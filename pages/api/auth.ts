@@ -6,7 +6,7 @@ import * as util from "util";
 import {doRequest} from '../../lib/utils';
 
 type Data = {
-    res: string
+    res: string | null | undefined
 }
 
 export default async function handler(
@@ -14,10 +14,16 @@ export default async function handler(
     res: NextApiResponse<Data>
 ) {
     const {ticket}: { [key: string]: string | string[]; } = req.query;
+    if (ticket === undefined) {
+        res.status(500).json({res: 'There is no ticket'});
+        return;
+    }
+    const proto: string = req.headers["x-forwarded-proto"] ? "https" : "http";
+    const host: string = `${proto}://${req.headers.host}${req.url?.split('?')[0]}`;
     const options: https.RequestOptions = {
         hostname: 'login.mephi.ru',
         port: 443,
-        path: `/validate?service=${hostname()}&ticket=${ticket}`,
+        path: `/validate?service=${host}&ticket=${ticket}`,
         method: 'GET',
     };
     const response: string | Error = await doRequest(options);
