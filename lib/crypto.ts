@@ -4,7 +4,7 @@ import crypto from "crypto";
 export async function encrypt(plaintext: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
-        throw Error('There is no some environment variables');
+        throw new Error('There is no some environment variables');
     const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const cipher = crypto.createCipheriv(
@@ -24,7 +24,7 @@ export async function encrypt(plaintext: string): Promise<string> {
 export async function decrypt(ciphertext: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
-        throw Error('There is no some environment variables');
+        throw new Error('There is no some environment variables');
     const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const decipher = crypto.createDecipheriv('aes-256-ccm',
@@ -36,7 +36,13 @@ export async function decrypt(ciphertext: string): Promise<string> {
     const authTag: Buffer = Buffer.from(ciphertext.split('=')[1] + '=', 'base64');
     decipher.setAuthTag(authTag);
     const realCiphertext: Buffer = Buffer.from(ciphertext.split('=')[0] + '=', 'base64')
-    return decipher.update(realCiphertext).toString('utf8');
+    const res:string = decipher.update(realCiphertext).toString('utf8');
+    try {
+        decipher.final();
+    } catch (err) {
+        throw new Error('Decryption failed');
+    }
+    return res;
 
 }
 

@@ -35,7 +35,7 @@ export async function hash(pass: string): Promise<string> {
         || process.env.HASH_TYPE === undefined
         || process.env.HASH_TIME_COST === undefined
         || process.env.HASH_PARALLELISM === undefined)
-        throw Error('There is no some environment variables');
+        throw new Error('There is no some environment variables');
     let hash_type: 0 | 1 | 2 | undefined;
     if (process.env.HASH_TYPE === '0')
         hash_type = argon2.argon2d;
