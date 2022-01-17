@@ -3,12 +3,11 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import https from 'https'
 import * as util from "util";
 import {doRequest, hash} from '../../lib/utils';
+import {decrypt} from '../../lib/crypto';
 import admin from "firebase-admin";
+import fs from 'fs';
+import {child, Database, DatabaseReference, DataSnapshot, get, getDatabase, ref, set} from "firebase/database";
 
-admin.initializeApp({
-    credential: admin.credential.cert("../../daily-mephi-firebase-adminsdk-owy0l-8196187005.json"),
-    databaseURL: "https://daily-mephi-default-rtdb.firebaseio.com"
-});
 
 type Data = {
     res: string | null | undefined
@@ -43,7 +42,39 @@ export default async function handler(
     }
 
     if (resArr[0] === 'yes') {
-        const login: string = await hash(resArr[1]);
+        const userId: string = await hash(resArr[1]);
+        if (admin.credential === undefined) {
+            const credentials: string = fs.readFileSync('firebaseCredentialsEncrypted.b64', 'binary')
+            admin.initializeApp({
+                credential: admin.credential.cert(await decrypt(credentials)),
+                databaseURL: "https://daily-mephi-default-rtdb.firebaseio.com"
+            });
+        }
+        const db: Database = getDatabase();
+        const dbRef: DatabaseReference = ref(getDatabase());
+        const snapshot: DataSnapshot = await get(child(dbRef, `users/${userId}`));
+        // let id: string;
+        let cookie: string;
+        if (!snapshot.exists()) {
+            // await set(ref(db, 'users/' + userId), {
+            //     cookie: cookie,
+            //     profileName: email,
+            //     profile_picture: imageUrl
+            // });
+        }
+        else{
+
+        }
+        // TODO:auth
+        // .then((snapshot) => {
+        //         if (snapshot.exists()) {
+        //             console.log(snapshot.val());
+        //         } else {
+        //             console.log("No data available");
+        //         }
+        //     }).catch((error) => {
+        //         console.error(error);
+        //     });
 
 
     } else if (resArr[0] === 'no') {
@@ -52,3 +83,4 @@ export default async function handler(
         res.status(500).json({res: 'There is an error 2: ' + response});
     }
 }
+
