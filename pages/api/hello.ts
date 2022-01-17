@@ -1,6 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {hash} from '../../lib/utils';
+import {encrypt, decrypt} from '../../lib/crypto';
+import fs from 'fs';
 
 type Data = {
     res: string
@@ -10,15 +12,10 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    let duration: number = 0;
-    for (let a: number = 0; a < 1; a++) {
-        const start: number = Date.now();
-        const pass: string = await hash(a.toString());
-        duration += Date.now() - start;
-
-        console.log(pass);
-
-    }
+    //
+    const file:string = fs.readFileSync("daily-mephi-firebase-adminsdk-owy0l-8196187005.json", 'utf8');
+    // console.log(file.length);
+    const enc = await encrypt(file)
     // report duration
-    res.status(200).json({res: duration.toString()})
+    res.status(200).json({res: enc + ' ' + await decrypt(enc)})
 }

@@ -10,6 +10,8 @@
   "dependencies": {
     "argon2": "^0.28.3",
     "autoprefixer": "^10.4.2",
+    "firebase": "^9.6.3",
+    "firebase-admin": "^10.0.1",
     "fireorm": "^0.23.3",
     "next": "12.0.8",
     "postcss": "^8.4.5",
