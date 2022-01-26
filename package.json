@@ -8,10 +8,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next-auth/firebase-adapter": "^0.1.2-pr.183-76202b42.8",
     "argon2": "^0.28.3",
     "autoprefixer": "^10.4.2",
-    "firebase": "^9.6.3",
+    "firebase": "^9.6.4",
     "firebase-admin": "^10.0.1",
     "fireorm": "^0.23.3",
     "next": "12.0.8",

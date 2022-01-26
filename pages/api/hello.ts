@@ -5,11 +5,8 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 // import {Octokit} from 'octokit';
 // import fs from 'fs';
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import {initializeApp, getApps} from 'firebase/app';
-import {getDatabase} from "firebase/database";
-import {initializeDatabase, getAuthToken} from '../../lib/backend/database';
-import database_client from '../../lib/frontend/database'
-import NextAuth from "next-auth"
+import {initializeApp, getApps, getApp} from 'firebase/app';
+
 
 // const octokit: Octokit = new Octokit();
 
@@ -23,15 +20,9 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<string>
 ) {
-    await initializeDatabase();
-
-    const firestore = getApps()[0].firestore()
-    // TODO: Replace with your app's Firebase project configuration
 
 
-    const auth = getAuth();
-    const userCredential = await signInWithCustomToken(auth, await getAuthToken('123'));
-    const uid = userCredential.user;
+    // const uid = userCredential.user;
 
 
     // const username: string = 'PotatoHD';
