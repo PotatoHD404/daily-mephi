@@ -1,11 +1,11 @@
 // import type firebase from "firebase"
 import {createHash, randomBytes} from "crypto"
-import {Adapter} from "next-auth/adapters"
-import {docSnapshotToObject, querySnapshotToObject, stripUndefined,} from "./utils"
+import {Adapter, AdapterSession, AdapterUser} from "next-auth/adapters"
+import {docSnapshotToObject, docSnapshotToObjectUndefined, querySnapshotToObject, stripUndefined,} from "./utils"
 
 import type {Firestore} from 'firebase/firestore';
-import {addDoc, collection, doc, getDoc, getDocs, limit, query, where} from 'firebase/firestore';
-import {Profile, Session, User} from "next-auth"
+import {addDoc, collection, doc, getDoc, getDocs, limit, query, where, updateDoc, deleteDoc} from 'firebase/firestore';
+import {Account, Awaitable, Profile, Session, User} from "next-auth"
 
 import {SessionOptions} from "next-auth/core/types";
 
@@ -43,117 +43,108 @@ export const FirebaseAdapter: Adapter<Firestore,
 
             return {
                 displayName: "Firebase",
-                async createUser(profile: Profile) {
+                async createUser(profile: Omit<AdapterUser, "id">): Promise<AdapterUser> {
                     const userRef = await addDoc(collection(db, "users"), stripUndefined({
                         name: profile.name,
                         email: profile.email,
                         image: profile.image,
                         emailVerified: profile.emailVerified ?? null,
                     }))
-                    return docSnapshotToObject(userRef)
-                },
-
-                async getUser(id: string) {
-                    const snapshot = await getDoc(doc(db, "users", id));
+                    const snapshot = await getDoc(userRef);
                     return docSnapshotToObject(snapshot)
                 },
 
-                async getUserByEmail(email: string | undefined | null) {
+                async getUser(id: string): Promise<AdapterUser | null> {
+                    const snapshot = await getDoc(doc(db, "users", id));
+                    return docSnapshotToObjectUndefined(snapshot)
+                },
+
+                async getUserByEmail(email: string): Promise<AdapterUser | null> {
                     if (!email) return null;
                     const col = collection(db, "users");
                     const q = query(col, where("email", "==", email), limit(1));
                     const snapshot = await getDocs(q);
                     return querySnapshotToObject(snapshot)
                 },
-
-                async getUserByProviderAccountId(providerId: string, providerAccountId: string) {
+                // https://github.com/nextauthjs/next-auth/blob/50fe115df6379fffe3f24408a1c8271284af660b/src/adapters.ts
+                async getUserByAccount({
+                                           provider,
+                                           providerAccountId
+                                       }: Pick<Account, "provider" | "providerAccountId">):
+                    Promise<AdapterUser | null> {
                     const col = collection(db, "accounts");
                     const q = query(col,
-                        where("providerId", "==", providerId),
+                        where("providerId", "==", provider),
                         where("providerAccountId", "==", providerAccountId),
                         limit(1));
                     const accountSnapshot = await getDocs(q);
 
                     if (accountSnapshot.empty) return null
 
-                    const userId = accountSnapshot.docs[0].data().userId
+                    const userId = accountSnapshot.docs[0].data().userId;
                     const userSnapshot = await getDoc(doc(db, "users", userId));
-                    return {...userSnapshot.data(), id: userSnapshot.id} as any
+                    return {...userSnapshot.data(), id: userSnapshot.id} as any;
                 },
 
-                async updateUser(user) {
-                    const userSnapshot = await getDoc(doc(db, "users", userId));
+                async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
+                    if (!user.id)
+                        throw Error("User id is not set!");
+                    const userSnapshot = await updateDoc(doc(db, "users", user.id), stripUndefined(user));
 
-                    await db
-                        .collection("users")
-                        .doc(user.id)
-                        .update(stripUndefined(user))
 
-                    return user
+                    return user as AdapterUser;
                 },
 
-                async deleteUser(userId) {
-                    await db.collection("users").doc(userId).delete()
+                async deleteUser(userId: string): Promise<void> {
+                    await deleteDoc(doc(db, "users", userId));
                 },
 
-                async linkAccount(
-                    userId,
-                    providerId,
-                    providerType,
-                    providerAccountId,
-                    refreshToken,
-                    accessToken,
-                    accessTokenExpires
-                ) {
-                    const accountRef = await db.collection("accounts").add(
-                        stripUndefined({
-                            userId,
-                            providerId,
-                            providerType,
-                            providerAccountId,
-                            refreshToken,
-                            accessToken,
-                            accessTokenExpires,
-                        })
-                    )
+                async linkAccount(account: Account) {
+                    const accountRef = await addDoc(collection(db, "accounts"),
+                        stripUndefined(account)
+                    );
 
-                    const accountSnapshot = await accountRef.get()
-                    const account = docSnapshotToObject(accountSnapshot)
-                    return account
+                    const accountSnapshot = await getDoc(accountRef);
+                    return docSnapshotToObjectUndefined(accountSnapshot);
                 },
 
-                async unlinkAccount(userId, providerId, providerAccountId) {
-                    const snapshot = await db
-                        .collection("accounts")
-                        .where("userId", "==", userId)
-                        .where("providerId", "==", providerId)
-                        .where("providerAccountId", "==", providerAccountId)
-                        .limit(1)
-                        .get()
+                async unlinkAccount({
+                                        provider,
+                                        providerAccountId
+                                    }: Pick<Account, "provider" | "providerAccountId">): Promise<void> {
+                    const coll = collection(db, "accounts");
+                    const q = query(coll, where("providerId",
+                            "==", provider), where("providerAccountId",
+                            "==", providerAccountId),
+                        limit(1));
+                    const snapshot = await getDocs(q);
 
-                    const accountId = snapshot.docs[0].id
+                    const accountId = snapshot.docs[0].id;
 
-                    await db.collection("accounts").doc(accountId).delete()
+                    await deleteDoc(doc(db, "accounts", accountId));
                 },
 
-                async createSession(user) {
-                    const sessionRef = await db.collection("sessions").add({
-                        userId: user.id,
-                        expires: new Date(Date.now() + sessionMaxAge),
+                async createSession(session: {
+                    sessionToken: string
+                    userId: string
+                    expires: Date
+                }): Promise<AdapterSession> {
+                    const sessionRef = await addDoc(collection(db, "sessions"), {
+                        userId: session.userId,
+                        expires: new Date(session.expires),
                         sessionToken: randomBytes(32).toString("hex"),
                         accessToken: randomBytes(32).toString("hex"),
-                    })
-                    const snapshot = await sessionRef.get()
-                    const session = docSnapshotToObject(snapshot)
-                    return session
+                    });
+                    const snapshot = await getDoc(sessionRef);
+                    return docSnapshotToObject(snapshot);
                 },
 
-                async getSession(sessionToken) {
-                    const snapshot = await db
-                        .collection("sessions")
-                        .where("sessionToken", "==", sessionToken)
-                        .limit(1)
-                        .get()
+                async getSession(sessionToken: string):Promise<{ session: AdapterSession; user: AdapterUser } | null> {
+                    const col = collection(db, "sessions");
+                    const q = query(col,
+                        where("sessionToken", "==", sessionToken),
+                        limit(1));
+                    const snapshot = await getDocs(q);
 
                     const session = querySnapshotToObject<FirebaseSession>(snapshot)
                     if (!session) return null
@@ -165,7 +156,7 @@ export const FirebaseAdapter: Adapter<Firestore,
                         return null
                     }
                     // return already existing session
-                    return session
+                    return {session, user}
                 },
 
                 async updateSession(session, force) {
@@ -221,7 +212,7 @@ export const FirebaseAdapter: Adapter<Firestore,
                     })
 
                     const snapshot = await verificationRequestRef.get()
-                    return docSnapshotToObject<FirebaseVerificationRequest>(snapshot)
+                    return docSnapshotToObjectUndefined<FirebaseVerificationRequest>(snapshot)
                 },
 
                 async getVerificationRequest(identifier, token) {

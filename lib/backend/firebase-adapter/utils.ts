@@ -1,12 +1,19 @@
-import type firebase from "firebase"
+import {DocumentData, DocumentSnapshot, QuerySnapshot} from "@firebase/firestore";
 
 /**
  * Takes in a snapshot and returns all of its `data()`,
  * as well as `id` and `createdAt` and `updatedAt` `Date`
  */
-export function docSnapshotToObject<T>(
-    snapshot: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
-): T | null {
+
+export function docSnapshotToObject<T>(snapshot: DocumentSnapshot): T  {
+    const data: any = snapshot.data()
+    if (data.expires) {
+        data.expires = data.expires.toDate()
+    }
+    return {id: snapshot.id, ...data}
+}
+
+export function docSnapshotToObjectUndefined<T>(snapshot: DocumentSnapshot): T | null {
     if (!snapshot.exists) {
         return null
     }
@@ -14,12 +21,10 @@ export function docSnapshotToObject<T>(
     if (data.expires) {
         data.expires = data.expires.toDate()
     }
-    return { id: snapshot.id, ...data }
+    return {id: snapshot.id, ...data}
 }
 
-export function querySnapshotToObject<T>(
-    snapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-): T | null {
+export function querySnapshotToObject<T>(snapshot: QuerySnapshot): T | null {
     if (snapshot.empty) {
         return null
     }
@@ -29,12 +34,12 @@ export function querySnapshotToObject<T>(
     if (data.expires) {
         data.expires = data.expires.toDate()
     }
-    return { id: doc.id, ...data }
+    return {id: doc.id, ...data}
 }
 
 /** Firebase does not like `undefined` values */
-export function stripUndefined(obj: any) {
+export function stripUndefined(obj: any): { [x: string]: Partial<unknown>; } {
     return Object.fromEntries(
         Object.entries(obj).filter(([, value]) => typeof value !== "undefined")
-    )
+    ) as Partial<unknown>
 }
