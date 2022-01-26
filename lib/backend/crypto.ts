@@ -48,7 +48,7 @@ export async function decrypt(ciphertext: string): Promise<string> {
 }
 
 export async function hash(pass: string, secret: string | undefined = undefined): Promise<string> {
-    if (process.env.HASH_PEPPER === undefined
+    if (process.env.HASH_SECRET === undefined
         || process.env.HASH_SALT === undefined
         || process.env.HASH_MEMORY_COST === undefined
         || process.env.HASH_TYPE === undefined
@@ -62,7 +62,7 @@ export async function hash(pass: string, secret: string | undefined = undefined)
         hash_type = argon2.argon2i;
     else
         hash_type = argon2.argon2id;
-    const pepper: string = secret ?? process.env.HASH_PEPPER;
+    const pepper: string = secret ?? process.env.HASH_SECRET;
     return (await argon2.hash(pass, {
         memoryCost: +process.env.HASH_MEMORY_COST,
         parallelism: +process.env.HASH_PARALLELISM,
