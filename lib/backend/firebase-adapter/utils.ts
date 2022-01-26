@@ -1,4 +1,4 @@
-import {DocumentData, DocumentSnapshot, QuerySnapshot} from "@firebase/firestore";
+import {DocumentSnapshot, QuerySnapshot} from "@firebase/firestore";
 
 /**
  * Takes in a snapshot and returns all of its `data()`,

@@ -1,11 +1,11 @@
 // import type firebase from "firebase"
 import {createHash, randomBytes} from "crypto"
-import {Adapter, AdapterSession, AdapterUser} from "next-auth/adapters"
+import {Adapter, AdapterSession, AdapterUser, VerificationToken} from "next-auth/adapters"
 import {docSnapshotToObject, docSnapshotToObjectUndefined, querySnapshotToObject, stripUndefined,} from "./utils"
 
 import type {Firestore} from 'firebase/firestore';
 import {addDoc, collection, doc, getDoc, getDocs, limit, query, where, updateDoc, deleteDoc} from 'firebase/firestore';
-import {Account, Awaitable, Profile, Session, User} from "next-auth"
+import {Account, Profile, Session, User} from "next-auth"
 
 import {SessionOptions} from "next-auth/core/types";
 
@@ -139,122 +139,89 @@ export const FirebaseAdapter: Adapter<Firestore,
                     return docSnapshotToObject(snapshot);
                 },
 
-                async getSession(sessionToken: string):Promise<{ session: AdapterSession; user: AdapterUser } | null> {
+                async getSession(sessionToken: string): Promise<{ session: AdapterSession; user: AdapterUser } | null> {
                     const col = collection(db, "sessions");
                     const q = query(col,
                         where("sessionToken", "==", sessionToken),
                         limit(1));
                     const snapshot = await getDocs(q);
 
-                    const session = querySnapshotToObject<FirebaseSession>(snapshot)
-                    if (!session) return null
+                    const session = querySnapshotToObject<AdapterSession>(snapshot);
+                    if (!session) return null;
 
                     // if the session has expired
                     if (session.expires < new Date()) {
                         // delete the session
-                        await db.collection("sessions").doc(session.id).delete()
+                        await deleteDoc(doc(db, "sessions", session.id));
                         return null
                     }
                     // return already existing session
-                    return {session, user}
+                    const anotherSnapshot = await getDoc(doc(db, "users", session.userId));
+                    const user: AdapterUser = docSnapshotToObject(anotherSnapshot)
+                    return {session, user};
                 },
 
-                async updateSession(session, force) {
+                async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">):
+                    Promise<AdapterSession | null | undefined> {
                     if (
-                        !force &&
                         Number(session.expires) - sessionMaxAge + sessionUpdateAge >
                         Date.now()
                     ) {
-                        return null
+                        return null;
                     }
+
+                    if (!session.id)
+                        throw Error("Session id is not set!");
 
                     // Update the item in the database
-                    await db
-                        .collection("sessions")
-                        .doc(session.id)
-                        .update({
-                            expires: new Date(Date.now() + sessionMaxAge),
-                        })
+                    await updateDoc(doc(db, "sessions", session.id), {
+                        expires: new Date(Date.now() + sessionMaxAge),
+                    });
 
-                    return session
+                    const snapshot = await getDoc(doc(db, "sessions", session.id));
+                    return docSnapshotToObject<AdapterSession>(snapshot);
                 },
 
-                async deleteSession(sessionToken) {
-                    const snapshot = await db
-                        .collection("sessions")
-                        .where("sessionToken", "==", sessionToken)
-                        .limit(1)
-                        .get()
+                async deleteSession(sessionToken: string): Promise<void> {
+                    const col = collection(db, "sessions");
+                    const q = query(col,
+                        where("sessionToken", "==", sessionToken),
+                        limit(1));
+                    const snapshot = await getDocs(q);
 
-                    const session = querySnapshotToObject<FirebaseSession>(snapshot)
-                    if (!session) return
+                    const session = querySnapshotToObject<AdapterSession>(snapshot);
+                    if (!session) return;
 
-                    await db.collection("sessions").doc(session.id).delete()
+                    await deleteDoc(doc(db, "sessions", session.id));
                 },
 
-                async createVerificationRequest(identifier, url, token, _, provider) {
-                    const verificationRequestRef = await db
-                        .collection("verificationRequests")
-                        .add({
-                            identifier,
-                            token: hashToken(token),
-                            expires: new Date(Date.now() + provider.maxAge * 1000),
-                        })
+                async createVerificationToken(verificationToken: VerificationToken):
+                    Promise<VerificationToken | null | undefined> {
+                    const verificationRequestRef = await addDoc(collection(db, "verificationRequests")
+                        , verificationToken);
 
-                    // With the verificationCallback on a provider, you can send an email, or queue
-                    // an email to be sent, or perform some other action (e.g. send a text message)
-                    await provider.sendVerificationRequest({
-                        identifier,
-                        url,
-                        token,
-                        baseUrl: appOptions.baseUrl,
-                        provider,
-                    })
-
-                    const snapshot = await verificationRequestRef.get()
-                    return docSnapshotToObjectUndefined<FirebaseVerificationRequest>(snapshot)
+                    const snapshot = await getDoc(verificationRequestRef);
+                    return docSnapshotToObjectUndefined<VerificationToken>(snapshot);
                 },
 
-                async getVerificationRequest(identifier, token) {
-                    const snapshot = await db
-                        .collection("verificationRequests")
-                        .where("token", "==", hashToken(token))
-                        .where("identifier", "==", identifier)
-                        .limit(1)
-                        .get()
+                async useVerificationToken({identifier, token}: {
+                    identifier: string
+                    token: string
+                }): Promise<VerificationToken | null> {
+                    const col = collection(db, "verificationRequests");
+                    const q = query(col,
+                        where("token", "==", hashToken(token)),
+                        where("identifier", "==", identifier),
+                        limit(1));
+                    const snapshot = await getDocs(q);
 
-                    const verificationRequest =
-                        querySnapshotToObject<FirebaseVerificationRequest>(snapshot)
-                    if (!verificationRequest) return null
+                    const verificationRequest = querySnapshotToObject<VerificationToken>(snapshot);
 
-                    if (verificationRequest.expires < new Date()) {
-                        // Delete verification entry so it cannot be used again
-                        await db
-                            .collection("verificationRequests")
-                            .doc(verificationRequest.id)
-                            .delete()
-                        return null
-                    }
-                    return verificationRequest
-                },
+                    if (!verificationRequest) return null;
 
-                async deleteVerificationRequest(identifier, token) {
-                    const snapshot = await db
-                        .collection("verificationRequests")
-                        .where("token", "==", hashToken(token))
-                        .where("identifier", "==", identifier)
-                        .limit(1)
-                        .get()
 
-                    const verificationRequest =
-                        querySnapshotToObject<FirebaseVerificationRequest>(snapshot)
-
-                    if (!verificationRequest) return null
-
-                    await db
-                        .collection("verificationRequests")
-                        .doc(verificationRequest.id)
-                        .delete()
+                    await deleteDoc(doc(db, "verificationRequests", verificationRequest.identifier));
+                    return verificationRequest;
                 },
             }
         },
