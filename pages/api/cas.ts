@@ -2,8 +2,8 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import https from 'https'
 import * as util from "util";
-import {doRequest, hash} from '../../lib/utils';
-import {decrypt} from '../../lib/crypto';
+import {doRequest} from '../../lib/backend/utils';
+import {decrypt, hash} from '../../lib/backend/crypto';
 import admin from "firebase-admin";
 import fs from 'fs';
 import {child, Database, DatabaseReference, DataSnapshot, get, getDatabase, ref, set} from "firebase/database";

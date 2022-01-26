@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import argon2 from "argon2";
 
 
 export async function encrypt(plaintext: string): Promise<string> {
@@ -36,7 +37,7 @@ export async function decrypt(ciphertext: string): Promise<string> {
     const authTag: Buffer = Buffer.from(ciphertext.split('=')[1] + '=', 'base64');
     decipher.setAuthTag(authTag);
     const realCiphertext: Buffer = Buffer.from(ciphertext.split('=')[0] + '=', 'base64')
-    const res:string = decipher.update(realCiphertext).toString('utf8');
+    const res: string = decipher.update(realCiphertext).toString('utf8');
     try {
         decipher.final();
     } catch (err) {
@@ -45,5 +46,32 @@ export async function decrypt(ciphertext: string): Promise<string> {
     return res;
 
 }
+
+export async function hash(pass: string): Promise<string> {
+    if (process.env.HASH_PEPPER === undefined
+        || process.env.HASH_SALT === undefined
+        || process.env.HASH_MEMORY_COST === undefined
+        || process.env.HASH_TYPE === undefined
+        || process.env.HASH_TIME_COST === undefined
+        || process.env.HASH_PARALLELISM === undefined)
+        throw new Error('There is no some environment variables');
+    let hash_type: 0 | 1 | 2 | undefined;
+    if (process.env.HASH_TYPE === '0')
+        hash_type = argon2.argon2d;
+    else if (process.env.HASH_TYPE === '1')
+        hash_type = argon2.argon2i;
+    else
+        hash_type = argon2.argon2id;
+    return (await argon2.hash(pass, {
+        memoryCost: +process.env.HASH_MEMORY_COST,
+        parallelism: +process.env.HASH_PARALLELISM,
+        type: hash_type,
+        timeCost: +process.env.HASH_TIME_COST,
+        secret: Buffer.from(process.env.HASH_PEPPER, 'utf8'),
+        salt: Buffer.from(process.env.HASH_SALT, 'utf8'),
+        raw: true
+    })).toString('base64');
+}
+
 
 // Now transmit { ciphertext, nonce, tag }.
