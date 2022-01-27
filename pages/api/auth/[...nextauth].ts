@@ -1,15 +1,17 @@
 import {initializeDatabase, getAuthToken} from '../../../lib/backend/database';
-import database_client from './../../../lib/frontend/database'
+import app from './../../../lib/frontend/database'
 import GoogleProvider from "next-auth/providers/google"
 import {getFirestore} from "firebase/firestore"
 import NextAuth from "next-auth"
 import {FirebaseAdapter} from "../../../lib/backend/firebase-adapter";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
+import {initializeApp} from "firebase/app";
 
 
 if (process.env.GOOGLE_ID === undefined
     || process.env.GOOGLE_SECRET === undefined || process.env.AUTH_SECRET === undefined)
     throw new Error('There is no some environment variables');
+
 
 
 export default NextAuth({
@@ -21,13 +23,13 @@ export default NextAuth({
             clientSecret: process.env.GOOGLE_SECRET,
         }),
     ],
-    adapter: FirebaseAdapter(await (async () => {
+    adapter: FirebaseAdapter(
+        await (async () => {
             await initializeDatabase();
+            const auth = getAuth(app);
+            await signInWithCustomToken(auth, await getAuthToken('admin'));
 
-            const auth = getAuth();
-            const userCredential = await signInWithCustomToken(auth, await getAuthToken('admin'));
-
-            return getFirestore()
+            return getFirestore();
         })()
     )
 

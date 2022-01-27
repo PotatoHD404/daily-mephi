@@ -6,6 +6,7 @@ import {docSnapshotToObject, docSnapshotToObjectUndefined, querySnapshotToObject
 import type {Firestore} from 'firebase/firestore';
 import {addDoc, collection, doc, getDoc, getDocs, limit, query, where, updateDoc, deleteDoc} from 'firebase/firestore';
 import {Account, Profile, Session, User} from "next-auth"
+import {hash} from '../crypto';
 
 import {SessionOptions} from "next-auth/core/types";
 
@@ -22,7 +23,7 @@ export type FirebaseSession = Session & {
     expires: Date
 }
 
-export type AdapterParams = { session: SessionOptions, secret: Session, appOptions: { baseUrl: string } }
+export type AdapterParams = { session: SessionOptions, secret: string, appOptions: { baseUrl: string } }
 
 // @ts-expect-error
 export const FirebaseAdapter: Adapter<Firestore,
@@ -38,11 +39,10 @@ export const FirebaseAdapter: Adapter<Firestore,
              * @todo Move this to core package
              * @todo Use bcrypt or a more secure method
              */
-            const hashToken = (token: string) =>
-                createHash("sha256").update(`${token}${secret}`).digest("hex")
+            const hashToken = (token: string) => hash(token, secret);
 
             return {
-                displayName: "Firebase",
+                // displayName: "Firebase",
                 async createUser(profile: Omit<AdapterUser, "id">): Promise<AdapterUser> {
                     const userRef = await addDoc(collection(db, "users"), stripUndefined({
                         name: profile.name,
