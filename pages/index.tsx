@@ -8,7 +8,7 @@ export default function Component() {
 
         return (
             <>
-                Signed in as {session.user?.email ?? 'wha'} <br/>
+                Signed in as {session.user?.name ?? 'wha'} <br/>
                 <button onClick={() => signOut()}>Sign out</button>
             </>
         )

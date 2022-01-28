@@ -1,5 +1,5 @@
 // import type firebase from "firebase"
-import {createHash, randomBytes} from "crypto"
+import {randomBytes} from "crypto"
 import {Adapter, AdapterSession, AdapterUser, VerificationToken} from "next-auth/adapters"
 import {docSnapshotToObject, docSnapshotToObjectUndefined, querySnapshotToObject, stripUndefined,} from "./utils"
 
@@ -18,12 +18,12 @@ import {
     getFirestore
 } from 'firebase/firestore';
 import {Account, NextAuthOptions, Profile, Session, User} from "next-auth"
-import {hash} from '../crypto';
+import {hash} from '../../crypto';
 
 import {SessionOptions} from "next-auth/core/types";
-import {getAuthToken, initializeDatabase} from "../database";
+import {getAuthToken, initializeDatabase} from "../../database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import app from "../../frontend/database";
+import app from "../../../frontend/database";
 
 //
 // interface FirebaseVerificationRequest {

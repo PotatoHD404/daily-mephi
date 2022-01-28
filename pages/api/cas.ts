@@ -50,6 +50,7 @@ export default async function handler(
                 databaseURL: "https://daily-mephi-default-rtdb.firebaseio.com"
             });
         }
+        // https://github.com/nextauthjs/next-auth/blob/main/src/core/routes/callback.ts
         const db: Database = getDatabase();
         const dbRef: DatabaseReference = ref(getDatabase());
         const snapshot: DataSnapshot = await get(child(dbRef, `users/${userId}`));
