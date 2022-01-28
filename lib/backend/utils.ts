@@ -2,6 +2,7 @@ import https from "https";
 import {URL} from "url";
 import {ClientRequest} from "http";
 
+
 export function doRequest(options: string | https.RequestOptions | URL): Promise<string | Error> {
     return new Promise((resolve, reject) => {
         const req: ClientRequest = https.request(options, (res) => {
@@ -26,4 +27,3 @@ export function doRequest(options: string | https.RequestOptions | URL): Promise
     });
 }
 
-// export default {doRequest};
