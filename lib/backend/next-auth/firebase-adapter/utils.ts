@@ -5,7 +5,7 @@ import {DocumentSnapshot, QuerySnapshot} from "@firebase/firestore";
  * as well as `id` and `createdAt` and `updatedAt` `Date`
  */
 
-export function docSnapshotToObject<T>(snapshot: DocumentSnapshot): T  {
+export function docSnapshotToObject<T>(snapshot: DocumentSnapshot): T {
     const data: any = snapshot.data()
     if (data.expires) {
         data.expires = data.expires.toDate()
