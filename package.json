@@ -13,7 +13,7 @@
     "firebase": "^9.6.4",
     "firebase-admin": "^10.0.1",
     "fireorm": "^0.23.3",
-    "next": "12.0.8",
+    "next": "12.0.9",
     "next-auth": "^4.1.2",
     "octokit": "^1.7.1",
     "postcss": "^8.4.5",
