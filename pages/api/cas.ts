@@ -6,7 +6,10 @@ import {doRequest} from '../../lib/backend/utils';
 import {decrypt, hash} from '../../lib/backend/crypto';
 import admin from "firebase-admin";
 import fs from 'fs';
+import {nextAuthOptions, NextAuthHandler} from "../../lib/backend/next-auth/signin";
 import {child, Database, DatabaseReference, DataSnapshot, get, getDatabase, ref, set} from "firebase/database";
+import {NextAuthAction} from "../../lib/backend/next-auth/types";
+import {detectHost} from "next-auth/next/utils";
 
 
 type Data = {
@@ -50,6 +53,8 @@ export default async function handler(
                 databaseURL: "https://daily-mephi-default-rtdb.firebaseio.com"
             });
         }
+        await NextAuthHandler(req);
+
         // https://github.com/nextauthjs/next-auth/blob/main/src/core/routes/callback.ts
         // const db: Database = getDatabase();
         // const dbRef: DatabaseReference = ref(getDatabase());
