@@ -2,7 +2,7 @@ import GoogleProvider from "next-auth/providers/google"
 import NextAuth from "next-auth"
 import FirebaseAdapter from "../../../lib/backend/next-auth/firebase-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import {nextAuthOptions} from "../../../lib/backend/next-auth/signin";
+import {nextAuthOptions} from "../../../lib/backend/next-auth/options";
 
 if (process.env.GOOGLE_ID === undefined
     || process.env.GOOGLE_SECRET === undefined || process.env.AUTH_SECRET === undefined)

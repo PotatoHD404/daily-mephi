@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/cookie": "^0.4.1",
     "argon2": "^0.28.3",
     "autoprefixer": "^10.4.2",
     "firebase": "^9.6.5",
