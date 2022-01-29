@@ -1,0 +1,3 @@
+[submodule "./lib/backend/next-auth"]
+	path = ./lib/backend/next-auth
+	url = https://github.com/nextauthjs/next-auth
