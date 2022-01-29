@@ -1,16 +1,16 @@
-import { TokenSet } from "openid-client"
-import { openidClient } from "next-auth/core/lib/oauth/client"
-import { oAuth1Client } from "next-auth/core/lib/oauth/client-legacy"
-import { useState } from "next-auth/core/lib/oauth/state-handler"
-import { usePKCECodeVerifier } from "next-auth/core/lib/oauth/pkce-handler"
-import { OAuthCallbackError } from "next-auth/core/errors"
+import {TokenSet} from "openid-client"
+import {openidClient} from "next-auth/core/lib/oauth/client"
+import {oAuth1Client} from "next-auth/core/lib/oauth/client-legacy"
+import {useState} from "next-auth/core/lib/oauth/state-handler"
+import {usePKCECodeVerifier} from "next-auth/core/lib/oauth/pkce-handler"
+import {OAuthCallbackError} from "next-auth/core/errors"
 
-import type { CallbackParamsType } from "openid-client"
-import type { Account, LoggerInstance, Profile } from "next-auth"
-import type { OAuthChecks, OAuthConfig } from "next-auth/providers"
-import type { InternalOptions } from "./types"
-import type { IncomingRequest, OutgoingResponse } from "next-auth/core"
-import type { Cookie } from "next-auth/core/lib/cookie"
+import type {CallbackParamsType} from "openid-client"
+import type {Account, LoggerInstance, Profile} from "next-auth"
+import type {OAuthChecks, OAuthConfig} from "next-auth/providers"
+import type {InternalOptions} from "./types"
+import type {IncomingRequest, OutgoingResponse} from "next-auth/core"
+import type {Cookie} from "next-auth/core/lib/cookie"
 
 export default async function oAuthCallback(params: {
     options: InternalOptions<"oauth">
@@ -19,8 +19,8 @@ export default async function oAuthCallback(params: {
     method: Required<IncomingRequest>["method"]
     cookies: IncomingRequest["cookies"]
 }): Promise<GetProfileResult & { cookies?: OutgoingResponse["cookies"] }> {
-    const { options, query, body, method, cookies } = params
-    const { logger, provider } = options
+    const {options, query, body, method, cookies} = params
+    const {logger, provider} = options
 
     const errorMessage = body?.error ?? query?.error
     if (errorMessage) {
@@ -38,15 +38,15 @@ export default async function oAuthCallback(params: {
         try {
             const client = await oAuth1Client(options)
             // Handle OAuth v1.x
-            const { oauth_token, oauth_verifier } = query ?? {}
-            
+            const {oauth_token, oauth_verifier} = query ?? {}
+
             const tokens: TokenSet = await client.getOAuthAccessToken(
                 oauth_token as string,
-                
+
                 null,
                 oauth_verifier
             )
-            
+
             let profile: Profile = await client.get(
                 (provider as any).profileUrl,
                 tokens.oauth_token,
@@ -54,8 +54,7 @@ export default async function oAuthCallback(params: {
             )
 
 
-
-            return await getProfile({ profile, tokens, provider, logger })
+            return await getProfile({profile, tokens, provider, logger})
         } catch (error) {
             logger.error("OAUTH_V1_GET_ACCESS_TOKEN_ERROR", error as Error)
             throw error
@@ -91,17 +90,17 @@ export default async function oAuthCallback(params: {
                 url: `http://n?${new URLSearchParams(query)}`,
                 // TODO: Ask to allow object to be passed upstream:
                 // https://github.com/panva/node-openid-client/blob/3ae206dfc78c02134aa87a07f693052c637cab84/types/index.d.ts#L439
-                
+
                 body,
                 method,
             }),
-            
+
             ...provider.token?.params,
         }
 
-        
+
         if (provider.token?.request) {
-            
+
             const response = await provider.token.request({
                 provider,
                 params,
@@ -121,9 +120,9 @@ export default async function oAuthCallback(params: {
         }
 
         let profile: Profile
-        
+
         if (provider.userinfo?.request) {
-            
+
             profile = await provider.userinfo.request({
                 provider,
                 tokens,
@@ -133,7 +132,7 @@ export default async function oAuthCallback(params: {
             profile = tokens.claims()
         } else {
             profile = await client.userinfo(tokens, {
-                
+
                 params: provider.userinfo?.params,
             })
         }
@@ -144,7 +143,7 @@ export default async function oAuthCallback(params: {
             tokens,
             logger,
         })
-        return { ...profileResult, cookies: resCookies }
+        return {...profileResult, cookies: resCookies}
     } catch (error) {
         logger.error("OAUTH_CALLBACK_ERROR", {
             error: error as Error,
@@ -162,7 +161,7 @@ export interface GetProfileParams {
 }
 
 export interface GetProfileResult {
-    
+
     profile: any
     account: Omit<Account, "userId"> | null
     OAuthProfile: Profile
@@ -176,8 +175,8 @@ async function getProfile({
                               logger,
                           }: GetProfileParams): Promise<GetProfileResult> {
     try {
-        logger.debug("PROFILE_DATA", { OAuthProfile })
-        
+        logger.debug("PROFILE_DATA", {OAuthProfile})
+
         const profile = await provider.profile(OAuthProfile, tokens)
         profile.email = profile.email?.toLowerCase()
         // Return profile, raw profile and auth provider details

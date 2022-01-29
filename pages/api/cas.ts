@@ -42,7 +42,7 @@ export default async function handler(
     }
 
     if (resArr[0] === 'yes') {
-        const userId: string = await hash(resArr[1]);
+        const providerUserId: string = await hash(resArr[1]);
         if (admin.credential === undefined) {
             const credentials: string = fs.readFileSync('firebaseCredentialsEncrypted.b64', 'binary')
             admin.initializeApp({
@@ -51,21 +51,21 @@ export default async function handler(
             });
         }
         // https://github.com/nextauthjs/next-auth/blob/main/src/core/routes/callback.ts
-        const db: Database = getDatabase();
-        const dbRef: DatabaseReference = ref(getDatabase());
-        const snapshot: DataSnapshot = await get(child(dbRef, `users/${userId}`));
+        // const db: Database = getDatabase();
+        // const dbRef: DatabaseReference = ref(getDatabase());
+        // const snapshot: DataSnapshot = await get(child(dbRef, `users/${userId}`));
         // let id: string;
-        let cookie: string;
-        if (!snapshot.exists()) {
-            // await set(ref(db, 'users/' + userId), {
-            //     cookie: cookie,
-            //     profileName: email,
-            //     profile_picture: imageUrl
-            // });
-        }
-        else{
-
-        }
+        // let cookie: string;
+        // if (!snapshot.exists()) {
+        //     // await set(ref(db, 'users/' + userId), {
+        //     //     cookie: cookie,
+        //     //     profileName: email,
+        //     //     profile_picture: imageUrl
+        //     // });
+        // }
+        // else{
+        //
+        // }
         // TODO:auth
         // .then((snapshot) => {
         //         if (snapshot.exists()) {
