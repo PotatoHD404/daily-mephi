@@ -8,14 +8,14 @@ import admin from "firebase-admin";
 import fs from 'fs';
 import {detectHost} from "../../lib/backend/utils";
 import {NextAuthOptions} from "next-auth/core/types";
-import logger, {setLogger} from "../../lib/backend/next-auth/lib/logger";  //
-import {assertConfig} from "../../lib/backend/next-auth/core/lib/assert"; //
-import {init} from "../../lib/backend/next-auth/core/init"; //
-import {SessionStore} from "../../lib/backend/next-auth/core/lib/cookie"; //
+import logger, {setLogger} from "../../lib/backend/next-auth/src/lib/logger";  //
+import {assertConfig} from "../../lib/backend/next-auth/src/core/lib/assert"; //
+import {init} from "../../lib/backend/next-auth/src/core/init"; //
+import {SessionStore} from "../../lib/backend/next-auth/src/core/lib/cookie"; //
 import {Account, Profile} from "next-auth";
-import callbackHandler from "../../lib/backend/next-auth/core/lib/callback-handler"; //
+import callbackHandler from "../../lib/backend/next-auth/src/core/lib/callback-handler"; //
 import {nextAuthOptions} from "../../lib/backend/options";
-import {NextAuthAction} from "../../lib/backend/next-auth/lib/types";
+import {NextAuthAction} from "../../lib/backend/next-auth/src/lib/types";
 
 // TODO: https://github.com/nextauthjs/next-auth/blob/main/src/core/lib/callback-handler.ts
 // https://github.com/nextauthjs/next-auth/blob/main/src/core/routes/callback.ts
@@ -38,12 +38,13 @@ export default async function handler(
     }
     const proto: string = req.headers["x-forwarded-proto"] ? "https" : "http";
     const host: string = `${proto}://${req.headers.host}${req.url?.split('?')[0]}`;
-    const response: string | Error = await doRequest({
-        hostname: 'login.mephi.ru',
-        port: 443,
-        path: `/validate?service=${host}&ticket=${ticket}`,
-        method: 'GET',
-    });
+    // const response: string | Error = await doRequest({
+    //     hostname: 'login.mephi.ru',
+    //     port: 443,
+    //     path: `/validate?service=${host}&ticket=${ticket}`,
+    //     method: 'GET',
+    // });
+    const response = 'yes\n1\n'
     if (util.types.isNativeError(response)) {
         res.status(500).json({res: response.message})
         return;
@@ -125,8 +126,9 @@ export default async function handler(
             events,
             callbacks,
         } = options;
-        console.log(provider);
-        // try {
+
+        if (!provider)
+            throw new Error("Provider is undefined");
         const {
             profile: profile,
             account: acc,
@@ -227,25 +229,28 @@ export default async function handler(
 
         if (!session ||
             !("sessionToken" in session) ||
-            session?.sessionToken ||
+            !session?.sessionToken ||
             typeof session?.sessionToken !== "string") {
+            // http://localhost:3000/api/cas?ticket=ST-1643483469rDNvuk3-Cm4LQjTVubb
+
             redirect(res, `${url}/signin`, cookies);
 
             return;
         }
+
         // Save Session Token in cookie
         cookies.push({
             name: options.cookies.sessionToken.name,
             value: session.sessionToken,
             options: {
                 ...options.cookies.sessionToken.options,
-                expires: session.expires,
+                expires: session.expires as Date,
             },
         })
         await events.signIn?.({
             user: user,
             account: account,
-            profile: null,
+            profile: undefined,
             isNewUser: isNewUser
         });
 
