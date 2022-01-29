@@ -86,16 +86,16 @@ export default function FirebaseAdapter(): Adapter {
             Promise<AdapterUser | null> {
             const col = collection(await db(), "accounts");
             const q = query(col,
-                where("providerId", "==", provider),
+                where("provider", "==", provider),
                 where("providerAccountId", "==", providerAccountId),
                 limit(1));
             const accountSnapshot = await getDocs(q);
-
             if (accountSnapshot.empty) return null
 
             const userId = accountSnapshot.docs[0].data().userId;
             const userSnapshot = await getDoc(doc(await db(), "users", userId));
-            return {...userSnapshot.data(), id: userSnapshot.id} as any;
+            // console.log({...userSnapshot.data(), id: userSnapshot.id} as AdapterUser);
+            return {...userSnapshot.data(), id: userSnapshot.id} as AdapterUser;
         },
 
         async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
@@ -125,7 +125,7 @@ export default function FirebaseAdapter(): Adapter {
                                 providerAccountId
                             }: Pick<Account, "provider" | "providerAccountId">): Promise<void> {
             const coll = collection(await db(), "accounts");
-            const q = query(coll, where("providerId",
+            const q = query(coll, where("provider",
                     "==", provider), where("providerAccountId",
                     "==", providerAccountId),
                 limit(1));
