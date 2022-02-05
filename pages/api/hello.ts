@@ -6,6 +6,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 // import fs from 'fs';
 import {getAuth, signInWithCustomToken} from "firebase/auth";
 import {initializeApp, getApps, getApp} from 'firebase/app';
+import {randomBytes} from "crypto";
 
 
 // const octokit: Octokit = new Octokit();
@@ -20,7 +21,6 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<string>
 ) {
-
 
     // const uid = userCredential.user;
 
@@ -37,5 +37,5 @@ export default async function handler(
 
     // report duration
     // @ts-ignore
-    res.status(200).json(uid);
+    res.status(200).json('uid');
 }

@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@notionhq/client": "^0.4.13",
-    "@types/cookie": "^0.4.1",
     "argon2": "^0.28.3",
     "autoprefixer": "^10.4.2",
     "firebase": "^9.6.5",
     "firebase-admin": "^10.0.2",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.0.9",
     "next-auth": "^4.1.2",
     "postcss": "^8.4.5",
@@ -23,6 +23,8 @@
     "tailwindcss": "^3.0.15"
   },
   "devDependencies": {
+    "@types/cookie": "^0.4.1",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.8",
     "@types/react": "^17.0.38",
     "eslint": "8.7.0",

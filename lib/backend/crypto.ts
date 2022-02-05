@@ -2,11 +2,13 @@ import crypto from "crypto";
 import argon2 from "argon2";
 
 
-export async function encrypt(plaintext: string): Promise<string> {
+export async function encrypt(plaintext: string, key?: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
         throw new Error('There is no some environment variables');
-    const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
+    if (!key)
+        key = process.env.AES_KEY256;
+    const key256: Buffer = Buffer.from(key, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const cipher = crypto.createCipheriv(
         "aes-256-ccm",
@@ -22,11 +24,13 @@ export async function encrypt(plaintext: string): Promise<string> {
     return ciphertext + authTag;
 }
 
-export async function decrypt(ciphertext: string): Promise<string> {
+export async function decrypt(ciphertext: string, key?: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
         throw new Error('There is no some environment variables');
-    const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
+    if (!key)
+        key = process.env.AES_KEY256;
+    const key256: Buffer = Buffer.from(key, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const decipher = crypto.createDecipheriv('aes-256-ccm',
         key256,

@@ -1,12 +1,27 @@
 import https from "https";
 import {URL} from "url";
 import {ClientRequest} from "http";
-import {Cookie} from "next-auth/core/lib/cookie";
 import {NextApiResponse} from "next";
 import {serialize} from "cookie";
+import {Cookie} from "next-auth/core/lib/cookie";
+import cookie from 'cookie';
 
-export function getRequest(options: string | https.RequestOptions | URL, ): Promise<string | Error> {
+interface Cookies {
+    [Key: string]: { Value: string, Domain: string, Path: string, Expires: Date };
+}
+
+export function doRequest(options: https.RequestOptions, data?: any): Promise<{
+    response: string,
+    cookies: Cookies,
+    code: number
+}> {
     return new Promise((resolve, reject) => {
+        if (data)
+            data = JSON.stringify(data);
+        if (!options.headers)
+            options.headers = {}
+        options.headers['Content-Length'] = data.length;
+        options.headers['Content-Type'] = 'application/json';
         const req: ClientRequest = https.request(options, (res) => {
             res.setEncoding('utf8');
             let responseBody: string = '';
@@ -16,15 +31,50 @@ export function getRequest(options: string | https.RequestOptions | URL, ): Prom
             });
 
             res.on('end', () => {
-                resolve(responseBody);
+                const tmp = res.headers["set-cookie"]?.map((el) => cookie.parse(el));
+                const cookies: Cookies = {};
+                tmp?.forEach((el) => {
+                    const first_key = Object.keys(el)[0];
+                    const first_value = Object.values(el)[0];
+                    delete el[first_key]
+                    cookies[first_key] = {
+                        Value: first_value,
+                        Path: el['Path'],
+                        Domain: el['Domain'],
+                        Expires: new Date(Date.parse(el['Expires']))
+                    };
+                });
+                // console.log(res.headers["set-cookie"]);
+                resolve({response: responseBody, cookies, code: res.statusCode ?? 500});
             });
         });
 
         req.on('error', (err) => {
-            reject(err);
+            throw err;
+        });
+        if (data)
+            req.write(data);
+        req.end();
+    });
+}
+
+export function checkStatus(options: https.RequestOptions, data?: any): Promise<number | undefined> {
+    return new Promise((resolve, reject) => {
+        if (data)
+            data = JSON.stringify(data);
+        if (!options.headers)
+            options.headers = {}
+        options.headers['Content-Length'] = data.length;
+        options.headers['Content-Type'] = 'application/json';
+        const req: ClientRequest = https.request(options, (res) => {
+            resolve(res.statusCode);
         });
 
-        // req.write(data)
+        req.on('error', (err) => {
+            throw err;
+        });
+        if (data)
+            req.write(data);
         req.end();
     });
 }

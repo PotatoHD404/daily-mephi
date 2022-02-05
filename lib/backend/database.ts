@@ -14,7 +14,7 @@ export async function initializeDatabase() {
         let credentials: string = fs.readFileSync("firebaseCredentialsEncrypted.b64", 'binary');
         credentials = await decrypt(credentials);
         const cred: Credential = cert(JSON.parse(credentials));
-        initializeApp({
+        return initializeApp({
             credential: cred,
             databaseURL: process.env.FIREBASE_DATABASE_URL,
             projectId: process.env.FIREBASE_PROJECT_ID,

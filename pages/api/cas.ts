@@ -2,7 +2,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import https from 'https'
 import * as util from "util";
-import {getRequest, redirect} from '../../lib/backend/utils';
+import {doRequest, redirect} from '../../lib/backend/utils';
 import {decrypt, hash} from '../../lib/backend/crypto';
 import admin from "firebase-admin";
 import fs from 'fs';
@@ -37,7 +37,7 @@ export default async function handler(
     }
     const proto: string = req.headers["x-forwarded-proto"] ? "https" : "http";
     const host: string = `${proto}://${req.headers.host}${req.url?.split('?')[0]}`;
-    // const response: string | Error = await doRequest({
+    // const {response} = await doRequest({
     //     hostname: 'login.mephi.ru',
     //     port: 443,
     //     path: `/validate?service=${host}&ticket=${ticket}`,

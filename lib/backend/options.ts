@@ -1,5 +1,7 @@
 import DailyOauth from "./dailyOauth";
 import FirebaseAdapter from "./firebase-adapter";
+import {JWT} from "./next-auth/src/jwt";
+import {Session, User} from "./next-auth/src";
 // import GoogleProvider from "next-auth/providers/google";
 //
 // if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET)
@@ -15,6 +17,16 @@ export const nextAuthOptions = {
         //     clientSecret: process.env.GOOGLE_CLIENT_SECRET
         // })
     ],
+    callbacks: {
+        async session({session, token, user}: {
+            session: Session
+            user: User
+            token: JWT
+        }) {
+            (session.user as any).id = user.id;
+            return session;
+        }
+    },
     adapter: FirebaseAdapter()
 
 };
