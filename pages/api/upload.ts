@@ -7,7 +7,7 @@ import {
     doc,
     getDoc,
     updateDoc,
-    getFirestore, DocumentData
+    getFirestore, DocumentData, Timestamp
 } from 'firebase/firestore';
 import {getAuthToken, initializeDatabase} from "../../lib/backend/database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
@@ -55,7 +55,6 @@ export default async function handler(
         throw new Error('Request timeout');
     }
 
-    // TODO: auth
     const auth = getAuth(app);
 
     await initializeDatabase();
@@ -66,7 +65,7 @@ export default async function handler(
     const token_res = (await getDoc(doc(db, 'internal', 'notion_token'))).data();
     if (!token_res)
         throw new Error('There is no notion_token!');
-    let {expires: expires, value: enc_token} = token_res as { expires: Date, value: string };
+    let {expires: expires, value: enc_token} = token_res as { expires: Timestamp, value: string };
     let token_v2: string = '';
     try {
         token_v2 = await decrypt(enc_token, process.env.DATABASE_KEY);
@@ -75,7 +74,7 @@ export default async function handler(
     }
     const d = new Date();
     d.setHours(d.getHours() - 24);
-    if (expires < d || !token_v2) {
+    if (new Date(expires.seconds * 1000) < d || !token_v2) {
         const {cookies} = await doRequest({
                 hostname: 'www.notion.so',
                 port: 443,
@@ -103,7 +102,7 @@ export default async function handler(
         path: `/api/v3/getUploadFileUrl`,
         method: 'POST',
         headers: {
-            token_v2: token_v2
+            'Cookie': `token_v2=${token_v2}`
         }
     }, {
         bucket: "secure",

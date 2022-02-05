@@ -16,12 +16,13 @@ export function doRequest(options: https.RequestOptions, data?: any): Promise<{
     code: number
 }> {
     return new Promise((resolve, reject) => {
-        if (data)
+        if (data) {
             data = JSON.stringify(data);
-        if (!options.headers)
-            options.headers = {}
-        options.headers['Content-Length'] = data.length;
-        options.headers['Content-Type'] = 'application/json';
+            if (!options.headers)
+                options.headers = {}
+            options.headers['Content-Length'] = data.length;
+            options.headers['Content-Type'] = 'application/json';
+        }
         const req: ClientRequest = https.request(options, (res) => {
             res.setEncoding('utf8');
             let responseBody: string = '';
@@ -58,16 +59,17 @@ export function doRequest(options: https.RequestOptions, data?: any): Promise<{
     });
 }
 
-export function checkStatus(options: https.RequestOptions, data?: any): Promise<number | undefined> {
+export function checkStatus(options: https.RequestOptions, data?: any): Promise<{code: number | undefined, redirect: string | undefined}> {
     return new Promise((resolve, reject) => {
-        if (data)
+        if (data) {
             data = JSON.stringify(data);
-        if (!options.headers)
-            options.headers = {}
-        options.headers['Content-Length'] = data.length;
-        options.headers['Content-Type'] = 'application/json';
+            if (!options.headers)
+                options.headers = {}
+            options.headers['Content-Length'] = data.length;
+            options.headers['Content-Type'] = 'application/json';
+        }
         const req: ClientRequest = https.request(options, (res) => {
-            resolve(res.statusCode);
+            resolve({code: res.statusCode, redirect: res.headers['location']});
         });
 
         req.on('error', (err) => {
