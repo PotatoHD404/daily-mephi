@@ -16,7 +16,9 @@ export async function initializeDatabase() {
         const cred: Credential = cert(JSON.parse(credentials));
         initializeApp({
             credential: cred,
-            databaseURL: process.env.DATABASE_URL
+            databaseURL: process.env.FIREBASE_DATABASE_URL,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
         });
     }
 }

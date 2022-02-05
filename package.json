@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@notionhq/client": "^0.4.13",
     "@types/cookie": "^0.4.1",
     "argon2": "^0.28.3",
     "autoprefixer": "^10.4.2",

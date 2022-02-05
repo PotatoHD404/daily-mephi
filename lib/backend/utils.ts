@@ -5,7 +5,7 @@ import {Cookie} from "next-auth/core/lib/cookie";
 import {NextApiResponse} from "next";
 import {serialize} from "cookie";
 
-export function doRequest(options: string | https.RequestOptions | URL): Promise<string | Error> {
+export function getRequest(options: string | https.RequestOptions | URL, ): Promise<string | Error> {
     return new Promise((resolve, reject) => {
         const req: ClientRequest = https.request(options, (res) => {
             res.setEncoding('utf8');
