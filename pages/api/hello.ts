@@ -7,6 +7,11 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {getAuth, signInWithCustomToken} from "firebase/auth";
 import {initializeApp, getApps, getApp} from 'firebase/app';
 import {randomBytes} from "crypto";
+import app from "../../lib/frontend/database";
+import {getAuthToken, initializeDatabase} from "../../lib/backend/database";
+import {doc, getDoc, getFirestore} from "firebase/firestore";
+import fs from "fs";
+import {encrypt} from "../../lib/backend/crypto";
 
 
 // const octokit: Octokit = new Octokit();
@@ -24,6 +29,15 @@ export default async function handler(
 
     // const uid = userCredential.user;
 
+    // const auth = getAuth(app);
+    //
+    // await initializeDatabase();
+    // await signInWithCustomToken(auth, await getAuthToken('admin'));
+    //
+    // const db = getFirestore();
+    //
+    // const token_res = (await getDoc(doc(db, 'test', 'yyrwg42xMT3WoPFS0fBx'))).data();
+
 
     // const username: string = 'PotatoHD';
     // const {
@@ -32,10 +46,10 @@ export default async function handler(
     // //
     // const file: string = fs.readFileSync("daily-mephi-firebase-adminsdk-owy0l-8196187005.json", 'utf8');
     // // console.log(file.length);
-    // const enc = await encrypt(file)
+    // const enc = await encrypt(file);
     // fs.writeFileSync("firebaseCredentialsEncrypted.b64", enc, 'binary');
-
+    // let token_res = '';
     // report duration
     // @ts-ignore
-    res.status(200).json('uid');
+    res.status(200).json('ok');
 }

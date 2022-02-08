@@ -18,12 +18,10 @@ export async function encrypt(plaintext: string, key?: string): Promise<string> 
             authTagLength: 16
         });
 
-    const ciphertext: string = cipher.update(plaintext, 'utf8').toString('base64');
+    const ciphertext: Buffer = cipher.update(plaintext, 'utf8')
     cipher.final();
-    const authTag: string = cipher.getAuthTag().toString('base64');
-    console.log(ciphertext);
-    console.log(authTag);
-    return ciphertext + '===' + authTag;
+    const authTag: Buffer = cipher.getAuthTag()
+    return Buffer.concat([ciphertext, authTag]).toString('base64');
 }
 
 export async function decrypt(ciphertext: string, key?: string): Promise<string> {
@@ -40,9 +38,10 @@ export async function decrypt(ciphertext: string, key?: string): Promise<string>
         {
             authTagLength: 16
         });
-    const authTag: Buffer = Buffer.from(ciphertext.split('===')[1], 'base64');
+    const buf: Buffer = Buffer.from(ciphertext, 'base64');
+    const authTag: Buffer = buf.slice(-16);
     decipher.setAuthTag(authTag);
-    const realCiphertext: Buffer = Buffer.from(ciphertext.split('===')[0], 'base64')
+    const realCiphertext: Buffer = buf.slice(0,-16);
     const res: string = decipher.update(realCiphertext).toString('utf8');
     try {
         decipher.final();
