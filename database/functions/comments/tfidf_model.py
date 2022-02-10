@@ -1,6 +1,6 @@
 # Made by mmkuznecov
 
-import sklearn
+from sklearn import *
 import pickle
 
 
