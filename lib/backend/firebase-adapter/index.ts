@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import {Account} from "next-auth"
 
-import {getAuthToken, initializeDatabase} from "../database";
+import {getAuthToken, initializeAdmin} from "../database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
 import app from "../../frontend/database";
 import {randomBytes} from "crypto";
@@ -27,7 +27,7 @@ export default function FirebaseAdapter(): Adapter {
     async function db() {
         const auth = getAuth(app);
         if (auth.currentUser?.uid != 'admin') {
-            await initializeDatabase();
+            await initializeAdmin();
 
 
             await signInWithCustomToken(auth, await getAuthToken('admin'));

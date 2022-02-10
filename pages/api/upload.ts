@@ -9,9 +9,9 @@ import {
     updateDoc,
     getFirestore, DocumentData, Timestamp
 } from 'firebase/firestore';
-import {getAuthToken, initializeDatabase} from "../../lib/backend/database";
+import {getAuthToken, initializeAdmin} from "../../lib/backend/database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import app from "../../lib/frontend/database";
+import app from "../../lib/firebase/initApp";
 import {decrypt, encrypt} from "../../lib/backend/crypto";
 import {getSession} from "next-auth/react";
 
@@ -57,7 +57,7 @@ export default async function handler(
 
     const auth = getAuth(app);
 
-    await initializeDatabase();
+    await initializeAdmin();
     await signInWithCustomToken(auth, await getAuthToken('admin'));
 
     const db = getFirestore();

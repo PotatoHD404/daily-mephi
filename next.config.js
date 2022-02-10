@@ -2,9 +2,12 @@
 const nextConfig = {
     reactStrictMode: true,
     webpack: (config) => {
-        config.experiments = {topLevelAwait: true, layers: true,};
+        config.experiments = {layers: true, topLevelAwait: true};
         return config;
     },
+    experimental: {
+        esmExternals: false
+    }
 }
 
 module.exports = nextConfig

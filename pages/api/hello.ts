@@ -7,8 +7,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {getAuth, signInWithCustomToken} from "firebase/auth";
 import {initializeApp, getApps, getApp} from 'firebase/app';
 import {randomBytes} from "crypto";
-import app from "../../lib/frontend/database";
-import {getAuthToken, initializeDatabase} from "../../lib/backend/database";
+import {getAuthToken, initializeAdmin} from "../../lib/backend/database";
 import {doc, getDoc, getFirestore} from "firebase/firestore";
 import fs from "fs";
 import {encrypt} from "../../lib/backend/crypto";
