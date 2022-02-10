@@ -2,10 +2,11 @@ import '../styles/globals.css'
 import type {AppProps} from 'next/app'
 import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
+import {useSession} from "next-auth/react"
 import {Session} from "next-auth";
 import {JSXInternal} from "preact/src/jsx";
 import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import {AppPropsType} from "next/dist/shared/lib/utils";
 
 
