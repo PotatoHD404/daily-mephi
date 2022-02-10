@@ -5,7 +5,9 @@ export interface Comment {
     text: string,
     time: Date,
     user: string
-    parent: string | null
+    parent: string | null,
+    children: Array<string>,
+    next: Array<string>
 }
 
 export interface Material {

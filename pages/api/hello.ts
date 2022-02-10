@@ -44,8 +44,8 @@ export default async function handler(
     //     data: {login, avatar_url},
     // } = await octokit.rest.users.getByUsername({username});
     // //
-    // const file: string = fs.readFileSync("daily-mephi-firebase-adminsdk-owy0l-8196187005.json", 'utf8');
-    // // console.log(file.length);
+    // const file: string = fs.readFileSync("daily-mephi-fdcd9-firebase-adminsdk-bz905-bd0979e9d8.json", 'utf8');
+    // console.log(file.length);
     // const enc = await encrypt(file);
     // fs.writeFileSync("firebaseCredentialsEncrypted.b64", enc, 'binary');
     // let token_res = '';

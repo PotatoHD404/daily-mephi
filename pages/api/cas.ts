@@ -60,7 +60,6 @@ export default async function handler(
             const credentials: string = fs.readFileSync('firebaseCredentialsEncrypted.b64', 'binary')
             admin.initializeApp({
                 credential: admin.credential.cert(await decrypt(credentials)),
-                databaseURL: "https://daily-mephi-default-rtdb.firebaseio.com"
             });
         }
         const {nextauth, ...query} = req.query;
