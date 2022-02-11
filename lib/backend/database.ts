@@ -9,14 +9,16 @@ import fs from "fs";
 
 // let app: App;
 
-export async function initializeDatabase() {
+export async function initializeAdmin() {
     if (getApps().length === 0) {
         let credentials: string = fs.readFileSync("firebaseCredentialsEncrypted.b64", 'binary');
         credentials = await decrypt(credentials);
         const cred: Credential = cert(JSON.parse(credentials));
-        initializeApp({
+        return initializeApp({
             credential: cred,
-            databaseURL: process.env.DATABASE_URL
+            databaseURL: process.env.FIREBASE_DATABASE_URL,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
         });
     }
 }

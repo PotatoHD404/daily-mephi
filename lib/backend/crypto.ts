@@ -2,11 +2,13 @@ import crypto from "crypto";
 import argon2 from "argon2";
 
 
-export async function encrypt(plaintext: string): Promise<string> {
+export async function encrypt(plaintext: string, key?: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
         throw new Error('There is no some environment variables');
-    const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
+    if (!key)
+        key = process.env.AES_KEY256;
+    const key256: Buffer = Buffer.from(key, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const cipher = crypto.createCipheriv(
         "aes-256-ccm",
@@ -16,17 +18,19 @@ export async function encrypt(plaintext: string): Promise<string> {
             authTagLength: 16
         });
 
-    const ciphertext: string = cipher.update(plaintext, 'utf8').toString('base64');
+    const ciphertext: Buffer = cipher.update(plaintext, 'utf8')
     cipher.final();
-    const authTag: string = cipher.getAuthTag().toString('base64');
-    return ciphertext + authTag;
+    const authTag: Buffer = cipher.getAuthTag()
+    return Buffer.concat([ciphertext, authTag]).toString('base64');
 }
 
-export async function decrypt(ciphertext: string): Promise<string> {
+export async function decrypt(ciphertext: string, key?: string): Promise<string> {
     if (process.env.AES_NONCE === undefined
         || process.env.AES_KEY256 === undefined)
         throw new Error('There is no some environment variables');
-    const key256: Buffer = Buffer.from(process.env.AES_KEY256, 'base64url');
+    if (!key)
+        key = process.env.AES_KEY256;
+    const key256: Buffer = Buffer.from(key, 'base64url');
     const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
     const decipher = crypto.createDecipheriv('aes-256-ccm',
         key256,
@@ -34,9 +38,10 @@ export async function decrypt(ciphertext: string): Promise<string> {
         {
             authTagLength: 16
         });
-    const authTag: Buffer = Buffer.from(ciphertext.split('=')[1] + '=', 'base64');
+    const buf: Buffer = Buffer.from(ciphertext, 'base64');
+    const authTag: Buffer = buf.slice(-16);
     decipher.setAuthTag(authTag);
-    const realCiphertext: Buffer = Buffer.from(ciphertext.split('=')[0] + '=', 'base64')
+    const realCiphertext: Buffer = buf.slice(0,-16);
     const res: string = decipher.update(realCiphertext).toString('utf8');
     try {
         decipher.final();

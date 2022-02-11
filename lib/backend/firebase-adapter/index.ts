@@ -1,9 +1,6 @@
-// import type firebase from "firebase"
-import {randomBytes} from "crypto"
 import {Adapter, AdapterSession, AdapterUser, VerificationToken} from "next-auth/adapters"
 import {docSnapshotToObject, docSnapshotToObjectUndefined, querySnapshotToObject, stripUndefined,} from "./utils"
 
-import type {Firestore} from 'firebase/firestore';
 import {
     addDoc,
     collection,
@@ -17,28 +14,12 @@ import {
     deleteDoc,
     getFirestore
 } from 'firebase/firestore';
-import {Account, NextAuthOptions, Profile, Session, User} from "next-auth"
-import {hash} from '../../crypto';
+import {Account} from "next-auth"
 
-import {SessionOptions} from "next-auth/core/types";
-import {getAuthToken, initializeDatabase} from "../../database";
+import {getAuthToken, initializeAdmin} from "../database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import app from "../../../frontend/database";
-
-//
-// interface FirebaseVerificationRequest {
-//     id: string
-//     identifier: string
-//     token: string
-//     expires: Date
-// }
-//
-// export type FirebaseSession = Session & {
-//     id: string
-//     expires: Date
-// }
-//
-// export type AdapterParams = { session: SessionOptions, secret: string, appOptions: { baseUrl: string } }
+import app from "../../frontend/database";
+import {randomBytes} from "crypto";
 
 
 export default function FirebaseAdapter(): Adapter {
@@ -46,7 +27,7 @@ export default function FirebaseAdapter(): Adapter {
     async function db() {
         const auth = getAuth(app);
         if (auth.currentUser?.uid != 'admin') {
-            await initializeDatabase();
+            await initializeAdmin();
 
 
             await signInWithCustomToken(auth, await getAuthToken('admin'));
@@ -56,20 +37,16 @@ export default function FirebaseAdapter(): Adapter {
 
     // displayName: "Firebase",
     return {
-        async createUser(profile: Omit<AdapterUser, "id">): Promise<AdapterUser> {
-            const userRef = await addDoc(collection(await db(), "users"), stripUndefined({
-                name: profile.name,
-                email: profile.email,
-                image: profile.image,
-                emailVerified: profile.emailVerified ?? null,
-            }))
+        async createUser(user: Omit<AdapterUser, "id">): Promise<AdapterUser> {
+            user.emailVerified = undefined;
+            const userRef = await addDoc(collection(await db(), "users"), stripUndefined(user));
             const snapshot = await getDoc(userRef);
-            return docSnapshotToObject(snapshot)
+            return docSnapshotToObject(snapshot);
         },
 
         async getUser(id: string): Promise<AdapterUser | null> {
             const snapshot = await getDoc(doc(await db(), "users", id));
-            return docSnapshotToObjectUndefined(snapshot)
+            return docSnapshotToObjectUndefined(snapshot);
         },
 
         async getUserByEmail(email: string): Promise<AdapterUser | null> {
@@ -77,7 +54,7 @@ export default function FirebaseAdapter(): Adapter {
             const col = collection(await db(), "users");
             const q = query(col, where("email", "==", email), limit(1));
             const snapshot = await getDocs(q);
-            return querySnapshotToObject(snapshot)
+            return querySnapshotToObject(snapshot);
         },
         // https://github.com/nextauthjs/next-auth/blob/50fe115df6379fffe3f24408a1c8271284af660b/src/adapters.ts
         async getUserByAccount({
@@ -87,23 +64,23 @@ export default function FirebaseAdapter(): Adapter {
             Promise<AdapterUser | null> {
             const col = collection(await db(), "accounts");
             const q = query(col,
-                where("providerId", "==", provider),
+                where("provider", "==", provider),
                 where("providerAccountId", "==", providerAccountId),
                 limit(1));
             const accountSnapshot = await getDocs(q);
-
-            if (accountSnapshot.empty) return null
+            if (accountSnapshot.empty) return null;
 
             const userId = accountSnapshot.docs[0].data().userId;
             const userSnapshot = await getDoc(doc(await db(), "users", userId));
-            return {...userSnapshot.data(), id: userSnapshot.id} as any;
+            return {...userSnapshot.data(), id: userSnapshot.id} as AdapterUser;
         },
 
         async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
             if (!user.id)
                 throw Error("User id is not set!");
-            const userSnapshot = await updateDoc(doc(await db(), "users", user.id), stripUndefined(user));
+            user.emailVerified = undefined;
 
+            await updateDoc(doc(await db(), "users", user.id), stripUndefined(user));
 
             return user as AdapterUser;
         },
@@ -113,12 +90,9 @@ export default function FirebaseAdapter(): Adapter {
         },
 
         async linkAccount(account: Account): Promise<void> {
-            const accountRef = await addDoc(collection(await db(), "accounts"),
+            await addDoc(collection(await db(), "accounts"),
                 stripUndefined(account)
             );
-
-            // const accountSnapshot = await getDoc(accountRef);
-            // return docSnapshotToObjectUndefined(accountSnapshot);
         },
 
         async unlinkAccount({
@@ -126,7 +100,7 @@ export default function FirebaseAdapter(): Adapter {
                                 providerAccountId
                             }: Pick<Account, "provider" | "providerAccountId">): Promise<void> {
             const coll = collection(await db(), "accounts");
-            const q = query(coll, where("providerId",
+            const q = query(coll, where("provider",
                     "==", provider), where("providerAccountId",
                     "==", providerAccountId),
                 limit(1));
@@ -166,11 +140,11 @@ export default function FirebaseAdapter(): Adapter {
             if (session.expires < new Date()) {
                 // delete the session
                 await deleteDoc(doc(await db(), "sessions", session.id));
-                return null
+                return null;
             }
             // return already existing session
             const anotherSnapshot = await getDoc(doc(await db(), "users", session.userId));
-            const user: AdapterUser = docSnapshotToObject(anotherSnapshot)
+            const user: AdapterUser = docSnapshotToObject(anotherSnapshot);
             return {session, user};
         },
 

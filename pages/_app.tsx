@@ -2,20 +2,43 @@ import '../styles/globals.css'
 import type {AppProps} from 'next/app'
 import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
+import {useSession} from "next-auth/react"
 import {Session} from "next-auth";
 import {JSXInternal} from "preact/src/jsx";
 import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import {AppPropsType} from "next/dist/shared/lib/utils";
+import Footer from "../components/footer";
+import SEO from "../components/seo";
+import Header from "../components/header";
+import Image from "next/image";
+import template from "../images/template.jpg";
+import styles from "../styles/home.module.css";
 
+function MyApp(
+    {
+        Component,
+        pageProps: {session, ...pageProps}
+    }: {
+        Component: NextComponentType,
+        pageProps: IntrinsicAttributes &
+            {
+                children?: ReactNode,
+                session: Session
+            }
+    }) {
 
-function MyApp({
-                   Component,
-                   pageProps: {session, ...pageProps}
-               }: { Component: NextComponentType, pageProps: { session: Session, pageProps: any } }) {
-
-    // @ts-ignore
-    return <SessionProvider session={session}> <Component {...pageProps} /> </SessionProvider>
+    return <SessionProvider session={session}>
+        <div>
+            {/*<header>*/}
+            {/*    <Header/>*/}
+            {/*</header>*/}
+            <Component {...pageProps} />
+            {/*<footer>*/}
+            {/*    <Footer/>*/}
+            {/*</footer>*/}
+        </div>
+    </SessionProvider>
 
 
 }
