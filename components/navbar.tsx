@@ -59,40 +59,44 @@ const Navbar = () => {
 
     //greenBox
     return (
-        <header className="opacity-100 font-[Montserrat] font-medium pt-12 ">
-            <nav className="mt-3 flex grid-cols-12 grid text-black text-4xl">
+        <header className="font-[Montserrat] font-medium pt-12 pb-12">
+            <nav className="mt-3 flex grid-cols-12 grid text-4xl">
 
 
-                <div className="col-start-2 col-end-10 w-11/12 flex flex-wrap justify-between items-center">
-                    <div className="flex">
-                        <Link href="/">
-                            О нас
-                        </Link>
+                <div className="col-start-2 col-end-12 flex flex-wrap
+                 justify-between items-center grid-cols-12 grid">
+                    <div className="flex col-start-1 col-end-10 justify-between">
+                        <div className="flex">
+                            <Link href="/">
+                                О нас
+                            </Link>
+                        </div>
+
+                        <div className="flex">
+                            <Link href="/">
+                                Новости
+                            </Link>
+                        </div>
+                        <div className="flex">
+                            <Link href="/">
+                                Материалы
+                            </Link>
+                        </div>
+
+                        <div className="flex">
+                            <Link href="/">
+                                Преподаватели
+                            </Link>
+                        </div>
                     </div>
-
-                    <div className="flex">
+                    <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end">
                         <Link href="/">
-                            Новости
-                        </Link>
-                    </div>
-                    <div className="flex">
-                        <Link href="/">
-                            Материалы
-                        </Link>
-                    </div>
-
-                    <div className="flex">
-                        <Link href="/">
-                            Преподаватели
+                            Войти
                         </Link>
                     </div>
                 </div>
 
-                <div className="flex col-start-11 col-end-12 flex flex-wrap justify-end">
-                    <Link href="/">
-                        Войти
-                    </Link>
-                </div>
+
             </nav>
 
             <SwappableDrawer

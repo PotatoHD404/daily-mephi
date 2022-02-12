@@ -21,7 +21,9 @@ import Image from 'next/image'
 import template from '../images/template.png'
 import Navbar from '../components/navbar'
 import Link from 'next/link'
-
+import Logo from '../images/logo.svg'
+import Search from '../images/search.svg'
+import MiniCat from '../images/minicat.svg'
 
 //https://next-auth.js.org/configuration/options
 
@@ -73,20 +75,33 @@ class Home extends Component<{ session: Session }> {
                     objectFit="cover"
                 /></div>
                 <Navbar/>
-                <div className="grid-cols-12 grid greenBox">
-                    <div className="grid-cols-12 grid col-start-2 col-end-12">
-                        <div className="justify-start  greenBox">
-                            {/*<div className="greenBox">*/}
-                            {/*    text*/}
-                            {/*</div>*/}
-                            text
+                <div className="grid-cols-12 grid mt-20">
+                    <div className="flex grid-cols-12 grid col-start-2 col-end-13 items-center">
+                        <div
+                            className="col-start-1 col-end-6 font-[Montserrat] items-center justify-start flex flex-wrap">
+
+                            <div className="text-[6.25vw] -ml-1 flex whitespace-nowrap font-bold greenBox flex-nowrap">
+                                <div className="greenBox w-20"><Image src={MiniCat} alt="mini cat"/></div>
+
+                                <div>Daily MEPhi</div>
+                            </div>
+                            {/*<div className="ml-3"></div>*/}
+
+                            <div className="flex text-4xl mt-8 greenBox">Lorem ipsum dolor sit amet, consectetur
+                                adipisicing elit.
+                                Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
+                            </div>
+                            <div className="p-4 mt-8 text-5xl flex outline rounded rounded-2xl w-5/6 greenBox">
+                                <div className="mx-5">
+                                    <Image src={Search} alt="Search"/>
+                                </div>
+
+                                <div>Поиск</div>
+                            </div>
                         </div>
 
-                        <div className="justify-start col-start-3 greenBox">
-                            {/*<div className="greenBox">*/}
-                            {/*    text*/}
-                            {/*</div>*/}
-                            text
+                        <div className="justify-start col-start-6 col-end-13 flex justify-center ">
+                            <Image src={Logo} alt="Big logo" className="flex"/>
                         </div>
                     </div>
                 </div>
