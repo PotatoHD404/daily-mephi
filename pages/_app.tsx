@@ -14,6 +14,7 @@ import SEO from "../components/seo";
 import Image from "next/image";
 import template from "../images/template.jpg";
 import styles from "../styles/home.module.css";
+import Navbar from "../components/navbar";
 
 function MyApp(
     {
@@ -30,9 +31,9 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <div>
-            {/*    <Header/>*/}
+            {/*<Navbar/>*/}
             <Component {...pageProps} />
-            <Footer/>
+            {/*<Footer/>*/}
         </div>
     </SessionProvider>
 

@@ -9,6 +9,8 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import ListItemText from "@mui/material/ListItemText";
 
+// import Logo
+
 import Image from 'next/image'
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
@@ -55,23 +57,44 @@ const Navbar = () => {
         </Box>
     );
 
-
+    //greenBox
     return (
-        <header className="opacity-50">
-            <nav className="bg-white border-gray-200 px-2 sm:px-4 py-12 dark:bg-gray-800">
-                <div className="container flex flex-wrap justify-between items-left mx-auto">
-                    <Link href="/" passHref>
-                        <div className="flex text-white">
-                            {/*<Image src="" alt=""/>*/}
-                            <div>
-                                Daily MEPhi
-                            </div>
-                        </div>
+        <header className="opacity-100 font-[Montserrat] font-medium pt-12 ">
+            <nav className="mt-3 flex grid-cols-12 grid text-black text-4xl">
+
+
+                <div className="col-start-2 col-end-10 w-11/12 flex flex-wrap justify-between items-center">
+                    <div className="flex">
+                        <Link href="/">
+                            О нас
+                        </Link>
+                    </div>
+
+                    <div className="flex">
+                        <Link href="/">
+                            Новости
+                        </Link>
+                    </div>
+                    <div className="flex">
+                        <Link href="/">
+                            Материалы
+                        </Link>
+                    </div>
+
+                    <div className="flex">
+                        <Link href="/">
+                            Преподаватели
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="flex col-start-11 col-end-12 flex flex-wrap justify-end">
+                    <Link href="/">
+                        Войти
                     </Link>
-
-
                 </div>
             </nav>
+
             <SwappableDrawer
                 className={'lg:hidden'}
                 anchor={'left'}
