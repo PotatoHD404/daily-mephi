@@ -10,7 +10,7 @@ import React, {ReactNode} from "react";
 import {AppPropsType} from "next/dist/shared/lib/utils";
 import Footer from "../components/footer";
 import SEO from "../components/seo";
-import Header from "../components/header";
+// import Header from "../components/header";
 import Image from "next/image";
 import template from "../images/template.jpg";
 import styles from "../styles/home.module.css";
@@ -30,13 +30,9 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <div>
-            {/*<header>*/}
             {/*    <Header/>*/}
-            {/*</header>*/}
             <Component {...pageProps} />
-            {/*<footer>*/}
-            {/*    <Footer/>*/}
-            {/*</footer>*/}
+            {/*<Footer/>*/}
         </div>
     </SessionProvider>
 

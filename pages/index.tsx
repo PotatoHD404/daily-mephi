@@ -19,6 +19,9 @@ import {Session} from "next-auth";
 import SEO from "../components/seo";
 import Image from 'next/image'
 import template from '../images/template.jpg'
+import Drawer from '../components/drawer'
+import Navbar from '../components/navbar'
+import Link from 'next/link'
 
 
 //https://next-auth.js.org/configuration/options
@@ -27,13 +30,9 @@ class Home extends Component<{ session: Session }> {
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            name: "React",
-        };
-
-
-        // Binding method
     }
+
+
 
     async componentDidMount() {
 
@@ -75,8 +74,7 @@ class Home extends Component<{ session: Session }> {
                     quality={100}
                     objectFit="cover"
                 /></div>
-
-                <div>data</div>
+                <Navbar/>
             </div>
         )
     }
