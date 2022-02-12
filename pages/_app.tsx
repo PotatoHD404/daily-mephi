@@ -32,7 +32,7 @@ function MyApp(
         <div>
             {/*    <Header/>*/}
             <Component {...pageProps} />
-            {/*<Footer/>*/}
+            <Footer/>
         </div>
     </SessionProvider>
 
