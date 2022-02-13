@@ -24,8 +24,20 @@ import Logo from '../images/logo.svg'
 import Search from '../images/search.svg'
 import Footer from '../components/footer'
 import MiniCat from '../images/minicat.svg'
+import Button, {ButtonProps} from "@mui/material/Button";
+import styled from '@emotion/styled';
+
+import Paper from '@mui/material/Paper';
+import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import DirectionsIcon from '@mui/icons-material/Directions';
 
 //https://next-auth.js.org/configuration/options
+// className="btn inline-block p-4 border-2 border-black leading-tight"
+
 
 class Home extends Component<{ session: Session }> {
 
@@ -93,12 +105,32 @@ class Home extends Component<{ session: Session }> {
                                 Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
                             </div>
                             <div
-                                className="p-4 mt-8 text-5xl flex outline rounded rounded-2xl w-5/6 gap-5 align-middle">
-                                <div className="ml-3">
-                                    <Image src={Search} alt="Search" className=""/>
+                                className="mt-14 text-5xl flex w-5/6 align-middle items-stretch">
+
+
+                                <Paper
+
+                                    className="bg-transparent justify-center flex w-5/6 border-2 border-black border-r-0 justify-center align-middle rounded-l-full pl-6 pr-2"
+                                >
+                                    <InputBase
+                                        placeholder="Поиск"
+                                        inputProps={{'aria-label': 'Поиск'}}
+                                        className="font-[Montserrat] flex text-4xl w-11/12"
+                                        sx={{color: 'black'}}
+                                    />
+                                </Paper>
+                                <Divider orientation="vertical" className="bg-black h-auto"/>
+                                <div className="border-2 border-black border-l-0 rounded-r-full">
+                                    <Button aria-label="search"
+                                            className="flex w-1/6 h-full rounded-none rounded-r-full shadow-none"
+                                            style={{color: 'black'}}
+                                    >
+                                        <SearchIcon style={{color: 'black'}} className="scale-125"/>
+                                    </Button>
+
                                 </div>
 
-                                <div>Поиск</div>
+
                             </div>
                         </div>
 
