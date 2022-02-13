@@ -9,7 +9,9 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-
+.greenBox{
+    background-color: rgba(0, 255, 0, 0.2);
+}
 
 a {
     color: inherit;

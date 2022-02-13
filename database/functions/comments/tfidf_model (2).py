@@ -1,6 +1,4 @@
-# Made by mmkuznecov
-
-from sklearn import *
+import sklearn
 import pickle
 
 
@@ -14,20 +12,17 @@ def load_model(model_name):
 model = load_model('model.pkl')
 vectorizer = load_model('vectorizer.pkl')
 
-sentence = 'харош'
+sentence = 'хороший'
+
+sentence2 = 'пизда'
 
 
-def predict_sentence(sentence):  # 1 - toxic, 0 - not toxic
+def predict_sentence(sentence, vectorizer, model):
     vector = vectorizer.transform([sentence])
     predict = model.predict(vector)
-    return predict[0]
-
-
-def main():
-    print(predict_sentence(sentence))
+    return predict[0]  # 1 - toxic, 0 - not toxic
 
 
 if __name__ == "__main__":
-    main()
-    # print(dir(vectorizer))
-    ...
+    print(predict_sentence(sentence, vectorizer, model))
+    print(predict_sentence(sentence2, vectorizer, model))

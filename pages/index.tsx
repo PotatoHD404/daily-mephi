@@ -18,8 +18,12 @@ import withSession from "../components/withSession";
 import {Session} from "next-auth";
 import SEO from "../components/seo";
 import Image from 'next/image'
-import template from '../images/template.jpg'
-
+import Navbar from '../components/navbar'
+import Link from 'next/link'
+import Logo from '../images/logo.svg'
+import Search from '../images/search.svg'
+import Footer from '../components/footer'
+import MiniCat from '../images/minicat.svg'
 
 //https://next-auth.js.org/configuration/options
 
@@ -27,13 +31,8 @@ class Home extends Component<{ session: Session }> {
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            name: "React",
-        };
-
-
-        // Binding method
     }
+
 
     async componentDidMount() {
 
@@ -65,19 +64,48 @@ class Home extends Component<{ session: Session }> {
 
     render() {
         return (
-            <div>
+            <>
                 <SEO title={'Главная'} description={'what?'}/>
-                <div className={styles.bgWrap}><Image
-                    src={template}
-                    alt="Picture of the author"
-                    width={1920}
-                    height={1080}
-                    quality={100}
-                    objectFit="cover"
-                /></div>
 
-                <div>data</div>
-            </div>
+                <div className="flex grid-cols-12 grid h-[73vh]">
+                    <div className="flex col-start-2 col-end-13 items-center gap-4">
+                        <div
+                            className="items-center justify-start flex flex-wrap w-[42.8%]">
+
+                            <div className="text-[6.25vw] -ml-1 -my-10 flex font-bold flex-nowrap">
+                                <div className="flex w-[4vw] h-auto pt-[1.2vw] justify-center pl-[0.7vw] z-0">
+                                    <Image src={MiniCat} alt="mini cat" className="flex"
+                                           // layout="responsive"
+                                    />
+                                </div>
+
+                                <div className="-ml-[4vw] z-10 mt-1.5">Daily MEPhi</div>
+                            </div>
+                            {/*<div className="ml-3"></div>*/}
+
+                            <div className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
+                                consectetur
+                                adipisicing elit.
+                                Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
+                            </div>
+                            <div
+                                className="p-4 mt-8 text-5xl flex outline rounded rounded-2xl w-5/6 gap-5 align-middle">
+                                <div className="ml-3">
+                                    <Image src={Search} alt="Search" className=""/>
+                                </div>
+
+                                <div>Поиск</div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center w-[50%]">
+                            <Image src={Logo} alt="Big logo"/>
+                        </div>
+                    </div>
+                </div>
+
+                {/*<Footer/>*/}
+            </>
         )
     }
 }
