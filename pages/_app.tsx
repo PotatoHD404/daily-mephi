@@ -11,8 +11,9 @@ import {AppPropsType} from "next/dist/shared/lib/utils";
 import Footer from "../components/footer";
 import SEO from "../components/seo";
 // import Header from "../components/header";
+import Background from '../images/bg.svg';
 import Image from "next/image";
-import template from "../images/template.jpg";
+import template from "../images/template.png";
 import styles from "../styles/home.module.css";
 import Navbar from "../components/navbar";
 
@@ -30,10 +31,25 @@ function MyApp(
     }) {
 
     return <SessionProvider session={session}>
-        <div>
-            {/*<Navbar/>*/}
+        <div className="font-[Montserrat]">
+            {/*<div className={styles.bgWrap}><Image*/}
+            {/*    src={template}*/}
+            {/*    alt="Picture of the author"*/}
+            {/*    quality={100}*/}
+            {/*    objectFit="cover"*/}
+            {/*/></div>*/}
+
+            <div className={styles.bgWrap}><Image
+                src={Background}
+                alt="Picture of the author"
+                quality={100}
+                objectFit="cover"
+                layout="fill"
+            /></div>
+
+            <Navbar/>
             <Component {...pageProps} />
-            {/*<Footer/>*/}
+            <Footer/>
         </div>
     </SessionProvider>
 

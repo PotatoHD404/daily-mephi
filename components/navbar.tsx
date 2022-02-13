@@ -59,7 +59,7 @@ const Navbar = () => {
 
     //greenBox
     return (
-        <header className="font-[Montserrat] font-medium pt-12 pb-12">
+        <header className="font-medium pt-12 pb-12">
             <nav className="mt-3 flex grid-cols-12 grid text-4xl">
 
 
