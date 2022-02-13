@@ -73,13 +73,17 @@ class Home extends Component<{ session: Session }> {
                             className="items-center justify-start flex flex-wrap w-[42.8%]">
 
                             <div className="text-[6.25vw] -ml-1 -my-10 flex font-bold flex-nowrap">
-                                <div className="flex w-[4vw] h-auto pt-[1.2vw] justify-center pl-[0.7vw] z-0">
-                                    <Image src={MiniCat} alt="mini cat" className="flex"
-                                           // layout="responsive"
+                                <div
+                                    className="flex h-fit w-[4vw] mt-[4vw] justify-center
+                                     pl-[0.8vw] z-0">
+                                    <Image src={MiniCat} alt="mini cat"
+                                           className="flex scale-95 active:scale-110 transition ease-in-out duration-300"
+                                        // layout="responsive"
                                     />
+
                                 </div>
 
-                                <div className="-ml-[4vw] z-10 mt-1.5">Daily MEPhi</div>
+                                <div className="-ml-[4vw] z-10 mt-1.5 pointer-events-none">Daily MEPhi</div>
                             </div>
                             {/*<div className="ml-3"></div>*/}
 
