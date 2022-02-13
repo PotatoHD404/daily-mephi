@@ -110,13 +110,14 @@ class Home extends Component<{ session: Session }> {
 
                                 <Paper
 
-                                    className="bg-transparent justify-center flex w-5/6 border-2 border-black border-r-0 justify-center align-middle rounded-l-full pl-6 pr-2"
+                                    className="bg-transparent justify-center flex w-5/6 border-2
+                                     border-black border-r-0 justify-center align-middle
+                                     rounded-l-full pl-6 pr-2 shadow-none"
                                 >
                                     <InputBase
                                         placeholder="Поиск"
                                         inputProps={{'aria-label': 'Поиск'}}
                                         className="font-[Montserrat] flex text-4xl w-11/12"
-                                        sx={{color: 'black'}}
                                     />
                                 </Paper>
                                 <Divider orientation="vertical" className="bg-black h-auto"/>

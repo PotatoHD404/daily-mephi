@@ -10,7 +10,6 @@ import Profile from "./../images/profile.svg";
 import GitHub from '../images/github.svg'
 import Image from "next/image";
 // style="background-color: #f1f1f1;"
-// <div>© {new Date().getFullYear()} ExtraMine.ru</div>
 class Footer extends Component {
     render() {
         return (
@@ -21,7 +20,7 @@ class Footer extends Component {
                 </div>
 
                 <div className="text-center col-start-6 col-end-8 p-4 text-2xl font-semibold">
-                    © {new Date().getFullYear()} daily mephi
+                    © {new Date().getFullYear()} Daily MEPhi
                 </div>
                 <div
                     className="col-start-9 flex-row justify-end gap-1 col-end-12 p-4 text-2xl font-semibold">

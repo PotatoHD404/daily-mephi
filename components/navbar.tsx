@@ -13,8 +13,10 @@ import ListItemText from "@mui/material/ListItemText";
 
 import Image from 'next/image'
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
+import Button from "@mui/material/Button";
+
+
 
 const Navbar = () => {
     const [state, setState] = React.useState({
@@ -90,9 +92,9 @@ const Navbar = () => {
                         </div>
                     </div>
                     <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end">
-                        <Link href="/">
+                        <button onClick={() => {console.log(5)}}>
                             Войти
-                        </Link>
+                        </button>
                     </div>
                 </div>
 
