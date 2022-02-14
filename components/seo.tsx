@@ -29,7 +29,7 @@ function SEO({description, title}: { description: string, title: string }) {
             />
             {/*<link rel="apple-touch-icon" href="/apple-icon.png"/>*/}
             <meta name="theme-color" content="#317EFB"/>
-            <title>{title + " | ExtraMine"}</title>
+            <title>{title + " | Daily MEPhi"}</title>
             <meta name="description" content={description}/>
             <meta property="og:description" content={description}/>
             <meta property="og:locale" content="ru"/>

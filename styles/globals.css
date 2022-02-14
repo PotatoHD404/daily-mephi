@@ -1,16 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap'); */
+
+
 html,
 body {
     padding: 0;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .greenBox{
     background-color: rgba(0, 255, 0, 0.2);
+}
+
+.underlining {
+
+    line-height:1;
+    text-decoration: none;
+    cursor:pointer;
+    position:relative;
+    display:inline-block;
+}
+
+.underlining:after {
+    background-color:black;
+    display:block;
+    content: "";
+    height: 0.1rem;
+    width: 0;
+    left: 50%;
+    position: absolute;
+    -webkit-transition: width 0.3s ease-in-out;
+    -moz-transition: width 0.3s ease-in-out;
+    transition: width 0.3s ease-in-out;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.underlining:hover:after,
+.underlining:focus:after {
+    width:100%;
 }
 
 a {
