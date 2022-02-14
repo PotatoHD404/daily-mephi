@@ -31,21 +31,21 @@ function MyApp(
     }) {
 
     return <SessionProvider session={session}>
-        <div className="font-[Montserrat]">
-             <div className={styles.bgWrap}><Image
-                src={template}
-                alt="Picture of the author"
-                quality={100}
-                objectFit="cover"
-            /></div>
+        <div className="font-[Montserrat] h-screen grid">
+            {/* <div className={styles.bgWrap}><Image*/}
+            {/*    src={template}*/}
+            {/*    alt="Picture of the author"*/}
+            {/*    quality={100}*/}
+            {/*    objectFit="cover"*/}
+            {/*/></div>*/}
 
-            {/* <div className={styles.bgWrap}><Image
+            <div className={styles.bgWrap}><Image
                 src={Background}
                 alt="Picture of the author"
                 quality={100}
                 objectFit="cover"
                 layout="fill"
-            /></div> */}
+            /></div>
 
             <Navbar/>
             <Component {...pageProps} />

@@ -79,10 +79,10 @@ class Home extends Component<{ session: Session }> {
             <>
                 <SEO title={'Главная'} description={'what?'}/>
 
-                <div className="flex grid-cols-12 grid h-[73vh]">
-                    <div className="flex col-start-2 col-end-13 items-center gap-4">
+                <div className="flex grid-cols-12 grid h-[75vh]">
+                    <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
                         <div
-                            className="items-center justify-start flex flex-wrap w-[42.8%]">
+                            className="items-center justify-start flex flex-wrap w-[42.8%] h-[50%]  mt-[6.5%]">
 
                             <div className="text-[6.25vw] -ml-1 -my-10 flex font-bold flex-nowrap">
                                 <div
@@ -99,11 +99,11 @@ class Home extends Component<{ session: Session }> {
                             </div>
                             {/*<div className="ml-3"></div>*/}
 
-                            <div className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
+                            <span className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
                                 consectetur
                                 adipisicing elit.
                                 Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
-                            </div>
+                            </span>
                             <div
                                 className="mt-14 text-5xl flex w-5/6 align-middle items-stretch">
 
@@ -135,7 +135,7 @@ class Home extends Component<{ session: Session }> {
                             </div>
                         </div>
 
-                        <div className="flex justify-center w-[50%]">
+                        <div className="flex justify-center w-[50%]  mt-[4.5%]">
                             <Image src={Logo} alt="Big logo"/>
                         </div>
                     </div>

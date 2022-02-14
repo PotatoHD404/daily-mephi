@@ -70,37 +70,37 @@ const Navbar = () => {
 
     //greenBox
     return (
-        <header className="font-medium pt-12 pb-12">
-            <nav className="mt-3 flex grid-cols-12 grid text-4xl">
+        <header className="font-medium justify-center items-center grid grid-cols-1">
+            <nav className="mb-0 flex grid-cols-12 grid text-4xl my-auto">
 
 
                 <div className="col-start-2 col-end-12 flex flex-wrap
                  justify-between items-center grid-cols-12 grid">
                     <div className="flex col-start-1 col-end-10 justify-between">
                         <div className="flex underlining">
-                            <Link href="/">
+                            <Link href="/about">
                                 О нас
                             </Link>
                         </div>
 
-                        <div className="flex">
+                        <div className="flex underlining">
                             <Link href="/">
                                 Новости
                             </Link>
                         </div>
-                        <div className="flex">
+                        <div className="flex underlining">
                             <Link href="/">
                                 Материалы
                             </Link>
                         </div>
 
-                        <div className="flex">
+                        <div className="flex underlining">
                             <Link href="/">
                                 Преподаватели
                             </Link>
                         </div>
                     </div>
-                    <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end">
+                    <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit">
                         <button onClick={handleClickOpen}>
                             Войти
                         </button>

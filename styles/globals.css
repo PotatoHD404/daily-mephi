@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap'); */
 
 
@@ -19,6 +21,7 @@ body {
 }
 
 .underlining {
+
     line-height:1;
     text-decoration: none;
     cursor:pointer;
@@ -27,14 +30,13 @@ body {
 }
 
 .underlining:after {
-    background-color:white;
+    background-color:black;
     display:block;
     content: "";
-    height: 1px;
+    height: 0.1rem;
     width: 0;
     left: 50%;
     position: absolute;
-    -webkit-transition: width 0.3s ease-in-out;
     -webkit-transition: width 0.3s ease-in-out;
     -moz-transition: width 0.3s ease-in-out;
     transition: width 0.3s ease-in-out;
@@ -43,8 +45,8 @@ body {
     transform: translateX(-50%);
 }
 
-.underlining:hover:aftr,
-.underlining:focus:aftr {
+.underlining:hover:after,
+.underlining:focus:after {
     width:100%;
 }
 
