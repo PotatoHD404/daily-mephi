@@ -18,7 +18,6 @@ import Button from "@mui/material/Button";
 import WarningDialog from '../components/warning';
 
 
-
 const Navbar = () => {
     const [state, setState] = React.useState({
         opened: false,
@@ -84,27 +83,28 @@ const Navbar = () => {
                         </div>
 
                         <div className="flex underlining">
-                            <Link href="/">
+                            <Link href="/news">
                                 Новости
                             </Link>
                         </div>
                         <div className="flex underlining">
-                            <Link href="/">
+                            <Link href="/materials">
                                 Материалы
                             </Link>
                         </div>
 
                         <div className="flex underlining">
-                            <Link href="/">
+                            <Link href="/tutors">
                                 Преподаватели
                             </Link>
                         </div>
                     </div>
-                    <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit">
-                        <button onClick={handleClickOpen}>
-                            Войти
-                        </button>
-                    </div>
+
+                    <button onClick={handleClickOpen}
+                            className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                        Войти
+                    </button>
+
                 </div>
             </nav>
             <WarningDialog handleClose={handleClose} opened={state.warning}/>

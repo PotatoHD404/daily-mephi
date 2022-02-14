@@ -10,7 +10,6 @@ import React, {ReactNode} from "react";
 import {AppPropsType} from "next/dist/shared/lib/utils";
 import Footer from "../components/footer";
 import SEO from "../components/seo";
-// import Header from "../components/header";
 import Background from '../images/bg.svg';
 import Image from "next/image";
 import template from "../images/template2.png";
@@ -32,20 +31,20 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <div className="font-[Montserrat] h-screen grid">
-            {/* <div className={styles.bgWrap}><Image*/}
-            {/*    src={template}*/}
-            {/*    alt="Picture of the author"*/}
-            {/*    quality={100}*/}
-            {/*    objectFit="cover"*/}
-            {/*/></div>*/}
-
-            <div className={styles.bgWrap}><Image
-                src={Background}
+             <div className={styles.bgWrap}><Image
+                src={template}
                 alt="Picture of the author"
                 quality={100}
                 objectFit="cover"
-                layout="fill"
             /></div>
+
+            {/*<div className={styles.bgWrap}><Image*/}
+            {/*    src={Background}*/}
+            {/*    alt="Picture of the author"*/}
+            {/*    quality={100}*/}
+            {/*    objectFit="cover"*/}
+            {/*    layout="fill"*/}
+            {/*/></div>*/}
 
             <Navbar/>
             <Component {...pageProps} />
