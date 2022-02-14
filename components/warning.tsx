@@ -26,11 +26,17 @@ export interface DialogTitleProps {
     onClose: () => void;
 }
 
-const BootstrapDialogTitle = (props: DialogTitleProps) => {
+export interface DialogProps {
+    opened: boolean;
+    handleClose: () => void;
+}
+
+
+const WarningDialogTitle = (props: DialogTitleProps) => {
     const { children, onClose, ...other } = props;
 
     return (
-        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        <DialogTitle sx={{ m: 0, p: 2}} {...other}>
             {children}
             {onClose ? (
                 <IconButton
@@ -40,7 +46,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
                         position: 'absolute',
                         right: 8,
                         top: 8,
-                        color: (theme) => theme.palette.grey[500],
+                        // color: (theme) => theme.palette.grey[500],
                     }}
                 >
                     <CloseIcon />
@@ -50,30 +56,22 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-export default function CustomizedDialogs() {
-    const [open, setOpen] = React.useState(false);
+export default function WarningDialog (props: DialogProps) {
+    const { handleClose, opened } = props;
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
 
     return (
-        <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open dialog
-            </Button>
+        <>
             <BootstrapDialog
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
-                open={open}
+                open={opened}
+                className="greenBox"
             >
-                <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                <WarningDialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Modal title
-                </BootstrapDialogTitle>
-                <DialogContent dividers>
+                </WarningDialogTitle>
+                <DialogContent>
                     <Typography gutterBottom>
                         Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
                         dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
@@ -95,6 +93,6 @@ export default function CustomizedDialogs() {
                     </Button>
                 </DialogActions>
             </BootstrapDialog>
-        </div>
+        </>
     );
 }

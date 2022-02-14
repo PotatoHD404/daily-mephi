@@ -108,22 +108,22 @@ class Home extends Component<{ session: Session }> {
                                 className="mt-14 text-5xl flex w-5/6 align-middle items-stretch">
 
 
-                                <Paper
+                                <div
 
                                     className="bg-transparent justify-center flex w-5/6 border-2
                                      border-black border-r-0 justify-center align-middle
-                                     rounded-l-full pl-6 pr-2 shadow-none"
+                                     rounded-l-full pl-6 pr-2"
                                 >
                                     <InputBase
                                         placeholder="Поиск"
                                         inputProps={{'aria-label': 'Поиск'}}
                                         className="font-[Montserrat] flex text-4xl w-11/12"
                                     />
-                                </Paper>
+                                </div>
                                 <Divider orientation="vertical" className="bg-black h-auto"/>
                                 <div className="border-2 border-black border-l-0 rounded-r-full">
                                     <Button aria-label="search"
-                                            className="flex w-1/6 h-full rounded-none rounded-r-full shadow-none"
+                                            className="flex w-1/6 h-full rounded-none rounded-r-full"
                                             style={{color: 'black'}}
                                     >
                                         <SearchIcon style={{color: 'black'}} className="scale-125"/>

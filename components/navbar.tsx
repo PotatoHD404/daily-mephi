@@ -15,13 +15,22 @@ import Image from 'next/image'
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
+import WarningDialog from '../components/warning';
 
 
 
 const Navbar = () => {
     const [state, setState] = React.useState({
-        opened: false
+        opened: false,
+        warning: false
     });
+
+    const handleClickOpen = () => {
+        setState({...state, warning: true});
+    };
+    const handleClose = () => {
+        setState({...state, warning: false});
+    };
 
     const toggleDrawer =
         () =>
@@ -68,7 +77,7 @@ const Navbar = () => {
                 <div className="col-start-2 col-end-12 flex flex-wrap
                  justify-between items-center grid-cols-12 grid">
                     <div className="flex col-start-1 col-end-10 justify-between">
-                        <div className="flex">
+                        <div className="flex underlining">
                             <Link href="/">
                                 О нас
                             </Link>
@@ -92,15 +101,13 @@ const Navbar = () => {
                         </div>
                     </div>
                     <div className="flex col-start-12 col-end-13 flex flex-wrap justify-end">
-                        <button onClick={() => {console.log(5)}}>
+                        <button onClick={handleClickOpen}>
                             Войти
                         </button>
                     </div>
                 </div>
-
-
             </nav>
-
+            <WarningDialog handleClose={handleClose} opened={state.warning}/>
             <SwappableDrawer
                 className={'lg:hidden'}
                 anchor={'left'}

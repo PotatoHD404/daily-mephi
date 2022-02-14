@@ -28,6 +28,9 @@ function SEO({description, title}: { description: string, title: string }) {
                 sizes="32x32"
             />
             {/*<link rel="apple-touch-icon" href="/apple-icon.png"/>*/}
+            <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet"/>
             <meta name="theme-color" content="#317EFB"/>
             <title>{title + " | Daily MEPhi"}</title>
             <meta name="description" content={description}/>
