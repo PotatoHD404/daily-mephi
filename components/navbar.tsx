@@ -1,6 +1,6 @@
 /*  ./components/Navbar.jsx     */
 import Link from 'next/link';
-import React, {useState} from 'react';
+import React from 'react';
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -8,13 +8,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import ListItemText from "@mui/material/ListItemText";
-
-// import Logo
-
-import Image from 'next/image'
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
-import Button from "@mui/material/Button";
 import WarningDialog from '../components/warning';
 
 

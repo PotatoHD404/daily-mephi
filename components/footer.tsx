@@ -1,12 +1,5 @@
 import React, {Component} from "react";
 import Link from "next/link";
-import styles from "../styles/footer.module.css";
-import Home from "./../images/home.svg";
-import News from "./../images/news.svg";
-import Forum from "./../images/forum.svg";
-import Shop from "./../images/shop.svg";
-import Servers from "./../images/servers.svg";
-import Profile from "./../images/profile.svg";
 import GitHub from '../images/github.svg'
 import Image from "next/image";
 

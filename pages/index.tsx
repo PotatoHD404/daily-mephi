@@ -1,46 +1,25 @@
-import styles from '../styles/Home.module.css'
-import {useSession, signIn, signOut} from "next-auth/react"
-import React, {Component, useEffect} from "react";
-import db from '../lib/firebase/db'
-import {initializeApp} from "firebase/app";
-import {
-    connectFirestoreEmulator,
-    doc,
-    getDoc,
-    initializeFirestore,
-    setLogLevel,
-    collection as col,
-    addDoc
-} from "firebase/firestore";
+import React, {Component} from "react";
 import {Tutor} from "../lib/backend/models";
-import PropTypes from "prop-types";
 import withSession from "../components/withSession";
 import {Session} from "next-auth";
 import SEO from "../components/seo";
 import Image from 'next/image'
-import Navbar from '../components/navbar'
-import Link from 'next/link'
 import Logo from '../images/logo.svg'
-import Search from '../images/search.svg'
-import Footer from '../components/footer'
 import MiniCat from '../images/minicat.svg'
-import Button, {ButtonProps} from "@mui/material/Button";
-import styled from '@emotion/styled';
+import Button from "@mui/material/Button";
 
-import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import DirectionsIcon from '@mui/icons-material/Directions';
+import { useRouter } from 'next/router'
 
 //https://next-auth.js.org/configuration/options
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
 
 class Home extends Component<{ session: Session }> {
-
+    const router = useRouter();
+    
     constructor(props: any) {
         super(props);
     }
