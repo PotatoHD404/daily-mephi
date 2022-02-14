@@ -57,7 +57,7 @@ export default function WarningDialog(props: DialogProps) {
 
 
                 <div className="grid grid-cols-12">
-                    <div className="col-start-1 col-end-6 grid mt-1">
+                    <div className="col-start-1 col-end-6 grid mt-1 -ml-5">
                         <Image
                             src={WarningCat}
                             alt="Warning cat"
