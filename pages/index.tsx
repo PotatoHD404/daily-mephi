@@ -18,8 +18,8 @@ import { useRouter } from 'next/router'
 
 
 class Home extends Component<{ session: Session }> {
-    const router = useRouter();
-    
+
+
     constructor(props: any) {
         super(props);
     }
@@ -84,7 +84,7 @@ class Home extends Component<{ session: Session }> {
                                 Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
                             </span>
                             <div
-                                className="mt-14 text-5xl flex w-5/6 align-middle items-stretch">
+                                className="mt-14 flex w-5/6 align-middle items-stretch">
 
 
                                 <div

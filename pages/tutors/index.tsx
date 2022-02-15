@@ -14,7 +14,7 @@ import SearchIcon from '@mui/icons-material/Search';
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
 
-class Home extends Component<{ session: Session }> {
+class Tutors extends Component<{ session: Session }> {
 
     constructor(props: any) {
         super(props);
@@ -52,7 +52,7 @@ class Home extends Component<{ session: Session }> {
     render() {
         return (
             <>
-                <SEO title={'Главная'} description={'what?'}/>
+                <SEO title={''} description={'what?'}/>
 
                 <div className="flex grid-cols-12 grid">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
@@ -115,7 +115,7 @@ class Home extends Component<{ session: Session }> {
 }
 
 
-export default withSession(Home);
+export default withSession(Tutors);
 
 
 //        if (this.props.session) {
