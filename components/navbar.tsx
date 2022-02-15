@@ -52,7 +52,7 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
             </nav>);
     else
         return (
-            <nav className="grid-cols-12 grid text-[2.1rem] my-0 h-[9vh] w-full mx-auto rounded-b-xl flex flex-wrap
+            <nav className="grid-cols-12 grid text-[2.1rem] h-[9vh] w-full mx-auto rounded-b-xl flex flex-wrap
                      justify-between align-middle bg-white bg-opacity-[36%] pl-20">
 
                 <div className="flex col-start-1 col-end-10 justify-around">
@@ -62,7 +62,7 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                         alt="Mini cat"
                     /></div>
 
-                    <div className="flex align-middle items-stretch h-12 w-[20rem] my-auto">
+                    <div className="flex align-middle items-stretch h-12 w-[20rem] my-auto w-[27%] -ml-4">
                         <div
 
                             className="bg-transparent justify-center flex w-5/6 border-2
