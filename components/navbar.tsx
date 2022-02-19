@@ -52,42 +52,32 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
             </nav>);
     else
         return (
-            <nav className="grid-cols-12 grid text-[2.1rem] h-[9vh] w-full mx-auto rounded-b-2xl flex flex-wrap
-                     justify-between align-middle bg-white bg-opacity-[36%] pl-20">
+            <nav className="grid-cols-12 grid text-[1.65rem] h-[8vh] w-full mx-auto rounded-b-2xl flex flex-wrap
+                     justify-between align-middle bg-white bg-opacity-[36%] pl-16">
 
-                <div className="flex col-start-1 col-end-10 justify-around">
+                <div className="flex col-start-1 col-end-11 w-11/12 justify-around greenBox">
 
-                    <div className="flex h-16 my-auto w-20">
+                    <div className="flex h-14 my-auto w-14">
                         <Image
                             src={miniCat}
                             alt="Mini cat"
                         />
                     </div>
 
-                    <div className="flex align-middle items-stretch h-12 w-[20rem] my-auto w-[27%] -ml-4">
+                    <div className="flex-row h-10 w-[20rem] my-auto w-[25%] ">
                         <div
 
-                            className="bg-transparent justify-center flex w-5/6 border-2
-                                     border-black border-r-0 justify-center align-middle
-                                     rounded-l-full pl-6 pr-2"
+                            className="bg-transparent justify-center flex border-2
+                                     border-black justify-center align-middle
+                                     rounded-full "
                         >
+                            <SearchIcon style={{color: 'black'}} className="scale-125 my-auto mx-2.5"/>
                             <InputBase
                                 placeholder="Поиск"
                                 inputProps={{'aria-label': 'Поиск'}}
-                                className="font-[Montserrat] flex text-3xl w-11/12"
+                                className="font-[Montserrat] text-[1.65rem] greenBox"
                             />
                         </div>
-                        <Divider orientation="vertical" className="bg-black h-auto"/>
-                        <div className="border-2 border-black border-l-0 rounded-r-full">
-                            <Button aria-label="search"
-                                    className="flex w-1/6 h-full rounded-none rounded-r-full"
-                                    style={{color: 'black'}}
-                            >
-                                <SearchIcon style={{color: 'black'}} className="scale-125"/>
-                            </Button>
-
-                        </div>
-
 
                     </div>
 
