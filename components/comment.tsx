@@ -1,5 +1,6 @@
 import Image from "next/image";
 import ProfilePicture2 from "../images/profile2.png";
+import CommentIco from '../images/comment.svg';
 import Divider from "@mui/material/Divider";
 import React from "react";
 
@@ -10,7 +11,7 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
 
 
     return (
-        <div className="text-xl">
+        <div className="text-xl mt-2">
             <div className="flex-row">
                 <div className="h-[2.6rem] w-[2.6rem]">
                     <Image
@@ -26,9 +27,21 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
                 <Divider className="bg-black w-[2px] h-auto" orientation="vertical"/>
                 <div className="w-full flex-wrap ml-5">
                     <div className="mb-1">Comment body</div>
+                    <div className="text-[1.1rem] font-bold flex-row">
+                        <div className="h-5 w-5 mr-1 my-auto">
+                            <Image
+                                src={CommentIco}
+                                alt="Reply ico"
+                            />
+                        </div>
+                        <div className="my-auto">Reply</div>
+                    </div>
                     <div>{children}</div>
+
                 </div>
+
             </div>
+            <div className="ml-5 text-blue-500 text-[1.1rem] font-semibold">1 more reply</div>
         </div>
     );
 }
