@@ -16,7 +16,10 @@ import materialsIco from '../../images/materials.svg';
 import HoverRating from "../../components/rating";
 import ProfilePicture1 from '../../images/profile1.png';
 import ProfilePicture2 from '../../images/profile2.png';
-import Like from '../../images/like.svg';
+import LikeIco from '../../images/like.svg';
+import CommentIco from '../../images/comment.svg'
+import Divider from "@mui/material/Divider";
+import Comment from "../../components/comment";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -75,18 +78,21 @@ function Tutor() {
     return (
         <div className="flex-wrap w-full">
             <div className="font-bold text-3xl w-fit mx-auto mb-5">Трифоненков Владимир Петрович</div>
-            <div className="rounded-2xl flex-row greenBox py-12 px-8">
-                <div className="w-[36.8%] mr-12 greenBox text-2xl font-bold relative">
-                    <div className="flex -mt-2 mb-10">
+            <div className="rounded-2xl flex-row bg-white bg-opacity-90 py-12 px-8">
+                <div className="w-[36.8%] mr-12 text-2xl font-bold">
+                    <div className="flex-row -mt-2 mb-10 w-fit relative mx-auto">
                         <Image
                             src={TutorImage}
                             alt="Tutor image"
+                            className="rounded-full z-0"
                         />
+                        <div className="rounded-full bg-gray-300 w-20 h-20 px-2 py-5 underline
+                     right-2 top-2 mt-2 z-10 absolute">
+                            №46
+                        </div>
                     </div>
-                    <div
-                        className="rounded-full greenBox w-20 h-20 px-2 py-5 underline absolute right-0 top-0 mt-2">№46
-                    </div>
-                    <div className="flex flex-wrap w-[74%] mx-auto greenBox">
+
+                    <div className="flex flex-wrap w-[74%] mx-auto">
                         <div className="my-auto flex-row w-full">
                             <div>Daily Mephi:</div>
                             <div className="ml-auto">4.5</div>
@@ -108,20 +114,20 @@ function Tutor() {
                         <span className="font-bold pr-4">Кафедра:</span>
                         <span>30</span>
                     </div>
-                    <div className="bottom-0 absolute w-full space-y-7">
-                        <div className="text-xl greenBox flex-row">
+                    <div className="bottom-0 absolute w-full space-y-7 font-semibold">
+                        <div className="text-xl flex-row">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl greenBox flex-row">
+                        <div className="text-xl flex-row">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl greenBox flex-row">
+                        <div className="text-xl flex-row">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl greenBox flex-row">
+                        <div className="text-xl flex-row">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
@@ -174,28 +180,113 @@ function Tutor() {
                         />
                     </Tabs>
                 </Box>
-                <div className="mt-14">
+                {/* mt-14 */}
+                <div className="mt-[4.3rem] mx-auto">
                     {value == 0 ?
-                        <div className="greenBox flex-row">
-                            <div className="h-[4.7rem] my-auto w-[4.7rem] ">
-                                <Image
-                                    src={ProfilePicture2}
-                                    alt="Mini cat"
-                                    className="rounded-full"
-                                />
+                        <div className="flex-wrap space-y-10 w-full">
+                            <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
+                                <div className="flex-row w-full mb-7">
+                                    <div className="h-14 my-auto w-14 ">
+                                        <Image
+                                            src={ProfilePicture2}
+                                            alt="Profile picture"
+                                            className="rounded-full"
+                                        />
+                                    </div>
+                                    <span className="font-bold ml-2 my-auto">User1</span>
+                                    <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
+                                </div>
+                                <textarea
+                                    className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
+                                 border border-gray-200 py-3 px-4 focus:outline-none
+                                  focus:bg-gray-100 focus:border-gray-500 transition-colors h-28 mb-3"
+                                    placeholder="Оставить отзыв"/>
+                                <div className="flex-row space-x-4 font-semibold">
+                                    <div className="h-fit flex-row space-x-2">
+                                        <div className="h-6 my-auto flex w-6">
+                                            <Image
+                                                src={LikeIco}
+                                                alt="Like"
+                                            />
+                                        </div>
+                                        <div className="text-xl mt-0.5">?</div>
+                                    </div>
+                                    <div className="flex-row space-x-2 h-fit">
+                                        <div className="h-6 my-auto flex w-6 mt-2">
+                                            <Image
+                                                src={LikeIco}
+                                                alt="Dislike"
+                                                className="rotate-180"
+                                            />
+                                        </div>
+                                        <div className="text-xl my-auto">?</div>
+                                    </div>
+                                    <div className="flex-row space-x-2">
+                                        <div className="h-5 my-auto flex w-5  mt-2">
+                                            <Image
+                                                src={CommentIco}
+                                                alt="Comment"
+                                            />
+                                        </div>
+                                        <div className="text-xl my-auto">?</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="h-[4.7rem] my-auto w-[4.7rem] ml-5 flex-row">
-                                <Image
-                                    src={Like}
-                                    alt="Like"
-                                />
-                            </div>
-                            <div className="h-[4.7rem] my-auto w-[4.7rem] ml-5 flex-row">
-                                <Image
-                                    src={Like}
-                                    alt="Dislike"
-                                    className="rotate-180"
-                                />
+
+
+                            <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-90">
+                                <div className="flex-row w-full mb-4">
+                                    <div className="h-14 my-auto w-14">
+                                        <Image
+                                            src={ProfilePicture2}
+                                            alt="Mini cat"
+                                            className="rounded-full"
+                                        />
+                                    </div>
+                                    <span className="font-bold ml-2 my-auto">User1</span>
+                                    <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
+                                </div>
+                                <div className="font-bold">Заголовок</div>
+                                <div className="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci
+                                    aut autem
+                                    dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
+                                    officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
+                                </div>
+                                <div className="flex-row space-x-4 font-semibold mb-4">
+                                    <div className="h-fit flex-row space-x-2">
+                                        <div className="h-6 my-auto flex w-6">
+                                            <Image
+                                                src={LikeIco}
+                                                alt="Like"
+                                            />
+                                        </div>
+                                        <div className="text-xl mt-0.5">?</div>
+                                    </div>
+                                    <div className="flex-row space-x-2 h-fit">
+                                        <div className="h-6 my-auto flex w-6 mt-2">
+                                            <Image
+                                                src={LikeIco}
+                                                alt="Dislike"
+                                                className="rotate-180"
+                                            />
+                                        </div>
+                                        <div className="text-xl my-auto">?</div>
+                                    </div>
+                                    <div className="flex-row space-x-2">
+                                        <div className="h-5 my-auto flex w-5  mt-2">
+                                            <Image
+                                                src={CommentIco}
+                                                alt="Comment"
+                                            />
+                                        </div>
+                                        <div className="text-xl my-auto">?</div>
+                                    </div>
+                                </div>
+                                <Divider className="w-full bg-black mx-auto mb-4"/>
+                                <div className="flex-wrap space-y-5">
+                                    <Comment><Comment/></Comment>
+                                    <Comment/>
+                                </div>
                             </div>
                         </div>
                         : null}

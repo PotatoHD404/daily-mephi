@@ -7,7 +7,7 @@ import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
 import React, {ReactNode} from "react";
 import Footer from "../components/footer";
 import Image from "next/image";
-import template from "../images/template6.png";
+import template from "../images/template7.png";
 import Background from '../images/bg.svg'
 import styles from "../styles/home.module.css";
 import Navbar from "../components/navbar";
@@ -86,31 +86,33 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <ThemeProvider theme={theme}>
-            <div className={styles.bgWrap}>
-                <Image
-                src={template}
-                alt="Picture of the author"
-                quality={100}
-                objectFit="cover"
-            />
-            </div>
-
             {/*<div className={styles.bgWrap}>*/}
             {/*    <Image*/}
-            {/*        src={Background}*/}
+            {/*        src={template}*/}
             {/*        alt="Picture of the author"*/}
             {/*        quality={100}*/}
             {/*        objectFit="cover"*/}
-            {/*        layout="fill"*/}
             {/*    />*/}
             {/*</div>*/}
-            <div className={"font-[Montserrat] " + (home ? "grid h-screen" : "w-[70%] ml-[18.5rem]")}>
+
+            <div className={styles.bgWrap}>
+                <Image
+                    src={Background}
+                    alt="Picture of the author"
+                    quality={100}
+                    objectFit="cover"
+                    layout="fill"
+                />
+            </div>
+            <div className={"font-[Montserrat] " + (home ? "grid h-screen" : "w-[70%] mx-auto relative min-h-screen pb-24")}>
 
 
                 <Navbar/>
                 {home ?
                     <Component {...pageProps} /> :
-                    <div className="rounded-2xl flex py-6 px-8 my-12 bg-white bg-opacity-[36%]"><Component {...pageProps} /></div>}
+                    <div className="rounded-2xl flex py-6 px-8 my-12 bg-white bg-opacity-[36%]">
+                        <Component {...pageProps} />
+                    </div>}
                 <Footer/>
             </div>
         </ThemeProvider>
