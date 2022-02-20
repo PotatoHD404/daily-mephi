@@ -20,6 +20,7 @@ import LikeIco from '../../images/like.svg';
 import CommentIco from '../../images/comment.svg'
 import Divider from "@mui/material/Divider";
 import Comment from "../../components/comment";
+import QuoteIco from "../../images/quote.svg"
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -222,7 +223,7 @@ function Tutor() {
                                         <div className="text-xl my-auto">?</div>
                                     </div>
                                     <div className="flex-row space-x-2">
-                                        <div className="h-5 my-auto flex w-5  mt-2">
+                                        <div className="h-6 my-auto flex w-6  mt-2">
                                             <Image
                                                 src={CommentIco}
                                                 alt="Comment"
@@ -273,7 +274,7 @@ function Tutor() {
                                         <div className="text-xl my-auto">?</div>
                                     </div>
                                     <div className="flex-row space-x-2">
-                                        <div className="h-5 my-auto flex w-5  mt-2">
+                                        <div className="h-6 my-auto flex w-6  mt-2">
                                             <Image
                                                 src={CommentIco}
                                                 alt="Comment"
@@ -291,13 +292,136 @@ function Tutor() {
                         </div>
                         : null}
                     {value == 1 ?
-                        <div className="greenBox">
-                            test1
+                        <div className="flex-wrap space-y-10 w-full">
+                            <div>
+                                <div className="flex-row w-full text-[1rem] relative mb-2 pl-4">
+                                    <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
+                                    <div className="h-8 my-auto w-8">
+                                        <Image
+                                            src={ProfilePicture2}
+                                            alt="Profile picture"
+                                            className="rounded-full"
+                                        />
+                                    </div>
+                                    <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
+                                    <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
+                                </div>
+                                <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
+                                    <div className="relative flex-row mt-8">
+                                        <div className="h-8 w-8">
+                                            <Image
+                                                src={QuoteIco}
+                                                alt="Quote symbol"
+                                            />
+                                        </div>
+                                        <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet, consectetur adipisicing
+                                            elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                                            repellendus. Consequuntur dolorem, excepturi illum iste maxime modi nesciunt
+                                            pariatur, sed sunt tempora, ullam?
+                                        </div>
+                                        <div className="h-8 w-8 mt-auto">
+                                            <Image
+                                                src={QuoteIco}
+                                                alt="Quote symbol"
+                                                className="rotate-180"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="text-center my-2 font-semibold">Трифоненков В.П.</div>
+                                    <div className="flex-row space-x-4 font-semibold">
+                                        <div className="h-fit flex-row space-x-2">
+                                            <div className="h-6 my-auto flex w-6">
+                                                <Image
+                                                    src={LikeIco}
+                                                    alt="Like"
+                                                />
+                                            </div>
+                                            <div className="text-xl mt-0.5">?</div>
+                                        </div>
+                                        <div className="flex-row space-x-2 h-fit">
+                                            <div className="h-6 my-auto flex w-6 mt-2">
+                                                <Image
+                                                    src={LikeIco}
+                                                    alt="Dislike"
+                                                    className="rotate-180"
+                                                />
+                                            </div>
+                                            <div className="text-xl my-auto">?</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         : null}
                     {value == 2 ?
-                        <div className="greenBox">
-                            test2
+                        <div className="flex-wrap space-y-10 w-full">
+                            <div>
+                                <div className="flex-row w-full text-[1rem] relative mb-2 pl-4">
+                                    <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
+                                    <div className="h-8 my-auto w-8">
+                                        <Image
+                                            src={ProfilePicture2}
+                                            alt="Profile picture"
+                                            className="rounded-full"
+                                        />
+                                    </div>
+                                    <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
+                                    <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
+                                </div>
+                                <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
+                                    <div className="relative flex-row mt-8">
+                                        <div className="h-8 w-8">
+                                            <Image
+                                                src={QuoteIco}
+                                                alt="Quote symbol"
+                                            />
+                                        </div>
+                                        <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet, consectetur adipisicing
+                                            elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                                            repellendus. Consequuntur dolorem, excepturi illum iste maxime modi nesciunt
+                                            pariatur, sed sunt tempora, ullam?
+                                        </div>
+                                        <div className="h-8 w-8 mt-auto">
+                                            <Image
+                                                src={QuoteIco}
+                                                alt="Quote symbol"
+                                                className="rotate-180"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="text-center my-2 font-semibold">Трифоненков В.П.</div>
+                                    <div className="flex-row space-x-4 font-semibold">
+                                        <div className="h-fit flex-row space-x-2">
+                                            <div className="h-6 my-auto flex w-6">
+                                                <Image
+                                                    src={LikeIco}
+                                                    alt="Like"
+                                                />
+                                            </div>
+                                            <div className="text-xl mt-0.5">?</div>
+                                        </div>
+                                        <div className="flex-row space-x-2 h-fit">
+                                            <div className="h-6 my-auto flex w-6 mt-2">
+                                                <Image
+                                                    src={LikeIco}
+                                                    alt="Dislike"
+                                                    className="rotate-180"
+                                                />
+                                            </div>
+                                            <div className="text-xl my-auto">?</div>
+                                        </div>
+                                        <div className="flex-row space-x-2">
+                                            <div className="h-6 my-auto flex w-6  mt-2">
+                                                <Image
+                                                    src={CommentIco}
+                                                    alt="Comment"
+                                                />
+                                            </div>
+                                            <div className="text-xl my-auto">?</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         : null}
                 </div>
