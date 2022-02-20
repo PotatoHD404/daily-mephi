@@ -20,7 +20,8 @@ import LikeIco from '../../images/like.svg';
 import CommentIco from '../../images/comment.svg'
 import Divider from "@mui/material/Divider";
 import Comment from "../../components/comment";
-import QuoteIco from "../../images/quote.svg"
+import QuoteIco from "../../images/quote.svg";
+import DownloadIco from '../../images/download.svg';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -314,7 +315,8 @@ function Tutor() {
                                                 alt="Quote symbol"
                                             />
                                         </div>
-                                        <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet, consectetur adipisicing
+                                        <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet, consectetur
+                                            adipisicing
                                             elit. Delectus eius laboriosam magni neque obcaecati provident rem
                                             repellendus. Consequuntur dolorem, excepturi illum iste maxime modi nesciunt
                                             pariatur, sed sunt tempora, ullam?
@@ -369,28 +371,25 @@ function Tutor() {
                                     <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
                                 </div>
                                 <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
-                                    <div className="relative flex-row mt-8">
-                                        <div className="h-8 w-8">
-                                            <Image
-                                                src={QuoteIco}
-                                                alt="Quote symbol"
-                                            />
-                                        </div>
-                                        <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet, consectetur adipisicing
+                                    <div className="font-bold mt-3 mb-6">Название</div>
+                                    <div className="relative flex-row">
+
+                                        <div className="">Lorem ipsum dolor sit amet, consectetur
+                                            adipisicing
                                             elit. Delectus eius laboriosam magni neque obcaecati provident rem
                                             repellendus. Consequuntur dolorem, excepturi illum iste maxime modi nesciunt
                                             pariatur, sed sunt tempora, ullam?
                                         </div>
-                                        <div className="h-8 w-8 mt-auto">
-                                            <Image
-                                                src={QuoteIco}
-                                                alt="Quote symbol"
-                                                className="rotate-180"
-                                            />
-                                        </div>
+
                                     </div>
-                                    <div className="text-center my-2 font-semibold">Трифоненков В.П.</div>
-                                    <div className="flex-row space-x-4 font-semibold">
+                                    <div className="my-6 font-bold flex-row space-x-5 text-lg">
+                                        <div className="rounded bg-[#DDD9DF] py-0.5 px-9">Факультет</div>
+                                        <div className="rounded bg-[#F9C5D3] py-0.5 px-9">Семестр 1</div>
+                                        <div className="rounded bg-[#FEB3B4] py-0.5 px-9">МатАнализ</div>
+                                        <div className="rounded bg-[#F4BDE6] py-0.5 px-9">Препод</div>
+                                        <div className="rounded bg-[#C7A8F3] py-0.5 px-9">Экзамен</div>
+                                    </div>
+                                    <div className="flex-row space-x-4 font-semibold relative">
                                         <div className="h-fit flex-row space-x-2">
                                             <div className="h-6 my-auto flex w-6">
                                                 <Image
@@ -418,6 +417,16 @@ function Tutor() {
                                                 />
                                             </div>
                                             <div className="text-xl my-auto">?</div>
+                                        </div>
+                                        <div className="absolute right-0 flex-row space-x-4 my-auto text-xl mt-0.5">
+                                            <div className="font-medium">exam_file_1.pdf (50 MB)</div>
+                                            <div className="h-6 flex w-6 -mt-0.5">
+                                                <Image
+                                                    src={DownloadIco}
+                                                    alt="Comment"
+                                                />
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

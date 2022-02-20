@@ -86,24 +86,24 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <ThemeProvider theme={theme}>
-            <div className={styles.bgWrap}>
-                <Image
-                    src={template}
-                    alt="Picture of the author"
-                    quality={100}
-                    objectFit="cover"
-                />
-            </div>
-
             {/*<div className={styles.bgWrap}>*/}
             {/*    <Image*/}
-            {/*        src={Background}*/}
+            {/*        src={template}*/}
             {/*        alt="Picture of the author"*/}
             {/*        quality={100}*/}
             {/*        objectFit="cover"*/}
-            {/*        layout="fill"*/}
             {/*    />*/}
             {/*</div>*/}
+
+            <div className={styles.bgWrap}>
+                <Image
+                    src={Background}
+                    alt="Picture of the author"
+                    quality={100}
+                    objectFit="cover"
+                    layout="fill"
+                />
+            </div>
             <div className={"font-[Montserrat] " + (home ? "grid h-screen" : "w-[70%] mx-auto relative min-h-screen pb-24")}>
 
 

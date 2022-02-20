@@ -53,33 +53,20 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
     else
         return (
             <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
-                     justify-between align-middle bg-white bg-opacity-[36%] pl-16">
+                     justify-between align-middle bg-white bg-opacity-[36%] pl-8">
 
-                <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
+                <div className="flex col-start-1 col-end-11 w-11/12 justify-around greenBox">
 
-                    <div className="flex h-14 my-auto w-14">
-                        <Image
-                            src={miniCat}
-                            alt="Mini cat"
-                        />
-                    </div>
 
-                    <div className="flex-row h-10 w-[20rem] my-auto w-[25%] ">
-                        <div
-
-                            className="bg-transparent justify-center flex border-2
-                                     border-black justify-center align-middle
-                                     rounded-full "
-                        >
-                            <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-3 mr-1"/>
-                            <InputBase
-                                placeholder="Поиск"
-                                inputProps={{'aria-label': 'Поиск'}}
-                                className="font-[Montserrat] text-[1.65rem]"
+                    <Link href="/">
+                        <a className="flex h-14 my-auto w-14">
+                            <Image
+                                src={miniCat}
+                                alt="Mini cat"
                             />
-                        </div>
+                        </a>
+                    </Link>
 
-                    </div>
 
                     <Link href="/news">
                         <a className="underlining my-auto">Новости</a>

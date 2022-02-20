@@ -84,33 +84,17 @@ class Home extends Component<{ session: Session }> {
                                 Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
                             </span>
                             <div
-                                className="mt-14 flex w-5/6 align-middle items-stretch">
 
-
-                                <div
-
-                                    className="bg-transparent justify-center flex w-5/6 border-2
-                                     border-black border-r-0 justify-center align-middle
-                                     rounded-l-full pl-6 pr-2"
-                                >
-                                    <InputBase
-                                        placeholder="Поиск"
-                                        inputProps={{'aria-label': 'Поиск'}}
-                                        className="font-[Montserrat] flex text-4xl w-11/12"
-                                    />
-                                </div>
-                                <Divider orientation="vertical" className="bg-black h-auto"/>
-                                <div className="border-2 border-black border-l-0 rounded-r-full">
-                                    <Button aria-label="search"
-                                            className="flex w-1/6 h-full rounded-none rounded-r-full"
-                                            style={{color: 'black'}}
-                                    >
-                                        <SearchIcon style={{color: 'black'}} className="scale-125"/>
-                                    </Button>
-
-                                </div>
-
-
+                                className="bg-transparent flex border-2
+                                             border-black align-middle
+                                             rounded-full flex-row h-14 w-[80%]"
+                            >
+                                <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
+                                <InputBase
+                                    placeholder="Поиск"
+                                    inputProps={{'aria-label': 'Поиск'}}
+                                    className="font-[Montserrat] text-[1.65rem] ml-2"
+                                />
                             </div>
                         </div>
 
