@@ -1,20 +1,10 @@
-import {NextRouter, withRouter} from "next/router";
-import React, {Component} from "react";
-import {Session} from "next-auth";
+import React from "react";
 import TutorImage from '../../images/tutor.png'
 import Image from "next/image";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import {styled} from "@mui/material/styles";
-import {alpha, SliderProps, withStyles} from "@mui/material";
-import profileIco from '../../images/profile.svg';
-import reviewsIco from '../../images/reviews.svg';
-import quotesIco from '../../images/quotes.svg';
-import materialsIco from '../../images/materials.svg';
 import HoverRating from "../../components/rating";
-import ProfilePicture1 from '../../images/profile1.png';
 import ProfilePicture2 from '../../images/profile2.png';
 import LikeIco from '../../images/like.svg';
 import CommentIco from '../../images/comment.svg'
@@ -22,32 +12,6 @@ import Divider from "@mui/material/Divider";
 import Comment from "../../components/comment";
 import QuoteIco from "../../images/quote.svg";
 import DownloadIco from '../../images/download.svg';
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-    const {children, value, index, ...other} = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{p: 3}}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
 
 function a11yProps(index: number) {
     return {
@@ -80,9 +44,9 @@ function Tutor() {
     return (
         <div className="flex-wrap w-full">
             <div className="font-bold text-3xl w-fit mx-auto mb-5">Трифоненков Владимир Петрович</div>
-            <div className="rounded-2xl flex-row bg-white bg-opacity-90 py-12 px-8">
+            <div className="rounded-2xl flex bg-white bg-opacity-90 py-12 px-8">
                 <div className="w-[36.8%] mr-12 text-2xl font-bold">
-                    <div className="flex-row -mt-2 mb-10 w-fit relative mx-auto">
+                    <div className="flex -mt-2 mb-10 w-fit relative mx-auto">
                         <Image
                             src={TutorImage}
                             alt="Tutor image"
@@ -95,11 +59,11 @@ function Tutor() {
                     </div>
 
                     <div className="flex flex-wrap w-[74%] mx-auto">
-                        <div className="my-auto flex-row w-full">
+                        <div className="my-auto flex w-full">
                             <div>Daily Mephi:</div>
                             <div className="ml-auto">4.5</div>
                         </div>
-                        <div className="my-auto flex-row w-full mt-3">
+                        <div className="my-auto flex w-full mt-3">
                             <div>mephist.ru:</div>
                             <div className="ml-auto">2.1</div>
                         </div>
@@ -117,19 +81,19 @@ function Tutor() {
                         <span>30</span>
                     </div>
                     <div className="bottom-0 absolute w-full space-y-7 font-semibold">
-                        <div className="text-xl flex-row">
+                        <div className="text-xl flex">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl flex-row">
+                        <div className="text-xl flex">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl flex-row">
+                        <div className="text-xl flex">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
-                        <div className="text-xl flex-row">
+                        <div className="text-xl flex">
                             <div>Характер(4.6):</div>
                             <HoverRating/>
                         </div>
@@ -141,7 +105,7 @@ function Tutor() {
                     <Tabs value={value} onChange={handleChange} variant="fullWidth"
                           TabIndicatorProps={{style: {background: 'white'}}}>
                         <Tab label={
-                            <div className="flex-row h-8  w-[11.5rem]">
+                            <div className="flex h-8  w-[11.5rem]">
                                 {/*<div className="flex h-10 my-auto">*/}
                                 {/*    <Image*/}
                                 {/*        src={reviewsIco}*/}
@@ -154,7 +118,7 @@ function Tutor() {
                         } {...a11yProps(0)}
                         />
                         <Tab label={
-                            <div className="flex-row h-8  w-[11rem]">
+                            <div className="flex h-8  w-[11rem]">
                                 {/*<div className="flex h-10 my-auto">*/}
                                 {/*    <Image*/}
                                 {/*        src={quotesIco}*/}
@@ -167,7 +131,7 @@ function Tutor() {
                         } {...a11yProps(1)}
                         />
                         <Tab label={
-                            <div className="flex-row h-8 w-[14.5rem]">
+                            <div className="flex h-8 w-[14.5rem]">
                                 {/*<div className="flex h-10 my-auto">*/}
                                 {/*    <Image*/}
                                 {/*        src={materialsIco}*/}
@@ -187,7 +151,7 @@ function Tutor() {
                     {value == 0 ?
                         <div className="flex-wrap space-y-10 w-full">
                             <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
-                                <div className="flex-row w-full mb-7">
+                                <div className="flex w-full mb-7">
                                     <div className="h-14 my-auto w-14 ">
                                         <Image
                                             src={ProfilePicture2}
@@ -203,8 +167,8 @@ function Tutor() {
                                  border border-gray-200 py-3 px-4 focus:outline-none
                                   focus:bg-gray-100 focus:border-gray-500 transition-colors h-28 mb-3"
                                     placeholder="Оставить отзыв"/>
-                                <div className="flex-row space-x-4 font-semibold">
-                                    <div className="h-fit flex-row space-x-2">
+                                <div className="flex space-x-4 font-semibold">
+                                    <div className="h-fit flex space-x-2">
                                         <div className="h-6 my-auto flex w-6">
                                             <Image
                                                 src={LikeIco}
@@ -213,7 +177,7 @@ function Tutor() {
                                         </div>
                                         <div className="text-xl mt-0.5">?</div>
                                     </div>
-                                    <div className="flex-row space-x-2 h-fit">
+                                    <div className="flex space-x-2 h-fit">
                                         <div className="h-6 my-auto flex w-6 mt-2">
                                             <Image
                                                 src={LikeIco}
@@ -223,7 +187,7 @@ function Tutor() {
                                         </div>
                                         <div className="text-xl my-auto">?</div>
                                     </div>
-                                    <div className="flex-row space-x-2">
+                                    <div className="flex space-x-2">
                                         <div className="h-6 my-auto flex w-6  mt-2">
                                             <Image
                                                 src={CommentIco}
@@ -237,7 +201,7 @@ function Tutor() {
 
 
                             <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-90">
-                                <div className="flex-row w-full mb-4">
+                                <div className="flex w-full mb-4">
                                     <div className="h-14 my-auto w-14">
                                         <Image
                                             src={ProfilePicture2}
@@ -254,8 +218,8 @@ function Tutor() {
                                     dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                                     officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
                                 </div>
-                                <div className="flex-row space-x-4 font-semibold mb-4">
-                                    <div className="h-fit flex-row space-x-2">
+                                <div className="flex space-x-4 font-semibold mb-4">
+                                    <div className="h-fit flex space-x-2">
                                         <div className="h-6 my-auto flex w-6">
                                             <Image
                                                 src={LikeIco}
@@ -264,7 +228,7 @@ function Tutor() {
                                         </div>
                                         <div className="text-xl mt-0.5">?</div>
                                     </div>
-                                    <div className="flex-row space-x-2 h-fit">
+                                    <div className="flex space-x-2 h-fit">
                                         <div className="h-6 my-auto flex w-6 mt-2">
                                             <Image
                                                 src={LikeIco}
@@ -274,7 +238,7 @@ function Tutor() {
                                         </div>
                                         <div className="text-xl my-auto">?</div>
                                     </div>
-                                    <div className="flex-row space-x-2">
+                                    <div className="flex space-x-2">
                                         <div className="h-6 my-auto flex w-6  mt-2">
                                             <Image
                                                 src={CommentIco}
@@ -295,7 +259,7 @@ function Tutor() {
                     {value == 1 ?
                         <div className="flex-wrap space-y-10 w-full">
                             <div>
-                                <div className="flex-row w-full text-[1rem] relative mb-2 pl-4">
+                                <div className="flex w-full text-[1rem] relative mb-2 pl-4">
                                     <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
                                     <div className="h-8 my-auto w-8">
                                         <Image
@@ -308,7 +272,7 @@ function Tutor() {
                                     <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
                                 </div>
                                 <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
-                                    <div className="relative flex-row mt-8">
+                                    <div className="relative flex mt-8">
                                         <div className="h-8 w-8">
                                             <Image
                                                 src={QuoteIco}
@@ -330,8 +294,8 @@ function Tutor() {
                                         </div>
                                     </div>
                                     <div className="text-center my-2 font-semibold">Трифоненков В.П.</div>
-                                    <div className="flex-row space-x-4 font-semibold">
-                                        <div className="h-fit flex-row space-x-2">
+                                    <div className="flex space-x-4 font-semibold">
+                                        <div className="h-fit flex space-x-2">
                                             <div className="h-6 my-auto flex w-6">
                                                 <Image
                                                     src={LikeIco}
@@ -340,7 +304,7 @@ function Tutor() {
                                             </div>
                                             <div className="text-xl mt-0.5">?</div>
                                         </div>
-                                        <div className="flex-row space-x-2 h-fit">
+                                        <div className="flex space-x-2 h-fit">
                                             <div className="h-6 my-auto flex w-6 mt-2">
                                                 <Image
                                                     src={LikeIco}
@@ -358,7 +322,7 @@ function Tutor() {
                     {value == 2 ?
                         <div className="flex-wrap space-y-10 w-full">
                             <div>
-                                <div className="flex-row w-full text-[1rem] relative mb-2 pl-4">
+                                <div className="flex w-full text-[1rem] relative mb-2 pl-4">
                                     <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
                                     <div className="h-8 my-auto w-8">
                                         <Image
@@ -372,7 +336,7 @@ function Tutor() {
                                 </div>
                                 <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
                                     <div className="font-bold mt-3 mb-6">Название</div>
-                                    <div className="relative flex-row">
+                                    <div className="relative flex">
 
                                         <div className="">Lorem ipsum dolor sit amet, consectetur
                                             adipisicing
@@ -382,43 +346,45 @@ function Tutor() {
                                         </div>
 
                                     </div>
-                                    <div className="my-6 font-bold flex-row space-x-5 text-lg">
+                                    <div className="my-6 font-bold flex space-x-5 text-lg">
                                         <div className="rounded bg-[#DDD9DF] py-0.5 px-9">Факультет</div>
                                         <div className="rounded bg-[#F9C5D3] py-0.5 px-9">Семестр 1</div>
                                         <div className="rounded bg-[#FEB3B4] py-0.5 px-9">МатАнализ</div>
                                         <div className="rounded bg-[#F4BDE6] py-0.5 px-9">Препод</div>
                                         <div className="rounded bg-[#C7A8F3] py-0.5 px-9">Экзамен</div>
                                     </div>
-                                    <div className="flex-row space-x-4 font-semibold relative">
-                                        <div className="h-fit flex-row space-x-2">
-                                            <div className="h-6 my-auto flex w-6">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Like"
-                                                />
+                                    <div className="flex space-x-4 font-semibold relative">
+                                        <div className="flex space-x-4 font-semibold">
+                                            <div className="h-fit flex space-x-2">
+                                                <div className="h-6 my-auto flex w-6">
+                                                    <Image
+                                                        src={LikeIco}
+                                                        alt="Like"
+                                                    />
+                                                </div>
+                                                <div className="text-xl mt-0.5">?</div>
                                             </div>
-                                            <div className="text-xl mt-0.5">?</div>
-                                        </div>
-                                        <div className="flex-row space-x-2 h-fit">
-                                            <div className="h-6 my-auto flex w-6 mt-2">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Dislike"
-                                                    className="rotate-180"
-                                                />
+                                            <div className="flex space-x-2 h-fit">
+                                                <div className="h-6 my-auto flex w-6 mt-2">
+                                                    <Image
+                                                        src={LikeIco}
+                                                        alt="Dislike"
+                                                        className="rotate-180"
+                                                    />
+                                                </div>
+                                                <div className="text-xl my-auto">?</div>
                                             </div>
-                                            <div className="text-xl my-auto">?</div>
-                                        </div>
-                                        <div className="flex-row space-x-2">
-                                            <div className="h-6 my-auto flex w-6  mt-2">
-                                                <Image
-                                                    src={CommentIco}
-                                                    alt="Comment"
-                                                />
+                                            <div className="flex space-x-2">
+                                                <div className="h-6 my-auto flex w-6  mt-2">
+                                                    <Image
+                                                        src={CommentIco}
+                                                        alt="Comment"
+                                                    />
+                                                </div>
+                                                <div className="text-xl my-auto">?</div>
                                             </div>
-                                            <div className="text-xl my-auto">?</div>
                                         </div>
-                                        <div className="absolute right-0 flex-row space-x-4 my-auto text-xl mt-0.5">
+                                        <div className="absolute right-0 flex space-x-4 my-auto text-xl mt-0.5 inline-block">
                                             <div className="font-medium">exam_file_1.pdf (50 MB)</div>
                                             <div className="h-6 flex w-6 -mt-0.5">
                                                 <Image

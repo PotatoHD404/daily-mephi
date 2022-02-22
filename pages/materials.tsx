@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function About() {
+function Materials() {
 
     return (
         <div className="flex-wrap w-full">
@@ -10,4 +10,4 @@ function About() {
 
 }
 
-export default About;
+export default Materials;

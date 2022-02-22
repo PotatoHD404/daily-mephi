@@ -93,7 +93,7 @@ class Home extends Component<{ session: Session }> {
                                 <InputBase
                                     placeholder="Поиск"
                                     inputProps={{'aria-label': 'Поиск'}}
-                                    className="font-[Montserrat] text-[1.65rem] ml-2"
+                                    className="font-[Montserrat] text-[1.65rem] ml-2 w-full"
                                 />
                             </div>
                         </div>

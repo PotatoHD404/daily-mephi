@@ -30,9 +30,9 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                             <a className="underlining">О нас</a>
                         </Link>
 
-                        <Link href="/news">
-                            <a className="underlining">Новости</a>
-                        </Link>
+                        {/*<Link href="/news">*/}
+                        {/*    <a className="underlining">Новости</a>*/}
+                        {/*</Link>*/}
 
                         <Link href="/materials">
                             <a className="underlining">Материалы</a>
@@ -55,7 +55,7 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
             <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
                      justify-between align-middle bg-white bg-opacity-[36%] pl-8">
 
-                <div className="flex col-start-1 col-end-11 w-11/12 justify-around greenBox">
+                <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
 
 
                     <Link href="/">
@@ -68,8 +68,8 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                     </Link>
 
 
-                    <Link href="/news">
-                        <a className="underlining my-auto">Новости</a>
+                    <Link href="/about">
+                        <a className="underlining my-auto">О нас</a>
                     </Link>
 
                     <Link href="/materials">
@@ -81,12 +81,12 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                     </Link>
 
                 </div>
-
-                <button onClick={handleClickOpen}
-                        className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                    Войти
-                </button>
-
+                <div className="col-start-12 col-end-13 flex">
+                    <button onClick={handleClickOpen}
+                            className="text-left my-auto underlining -ml-2">
+                        Войти
+                    </button>
+                </div>
 
             </nav>);
 }

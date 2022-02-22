@@ -110,7 +110,7 @@ function MyApp(
                 <Navbar/>
                 {home ?
                     <Component {...pageProps} /> :
-                    <div className="rounded-2xl flex py-6 px-8 my-12 bg-white bg-opacity-[36%]">
+                    <div className="rounded-2xl flex pt-6 pb-10 px-8 my-12 bg-white bg-opacity-[36%]">
                         <Component {...pageProps} />
                     </div>}
                 <Footer/>

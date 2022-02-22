@@ -12,7 +12,7 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
 
     return (
         <div className="text-xl mt-2">
-            <div className="flex-row">
+            <div className="flex">
                 <div className="h-[2.6rem] w-[2.6rem]">
                     <Image
                         src={ProfilePicture2}
@@ -27,7 +27,7 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
                 <Divider className="bg-black w-[2px] h-auto" orientation="vertical"/>
                 <div className="w-full flex-wrap ml-5">
                     <div className="mb-1">Comment body</div>
-                    <div className="text-[1.1rem] font-bold flex-row">
+                    <div className="text-[1.1rem] font-bold flex">
                         <div className="h-5 w-5 mr-1 my-auto">
                             <Image
                                 src={CommentIco}

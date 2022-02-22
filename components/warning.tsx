@@ -35,8 +35,8 @@ export default function WarningDialog(props: DialogProps) {
                 open={opened}
                 PaperProps={{
                     sx: {
-                        width: '50.5%',
-                        height: '60%',
+                        width: '60rem',
+                        height: '40.5rem',
                         borderRadius: '25px',
                         // backgroundColor: "rgba(255, 255, 255, 0.5)",
                     }

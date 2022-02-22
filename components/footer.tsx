@@ -26,17 +26,16 @@ function Footer() {
                         © {new Date().getFullYear()} Daily MEPhi
                     </div>
                     <div
-                        className="col-span-1 flex-row justify-end gap-1 text-2xl">
-                        <div>
-                            <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
-
+                        className="col-span-1 flex justify-end gap-3 text-2xl greenBox">
+                        <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
+                            <div className="w-8 h-8 flex ">
                                 <Image
                                     src={GitHub}
                                     alt="GitHub"
                                     className="cursor-pointer"
                                 />
-                            </Link>
-                        </div>
+                            </div>
+                        </Link>
                         <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
 
                             <div className="cursor-pointer flex">github.com</div>
