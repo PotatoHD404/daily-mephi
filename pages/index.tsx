@@ -60,7 +60,7 @@ class Home extends Component<{ session: Session }> {
         return (
             <>
                 <SEO title={'Главная'} description={'what?'}/>
-                <BuyMeACoffee/>
+
                 <div className="flex grid-cols-12 grid h-[75vh]">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
                         <div
@@ -106,6 +106,7 @@ class Home extends Component<{ session: Session }> {
                         </div>
                     </div>
                 </div>
+                <BuyMeACoffee/>
 
                 {/*<Footer/>*/}
             </>
