@@ -1,8 +1,9 @@
-import React, {Component} from "react";
+import React from "react";
 import Link from "next/link";
 import GitHub from '../images/github.svg'
 import Image from "next/image";
 import {useRouter} from "next/router";
+import Divider from "@mui/material/Divider";
 
 // style="background-color: #f1f1f1;"
 function Footer() {
@@ -17,7 +18,7 @@ function Footer() {
 
             <div className={home ? "col-start-2 col-end-12" : "col-start-1 col-end-13"}>
                 <div className="grid grid-cols-3 align-bottom">
-                    <div className="bg-black h-1.5 rounded grid col-start-1 col-end-13 mb-8"/>
+                    <Divider className="bg-black rounded grid col-start-1 h-[2px] col-end-13 mb-8"/>
                     <div className="text-left col-span-1 pl-1 text-2xl ">
                         support@daily-mephi.ru
                     </div>
@@ -26,9 +27,9 @@ function Footer() {
                         © {new Date().getFullYear()} Daily MEPhi
                     </div>
                     <div
-                        className="col-span-1 flex justify-end gap-3 text-2xl greenBox">
+                        className="col-span-1 flex justify-end gap-3 text-2xl">
                         <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
-                            <div className="w-8 h-8 flex ">
+                            <div className="w-8 h-8 flex">
                                 <Image
                                     src={GitHub}
                                     alt="GitHub"

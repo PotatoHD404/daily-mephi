@@ -11,7 +11,9 @@ import Button from "@mui/material/Button";
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
+import {Head} from "next/document";
+import BuyMeACoffee from "../components/BuyMeACoffee";
 
 //https://next-auth.js.org/configuration/options
 // className="btn inline-block p-4 border-2 border-black leading-tight"
@@ -54,10 +56,11 @@ class Home extends Component<{ session: Session }> {
 
 
     render() {
+        // noinspection HtmlRequiredTitleElement
         return (
             <>
                 <SEO title={'Главная'} description={'what?'}/>
-
+                <BuyMeACoffee/>
                 <div className="flex grid-cols-12 grid h-[75vh]">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
                         <div
