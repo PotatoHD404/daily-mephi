@@ -18,31 +18,33 @@ function Footer() {
 
             <div className={home ? "col-start-2 col-end-12" : "col-start-1 col-end-13"}>
                 <div className="grid grid-cols-3 align-bottom">
-                    <Divider className="bg-black rounded grid col-start-1 h-[2px] col-end-13 mb-8"/>
-                    <div className="text-left col-span-1 pl-1 text-2xl ">
-                        support@daily-mephi.ru
-                    </div>
+                    <div className="bg-black rounded col-start-1 h-[2px] col-end-13 mb-8"/>
+                    <div className="flex justify-between col-start-1 col-end-13">
+                        <div className="text-left pl-1 text-2xl w-fit">
+                            support@daily-mephi.ru
+                        </div>
 
-                    <div className="text-center col-span-1 text-2xl h-max-auto">
-                        © {new Date().getFullYear()} Daily MEPhi
-                    </div>
-                    <div
-                        className="col-span-1 flex justify-end gap-3 text-2xl">
-                        <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
-                            <div className="w-8 h-8 flex">
-                                <Image
-                                    src={GitHub}
-                                    alt="GitHub"
-                                    className="cursor-pointer"
-                                />
-                            </div>
-                        </Link>
-                        <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
+                        <div className="text-center text-2xl h-max-auto">
+                            © {new Date().getFullYear()} Daily MEPhi
+                        </div>
+                        <div
+                            className="flex justify-end gap-3 text-2xl">
+                            <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
+                                <div className="w-8 h-8 flex">
+                                    <Image
+                                        src={GitHub}
+                                        alt="GitHub"
+                                        className="cursor-pointer"
+                                    />
+                                </div>
+                            </Link>
+                            <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
 
-                            <div className="cursor-pointer flex">github.com</div>
+                                <div className="cursor-pointer flex">github.com</div>
 
-                        </Link>
+                            </Link>
 
+                        </div>
                     </div>
                 </div>
             </div>

@@ -27,25 +27,20 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                      justify-between items-center grid-cols-12 grid">
                     <div className="flex col-start-1 col-end-10 justify-between">
                         <Link href="/about">
-                            <a className="underlining">О нас</a>
+                            <a className="underlining"><h3>О нас</h3></a>
                         </Link>
-
-                        {/*<Link href="/news">*/}
-                        {/*    <a className="underlining">Новости</a>*/}
-                        {/*</Link>*/}
-
                         <Link href="/materials">
-                            <a className="underlining">Материалы</a>
+                            <a className="underlining"><h3>Материалы</h3></a>
                         </Link>
 
                         <Link href="/tutors">
-                            <a className="underlining">Преподаватели</a>
+                            <a className="underlining"><h3>Преподаватели</h3></a>
                         </Link>
                     </div>
 
                     <button onClick={handleClickOpen}
                             className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                        Войти
+                        <h3>Войти</h3>
                     </button>
 
                 </div>

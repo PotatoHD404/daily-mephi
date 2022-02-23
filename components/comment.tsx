@@ -1,7 +1,6 @@
 import Image from "next/image";
 import ProfilePicture2 from "../images/profile2.png";
 import CommentIco from '../images/comment.svg';
-import Divider from "@mui/material/Divider";
 import React from "react";
 
 interface MyProps {
@@ -24,7 +23,7 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
                 <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
             </div>
             <div className="flex mt-1 ml-5">
-                <Divider className="bg-black w-[2px] h-auto" orientation="vertical"/>
+                <div className="bg-black w-[2px] h-auto"/>
                 <div className="w-full flex-wrap ml-5">
                     <div className="mb-1">Comment body</div>
                     <div className="text-[1.1rem] font-bold flex">

@@ -8,7 +8,6 @@ import HoverRating from "../../components/rating";
 import ProfilePicture2 from '../../images/profile2.png';
 import LikeIco from '../../images/like.svg';
 import CommentIco from '../../images/comment.svg'
-import Divider from "@mui/material/Divider";
 import Comment from "../../components/comment";
 import QuoteIco from "../../images/quote.svg";
 import DownloadIco from '../../images/download.svg';
@@ -101,7 +100,7 @@ function Tutor() {
                 </div>
             </div>
             <div className="w-full mt-7">
-                <Box sx={{borderBottom: 1, borderColor: 'divider'}} className="mb-4">
+                <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                     <Tabs value={value} onChange={handleChange} variant="fullWidth"
                           TabIndicatorProps={{style: {background: 'white'}}}>
                         <Tab label={
@@ -248,7 +247,7 @@ function Tutor() {
                                         <div className="text-xl my-auto">?</div>
                                     </div>
                                 </div>
-                                <Divider className="w-full bg-black mx-auto mb-4"/>
+                                <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
                                 <div className="flex-wrap space-y-5">
                                     <Comment><Comment/></Comment>
                                     <Comment/>

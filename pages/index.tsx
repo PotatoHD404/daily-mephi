@@ -6,19 +6,22 @@ import SEO from "../components/seo";
 import Image from 'next/image'
 import Logo from '../images/logo.svg'
 import MiniCat from '../images/minicat.svg'
-import Button from "@mui/material/Button";
 
-import InputBase from '@mui/material/InputBase';
-import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
-import {useRouter} from 'next/router'
-import {Head} from "next/document";
 import BuyMeACoffee from "../components/buyMeCoffee";
-import {Input, TextField} from "@mui/material";
+import {Input} from "@mui/material";
+import {styled} from "@mui/material/styles";
 
 //https://next-auth.js.org/configuration/options
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
+
+const StyledInput = styled(Input)(()=>({
+    width: '100%',
+    fontSize: '1.65rem',
+    fontFamily: 'Montserrat',
+    marginLeft: '0.5rem'
+}));
 
 class Home extends Component<{ session: Session }> {
 
@@ -29,7 +32,6 @@ class Home extends Component<{ session: Session }> {
 
 
     async componentDidMount() {
-        // this.nameInput.focus();
         const input = document.querySelector("input");
         input?.focus();
         input?.select();
@@ -60,7 +62,6 @@ class Home extends Component<{ session: Session }> {
 
 
     render() {
-        // noinspection HtmlRequiredTitleElement
         return (
             <>
                 <SEO title={'Главная'} description={'what?'}/>
@@ -96,12 +97,10 @@ class Home extends Component<{ session: Session }> {
                                              rounded-full flex-row h-14 w-[80%]"
                             >
                                 <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
-                                <Input
+                                <StyledInput
                                     placeholder="Поиск"
                                     inputProps={{'aria-label': 'Поиск'}}
-                                    className="font-[Montserrat] text-[1.65rem] ml-2 w-full"
                                     disableUnderline
-                                    // sx={{'& .MuiInputBase-input': {border: 0}}}
                                 />
                             </div>
                         </div>
@@ -112,8 +111,6 @@ class Home extends Component<{ session: Session }> {
                     </div>
                 </div>
                 <BuyMeACoffee/>
-
-                {/*<Footer/>*/}
             </>
         )
     }
