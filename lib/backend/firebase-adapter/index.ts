@@ -18,14 +18,14 @@ import {Account} from "next-auth"
 
 import {getAuthToken, initializeAdmin} from "../database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import app from "../../frontend/database";
+// import app from "../../frontend/database";
 import {randomBytes} from "crypto";
 
 
 export default function FirebaseAdapter(): Adapter {
 
     async function db() {
-        const auth = getAuth(app);
+        const auth = getAuth();
         if (auth.currentUser?.uid != 'admin') {
             await initializeAdmin();
 

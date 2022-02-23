@@ -16,7 +16,24 @@ const nextConfig = {
         // scope: '/app',
         sw: 'service-worker.js',
         //...
-    }
+    },
+    module: {
+        rules: [
+            {
+                test: /\.*$/,
+                exclude: [
+                    './database/'
+                ]
+            }
+        ]
+    },
+    typescript: {
+        // !! WARN !!
+        // Dangerously allow production builds to successfully complete even if
+        // your project has type errors.
+        // !! WARN !!
+        ignoreBuildErrors: true,
+    },
 }
 //https://www.npmjs.com/package/next-pwa
 

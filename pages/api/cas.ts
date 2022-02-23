@@ -8,13 +8,13 @@ import admin from "firebase-admin";
 import fs from 'fs';
 import {detectHost} from "../../lib/backend/utils";
 import {NextAuthOptions} from "next-auth/core/types";
-import logger, {setLogger} from "../../lib/backend/next-auth/src/lib/logger";
-import {init} from "../../lib/backend/next-auth/src/core/init";
-import {SessionStore} from "../../lib/backend/next-auth/src/core/lib/cookie";
+import logger, {setLogger} from "../../lib/backend/next-auth/packages/next-auth/src/lib/logger";
+import {init} from "../../lib/backend/next-auth/packages/next-auth/src/core/init";
+import {SessionStore} from "../../lib/backend/next-auth/packages/next-auth/src/core/lib/cookie";
 import {Account, Profile} from "next-auth";
-import callbackHandler from "../../lib/backend/next-auth/src/core/lib/callback-handler";
+import callbackHandler from "../../lib/backend/next-auth/packages/next-auth/src/core/lib/callback-handler";
 import {nextAuthOptions} from "../../lib/backend/options";
-import {NextAuthAction} from "../../lib/backend/next-auth/src/lib/types";
+import {NextAuthAction} from "../../lib/backend/next-auth/packages/next-auth/src/lib/types";
 
 // TODO: https://github.com/nextauthjs/next-auth/blob/main/src/core/lib/callback-handler.ts
 // https://github.com/nextauthjs/next-auth/blob/main/src/core/routes/callback.ts

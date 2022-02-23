@@ -34,12 +34,12 @@ function SEO({description, title}: { description: string, title: string }) {
             <meta property="og:description" content={description}/>
             <meta property="og:locale" content="ru"/>
             <meta property="og:title" content={"Daily MEPhi - " + title}/>
-            <meta property="vk:image" content='/og-large.png'/>
+            <meta property="vk:image" content='/images/twitter-large.png'/>
             <meta property="og:type" content="object"/>
             <meta name="twitter:title" content="Daily MEPhi"/>
             <meta name="twitter:card" content="summary_large_image"/>
             <meta name="twitter:image:src" content="/images/twitter-large.png"/>
-            <meta property="og:image" content='/og-large.png'/>
+            <meta property="og:image" content='/images/twitter-large.png'/>
             <meta property="og:image:width" content='1200'/>
             <meta property="og:image:height" content='630'/>
             <meta property="og:site_name" content="daily-mephi.ru"/>
