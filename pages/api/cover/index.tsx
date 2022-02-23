@@ -1,6 +1,10 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import getSvg from "../../../components/getSvg";
 import sharp from 'sharp';
+import path from "path";
+
+path.resolve(process.cwd(), 'fonts', 'fonts.conf')
+path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
 export default async function handler(
     req: NextApiRequest,
