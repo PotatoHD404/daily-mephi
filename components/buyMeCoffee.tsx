@@ -13,12 +13,12 @@ const BuyMeACoffeeWidget = () => {
 
     return (
         <>
-            <button className={"flex align-middle justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full fixed " +
+            <button className={"flex align-middle justify-center w-16 h-16 bg-[#FF5F5F] text-white rounded-full fixed " +
                 "right-10 bottom-10 duration-200 transition-all ease-in-out z-50 " +
                 (state.widget ? "scale-[80%]" : "")} onClick={toggleWidget}
                     style={{boxShadow: '0 4px 8px rgba(0,0,0,.4)'}}>
                 {state.widget ? <KeyboardArrowDownIcon className="m-auto w-[70%] h-[70%] rotate-180"/> :
-                    <div className="flex w-[80%] h-[80%] m-auto">
+                    <div className="flex w-[66%] h-[66%] m-auto">
 
                         <Image
                             src={CoffeeCup}
