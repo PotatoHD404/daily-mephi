@@ -29,14 +29,19 @@ function SEO({description, title}: { description: string, title: string }) {
             />
             {/*<link rel="apple-touch-icon" href="/apple-icon.png"/>*/}
             <meta name="theme-color" content="#317EFB"/>
-            <title>{title + " | Daily MEPhi"}</title>
+            <title>{title + " - Daily MEPhi"}</title>
             <meta name="description" content={description}/>
             <meta property="og:description" content={description}/>
             <meta property="og:locale" content="ru"/>
-            <meta property="og:title" content={title + " | Daily MEPhi"}/>
-            <meta property="vk:image" content='/icons/icon-512x512.png'/>
-            <meta property="og:type" content="website"/>
-            <meta property="og:image" content='/icons/icon-512x512.png'/>
+            <meta property="og:title" content={"Daily MEPhi - " + title}/>
+            <meta property="vk:image" content='/og-large.png'/>
+            <meta property="og:type" content="object"/>
+            <meta name="twitter:title" content="Daily MEPhi"/>
+            <meta name="twitter:card" content="summary_large_image"/>
+            <meta name="twitter:image:src" content="/images/twitter-large.png"/>
+            <meta property="og:image" content='/og-large.png'/>
+            <meta property="og:image:width" content='1200'/>
+            <meta property="og:image:height" content='630'/>
             <meta property="og:site_name" content="daily-mephi.ru"/>
         </Head>
     );

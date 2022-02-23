@@ -69,22 +69,22 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
 
 
                     <Link href="/about">
-                        <a className="underlining my-auto">О нас</a>
+                        <a className="underlining my-auto"><h3>О нас</h3></a>
                     </Link>
 
                     <Link href="/materials">
-                        <a className="underlining my-auto">Материалы</a>
+                        <a className="underlining my-auto"><h3>Материалы</h3></a>
                     </Link>
 
                     <Link href="/tutors">
-                        <a className="underlining my-auto">Преподаватели</a>
+                        <a className="underlining my-auto"><h3>Преподаватели</h3></a>
                     </Link>
 
                 </div>
                 <div className="col-start-12 col-end-13 flex">
                     <button onClick={handleClickOpen}
                             className="text-left my-auto underlining -ml-2">
-                        Войти
+                        <h3>Войти</h3>
                     </button>
                 </div>
 

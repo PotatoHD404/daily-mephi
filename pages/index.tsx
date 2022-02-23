@@ -13,7 +13,8 @@ import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
 import {useRouter} from 'next/router'
 import {Head} from "next/document";
-import BuyMeACoffee from "../components/BuyMeACoffee";
+import BuyMeACoffee from "../components/buyMeCoffee";
+import {Input, TextField} from "@mui/material";
 
 //https://next-auth.js.org/configuration/options
 // className="btn inline-block p-4 border-2 border-black leading-tight"
@@ -28,7 +29,10 @@ class Home extends Component<{ session: Session }> {
 
 
     async componentDidMount() {
-
+        // this.nameInput.focus();
+        const input = document.querySelector("input");
+        input?.focus();
+        input?.select();
         let data: Tutor = {
             id: 'string',
             name: 'string',
@@ -81,11 +85,10 @@ class Home extends Component<{ session: Session }> {
                             </div>
                             {/*<div className="ml-3"></div>*/}
 
-                            <span className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
-                                consectetur
-                                adipisicing elit.
-                                Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
-                            </span>
+                            <h1 className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
+                                consectetur adipisicing elit. Animi officia quae quia suscipit? Animi aspernatur autem
+                                doloribus eos error.
+                            </h1>
                             <div
 
                                 className="bg-transparent flex border-2
@@ -93,10 +96,12 @@ class Home extends Component<{ session: Session }> {
                                              rounded-full flex-row h-14 w-[80%]"
                             >
                                 <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
-                                <InputBase
+                                <Input
                                     placeholder="Поиск"
                                     inputProps={{'aria-label': 'Поиск'}}
                                     className="font-[Montserrat] text-[1.65rem] ml-2 w-full"
+                                    disableUnderline
+                                    // sx={{'& .MuiInputBase-input': {border: 0}}}
                                 />
                             </div>
                         </div>
