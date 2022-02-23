@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import {getAuthToken, initializeAdmin} from "../../lib/backend/database";
 import {getAuth, signInWithCustomToken} from "firebase/auth";
-import app from "../../lib/firebase/initApp";
+// import app from "../../lib/firebase/initApp";
 import {decrypt, encrypt} from "../../lib/backend/crypto";
 import {getSession} from "next-auth/react";
 
@@ -55,7 +55,7 @@ export default async function handler(
         throw new Error('Request timeout');
     }
 
-    const auth = getAuth(app);
+    const auth = getAuth();
 
     await initializeAdmin();
     await signInWithCustomToken(auth, await getAuthToken('admin'));

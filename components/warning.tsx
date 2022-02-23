@@ -7,6 +7,8 @@ import Image from "next/image";
 import CloseIcon from '../images/close_icon.svg';
 import WarningCat from '../images/warning_cat.svg'
 import Link from "next/link";
+import styles from "../styles/warning.module.css";
+
 
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
@@ -16,6 +18,28 @@ const BootstrapDialog = styled(Dialog)(({theme}) => ({
     '& .MuiDialogActions-root': {
         padding: theme.spacing(1),
     },
+}));
+// w-full rounded-full flex h-12 text-3xl font-bold font-[Montserrat]
+const StyledButton = styled(Button)(() => ({
+    color: 'black',
+    textTransform: 'none',
+    width: '100%',
+    borderRadius: '9999px',
+    display: 'flex',
+    height: '3rem',
+    fontSize: '1.875rem',
+    lineHeight: '2.25rem',
+    fontWeight: 700,
+    fontFamily: 'Montserrat'
+}));
+
+const StyledIconButton = styled(IconButton)(()=>({
+    width: '3.5rem',
+    height: '3.5rem',
+    gridColumnStart: 13,
+    gridColumnEnd: 13,
+    marginTop: '1.25rem',
+    marginRight: '2rem'
 }));
 
 export interface DialogProps {
@@ -35,10 +59,9 @@ export default function WarningDialog(props: DialogProps) {
                 open={opened}
                 PaperProps={{
                     sx: {
-                        width: '50.5%',
-                        height: '60%',
+                        width: '60rem',
+                        height: '40.5rem',
                         borderRadius: '25px',
-                        // backgroundColor: "rgba(255, 255, 255, 0.5)",
                     }
                 }}
                 fullWidth
@@ -56,17 +79,16 @@ export default function WarningDialog(props: DialogProps) {
 
                     <div className="col-start-6 col-end-13">
                         <div className="grid justify-end">
-                            <IconButton
+                            <StyledIconButton
                                 aria-label="close"
                                 onClick={handleClose}
-                                className="w-14 h-14 col-start-13 col-end-13 mr-8 mt-5"
                             >
                                 <Image
                                     src={CloseIcon}
                                     alt="Close icon"
                                     className="scale-90"
                                 />
-                            </IconButton>
+                            </StyledIconButton>
                         </div>
 
                         <div className="pl-5 mt-12 w-5/6">
@@ -83,11 +105,9 @@ export default function WarningDialog(props: DialogProps) {
                                     </div>
                                 </div>
                                 <div className="col-span-12 h-full rounded-full border-2 border-black">
-                                    <Button autoFocus onClick={handleClose}
-                                            className="w-full rounded-full flex h-13 text-3xl font-bold font-[Montserrat]"
-                                            style={{color: 'black', textTransform: 'none'}}>
+                                    <StyledButton onClick={handleClose}>
                                         Продолжить
-                                    </Button>
+                                    </StyledButton>
                                 </div>
                             </div>
 

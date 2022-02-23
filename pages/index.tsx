@@ -6,27 +6,35 @@ import SEO from "../components/seo";
 import Image from 'next/image'
 import Logo from '../images/logo.svg'
 import MiniCat from '../images/minicat.svg'
-import Button from "@mui/material/Button";
 
-import InputBase from '@mui/material/InputBase';
-import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRouter } from 'next/router'
+import BuyMeACoffee from "../components/buyMeCoffee";
+import {Input} from "@mui/material";
+import {styled} from "@mui/material/styles";
 
 //https://next-auth.js.org/configuration/options
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
 
+const StyledInput = styled(Input)(()=>({
+    width: '100%',
+    fontSize: '1.65rem',
+    fontFamily: 'Montserrat',
+    marginLeft: '0.5rem'
+}));
+
 class Home extends Component<{ session: Session }> {
-    const router = useRouter();
-    
+
+
     constructor(props: any) {
         super(props);
     }
 
 
     async componentDidMount() {
-
+        const input = document.querySelector("input");
+        input?.focus();
+        input?.select();
         let data: Tutor = {
             id: 'string',
             name: 'string',
@@ -78,39 +86,22 @@ class Home extends Component<{ session: Session }> {
                             </div>
                             {/*<div className="ml-3"></div>*/}
 
-                            <span className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
-                                consectetur
-                                adipisicing elit.
-                                Animi officia quae quia suscipit? Animi aspernatur autem doloribus eos error.
-                            </span>
+                            <h1 className="flex text-4xl mt-8 row-start-3 row-end-4">Lorem ipsum dolor sit amet,
+                                consectetur adipisicing elit. Animi officia quae quia suscipit? Animi aspernatur autem
+                                doloribus eos error.
+                            </h1>
                             <div
-                                className="mt-14 text-5xl flex w-5/6 align-middle items-stretch">
 
-
-                                <div
-
-                                    className="bg-transparent justify-center flex w-5/6 border-2
-                                     border-black border-r-0 justify-center align-middle
-                                     rounded-l-full pl-6 pr-2"
-                                >
-                                    <InputBase
-                                        placeholder="Поиск"
-                                        inputProps={{'aria-label': 'Поиск'}}
-                                        className="font-[Montserrat] flex text-4xl w-11/12"
-                                    />
-                                </div>
-                                <Divider orientation="vertical" className="bg-black h-auto"/>
-                                <div className="border-2 border-black border-l-0 rounded-r-full">
-                                    <Button aria-label="search"
-                                            className="flex w-1/6 h-full rounded-none rounded-r-full"
-                                            style={{color: 'black'}}
-                                    >
-                                        <SearchIcon style={{color: 'black'}} className="scale-125"/>
-                                    </Button>
-
-                                </div>
-
-
+                                className="bg-transparent flex border-2
+                                             border-black align-middle
+                                             rounded-full flex-row h-14 w-[80%]"
+                            >
+                                <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
+                                <StyledInput
+                                    placeholder="Поиск"
+                                    inputProps={{'aria-label': 'Поиск'}}
+                                    disableUnderline
+                                />
                             </div>
                         </div>
 
@@ -119,8 +110,7 @@ class Home extends Component<{ session: Session }> {
                         </div>
                     </div>
                 </div>
-
-                {/*<Footer/>*/}
+                <BuyMeACoffee/>
             </>
         )
     }

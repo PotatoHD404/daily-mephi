@@ -11,13 +11,91 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
 import WarningDialog from '../components/warning';
+import {useRouter} from "next/router";
+import Image from "next/image";
+import miniCat from '../images/minicat_transparent.svg'
+import InputBase from "@mui/material/InputBase";
+import Button from "@mui/material/Button";
+import SearchIcon from "@mui/icons-material/Search";
 
 
-const Navbar = () => {
+function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => void }) {
+    if (home)
+        return (
+            <nav className="mb-0 flex grid-cols-12 grid text-4xl">
+                <div className="col-start-2 col-end-12 flex flex-wrap
+                     justify-between items-center grid-cols-12 grid">
+                    <div className="flex col-start-1 col-end-10 justify-between">
+                        <Link href="/about">
+                            <a className="underlining"><h3>О нас</h3></a>
+                        </Link>
+                        <Link href="/materials">
+                            <a className="underlining"><h3>Материалы</h3></a>
+                        </Link>
+
+                        <Link href="/tutors">
+                            <a className="underlining"><h3>Преподаватели</h3></a>
+                        </Link>
+                    </div>
+
+                    <button onClick={handleClickOpen}
+                            className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                        <h3>Войти</h3>
+                    </button>
+
+                </div>
+            </nav>);
+    else
+        return (
+            <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
+                     justify-between align-middle bg-white bg-opacity-[36%] pl-8">
+
+                <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
+
+
+                    <Link href="/">
+                        <a className="flex h-14 my-auto w-14">
+                            <Image
+                                src={miniCat}
+                                alt="Mini cat"
+                            />
+                        </a>
+                    </Link>
+
+
+                    <Link href="/about">
+                        <a className="underlining my-auto"><h3>О нас</h3></a>
+                    </Link>
+
+                    <Link href="/materials">
+                        <a className="underlining my-auto"><h3>Материалы</h3></a>
+                    </Link>
+
+                    <Link href="/tutors">
+                        <a className="underlining my-auto"><h3>Преподаватели</h3></a>
+                    </Link>
+
+                </div>
+                <div className="col-start-12 col-end-13 flex">
+                    <button onClick={handleClickOpen}
+                            className="text-left my-auto underlining -ml-2">
+                        <h3>Войти</h3>
+                    </button>
+                </div>
+
+            </nav>);
+}
+
+
+function Navbar() {
     const [state, setState] = React.useState({
         opened: false,
         warning: false
     });
+
+    const router = useRouter();
+
+    const home: boolean = router.pathname === '/';
 
     const handleClickOpen = () => {
         setState({...state, warning: true});
@@ -65,43 +143,7 @@ const Navbar = () => {
     //greenBox
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <nav className="mb-0 flex grid-cols-12 grid text-4xl my-auto">
-
-
-                <div className="col-start-2 col-end-12 flex flex-wrap
-                 justify-between items-center grid-cols-12 grid">
-                    <div className="flex col-start-1 col-end-10 justify-between">
-                        <div className="flex underlining">
-                            <Link href="/about">
-                                О нас
-                            </Link>
-                        </div>
-
-                        <div className="flex underlining">
-                            <Link href="/news">
-                                Новости
-                            </Link>
-                        </div>
-                        <div className="flex underlining">
-                            <Link href="/materials">
-                                Материалы
-                            </Link>
-                        </div>
-
-                        <div className="flex underlining">
-                            <Link href="/tutors">
-                                Преподаватели
-                            </Link>
-                        </div>
-                    </div>
-
-                    <button onClick={handleClickOpen}
-                            className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                        Войти
-                    </button>
-
-                </div>
-            </nav>
+            <Nav {...{home, handleClickOpen}}/>
             <WarningDialog handleClose={handleClose} opened={state.warning}/>
             <SwappableDrawer
                 className={'lg:hidden'}

@@ -42,3 +42,6 @@ daily-mephi-firebase-adminsdk-owy0l-8196187005.json
 
 notes.txt
 /daily-mephi-fdcd9-firebase-adminsdk-bz905-bd0979e9d8.json
+
+public/workbox-*.js
+public/service-worker.js
