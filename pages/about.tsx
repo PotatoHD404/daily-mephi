@@ -8,7 +8,11 @@ import LikeIco from "../images/like.svg";
 import CommentIco from "../images/comment.svg";
 import Comment from "../components/comment";
 import ProfileIco from "../images/profile3.png";
-import ProfilePicture2 from "../images/profile2.png";
+import MiniCat from "../images/minicat_transparent.svg";
+import GoldenCrown from "../images/golden_crown.svg";
+import SilverCrown from "../images/silver_crown.svg";
+import BronzeCrown from "../images/bronze_crown.svg";
+
 
 function About() {
     const [value, setValue] = React.useState(0);
@@ -25,7 +29,7 @@ function About() {
                     <Tabs value={value} onChange={handleChange} variant="fullWidth"
                           TabIndicatorProps={{style: {background: 'white'}}}>
                         <Tab label={
-                            <div className="flex h-8  w-[11.5rem]">
+                            <div className="flex h-8 w-[11.5rem]">
                                 {/*<div className="flex h-10 my-auto">*/}
                                 {/*    <Image*/}
                                 {/*        src={reviewsIco}*/}
@@ -70,15 +74,16 @@ function About() {
                     <>
                         <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-90">
                             <div className="flex w-full mb-4">
-                                <div className="h-14 my-auto w-14">
+                                <div className="h-16 my-auto w-16">
                                     <Image
-                                        src={ProfilePicture2}
+                                        src={MiniCat}
                                         alt="Mini cat"
-                                        className="rounded-full"
                                     />
                                 </div>
-                                <span className="font-bold ml-2 my-auto">User1</span>
-                                <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
+                                <div className="ml-4 my-auto">
+                                    <div>Daily MEPhi</div>
+                                    <div className="text-lg my-auto opacity-60">15 февраля 2022</div>
+                                </div>
                             </div>
                             <div className="font-bold">Заголовок</div>
                             <div className="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci
@@ -127,7 +132,8 @@ function About() {
             <div className="w-[23.5%]">
                 <div className="text-[1.7rem] mt-[0.5rem] h-[3rem] text-center">Топ Мифистов</div>
                 <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
-                <div className="rounded-2xl py-6 px-3.5 text-[1.25rem] w-full bg-white bg-opacity-90 flex-wrap space-y-5">
+                <div
+                    className="rounded-2xl py-6 px-3.5 text-[1.25rem] w-full bg-white bg-opacity-90 flex-wrap space-y-5">
                     <div className="flex">
                         <div className="mr-4 -ml-0.5">#</div>
                         <div>Имя</div>
@@ -135,38 +141,75 @@ function About() {
                     </div>
                     <div className="flex">
                         <div className="mr-3.5 my-auto">1</div>
-                        <div className="flex w-[190%]">
-                            <div className="h-14 my-auto w-14">
+                        <div className="flex">
+                            <div className="h-14 my-auto w-14 flex">
                                 <Image
                                     src={ProfileIco}
                                     alt="Profile pic"
                                     className="rounded-full"
                                 />
+                                <div className="h-8 my-auto w-8 absolute ml-[2rem] -mt-[0.85rem]">
+                                    <Image
+                                        src={GoldenCrown}
+                                        alt="Golden crown"
+                                        className="rounded-full"
+                                    />
+                                </div>
                             </div>
+
                             <div className="text-[0.8rem] h-fit my-auto ml-2">Burunduk</div>
                         </div>
 
-                        <div className="ml-auto w-full text-center h-fit my-auto">3.1 K</div>
+                        <div className="ml-auto w-[5.3rem] text-center h-fit my-auto">3.1 K</div>
                     </div>
                     <div className="flex">
                         <div className="mr-3.5 my-auto">2</div>
-                        <div className="flex w-[190%]">
-                            <div className="h-14 my-auto w-14">
+                        <div className="flex">
+                            <div className="h-14 my-auto w-14 flex">
                                 <Image
                                     src={ProfileIco}
                                     alt="Profile pic"
                                     className="rounded-full"
                                 />
+                                <div className="h-8 my-auto w-8 absolute ml-[2rem] -mt-[0.85rem]">
+                                    <Image
+                                        src={SilverCrown}
+                                        alt="Silver crown"
+                                        className="rounded-full"
+                                    />
+                                </div>
                             </div>
                             <div className="text-[0.8rem] h-fit my-auto ml-2">Burunduk</div>
                         </div>
 
-                        <div className="ml-auto w-full text-center h-fit my-auto">3.1 K</div>
+                        <div className="ml-auto w-[5.3rem] text-center h-fit my-auto">3.1 K</div>
                     </div>
                     <div className="flex">
                         <div className="mr-3.5 my-auto">3</div>
-                        <div className="flex w-[190%]">
-                            <div className="h-14 my-auto w-14">
+                        <div className="flex">
+                            <div className="h-14 my-auto w-14 flex">
+                                <Image
+                                    src={ProfileIco}
+                                    alt="Profile pic"
+                                    className="rounded-full"
+                                />
+                                <div className="h-8 my-auto w-8 absolute ml-[2rem] -mt-[0.85rem]">
+                                    <Image
+                                        src={BronzeCrown}
+                                        alt="Bronze crown"
+                                        className="rounded-full"
+                                    />
+                                </div>
+                            </div>
+                            <div className="text-[0.8rem] h-fit my-auto ml-2">Burunduk</div>
+                        </div>
+
+                        <div className="ml-auto w-[5.3rem] text-center h-fit my-auto">3.1 K</div>
+                    </div>
+                    <div className="flex">
+                        <div className="mr-3.5 my-auto">3</div>
+                        <div className="flex">
+                            <div className="h-14 my-auto w-14 flex">
                                 <Image
                                     src={ProfileIco}
                                     alt="Profile pic"
@@ -176,7 +219,22 @@ function About() {
                             <div className="text-[0.8rem] h-fit my-auto ml-2">Burunduk</div>
                         </div>
 
-                        <div className="ml-auto w-full text-center h-fit my-auto">3.1 K</div>
+                        <div className="ml-auto w-[5.3rem] text-center h-fit my-auto">3.1 K</div>
+                    </div>
+                    <div className="flex">
+                        <div className="mr-3.5 my-auto">3</div>
+                        <div className="flex">
+                            <div className="h-14 my-auto w-14 flex">
+                                <Image
+                                    src={ProfileIco}
+                                    alt="Profile pic"
+                                    className="rounded-full"
+                                />
+                            </div>
+                            <div className="text-[0.8rem] h-fit my-auto ml-2">Burunduk</div>
+                        </div>
+
+                        <div className="ml-auto w-[5.3rem] text-center h-fit my-auto">3.1 K</div>
                     </div>
                 </div>
             </div>
