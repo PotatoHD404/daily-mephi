@@ -11,13 +11,7 @@ import CommentIco from '../../images/comment.svg'
 import Comment from "../../components/comment";
 import QuoteIco from "../../images/quote.svg";
 import DownloadIco from '../../images/download.svg';
-
-function a11yProps(index: number) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
+import {a11yProps} from '../../lib/frontend/utils'
 
 
 function Tutor() {
