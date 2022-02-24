@@ -16,7 +16,7 @@ import {styled} from "@mui/material/styles";
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
 
-const StyledInput = styled(Input)(()=>({
+export const StyledInput = styled(Input)(() => ({
     width: '100%',
     fontSize: '1.65rem',
     fontFamily: 'Montserrat',
@@ -64,7 +64,7 @@ class Home extends Component<{ session: Session }> {
     render() {
         return (
             <>
-                <SEO title={'Главная'} description={'what?'}/>
+                <SEO/>
 
                 <div className="flex grid-cols-12 grid h-[75vh]">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
@@ -91,11 +91,9 @@ class Home extends Component<{ session: Session }> {
                                 doloribus eos error.
                             </h1>
                             <div
-
                                 className="bg-transparent flex border-2
                                              border-black align-middle
-                                             rounded-full flex-row h-14 w-[80%]"
-                            >
+                                             rounded-full flex-row h-14 w-[80%]">
                                 <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
                                 <StyledInput
                                     placeholder="Поиск"

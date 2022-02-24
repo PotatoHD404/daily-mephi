@@ -1,12 +1,17 @@
 import React from "react";
+import SEO from "../components/seo";
 
 
 function Materials() {
 
     return (
-        <div className="flex-wrap w-full">
+        <>
+            <SEO title={'Ошибка на стороне сервера'}/>
+            <div className="flex-wrap w-full">
 
-        </div>);
+            </div>
+        </>
+    );
 
 }
 
