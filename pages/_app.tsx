@@ -86,25 +86,27 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <ThemeProvider theme={theme}>
-            <div className={styles.bgWrap}>
-                <Image
-                    src={template}
-                    alt="Picture of the author"
-                    quality={100}
-                    objectFit="cover"
-                />
-            </div>
-
             {/*<div className={styles.bgWrap}>*/}
             {/*    <Image*/}
-            {/*        src={Background}*/}
+            {/*        src={template}*/}
             {/*        alt="Picture of the author"*/}
             {/*        quality={100}*/}
             {/*        objectFit="cover"*/}
-            {/*        layout="fill"*/}
             {/*    />*/}
             {/*</div>*/}
-            <div className={"font-[Montserrat] " + (home ? "grid h-screen" : "w-[70%] mx-auto relative min-h-screen pb-24")}>
+
+            <div className={styles.bgWrap}>
+                <Image
+                    src={Background}
+                    alt="Picture of the author"
+                    quality={100}
+                    objectFit="cover"
+                    layout="fill"
+                />
+            </div>
+            {/*w-[125rem]*/}
+            <div className={"font-[Montserrat] relative min-h-screen pb-24 "
+                + (home ? "grid" : "max-w-[85rem] mx-auto")}>
 
 
                 <Navbar/>

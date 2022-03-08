@@ -40,7 +40,7 @@ export default function Comment({children}: React.PropsWithChildren<MyProps>) {
                 </div>
 
             </div>
-            <div className="ml-5 text-blue-500 text-[1.1rem] font-semibold">1 more reply</div>
+            <button className="ml-5 text-blue-500 text-[1.1rem] font-semibold">1 more reply</button>
         </div>
     );
 }

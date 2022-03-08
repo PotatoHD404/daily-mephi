@@ -6,7 +6,7 @@ function Profile() {
 
     return (
         <>
-            <SEO title={'Ошибка на стороне сервера'}/>
+            <SEO title={'Профиль'}/>
             <div className="flex-wrap w-full">
 
             </div>

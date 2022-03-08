@@ -6,7 +6,7 @@ function Materials() {
 
     return (
         <>
-            <SEO title={'Ошибка на стороне сервера'}/>
+            <SEO title={'Материалы'}/>
             <div className="flex-wrap w-full">
 
             </div>
