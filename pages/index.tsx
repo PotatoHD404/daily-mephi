@@ -16,7 +16,7 @@ import {styled} from "@mui/material/styles";
 // className="btn inline-block p-4 border-2 border-black leading-tight"
 
 
-const StyledInput = styled(Input)(()=>({
+export const StyledInput = styled(Input)(() => ({
     width: '100%',
     fontSize: '1.65rem',
     fontFamily: 'Montserrat',
@@ -64,17 +64,15 @@ class Home extends Component<{ session: Session }> {
     render() {
         return (
             <>
-                <SEO title={'Главная'} description={'what?'}/>
+                <SEO/>
 
-                <div className="flex grid-cols-12 grid h-[75vh]">
+                <div className="flex grid-cols-12 grid pb-12 h-auto">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
                         <div
                             className="items-center justify-start flex flex-wrap w-[42.8%] h-[50%]  mt-[6.5%]">
 
                             <div className="text-[6.25vw] -ml-1 -my-10 flex font-bold flex-nowrap">
-                                <div
-                                    className="flex h-fit w-[4vw] mt-[4vw] justify-center
-                                     pl-[0.8vw] z-0">
+                                <div className="flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">
                                     <Image src={MiniCat} alt="mini cat"
                                            className="flex scale-95 active:scale-110 transition ease-in-out duration-300"
                                         // layout="responsive"
@@ -90,12 +88,9 @@ class Home extends Component<{ session: Session }> {
                                 consectetur adipisicing elit. Animi officia quae quia suscipit? Animi aspernatur autem
                                 doloribus eos error.
                             </h1>
-                            <div
-
-                                className="bg-transparent flex border-2
+                            <div className="bg-transparent flex border-2
                                              border-black align-middle
-                                             rounded-full flex-row h-14 w-[80%]"
-                            >
+                                             rounded-full flex-row h-14 w-[80%]">
                                 <SearchIcon style={{color: 'black'}} className="scale-125 my-auto ml-5 mr-1"/>
                                 <StyledInput
                                     placeholder="Поиск"

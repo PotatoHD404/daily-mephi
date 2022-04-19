@@ -1,12 +1,17 @@
 import React from "react";
+import SEO from "../components/seo";
 
 
 function Materials() {
 
     return (
-        <div className="flex-wrap w-full">
+        <>
+            <SEO title={'Материалы'}/>
+            <div className="flex-wrap w-full">
 
-        </div>);
+            </div>
+        </>
+    );
 
 }
 

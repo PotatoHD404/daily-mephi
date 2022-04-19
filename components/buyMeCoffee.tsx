@@ -14,7 +14,7 @@ const BuyMeACoffeeWidget = () => {
     return (
         <>
             <button className={"flex align-middle justify-center w-16 h-16 bg-[#FF5F5F] text-white rounded-full fixed " +
-                "right-10 bottom-10 duration-200 transition-all ease-in-out z-50 " +
+                "right-[2.5rem] bottom-[2.5rem] duration-200 transition-all ease-in-out z-50 " +
                 (state.widget ? "scale-[80%]" : "")} onClick={toggleWidget}
                     style={{boxShadow: '0 4px 8px rgba(0,0,0,.4)'}}>
                 {state.widget ? <KeyboardArrowDownIcon className="m-auto w-[70%] h-[70%] rotate-180"/> :
@@ -29,11 +29,11 @@ const BuyMeACoffeeWidget = () => {
                 }
             </button>
             <div className={"fixed m-0 border-0 right-20 bottom-20 rounded-2xl shadow-xl z-30 " +
-                "transition-all duration-300 w-[335px] ease-in-out bg-white " + (state.widget ? "h-[530px]" : "h-0 opacity-0")}>
+                "transition-all duration-300 w-[335px] ease-in-out bg-white overflow:hidden " + (state.widget ? "h-[530px]" : "h-0 opacity-0")}>
                 {
                     state.triggered ?
                         <iframe className={"m-0 border-0 right-20 bottom-20 z-30 rounded-2xl " +
-                            "transition-all duration-300 w-[335px] ease-in-out bg-white " + (state.widget ? "h-[530px]" : "h-0 opacity-0")}
+                            "transition-all duration-300 w-[335px] ease-in-out bg-white overflow:hidden " + (state.widget ? "h-[530px]" : "h-0 opacity-0")}
                                 src={path}
                                 title="Buy Me a Coffee"/> : null
                 }

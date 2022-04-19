@@ -1,9 +1,18 @@
 import React from "react";
 import Head from "next/head";
+import {useRouter} from "next/router";
 
 
-function SEO({description, title}: { description: string, title: string }) {
-
+function SEO({title}: { title?: string }) {
+    let title1: string;
+    let title2: string;
+    if (title) {
+        title1 = title + " - Daily MEPhi";
+        title2 = "Daily MEPhi - " + title;
+    } else {
+        title1 = "Daily MEPhi";
+        title2 = "Студенческий портал Daily MEPhi";
+    }
     return (
         <Head>
             <meta charSet="utf-8"/>
@@ -29,11 +38,13 @@ function SEO({description, title}: { description: string, title: string }) {
             />
             {/*<link rel="apple-touch-icon" href="/apple-icon.png"/>*/}
             <meta name="theme-color" content="#317EFB"/>
-            <title>{title + " - Daily MEPhi"}</title>
-            <meta name="description" content={description}/>
-            <meta property="og:description" content={description}/>
+            <title>{title1}</title>
+            {/*<meta name="description" content={description}/>*/}
+            {/*<meta property="og:description" content={description}/>*/}
             <meta property="og:locale" content="ru"/>
-            <meta property="og:title" content={"Daily MEPhi - " + title}/>
+            <meta property="og:title" content={"Студенческий портал Daily MEPhi"}/>
+            <meta property="og:title" content={title2}/>
+
             <meta property="vk:image" content='/images/twitter-large.png'/>
             <meta property="og:type" content="object"/>
             <meta name="twitter:title" content="Daily MEPhi"/>

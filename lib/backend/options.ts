@@ -1,32 +1,41 @@
 import DailyOauth from "./dailyOauth";
-import FirebaseAdapter from "./firebase-adapter";
-import {JWT} from "./next-auth/src/jwt";
-import {Session, User} from "./next-auth/src";
+// import FirebaseAdapter from "./firebase-adapter";
+import HomeMEPhiOauth from "./OauthConfig";
+import {Session, User} from "next-auth";
+import {JWT} from "next-auth/jwt";
+import NextAuth from "next-auth"
+import SequelizeAdapter from "@next-auth/sequelize-adapter"
+import {Sequelize} from "sequelize";
 // import GoogleProvider from "next-auth/providers/google";
 //
 // if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET)
 //     throw new Error("There are not enough secrets");
 
+const sequelize = new Sequelize('postgres://PotatoHD:password@localhost:5432/stocks');
+
 export const nextAuthOptions = {
     // https://next-auth.js.org/providers/overview
     secret: process.env.AUTH_SECRET,
     providers: [
-        DailyOauth(),
-        // GoogleProvider({
-        //     clientId: process.env.GOOGLE_CLIENT_ID,
-        //     clientSecret: process.env.GOOGLE_CLIENT_SECRET
-        // })
+        HomeMEPhiOauth(),
     ],
-    callbacks: {
-        async session({session, token, user}: {
-            session: Session
-            user: User
-            token: JWT
-        }) {
-            (session.user as any).id = user.id;
-            return session;
-        }
+    pages: {
+        signIn: '/',
+        // signOut: '/auth/signout',
+        error: '/500', // Error code passed in query string as ?error=
+        // verifyRequest: '/auth/verify-request', // (used for check email message)
+        // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
     },
-    adapter: FirebaseAdapter()
+    // callbacks: {
+    //     async session({session, token, user}: {
+    //         session: Session
+    //         user: User
+    //         token: JWT
+    //     }) {
+    //         (session.user as any).id = user.id;
+    //         return session;
+    //     }
+    // },
+    adapter: SequelizeAdapter(sequelize)
 
 };
