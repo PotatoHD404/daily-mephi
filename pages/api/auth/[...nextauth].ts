@@ -1,5 +1,5 @@
 import NextAuth from "next-auth"
-import {nextAuthOptions} from "../../../lib/backend/auth/nextAuthOptions";
+import {nextAuthOptions} from "../../../lib/auth/nextAuthOptions";
 import {NextApiRequest, NextApiResponse} from "next";
 
 // if (process.env.GOOGLE_CLIENT_ID === undefined

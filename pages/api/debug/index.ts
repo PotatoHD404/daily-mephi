@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {getHost} from "../../../lib/backend/utils";
-import {getDb} from "../../../lib/backend/database/db"
+import {getHost} from "../../../lib/utils";
+import {getDb} from "../../../lib/database/db"
 
 async function handler(
     req: NextApiRequest,

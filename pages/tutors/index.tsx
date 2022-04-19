@@ -3,7 +3,7 @@ import SEO from "../../components/seo";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import {a11yProps} from "../../lib/frontend/utils";
+import {a11yProps} from "../../helpers/utils";
 import Image from "next/image";
 import MiniCat from "../../images/minicat_transparent.svg";
 import LikeIco from "../../images/like.svg";

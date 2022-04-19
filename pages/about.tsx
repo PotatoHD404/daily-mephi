@@ -2,7 +2,7 @@ import React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import {a11yProps} from '../lib/frontend/utils'
+import {a11yProps} from '../helpers/utils'
 import Image from "next/image";
 import LikeIco from "../images/like.svg";
 import CommentIco from "../images/comment.svg";

@@ -11,7 +11,7 @@ import CommentIco from '../../images/comment.svg'
 import Comment from "../../components/comment";
 import QuoteIco from "../../images/quote.svg";
 import DownloadIco from '../../images/download.svg';
-import {a11yProps} from '../../lib/frontend/utils'
+import {a11yProps} from '../../helpers/utils'
 import SEO from "../../components/seo";
 
 

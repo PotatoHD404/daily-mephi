@@ -18,7 +18,7 @@
 //
 // import {getAuthToken, initializeAdmin} from "../database";
 // import {getAuth, signInWithCustomToken} from "firebase/auth";
-// // import app from "../../frontend/database";
+// // import app from "../../helpers/database";
 // import {randomBytes} from "crypto";
 //
 //

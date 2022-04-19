@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Tutor} from "../lib/backend/models";
+import {Tutor} from "../lib/models";
 import withSession from "../components/withSession";
 import {Session} from "next-auth";
 import SEO from "../components/seo";

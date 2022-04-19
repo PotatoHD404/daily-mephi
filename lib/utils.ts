@@ -39,7 +39,7 @@ export function checkStatus(options: https.RequestOptions, data?: any): Promise<
 
 export function setCookie(res: NextApiResponse, cookie: Cookie) {
     // Preserve any existing cookies that have already been set in the same session
-    let setCookieHeader = res.getHeader("Set-Cookie") ?? [];
+    let setCookieHeader = res.getHeader("Set-Cookies") ?? [];
     // If not an array (i.e. a string with a single cookie) convert it into an array
     // if(!setCookieHeader)
     //     throw new Error("");
@@ -49,7 +49,7 @@ export function setCookie(res: NextApiResponse, cookie: Cookie) {
     const {name, value, options} = cookie;
     const cookieHeader = serialize(name, value, options);
     setCookieHeader.push(cookieHeader);
-    res.setHeader("Set-Cookie", setCookieHeader);
+    res.setHeader("Set-Cookies", setCookieHeader);
 }
 
 export function redirect(res: NextApiResponse, url: string, cookies?: Cookie[]) {
