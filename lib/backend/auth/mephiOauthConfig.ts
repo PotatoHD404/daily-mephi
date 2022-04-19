@@ -1,6 +1,6 @@
 import {OAuthConfig} from "next-auth/providers";
-import {getHost} from "./utils";
-import {hash} from "./crypto";
+import {getHost} from "../utils";
+import {hash} from "../crypto";
 
 export interface Profile {
     id: string

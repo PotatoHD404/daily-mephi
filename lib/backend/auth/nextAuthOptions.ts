@@ -1,6 +1,6 @@
-import DailyOauth from "./dailyOauth";
+import DailyOauth from "../dailyOauth";
 // import FirebaseAdapter from "./firebase-adapter";
-import HomeMEPhiOauth from "./OauthConfig";
+import HomeMEPhiOauth from "./mephiOauthConfig";
 import {Session, User} from "next-auth";
 import {JWT} from "next-auth/jwt";
 import NextAuth from "next-auth"

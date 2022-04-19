@@ -43,3 +43,4 @@ notes.txt
 
 public/workbox-*.js
 public/service-worker.js
+/ydb_certs/
