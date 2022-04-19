@@ -106,7 +106,7 @@ function MyApp(
             </div>
             {/*w-[125rem]*/}
             <div className={"font-[Montserrat] relative min-h-screen pb-24 "
-                + (home ? "grid" : "max-w-[85rem] mx-auto")}>
+                + (home ? "" : "max-w-[85rem] mx-auto")}>
 
 
                 <Navbar/>

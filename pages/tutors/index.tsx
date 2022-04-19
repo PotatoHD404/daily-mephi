@@ -24,6 +24,9 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import blue from "@mui/material/colors/blue";
 import Slider from "@mui/material/Slider";
 import Star from "@mui/icons-material/Star";
+import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+// import { useDemoData } from '@mui/x-data-grid-generator';
 
 
 const StyledInput = styled(Input)(() => ({
@@ -102,6 +105,27 @@ const marks = [
 // }}
 
 
+const rows: GridRowsProp = [
+    {id: 1, col1: 'Hello', col2: 'World'},
+    {id: 2, col1: 'DataGridPro', col2: 'is Awesome'},
+    {id: 3, col1: 'MUI', col2: 'is Amazing'},
+];
+
+const columns: GridColDef[] = [
+    {field: 'col1', headerName: 'Column 1'},
+    {field: 'col2', headerName: 'Column 2'},
+];
+
+function BasicExampleDataGrid() {
+
+    return (
+        <div style={{height: 400, width: '100%'}}>
+            <DataGrid rows={rows} columns={columns}/>
+        </div>
+    );
+}
+
+
 function Tutors() {
 
     const [value, setValue] = React.useState<number[]>([0, 5]);
@@ -118,6 +142,7 @@ function Tutors() {
                 <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
                 <div className="flex w-full justify-between">
                     <div className="w-[75%]">
+                        {/*<BasicExampleDataGrid/>*/}
                         <div className="rounded-2xl p-6 text-[1.7rem] bg-white bg-opacity-90">
                             <table className="table-auto w-full">
                                 <thead>

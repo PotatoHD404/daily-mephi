@@ -66,7 +66,7 @@ class Home extends Component<{ session: Session }> {
             <>
                 <SEO/>
 
-                <div className="flex grid-cols-12 grid pb-12">
+                <div className="flex grid-cols-12 grid pb-12 h-auto">
                     <div className="flex col-start-2 col-end-13 content-between items-center gap-4">
                         <div
                             className="items-center justify-start flex flex-wrap w-[42.8%] h-[50%]  mt-[6.5%]">

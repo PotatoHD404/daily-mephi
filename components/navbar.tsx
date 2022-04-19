@@ -22,7 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => void }) {
     if (home)
         return (
-            <nav className="mb-0 flex grid-cols-12 grid text-4xl py-12">
+            <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
                 <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid">
                     <div className="flex col-start-1 col-end-10 justify-between">
