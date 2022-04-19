@@ -1,45 +1,55 @@
-import {OAuthConfig, OAuthUserConfig} from "next-auth/providers";
-import {TokenSet} from "next-auth";
-import {Awaitable} from "next-auth";
+import {OAuthConfig} from "next-auth/providers";
+import {getHost} from "./utils";
+import {hash} from "./crypto";
 
 export interface Profile {
     id: string
 }
 
+const host = getHost() + "/api/auth/callback/home";
 
-// export interface TokenSetParameters {
-//     access_token?: string;
-//     token_type?: string;
-//     id_token?: string;
-//     refresh_token?: string;
-//     scope?: string;
-//
-//     expires_at?: number;
-//     session_state?: string;
-//
-//     [key: string]: unknown;
-// }
+// It's a little dirty code, but it's working! It's converting CAS auth to OAuth formatting
 
 export default function HomeOauth<P extends Record<string, any> = Profile>(): OAuthConfig<P> {
     return {
         id: "home",
         name: "Home MEPHi",
         type: "oauth",
-        // wellKnown: "https://accounts.google.com/.well-known/openid-configuration",
         authorization: {
             url: "https://login.mephi.ru/login",
-            params: {service: "http://localhost:3000/api/auth/callback/home"} // TODO: add host check
+            params: {service: host} // TODO: add host check
         },
-        // idToken: true,
-        // checks: ["pkce", "state"],
         token: {
-            url: "https://login.mephi.ru/validate",
-            async request(context) {
-                // context contains useful properties to help you make the request.
-                // const tokens = await makeTokenRequest(context)
-                console.log(context);
-                return {tokens: {access_token: 'token'}}
+            url: "http://localhost:3000/api/debug",
+            async request({params}) {
+                if(!params.code)
+                    throw new Error("There is no cas ticket");
+                const query = new URLSearchParams({service: host, ticket: params.code});
+                const response = await fetch('https://login.mephi.ru/validate?' + query)
+                const respString = await response.text();
+                // const respString = 'yes\n1\n';
+                const resArr: string[] = respString.split('\n');
+                if (resArr[0] !== 'yes' || !resArr[1])
+                    throw new Error("Something went wrong during cas login");
+                const access_token: string = await hash(resArr[1]);
+
+                return {tokens: {access_token}}
             }
-        }
+        },
+        userinfo: {
+            url: "https://example.com/oauth/userinfo",
+            async request({tokens: {access_token}}) {
+                if (!access_token)
+                    throw new Error("Something went wrong during getting user info");
+                return {id: access_token}
+            }
+        },
+        profile(profile) {
+            return {
+                id: profile.id,
+                name: profile.id
+            };
+        },
+        clientId: '1'
     }
 }

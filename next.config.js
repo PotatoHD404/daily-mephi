@@ -1,4 +1,4 @@
-const withPWA = require('next-pwa');
+// const withPWA = require('next-pwa');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
@@ -9,14 +9,14 @@ const nextConfig = {
     experimental: {
         esmExternals: false
     },
-    pwa: {
-        dest: 'public',
-        disable: process.env.NODE_ENV === 'development',
-        register: true,
-        // scope: '/app',
-        sw: 'service-worker.js',
-        //...
-    },
+    // pwa: {
+    //     dest: 'public',
+    //     disable: process.env.NODE_ENV === 'development',
+    //     register: true,
+    //     // scope: '/app',
+    //     sw: 'service-worker.js',
+    //     //...
+    // },
     module: {
         rules: [
             {
@@ -37,4 +37,5 @@ const nextConfig = {
 }
 //https://www.npmjs.com/package/next-pwa
 
-module.exports = withPWA(nextConfig)
+// module.exports = withPWA(nextConfig)
+module.exports = nextConfig

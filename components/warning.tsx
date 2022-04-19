@@ -53,7 +53,7 @@ export default function WarningDialog(props: DialogProps) {
     const {handleClose, opened} = props;
 
     const auth = async () => {
-        await signIn();
+        await signIn('home');
         handleClose();
     }
 

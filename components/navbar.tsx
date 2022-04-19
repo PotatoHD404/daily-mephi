@@ -17,9 +17,11 @@ import miniCat from '../images/minicat_transparent.svg'
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
+import {useSession} from "next-auth/react";
 
 
 function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => void }) {
+    const {data: session, status } = useSession()
     if (home)
         return (
             <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
@@ -37,11 +39,16 @@ function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => vo
                             <a className="underlining"><h3>Преподаватели</h3></a>
                         </Link>
                     </div>
+                    {(status === "loading" || status === "unauthenticated" || !session) ?
+                        <button onClick={handleClickOpen}
+                                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                            <h3>Войти</h3>
+                        </button> :
+                        <button onClick={handleClickOpen}
+                                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                            <h3>{session.user?.name}</h3>
+                        </button>}
 
-                    <button onClick={handleClickOpen}
-                            className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                        <h3>Войти</h3>
-                    </button>
 
                 </div>
             </nav>);
