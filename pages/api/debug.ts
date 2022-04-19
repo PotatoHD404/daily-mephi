@@ -2,26 +2,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 
 
-import {
-    getFirestore,
-    doc,
-    getDoc,
-
-    connectFirestoreEmulator,
-
-    addDoc,
-    collection as col,
-
-    getDocs,
-    limit,
-    query,
-    where,
-    updateDoc,
-    deleteDoc, enableIndexedDbPersistence, initializeFirestore, setLogLevel,
-} from 'firebase/firestore'
-import {Tutor} from '../../lib/backend/models'
-import {FirebaseApp, getApp, getApps, initializeApp} from "firebase/app";
-import {connectAuthEmulator, getAuth} from "firebase/auth";
 
 export default async function handler(
     req: NextApiRequest,

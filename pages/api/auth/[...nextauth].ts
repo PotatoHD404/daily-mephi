@@ -1,7 +1,4 @@
-import GoogleProvider from "next-auth/providers/google"
 import NextAuth from "next-auth"
-import FirebaseAdapter from "../../../lib/backend/firebase-adapter";
-import CredentialsProvider from "next-auth/providers/credentials";
 import {nextAuthOptions} from "../../../lib/backend/options";
 
 // if (process.env.GOOGLE_CLIENT_ID === undefined

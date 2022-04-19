@@ -8,6 +8,7 @@ import CloseIcon from '../images/close_icon.svg';
 import WarningCat from '../images/warning_cat.svg'
 import Link from "next/link";
 import styles from "../styles/warning.module.css";
+import {signIn} from "next-auth/react";
 
 
 
@@ -50,6 +51,11 @@ export interface DialogProps {
 
 export default function WarningDialog(props: DialogProps) {
     const {handleClose, opened} = props;
+
+    const auth = async () => {
+        await signIn();
+        handleClose();
+    }
 
     return (
         <>
@@ -105,7 +111,7 @@ export default function WarningDialog(props: DialogProps) {
                                     </div>
                                 </div>
                                 <div className="col-span-12 h-full rounded-full border-2 border-black">
-                                    <StyledButton onClick={handleClose}>
+                                    <StyledButton onClick={auth}>
                                         Продолжить
                                     </StyledButton>
                                 </div>
