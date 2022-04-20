@@ -2,10 +2,9 @@ import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/ne
 import {Controller} from "lib/decorators/Controller";
 import {createHandlers} from "../../../helpers/utils";
 
-type CommentType = "materials" | "reviews" | "news" | "comments";
 
 @Controller("/comments")
-class CommentsHandler {
+class CommentsController {
 
     @Post("/")
     public async add() {
@@ -23,4 +22,4 @@ class CommentsHandler {
     // }
 }
 
-export default createHandlers(CommentsHandler);
+export default createHandlers(CommentsController);
