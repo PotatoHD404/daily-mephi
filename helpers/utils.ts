@@ -109,20 +109,26 @@ export function findRoute(
     verb: string,
     path: string
 ): [Key[], RegExpExecArray | null | undefined, HandlerMethod | undefined] {
-    const methods: Array<HandlerMethod> = Reflect.getMetadata(HTTP_METHOD_TOKEN, cls);
+    let methods: Array<HandlerMethod> = Reflect.getMetadata(HTTP_METHOD_TOKEN, cls);
     const basePath: string = Reflect.getMetadata(BASE_PATH_TOKEN, cls);
+
+    methods = methods.map(f => {
+        return {
+            ...f,
+            path: basePath + (f.path === "/" ? "" : f.path)
+        }
+    })
 
     const {pathToRegexp} = loadPackage('path-to-regexp');
     if (!pathToRegexp) {
-        const method = methods.find(f => basePath + f.path === path && f.verb === verb);
-        return [[], undefined, method ?? methods.find(f => (basePath + f.path) === '/' && f.verb === verb)];
+        const method = methods.find(f => f.path === path && f.verb === verb);
+        return [[], undefined, method ?? methods.find(f => (f.path) === '/' && f.verb === verb)];
     }
 
     const keys: Key[] = [];
     let match: RegExpExecArray | null | undefined;
     const method = methods.find(f => {
-        match = pathToRegexp(basePath + f.path, keys).exec(path);
-
+        match = pathToRegexp(f.path, keys).exec(path);
         const condition = f.verb === verb && match?.length;
 
         if (!condition) {

@@ -1,20 +1,26 @@
 import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
 import {Controller} from "lib/decorators/Controller";
+import {createHandlers} from "../../../helpers/utils";
 
 type CommentType = "materials" | "reviews" | "news" | "comments";
 
-@Controller()
+@Controller("/comments")
 class CommentsHandler {
 
     @Post("/")
-    public async add(@Param('type') type: CommentType, @Param('id') id: string) {
+    public async add() {
         return ""
     }
 
-    @Delete("/:id")
-    public async delete(@Param('type') type: CommentType, @Param('id') id: string) {
-        return ""
+    @Get("/")
+    public async test() {
+        return "1"
     }
+
+    // @Delete("/:id")
+    // public async delete(@Param('id') id: string) {
+    //     return ""
+    // }
 }
 
-export default createHandler(CommentsHandler);
+export default createHandlers(CommentsHandler);
