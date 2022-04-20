@@ -1,7 +1,9 @@
 import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
+import {Controller} from "lib/decorators/Controller";
 
 type CommentType = "materials" | "reviews" | "news" | "comments";
 
+@Controller()
 class CommentsHandler {
 
     @Post("/")

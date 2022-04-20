@@ -7,8 +7,8 @@ export const Cookies = createParamDecorator<NextApiRequest["cookies"]>(
     }
 );
 
-export const Cookie = createParamDecorator<string | undefined>(
+export const Cookie = (name: string) => createParamDecorator<string | undefined>(
     req => {
-        return req.cookies
+        return req.cookies[name]
     }
 );

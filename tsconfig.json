@@ -20,7 +20,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",

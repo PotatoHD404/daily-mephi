@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import CoffeeCup from '../images/coffee.svg'
+import CoffeeCup from 'images/coffee.svg'
 import Image from "next/image";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 

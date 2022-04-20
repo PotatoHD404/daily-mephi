@@ -1,5 +1,5 @@
 import React from "react";
-import SEO from "../components/seo";
+import SEO from "components/seo";
 
 
 function Materials() {

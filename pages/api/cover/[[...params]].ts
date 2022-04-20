@@ -1,4 +1,4 @@
-import getSvg from "../../../components/getSvg";
+import getSvg from "components/getSvg";
 import {createHandler, Get, Param, SetHeader} from '@storyofams/next-api-decorators';
 import sharp from 'sharp';
 import path from "path";
