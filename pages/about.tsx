@@ -2,17 +2,17 @@ import React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import {a11yProps} from '../lib/frontend/utils'
+import {a11yProps} from 'helpers/reactUtils'
 import Image from "next/image";
-import LikeIco from "../images/like.svg";
-import CommentIco from "../images/comment.svg";
-import Comment from "../components/comment";
-import ProfileIco from "../images/profile3.png";
-import MiniCat from "../images/minicat_transparent.svg";
-import GoldenCrown from "../images/golden_crown.svg";
-import SilverCrown from "../images/silver_crown.svg";
-import BronzeCrown from "../images/bronze_crown.svg";
-import SEO from "../components/seo";
+import LikeIco from "images/like.svg";
+import CommentIco from "images/comment.svg";
+import Comment from "components/comment";
+import ProfileIco from "images/profile3.png";
+import MiniCat from "images/minicat_transparent.svg";
+import GoldenCrown from "images/golden_crown.svg";
+import SilverCrown from "images/silver_crown.svg";
+import BronzeCrown from "images/bronze_crown.svg";
+import SEO from "components/seo";
 
 
 function About() {

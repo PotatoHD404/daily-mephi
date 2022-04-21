@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import GitHub from '../images/github.svg'
+import GitHub from 'images/github.svg'
 import Image from "next/image";
 import {useRouter} from "next/router";
 import Divider from "@mui/material/Divider";

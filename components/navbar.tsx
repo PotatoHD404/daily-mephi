@@ -10,10 +10,10 @@ import MailIcon from "@mui/icons-material/Mail";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
-import WarningDialog from '../components/warning';
+import WarningDialog from 'components/warning';
 import {useRouter} from "next/router";
 import Image from "next/image";
-import miniCat from '../images/minicat_transparent.svg'
+import miniCat from 'images/minicat_transparent.svg'
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";

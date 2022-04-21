@@ -1,14 +1,14 @@
 import React, {Component} from "react";
-import {Tutor} from "../lib/backend/models";
-import withSession from "../components/withSession";
+import {Tutor} from "lib/database/models";
+import withSession from "components/withSession";
 import {Session} from "next-auth";
-import SEO from "../components/seo";
+import SEO from "components/seo";
 import Image from 'next/image'
-import Logo from '../images/logo.svg'
-import MiniCat from '../images/minicat.svg'
+import Logo from 'images/logo.svg'
+import MiniCat from 'images/minicat.svg'
 
 import SearchIcon from '@mui/icons-material/Search';
-import BuyMeACoffee from "../components/buyMeCoffee";
+import BuyMeACoffee from "components/buyMeCoffee";
 import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
 

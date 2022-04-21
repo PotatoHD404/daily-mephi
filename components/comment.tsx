@@ -1,6 +1,6 @@
 import Image from "next/image";
-import ProfilePicture2 from "../images/profile2.png";
-import CommentIco from '../images/comment.svg';
+import ProfilePicture2 from "images/profile2.png";
+import CommentIco from 'images/comment.svg';
 import React from "react";
 
 interface MyProps {

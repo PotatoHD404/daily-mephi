@@ -1,18 +1,18 @@
 import React from "react";
-import TutorImage from '../../images/tutor.png'
+import TutorImage from 'images/tutor.png'
 import Image from "next/image";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import HoverRating from "../../components/rating";
-import ProfilePicture2 from '../../images/profile2.png';
-import LikeIco from '../../images/like.svg';
-import CommentIco from '../../images/comment.svg'
-import Comment from "../../components/comment";
-import QuoteIco from "../../images/quote.svg";
-import DownloadIco from '../../images/download.svg';
-import {a11yProps} from '../../lib/frontend/utils'
-import SEO from "../../components/seo";
+import HoverRating from "components/rating";
+import ProfilePicture2 from 'images/profile2.png';
+import LikeIco from 'images/like.svg';
+import CommentIco from 'images/comment.svg'
+import Comment from "components/comment";
+import QuoteIco from "images/quote.svg";
+import DownloadIco from 'images/download.svg';
+import {a11yProps} from 'helpers/reactUtils'
+import SEO from "components/seo";
 
 
 function Tutor() {
