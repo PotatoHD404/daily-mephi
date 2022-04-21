@@ -1,6 +1,6 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 
-class NewsHandler {
+export class NewsController {
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
@@ -22,5 +22,3 @@ class NewsHandler {
         return ""
     }
 }
-
-export default createHandler(NewsHandler);

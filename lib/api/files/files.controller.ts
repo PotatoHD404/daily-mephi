@@ -5,7 +5,7 @@ import {checkStatus, doRequest, setCookie} from "helpers/utils";
 import {Client} from "@notionhq/client";
 import {decrypt, encrypt} from "helpers/crypto";
 
-class FilesHandler {
+export class FilesController {
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
@@ -170,5 +170,3 @@ class FilesHandler {
 
     }
 }
-
-export default createHandler(FilesHandler);

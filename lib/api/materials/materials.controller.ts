@@ -1,6 +1,6 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 
-class MaterialsHandler {
+export class MaterialsController {
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
@@ -22,5 +22,3 @@ class MaterialsHandler {
         return ""
     }
 }
-
-export default createHandler(MaterialsHandler);

@@ -7,7 +7,7 @@ path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
 
-class CoverHandler {
+export class CoverController {
     @Get("/tutors/:id")
     @SetHeader('Content-Type', 'image/png')
     public async tutors(@Param('id') id: string) {
@@ -41,5 +41,3 @@ class CoverHandler {
         return await roundedCornerResizer.toBuffer()
     }
 }
-
-export default createHandler(CoverHandler);

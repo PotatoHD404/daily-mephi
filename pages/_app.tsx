@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import 'styles/globals.css'
 import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";

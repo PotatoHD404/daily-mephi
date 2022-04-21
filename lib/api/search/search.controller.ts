@@ -1,6 +1,6 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 
-class SearchHandler {
+export class SearchController {
 
     @Get("/tutors")
     public async getTutors() {
@@ -12,5 +12,3 @@ class SearchHandler {
         return ""
     }
 }
-
-export default createHandler(SearchHandler);

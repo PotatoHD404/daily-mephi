@@ -2,15 +2,8 @@ import https from "https";
 import {ClientRequest} from "http";
 import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
-import type {NextApiHandler, NextApiRequest, NextApiResponse} from 'next';
-import {getCallerInfo} from '@storyofams/next-api-decorators/dist/internals/getCallerInfo';
-import {getParams} from '@storyofams/next-api-decorators/dist/internals/getParams';
-import {notFound} from '@storyofams/next-api-decorators/dist/internals/notFound';
-import {parseRequestUrl} from '@storyofams/next-api-decorators/dist/internals/parseRequestUrl';
-import {BASE_PATH_TOKEN} from "lib/decorators/Controller";
-import {HandlerMethod, HTTP_METHOD_TOKEN} from "@storyofams/next-api-decorators/dist/decorators";
-import {Key} from "path-to-regexp";
-import {loadPackage} from "@storyofams/next-api-decorators/dist/internals/loadPackage";
+import type {NextApiResponse} from 'next';
+
 
 interface Cookies {
     [Key: string]: { Value: string, Domain: string, Path: string, Expires: Date };
@@ -73,71 +66,3 @@ export function getHost() {
     return process.env.VERCEL_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 }
 
-export function createHandlers(...classes: (new (...args: any[]) => any)[]): NextApiHandler {
-    const instances = classes.map(cls => new cls());
-    const [directory, fileName] = getCallerInfo();
-
-    return (req: NextApiRequest, res: NextApiResponse) => {
-        if (!req.url || !req.method) {
-            return notFound(req, res);
-        }
-
-        const path = parseRequestUrl(req, directory, fileName);
-        for (let i = 0; i < instances.length; ++i) {
-            const [keys, match, method] = findRoute(classes[i], req.method, path);
-
-            if (!method)
-                continue;
-
-            const methodFn = instances[i][method.propertyKey];
-            if (!methodFn)
-                continue;
-
-            // @ts-ignore
-            req.params = getParams(keys, match);
-
-            return methodFn.call(instances, req, res);
-        }
-        return notFound(req, res);
-
-
-    };
-}
-
-export function findRoute(
-    cls: Record<string, any>,
-    verb: string,
-    path: string
-): [Key[], RegExpExecArray | null | undefined, HandlerMethod | undefined] {
-    let methods: Array<HandlerMethod> = Reflect.getMetadata(HTTP_METHOD_TOKEN, cls);
-    const basePath: string = Reflect.getMetadata(BASE_PATH_TOKEN, cls);
-
-    methods = methods.map(f => {
-        return {
-            ...f,
-            path: basePath + (f.path === "/" ? "" : f.path)
-        }
-    })
-
-    const {pathToRegexp} = loadPackage('path-to-regexp');
-    if (!pathToRegexp) {
-        const method = methods.find(f => f.path === path && f.verb === verb);
-        return [[], undefined, method ?? methods.find(f => (f.path) === '/' && f.verb === verb)];
-    }
-
-    const keys: Key[] = [];
-    let match: RegExpExecArray | null | undefined;
-    const method = methods.find(f => {
-        match = pathToRegexp(f.path, keys).exec(path);
-        const condition = f.verb === verb && match?.length;
-
-        if (!condition) {
-            keys.length = 0;
-            match = undefined;
-        }
-
-        return condition;
-    });
-
-    return [keys, match, method];
-}

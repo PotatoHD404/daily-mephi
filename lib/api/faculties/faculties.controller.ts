@@ -2,12 +2,10 @@ import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/ne
 
 type CommentType = "materials" | "reviews" | "news" | "comments";
 
-class CommentsHandler {
+export class CommentsController {
 
     @Get("/")
     public async get() {
         return ""
     }
 }
-
-export default createHandler(CommentsHandler);

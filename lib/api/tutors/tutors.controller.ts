@@ -1,6 +1,6 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 
-class TutorsHandler {
+export class TutorsController {
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
@@ -42,5 +42,3 @@ class TutorsHandler {
         return ""
     }
 }
-
-export default createHandler(TutorsHandler);

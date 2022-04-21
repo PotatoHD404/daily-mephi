@@ -1,10 +1,11 @@
 import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
 import {Controller} from "lib/decorators/Controller";
-import {createHandlers} from "../../../helpers/utils";
 
 
 @Controller("/comments")
-class CommentsController {
+export class CommentsController {
+
+
 
     @Post("/")
     public async add() {
@@ -21,5 +22,3 @@ class CommentsController {
     //     return ""
     // }
 }
-
-export default createHandlers(CommentsController);
