@@ -1,8 +1,8 @@
 import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
+import {Controller} from "../../decorators/controller.decorator";
 
-type CommentType = "materials" | "reviews" | "news" | "comments";
-
-export class CommentsController {
+@Controller("/faculties")
+class FacultiesController {
 
     @Get("/")
     public async get() {

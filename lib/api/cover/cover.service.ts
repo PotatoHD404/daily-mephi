@@ -1,8 +1,6 @@
-import {Service} from "typedi";
+import {Service} from "lib/decorators/service.decorator";
 
-@Service({id: "test", multiple: true})
+
+@Service()
 export class CoverService {
-    print(){
-        console.log("b")
-    }
 }

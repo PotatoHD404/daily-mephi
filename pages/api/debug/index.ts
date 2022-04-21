@@ -22,7 +22,7 @@ export default async function handler(
     }
 
     const tmp = new Test1();
-    tmp.database.print();
+
     // console.log(tmp.subcommands);
 
     // const db = getDb();

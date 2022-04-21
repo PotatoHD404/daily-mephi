@@ -1,4 +1,4 @@
-export function Test(): Function {
+export function TestDecorator(): Function {
     return function (target: object | Function, propertyKey: string) {
         switch (typeof target) {
             case 'function': {

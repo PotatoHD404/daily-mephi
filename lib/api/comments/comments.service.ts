@@ -1,12 +1,6 @@
-import {Get} from "@storyofams/next-api-decorators";
-import {Controller} from "../../decorators/Controller";
+import {Service} from "lib/decorators/service.decorator";
 
 
-@Controller()
-class CommentsService {
-    @Get("/bob")
-    func1() {
-        return "123"
-    }
-
+@Service()
+export class CommentsService {
 }

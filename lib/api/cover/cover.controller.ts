@@ -2,16 +2,17 @@ import getSvg from "components/getSvg";
 import {createHandler, Get, Param, SetHeader} from '@storyofams/next-api-decorators';
 import sharp from 'sharp';
 import path from "path";
+import {Controller} from "../../decorators/controller.decorator";
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
-
-export class CoverController {
+@Controller("/cover")
+class CoverController {
     @Get("/tutors/:id")
     @SetHeader('Content-Type', 'image/png')
     public async tutors(@Param('id') id: string) {
-        const svg = getSvg('Test', 'Test2');
+        const svg = getSvg('TestDecorator', 'Test2');
         const roundedCorners = Buffer.from(svg);
 
         const roundedCornerResizer = sharp(roundedCorners).png();
@@ -22,7 +23,7 @@ export class CoverController {
     @Get("/quotes/:id")
     @SetHeader('Content-Type', 'image/png')
     public async quotes(@Param('id') id: string) {
-        const svg = getSvg('Test', 'Test2');
+        const svg = getSvg('TestDecorator', 'Test2');
         const roundedCorners = Buffer.from(svg);
 
         const roundedCornerResizer = sharp(roundedCorners).png();
@@ -33,7 +34,7 @@ export class CoverController {
     @Get("/users/:id")
     @SetHeader('Content-Type', 'image/png')
     public async users(@Param('id') id: string) {
-        const svg = getSvg('Test', 'Test2');
+        const svg = getSvg('TestDecorator', 'Test2');
         const roundedCorners = Buffer.from(svg);
 
         const roundedCornerResizer = sharp(roundedCorners).png();

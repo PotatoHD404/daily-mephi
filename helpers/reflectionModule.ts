@@ -60,11 +60,12 @@ export class ApiModule {
 
         let methods: Array<HandlerMethod> = Reflect.getMetadata(HTTP_METHOD_TOKEN, cls);
         const basePath: string = Reflect.getMetadata(BASE_PATH_TOKEN, cls);
-
+        if(!basePath)
+            return [[], undefined, undefined];
         methods = methods.map(f => {
             return {
                 ...f,
-                path: (basePath + f.path).replace("//", "/")
+                path: (basePath + (f.path === "/" ? "" : f.path)).replace("//", "/")
             }
         })
 
@@ -72,6 +73,7 @@ export class ApiModule {
         let match: RegExpExecArray | null | undefined;
         const method = methods.find(f => {
             match = pathToRegexp(f.path, keys).exec(path);
+            // console.log(path, f.path)
             const condition = f.verb === verb && match?.length;
 
             if (!condition) {

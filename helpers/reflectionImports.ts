@@ -7,7 +7,7 @@ import {parseRequestUrl} from "@storyofams/next-api-decorators/dist/internals/pa
 import {getParams} from "@storyofams/next-api-decorators/dist/internals/getParams";
 import {Key, pathToRegexp} from "path-to-regexp";
 import {HandlerMethod, HTTP_METHOD_TOKEN} from "@storyofams/next-api-decorators/dist/decorators";
-import {BASE_PATH_TOKEN} from "lib/decorators/Controller";
+import {BASE_PATH_TOKEN} from "lib/decorators/controller.decorator";
 
 export {
     container,

@@ -1,6 +1,9 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
+import {Controller} from "../../decorators/controller.decorator";
 
-export class UsersController {
+
+@Controller("/users")
+class UsersController {
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
