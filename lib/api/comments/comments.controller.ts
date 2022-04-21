@@ -19,8 +19,4 @@ class CommentsController {
         return "123"
     }
 
-    // @Delete("/:id")
-    // public async delete(@Param('id') id: string) {
-    //     return ""
-    // }
 }

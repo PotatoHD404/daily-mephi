@@ -1,23 +1,12 @@
-import fs from 'fs'
-import path from 'path'
-import pino from 'pino'
+import {Driver, AnonymousAuthService,} from 'ydb-sdk'
+import {Database} from "../decorators/database.decorator";
 
-import {
-    Driver,
-    IamAuthService,
-    TokenAuthService,
-    AnonymousAuthService,
-    getSACredentialsFromJson,
-    MetadataAuthService,
-} from 'ydb-sdk'
-
-let db: Ydb | null = null;
-
+@Database()
 export class Ydb {
     timeout = 10000
     driver: Driver
 
-    constructor(endpoint: string, database: string) {
+    constructor(endpoint: string = 'localhost:2135', database: string = '/local') {
         this.driver = new Driver({endpoint, database, authService: new AnonymousAuthService()});
     }
 
@@ -31,11 +20,4 @@ export class Ydb {
         }
     }
 
-}
-
-
-export function getDb(): Ydb {
-    if (!db)
-        db = new Ydb('localhost:2135', '/local')
-    return db;
 }
