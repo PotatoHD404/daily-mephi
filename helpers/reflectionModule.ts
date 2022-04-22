@@ -34,7 +34,7 @@ export class ApiModule {
 
                 if (!method)
                     continue;
-
+                // console.log(this.controllers[i])
                 const cls: any = container.resolve(this.controllers[i]);
 
                 const methodFn = cls[method.propertyKey];

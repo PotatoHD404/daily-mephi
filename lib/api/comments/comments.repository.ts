@@ -1,5 +1,5 @@
 import {Repository} from "lib/decorators/repository.decorator";
-import {Ydb} from "lib/database/db";
+import {DB} from "lib/database/db";
 import {Repo} from "../../interfaces/repository";
 import {Comment} from "./comments.entity"
 import {string} from "prop-types";
@@ -7,27 +7,29 @@ import {string} from "prop-types";
 
 @Repository()
 export class CommentsRepository implements Repo<Comment> {
-    constructor(database: Ydb) {
+    constructor(private db: DB) {
     }
 
-    add(dto: Partial<Comment>): boolean {
-        return false;
+    async find(params: Partial<Comment>): Promise<Comment[]> {
+        const query = `SELECT * FROM /local/.sys/ds_groups`;
+        console.log(await this.db.query(query));
+        return Promise.resolve([]);
     }
 
-    count(params: Partial<Comment>): number {
-        return 0;
+    add(dto: Partial<Comment>): Promise<boolean> {
+        return Promise.resolve(false);
     }
 
-    find(params: Partial<Comment>): Comment[] {
-        return [];
+    count(params: Partial<Comment>): Promise<number> {
+        return Promise.resolve(0);
     }
 
-    findAndCount(params: Partial<Comment>): { count: number; entities: Comment[] } {
-        return {count: 0, entities: []};
+    findAndCount(params: Partial<Comment>): Promise<{ count: number; entities: Comment[] }> {
+        return Promise.resolve({count: 0, entities: []});
     }
 
-    findOne(params: Partial<Comment>): Comment {
-        return {
+    findOne(params: Partial<Comment>): Promise<Comment> {
+        return Promise.resolve({
             id: "string",
             text: "string",
             time: new Date(),
@@ -35,16 +37,15 @@ export class CommentsRepository implements Repo<Comment> {
             parent: null,
             children: [],
             next: []
-        };
+        });
     }
 
-    remove(params: Partial<Comment>): boolean {
-        return false;
+    remove(params: Partial<Comment>): Promise<boolean> {
+        return Promise.resolve(false);
     }
 
-    update(params: Partial<Comment>): boolean {
-        return false;
+    update(params: Partial<Comment>): Promise<boolean> {
+        return Promise.resolve(false);
     }
-
 
 }

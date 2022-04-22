@@ -1,4 +1,4 @@
-import {createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
+import {Catch, createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
 import {Controller} from "lib/decorators/controller.decorator";
 import {CommentsService} from "./comments.service";
 
@@ -16,6 +16,7 @@ class CommentsController {
 
     @Get("/")
     public async test() {
+        await this.service.test();
         return "123"
     }
 

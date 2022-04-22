@@ -3,7 +3,9 @@ import "reflect-metadata"
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {CommentsService} from "lib/api/comments/comments.service";
 import {autoInjectable} from "tsyringe";
-
+import {AnonymousAuthService, Driver, ISslCredentials} from "ydb-sdk";
+import fs from "fs";
+import path from "path";
 
 
 export default async function handler(
@@ -11,21 +13,28 @@ export default async function handler(
     res: NextApiResponse<Record<string, any> | string>
 ) {
 
-    @autoInjectable()
-    class Test1 {
-        constructor(public database?: CommentsService) {}
-        // constructor(
-        //     @InjectMany(id) private sensorTypes: any[],
-        // ) {}
 
+    let authService = new AnonymousAuthService();
+    const endpoint = "grpcs://localhost:2135";
 
+    const database = "/local";
+    // authService.getAuthMetadata = function () {
+    //     const grpc = require('grpc')
+    //     const metadata = new grpc.Metadata()
+    //     metadata.add('x-ydb-database', database)
+    //     return Promise.resolve(metadata)
+    // }
+
+    const ydb_certs_path = "C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\ydb_certs";
+    const credentials: ISslCredentials = {
+        rootCertificates: fs.readFileSync(path.join(ydb_certs_path, 'ca.pem')),
+        clientPrivateKey: fs.readFileSync(path.join(ydb_certs_path, 'key.pem')),
+        clientCertChain: fs.readFileSync(path.join(ydb_certs_path, 'cert.pem')),
     }
 
-    const tmp = new Test1();
+    // const endpoint: string = 'grpcs://localhost:2135', database: string = '/local'
 
-    // console.log(tmp.subcommands);
+    const driver = new Driver({endpoint, database, authService: authService, sslCredentials: credentials});
 
-    // const db = getDb();
-    // await db.connect()
     res.status(200).json('host');
 }
