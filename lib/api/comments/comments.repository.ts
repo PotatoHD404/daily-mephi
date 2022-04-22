@@ -11,8 +11,9 @@ export class CommentsRepository implements Repo<Comment> {
     }
 
     async find(params: Partial<Comment>): Promise<Comment[]> {
-        const query = `SELECT * FROM /local/.sys/ds_groups`;
-        console.log(await this.db.query(query));
+        const query = `SELECT * FROM `;
+        // console.log(await this.db.query(query));
+        await this.db.query(query)
         return Promise.resolve([]);
     }
 

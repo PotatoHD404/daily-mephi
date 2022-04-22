@@ -4,7 +4,7 @@ import {
     parseConnectionString,
     MetadataAuthService,
     TokenAuthService,
-    IamAuthService, ISslCredentials,
+    IamAuthService, ISslCredentials, TableDescription, Column, Types,
 } from 'ydb-sdk'
 import {Database} from "../decorators/database.decorator";
 import {session} from "next-auth/core/routes";
@@ -22,36 +22,43 @@ export class DB {
 
     constructor() {
         let authService = new AnonymousAuthService();
-        const endpoint = "grpcs://localhost:2135";
+        const endpoint = "grpc://localhost:2136";
 
         const database = "/local";
-        // authService.getAuthMetadata = function () {
-        //     const grpc = require('grpc')
-        //     const metadata = new grpc.Metadata()
-        //     metadata.add('x-ydb-database', database)
-        //     return Promise.resolve(metadata)
-        // }
 
-        const ydb_certs_path = "C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\ydb_certs";
-        const credentials: ISslCredentials = {
-            rootCertificates: fs.readFileSync(path.join(ydb_certs_path, 'ca.pem')),
-            clientPrivateKey: fs.readFileSync(path.join(ydb_certs_path, 'key.pem')),
-            clientCertChain: fs.readFileSync(path.join(ydb_certs_path, 'cert.pem')),
-        }
+        this.driver = new Driver({endpoint, database, authService: authService});
 
-        // const endpoint: string = 'grpcs://localhost:2135', database: string = '/local'
-        try {
-            this.driver = new Driver({endpoint, database, authService: authService, sslCredentials: credentials});
-        }
-        catch (e){
-
-        }
     }
 
     async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {
         await this.connect();
+        const table = 'table';
         await this.driver.tableClient.withSession(async (session) => {
-            await session.executeQuery(query, params, undefined, settings);
+
+            await session.dropTable(table);
+
+            await session.createTable(
+                table,
+                new TableDescription()
+                    .withColumn(new Column(
+                        'key',
+                        Types.optional(Types.UTF8),
+                    ))
+                    .withColumn(new Column(
+                        'hash',
+                        Types.optional(Types.UINT64),
+                    ))
+                    .withColumn(new Column(
+                        'value',
+                        Types.optional(Types.UTF8),
+                    ))
+                    .withPrimaryKey('key')
+            );
+
+
+            const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
+        
+            console.log();
         });
     }
 

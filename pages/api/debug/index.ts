@@ -15,7 +15,7 @@ export default async function handler(
 
 
     let authService = new AnonymousAuthService();
-    const endpoint = "grpcs://localhost:2135";
+    const endpoint = "grpc://localhost:2136";
 
     const database = "/local";
     // authService.getAuthMetadata = function () {
@@ -25,16 +25,17 @@ export default async function handler(
     //     return Promise.resolve(metadata)
     // }
 
-    const ydb_certs_path = "C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\ydb_certs";
-    const credentials: ISslCredentials = {
-        rootCertificates: fs.readFileSync(path.join(ydb_certs_path, 'ca.pem')),
-        clientPrivateKey: fs.readFileSync(path.join(ydb_certs_path, 'key.pem')),
-        clientCertChain: fs.readFileSync(path.join(ydb_certs_path, 'cert.pem')),
-    }
+    // const ydb_certs_path = "C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\ydb_certs";
+    // console.log(fs.readFileSync(path.join(ydb_certs_path, 'ca.pem')));
+    // const credentials: ISslCredentials = {
+    //     rootCertificates: fs.readFileSync(path.join(ydb_certs_path, 'ca.pem')),
+    //     clientPrivateKey: fs.readFileSync(path.join(ydb_certs_path, 'key.pem')),
+    //     clientCertChain: fs.readFileSync(path.join(ydb_certs_path, 'cert.pem')),
+    // }
 
     // const endpoint: string = 'grpcs://localhost:2135', database: string = '/local'
 
-    const driver = new Driver({endpoint, database, authService: authService, sslCredentials: credentials});
+    // const driver = new Driver({endpoint, database, authService: authService});
 
     res.status(200).json('host');
 }
