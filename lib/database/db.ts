@@ -57,7 +57,7 @@ export class DB {
 
 
             const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
-        
+
             console.log();
         });
     }
