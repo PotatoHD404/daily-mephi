@@ -2,7 +2,15 @@
 import "reflect-metadata"
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {CommentsService} from "lib/api/comments/comments.service";
-import {autoInjectable, container, inject, injectable, singleton} from "tsyringe";
+import {
+    autoInjectable,
+    container,
+    inject,
+    injectable,
+    InjectionToken,
+    instanceCachingFactory,
+    singleton
+} from "tsyringe";
 import {
     AnonymousAuthService,
     Driver,
@@ -14,6 +22,7 @@ import {
 import fs from "fs";
 import path from "path";
 import {Repo} from "../../../lib/interfaces/repository";
+import {DB} from "../../../lib/database/db";
 
 function logType(target: any, key: string) {
     let t = Reflect.getMetadata("design:type", target, key);
@@ -52,31 +61,18 @@ class Test2<T> {
 
     }
 
-    public find(){
+    public find() {
         console.log("find")
     }
 }
 
 
 function Entity() {
-    return function <T extends { new(...args: any[]): {} }>(constr: T){
-        return new Test2<typeof constr>(constr);
+    return function <T extends { new(...args: any[]): {} }>(constr: T) {
+        const class1 = new Test2<typeof constr>(constr)
+        container.register(typeof class1, {useValue: class1});
+        // container.register(Test2<typeof constr>, {useValue: class1});
     }
-}
-
-class CanEat {
-    public eat() {
-        alert('Munch Munch.');
-    }
-}
-
-class CanSleep {
-    sleep() {
-        alert('Zzzzzzz.');
-    }
-}
-
-interface Shopperholic extends CanSleep, CanEat {
 }
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
@@ -95,46 +91,66 @@ export default async function handler(
     res: NextApiResponse<Record<string, any> | string>
 ) {
 
-    class Test extends TypedData {
-        // @logType
-        a: string
-
-        constructor(a: string) {
-            super({})
-
-            this.a = a
-            console.log("a: ", a)
-        }
-
-        // @logType
-        // b: Test1
-    }
-
-    console.log(Reflect.ownKeys(Test.prototype))
-    // TypedData & Test1
-    @injectable()
-    class Test2<T> {
-        constructor(t: T) {
-
-        }
-
-        public find(){
-            console.log("find")
-        }
-    }
-    // @Repository()
-    @autoInjectable()
-    @Repository()
-    class Test1 extends Test2<Test1>{
-        public print() {
-            console.log("lol")
+    function Entity() {
+        return function <T extends { new(...args: any[]): {} }>(constr: T) {
+            const db = container.resolve(DB);
+            container.register("entity:" + (constr.name), {useFactory: instanceCachingFactory<Rep<T>>(c => new Rep(db, constr))});
+            // container.register(Test2<typeof constr>, {useValue: class1});
         }
     }
 
+    @Entity()
+    class Test {
+        a: string = ""
+    }
+
+
+    class Rep<T> {
+        constructor(private db: DB, private type: any) {
+            // console.log(type)
+        }
+
+        print() {
+            console.log("1")
+        }
+    }
+
+
+    let a = Test;
+    // const class1 = new Rep<typeof a>(db, Test)
+
+    // console.log(a.name)
+    // container.register(class1.constructor.name, {useValue: class1});
+
+    // const requiredMetadataKey = Symbol("repositories");
+
+    function injectRepo(entity: new(...args: any[]) => any) {
+        return inject("entity:" + (entity.name));
+    }
+
+    @singleton()
+    class RepImpl {
+        constructor(@injectRepo(Test) a: Rep<Test>) {
+            a.print()
+        }
+    }
+
+
+    // class Test extends TypedData {
+    //     a: string
     //
+    //     constructor(a: string) {
+    //         super({})
     //
-    const what = container.resolve(Test1);
+    //         this.a = a
+    //         console.log("a: ", a)
+    //     }
+    // }
 
+
+    const impl = container.resolve(RepImpl);
+
+    console.log(Test2.name)
     // console.log(Reflect.getMetadata("design:type",Test, "a"))
 
     res.status(200).json('host');
