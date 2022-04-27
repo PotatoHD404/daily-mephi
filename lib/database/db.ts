@@ -1,17 +1,11 @@
 import {
     Driver,
     AnonymousAuthService,
-    parseConnectionString,
-    MetadataAuthService,
-    TokenAuthService,
-    IamAuthService, ISslCredentials, TableDescription, Column, Types,
+    TableDescription, Column, Types, Session,
 } from 'ydb-sdk'
 import {Database} from "../decorators/database.decorator";
-import {session} from "next-auth/core/routes";
 import {Ydb} from "ydb-sdk"
 import {ExecuteQuerySettings} from "ydb-sdk/build/table";
-import path from "path";
-import * as fs from "fs";
 
 type IQueryParams = { [k: string]: Ydb.ITypedValue };
 
@@ -60,6 +54,10 @@ export class DB {
 
             console.log();
         });
+    }
+
+    async withSession(func:(session: Session) => Promise<void>){
+        await this.driver.tableClient.withSession(func);
     }
 
     async close() {

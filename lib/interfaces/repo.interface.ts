@@ -1,4 +1,4 @@
-export interface Repo<T> {
+export interface IRepo<T> {
     findOne: (params: Partial<T>) => Promise<T>;
     find: (params: Partial<T>) => Promise<T[]>;
     add: (dto: Partial<T>) => Promise<boolean>;

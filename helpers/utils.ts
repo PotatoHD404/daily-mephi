@@ -66,3 +66,7 @@ export function getHost() {
     return process.env.VERCEL_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 }
 
+
+export const camelToSnakeCase = (str: string) =>
+    str.replace(/^[A-Z]/g, letter => letter.toLowerCase())
+        .replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);

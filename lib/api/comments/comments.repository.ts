@@ -1,12 +1,12 @@
 import {Repository} from "lib/decorators/repository.decorator";
 import {DB} from "lib/database/db";
-import {Repo} from "../../interfaces/repository";
+import {IRepo} from "../../interfaces/repo.interface";
 import {Comment} from "./comments.entity"
 import {string} from "prop-types";
 
 
 @Repository()
-export class CommentsRepository implements Repo<Comment> {
+export class CommentsRepository implements IRepo<Comment> {
     constructor(private db: DB) {
     }
 

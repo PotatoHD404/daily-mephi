@@ -12,6 +12,7 @@ import 'lib/api/search/search.controller.ts';
 import 'lib/api/top/top.controller.ts';
 import 'lib/api/tutors/tutors.controller.ts';
 import 'lib/api/users/users.controller.ts';
+import 'lib/api/migrations/migrations.controller.ts';
 
 
 export default container.resolve(ApiModule).getHandler();
