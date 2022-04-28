@@ -4,6 +4,7 @@ import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
 import type {NextApiResponse} from 'next';
 import {Types, Ydb} from "ydb-sdk";
+import {PRIMARY_KEY_TOKEN} from "../lib/decorators/column.decorators";
 
 
 interface Cookies {
@@ -75,4 +76,10 @@ export const camelToSnakeCase = (str: string) =>
 
 export function typeToString(type: Ydb.IType) {
     return Ydb.Type.PrimitiveTypeId[type.typeId ?? 0]
+}
+
+export function getEntityProperty(entity: any, property: string | symbol) : string[] {
+    return Reflect.ownKeys(entity).filter((key) => {
+        return typeof key === 'string' && Reflect.hasMetadata(property, entity, key);
+    }) as any;
 }

@@ -1,11 +1,12 @@
 import {DB} from "lib/database/db";
 import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
-import {camelToSnakeCase, typeToString} from "helpers/utils";
+import {camelToSnakeCase, getEntityProperty, typeToString} from "helpers/utils";
 import {AlterTableDescription, Column, Session, TableDescription, Types, Ydb} from "ydb-sdk";
 import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
 import {Service} from "lib/decorators/service.decorator";
 import {BadRequest} from "ydb-sdk/build/errors";
 import {Materials} from "../materials/materials.entity";
+import {INDEX_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/column.decorators";
 
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
@@ -33,6 +34,8 @@ export class MigrationService {
                 },
                 table)
         }
+        table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN))
+        // table.withIndexes(...getEntityProperty(entity, INDEX_TOKEN))
         return table;
     }
 
