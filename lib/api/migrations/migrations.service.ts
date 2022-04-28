@@ -1,7 +1,7 @@
 import {DB} from "lib/database/db";
 import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
-import {camelToSnakeCase, getEntityProperty, typeToString} from "helpers/utils";
-import {AlterTableDescription, Column, Session, TableDescription, Types, Ydb} from "ydb-sdk";
+import {camelToSnakeCase, getEntityProperty, sameMembers, typeToString} from "helpers/utils";
+import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
 import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
 import {Service} from "lib/decorators/service.decorator";
 import {BadRequest} from "ydb-sdk/build/errors";
@@ -34,7 +34,16 @@ export class MigrationService {
                 },
                 table)
         }
+        console.table(getEntityProperty(entity, PRIMARY_KEY_TOKEN))
         table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN))
+        const indexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
+        table = indexes.reduce((prev: TableDescription, indexName: string) => {
+            const index = new TableIndex(indexName);
+            index.withIndexColumns(...getEntityProperty(entity, indexName));
+            if (index.indexColumns.length > 0)
+                return prev.withIndex(index);
+            return prev;
+        }, table)
         // table.withIndexes(...getEntityProperty(entity, INDEX_TOKEN))
         return table;
     }
@@ -73,31 +82,32 @@ export class MigrationService {
                 await this.createAll(session);
                 for (const entity of this.entities) {
                     const tableName = camelToSnakeCase(entity.constructor.name);
-                    // try {
 
                     let desc = new AlterTableDescription();
                     const tableDescription = (await session.describeTable(tableName)).toJSON();
-                    // console.log(tableDescription)
-                    // console.log((new entity).getRowType().structType.members)
+                    console.log(tableDescription)
+
                     const rowType = entity.getRowType();
                     type Col = { name: string; type: Ydb.IType; };
-                    const columns: Array<Col> = tableDescription['columns'];
-                    const primaryKeys: Array<string> = tableDescription['primaryKey'];
+                    type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
+                    const columns: Col[] = tableDescription['columns'];
+                    const primaryKeys: string[] = tableDescription['primaryKey'];
+                    const indexes: Index[] = tableDescription['indexes'] ?? [];
                     let withPrimary = false;
-                    desc = rowType.structType.members.reduce(
+                    const entityColumns = rowType.structType.members;
+                    const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
+
+                    desc = entityColumns.reduce(
                         (prev: AlterTableDescription, curr: Col) => {
-                            // console.log(Types.optional(curr.type))
 
                             if (withPrimary)
                                 return;
-                            // const description = tableDescription;
-                            // const description = tableDescription.toJSON();
+
                             if (columns.find((col) => {
                                 return col.name === curr.name &&
                                     // @ts-ignore
                                     col.type.optionalType?.item?.typeId !== typeToString(curr.type)
                             })) {
-                                // console.log("'" + curr.name + "'")
                                 if (primaryKeys.includes(curr.name)) {
                                     withPrimary = true;
                                     return prev;
@@ -117,35 +127,60 @@ export class MigrationService {
                             return prev;
                         },
                         desc)
+                    desc = columns.reduce((prev: AlterTableDescription, curr: Col) => {
+                        if (!entityColumns.find((col: Col) => {
+                            return col.name === curr.name
+                        })) {
+                            if (withPrimary)
+                                return prev;
+
+                            if (primaryKeys.includes(curr.name)) {
+                                withPrimary = true;
+                                return prev;
+                            }
+                            return prev.withDropColumn(curr.name);
+                        }
+                        return prev;
+                    }, desc);
+
+                    desc = entityIndexes.reduce((prev: AlterTableDescription, curr: string) => {
+                        const indexColumns = getEntityProperty(entity, curr);
+                        if (indexes.find(index => index.name === curr && !sameMembers(index.indexColumns, indexColumns))) {
+                            prev.dropIndexes.push(curr)
+                            MigrationService.addIndex(curr, indexColumns, prev);
+                        } else if (!indexes.find((index => index.name === curr))) {
+                            MigrationService.addIndex(curr, indexColumns, prev);
+                        }
+                        return prev;
+                    }, desc);
+
+                    desc = indexes.reduce((prev: AlterTableDescription, curr: Index) => {
+                        if (!entityIndexes.includes(curr.name)) {
+                            prev.dropIndexes.push(curr.name)
+                            return prev
+                        }
+                        return prev;
+                    }, desc);
+
                     if (withPrimary) {
                         await this.dropTable(session, entity)
                         await this.createTable(session, entity)
                         return;
                     }
-
-                    desc = columns.reduce((prev: AlterTableDescription, curr: Col) => {
-                        if (!rowType.structType.members.find((col: Col) => {
-                            return col.name === curr.name
-                        })) {
-                            return prev.withDropColumn(curr.name);
-                        }
-                        return prev;
-                    }, desc);
                     if (desc.addColumns.length > 0 || desc.alterColumns.length > 0 || desc.dropColumns.length > 0)
                         await session.alterTable(tableName, desc);
 
-                    // }
-                    // catch (e){
-                    //     console.log(e);
-                    // }
-
-                    // await session.dropTable(tableName);
                 }
 
-                // console.log();
                 return;
             }
         );
+    }
+
+    private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
+        const index = new TableIndex(curr);
+        index.withIndexColumns(...indexColumns);
+        prev.addIndexes.push(index)
     }
 
     public async createAll(session: Session): Promise<void> {
@@ -155,12 +190,17 @@ export class MigrationService {
         }
     }
 
-    public async createTable(session: Session, entity: any){
+    public async createTable(session: Session, entity: any) {
         const tableName = camelToSnakeCase(entity.constructor.name)
         // console.log(this.getTableDescription(new entity))
-        await session.createTable(
-            tableName,
-            this.getTableDescription(entity).withPrimaryKey("a")
-        );
+        const desc = this.getTableDescription(entity);
+        if (desc.columns.length > 0 && desc.primaryKey.length > 0)
+            await session.createTable(
+                tableName,
+                desc
+            );
+        else {
+            throw new Error("There is not enough columns or primary keys");
+        }
     }
 }

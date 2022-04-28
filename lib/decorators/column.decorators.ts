@@ -1,13 +1,14 @@
 import {declareType, Types, Ydb} from "ydb-sdk";
 import IType = Ydb.IType;
+import {camelToSnakeCase} from "../../helpers/utils";
 
 export const PRIMARY_KEY_TOKEN = Symbol('primary_key')
-export const INDEX_TOKEN = Symbol('index')
+export const INDEX_TOKEN = Symbol('indexes')
 
 export function Column(type?: IType) {
     return function (target: any, key: string) {
         // declareType()(target)
-        if(!type) {
+        if (!type) {
             let t = Reflect.getMetadata("design:type", target, key);
             // console.log(`${key} type: ${t.name}`);
             // console.log(t)
@@ -30,7 +31,7 @@ export function Column(type?: IType) {
                     throw new Error("Not implemented");
             }
         }
-        return declareType(type)(target);
+        return declareType(type)(target, key);
     };
 }
 
@@ -38,6 +39,15 @@ export function Primary() {
     return Reflect.metadata(PRIMARY_KEY_TOKEN, true);
 }
 
-// export function Index() {
-//     return Reflect.metadata(INDEX_TOKEN, true);
-// }
+export function Index(indexName?: string) {
+    return function (target: any, key: string) {
+        let indexes: string[] = Reflect.getMetadata(INDEX_TOKEN, target) ?? [];
+        if (!indexName)
+            indexName = camelToSnakeCase(target.constructor.name) + "_" + key
+        if (!indexes.includes(indexName)) {
+            indexes.push(indexName);
+        }
+        Reflect.defineMetadata(INDEX_TOKEN, indexes, target);
+        Reflect.metadata(indexName, true)(target, key)
+    };
+}

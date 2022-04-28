@@ -1,22 +1,18 @@
 import {Entity} from "../../decorators/entity.decorator";
 import {declareType, Types} from "ydb-sdk";
 import {BaseEntity} from "../../implementations/baseEntity";
+import {Column, Index, Primary} from "../../decorators/column.decorators";
 
 @Entity()
 export class Materials extends BaseEntity {
 
-
-    constructor(a: string, ab: string, b: string) {
-        super();
-        this.a = a;
-        this.ab = ab;
-        this.b = b;
-    }
-
-    @declareType(Types.STRING)
+    @Column()
+    @Primary()
+    private id: number;
+    @Index()
+    @Column()
     private a: string;
-    @declareType(Types.STRING)
-    private ab: string;
-    @declareType(Types.STRING)
+    @Index("a")
+    @Column()
     private b: string;
 }

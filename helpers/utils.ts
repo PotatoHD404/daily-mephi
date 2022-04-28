@@ -78,8 +78,15 @@ export function typeToString(type: Ydb.IType) {
     return Ydb.Type.PrimitiveTypeId[type.typeId ?? 0]
 }
 
-export function getEntityProperty(entity: any, property: string | symbol) : string[] {
+export function getEntityProperty(entity: any, property: string | symbol): string[] {
     return Reflect.ownKeys(entity).filter((key) => {
         return typeof key === 'string' && Reflect.hasMetadata(property, entity, key);
     }) as any;
+}
+
+export function sameMembers(arr1: any[], arr2: any[]): Boolean {
+    const set1 = new Set(arr1);
+    const set2 = new Set(arr2);
+    return arr1.every(item => set2.has(item)) &&
+        arr2.every(item => set1.has(item))
 }
