@@ -21,7 +21,7 @@ export class Materials extends BaseEntity {
     @Index("a")
     @Column()
     private b: string;
-    @Index("a")
+    @Index()
     @Column()
     private ba: string;
 }

@@ -96,7 +96,7 @@ export class MigrationService {
                     const tableName = camelToSnakeCase(entity.constructor.name);
 
                     let desc = new AlterTableDescription();
-                    let tableDescription = (await session.describeTable(tableName)).toJSON();
+                    const tableDescription = (await session.describeTable(tableName)).toJSON();
                     console.log(tableDescription)
 
                     const rowType = entity.getRowType();
@@ -104,11 +104,11 @@ export class MigrationService {
                     type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
                     const columns: Col[] = tableDescription['columns'];
                     const primaryKeys: string[] = tableDescription['primaryKey'];
-                    let indexes: Index[] = tableDescription['indexes'] ?? [];
+                    const indexes: Index[] = tableDescription['indexes'] ?? [];
                     let withPrimary = false;
                     const entityColumns = rowType.structType.members;
                     const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
-                    const patchedSession = new PatchedSession(session);
+
                     desc = entityColumns.reduce(
                         (prev: AlterTableDescription, curr: Col) => {
 
@@ -159,6 +159,9 @@ export class MigrationService {
                         const indexColumns = getEntityProperty(entity, curr);
                         if (indexes.find(index => index.name === curr && !sameMembers(index.indexColumns, indexColumns))) {
                             prev.dropIndexes.push(curr)
+                            MigrationService.addIndex(curr, indexColumns, prev);
+                        } else if (!indexes.find((index => index.name === curr))) {
+                            MigrationService.addIndex(curr, indexColumns, prev);
                         }
                         return prev;
                     }, desc);
@@ -182,28 +185,9 @@ export class MigrationService {
                         desc.dropColumns.length > 0 ||
                         desc.addIndexes.length > 0 ||
                         desc.dropIndexes.length > 0) {
-                        await patchedSession.alterTable(tableName, desc);
+                        await new PatchedSession(session).alterTable(tableName, desc);
                     }
-                    desc = new AlterTableDescription();
-                    tableDescription = (await session.describeTable(tableName)).toJSON();
-                    indexes = tableDescription['indexes'] ?? [];
 
-                    desc = entityIndexes.reduce((prev: AlterTableDescription, curr: string) => {
-                        const indexColumns = getEntityProperty(entity, curr);
-                        if (indexes.find(index => index.name === curr && !sameMembers(index.indexColumns, indexColumns))) {
-                            MigrationService.addIndex(curr, indexColumns, prev);
-                        } else if (!indexes.find((index => index.name === curr))) {
-                            MigrationService.addIndex(curr, indexColumns, prev);
-                        }
-                        return prev;
-                    }, desc);
-                    if (desc.addColumns.length > 0 ||
-                        desc.alterColumns.length > 0 ||
-                        desc.dropColumns.length > 0 ||
-                        desc.addIndexes.length > 0 ||
-                        desc.dropIndexes.length > 0) {
-                        await patchedSession.alterTable(tableName, desc);
-                    }
                 }
 
                 return;
