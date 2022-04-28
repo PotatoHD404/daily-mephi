@@ -10,7 +10,7 @@ export class PatchedSession extends Session {
 
     @retryable()
     @pessimizable
-    public async alterTable(tablePath: string, description: AlterTableDescription, settings?: AlterTableSettings): Promise<void> {
+    public async alterTable(tablePath: string, description: AlterTableDescription, settings?: AlterTableSettings, recursive: Boolean = false): Promise<void> {
         const {
             addColumns,
             dropColumns,
@@ -20,6 +20,13 @@ export class PatchedSession extends Session {
             addIndexes,
             dropIndexes,
         } = description;
+        if (dropIndexes.length > 0 && !recursive) {
+            for (const index of dropIndexes) {
+                const desc = new AlterTableDescription();
+                desc.dropIndexes.push(index);
+                await this.alterTable(tablePath, desc, settings, true);
+            }
+        }
         const request: Ydb.Table.IAlterTableRequest = {
             sessionId: this.sessionId,
             path: `${this.endpoint.database}/${tablePath}`,
@@ -30,8 +37,7 @@ export class PatchedSession extends Session {
             dropTtlSettings,
             addIndexes: addIndexes.map(el => {
                 return {...el, globalIndex: {}};
-            }),
-            dropIndexes
+            })
         };
         if (settings) {
             request.operationParams = settings.operationParams;
