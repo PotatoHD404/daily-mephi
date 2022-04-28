@@ -5,6 +5,12 @@ import {Column, Index, Primary} from "../../decorators/column.decorators";
 
 @Entity()
 export class Materials extends BaseEntity {
+    constructor(id: number, a: string, b: string) {
+        super();
+        this.id = id;
+        this.a = a;
+        this.b = b;
+    }
 
     @Column()
     @Primary()
@@ -15,4 +21,7 @@ export class Materials extends BaseEntity {
     @Index("a")
     @Column()
     private b: string;
+    @Index()
+    @Column()
+    private ba: string;
 }

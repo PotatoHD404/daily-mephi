@@ -21,7 +21,6 @@ export class DB {
         const database = "/local";
 
         this.driver = new Driver({endpoint, database, authService: authService});
-
     }
 
     async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {

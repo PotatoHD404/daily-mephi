@@ -1,12 +1,24 @@
 import {DB} from "lib/database/db";
 import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
 import {camelToSnakeCase, getEntityProperty, sameMembers, typeToString} from "helpers/utils";
-import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
+import {
+    AlterTableDescription,
+    Column,
+    CreateTableSettings,
+    Session,
+    TableDescription,
+    TableIndex,
+    Types,
+    Ydb
+} from "ydb-sdk";
 import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
 import {Service} from "lib/decorators/service.decorator";
 import {BadRequest} from "ydb-sdk/build/errors";
 import {Materials} from "../materials/materials.entity";
 import {INDEX_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/column.decorators";
+import {retryable} from "ydb-sdk/build/retries";
+import {pessimizable} from "ydb-sdk/build/utils";
+import {PatchedSession} from "../../database/PatchedSession";
 
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
@@ -167,8 +179,14 @@ export class MigrationService {
                         await this.createTable(session, entity)
                         return;
                     }
-                    if (desc.addColumns.length > 0 || desc.alterColumns.length > 0 || desc.dropColumns.length > 0)
-                        await session.alterTable(tableName, desc);
+                    console.log(desc)
+                    if (desc.addColumns.length > 0 ||
+                        desc.alterColumns.length > 0 ||
+                        desc.dropColumns.length > 0 ||
+                        desc.addIndexes.length > 0 ||
+                        desc.dropIndexes.length > 0) {
+                        await new PatchedSession(session).alterTable(tableName, desc);
+                    }
 
                 }
 

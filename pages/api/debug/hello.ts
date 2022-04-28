@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {Column, declareType, TableDescription, TypedData, typeMetadataKey, Types, Ydb} from "ydb-sdk";
+import {typeToString} from "../../../helpers/utils";
 
 export const SYNTAX_V1 = '--!syntax_v1';
 
