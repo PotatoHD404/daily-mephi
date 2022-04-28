@@ -1,5 +1,6 @@
-import {ApiModule} from "helpers/reflectionModule";
 import {container} from "tsyringe";
+import {ApiModule} from "helpers/reflectionModule";
+
 import 'lib/api/comments/comments.controller.ts';
 import 'lib/api/cover/cover.controller.ts';
 import 'lib/api/disciplines/disciplines.controller.ts';
@@ -12,6 +13,7 @@ import 'lib/api/search/search.controller.ts';
 import 'lib/api/top/top.controller.ts';
 import 'lib/api/tutors/tutors.controller.ts';
 import 'lib/api/users/users.controller.ts';
+import 'lib/api/migrations/migrations.controller.ts';
 
 
 export default container.resolve(ApiModule).getHandler();

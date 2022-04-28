@@ -3,6 +3,9 @@ import {ClientRequest} from "http";
 import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
 import type {NextApiResponse} from 'next';
+import {Types, Ydb} from "ydb-sdk";
+import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../lib/decorators/column.decorators";
+import {TABLE_NAME_TOKEN} from "../lib/decorators/entity.decorator";
 
 
 interface Cookies {
@@ -66,3 +69,35 @@ export function getHost() {
     return process.env.VERCEL_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 }
 
+
+export const camelToSnakeCase = (str: string) =>
+    str.replace(/^[A-Z]/g, letter => letter.toLowerCase())
+        .replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+
+export function typeToString(type: Ydb.IType) {
+    return Ydb.Type.PrimitiveTypeId[type.typeId ?? 0]
+}
+
+export function getEntityProperty(entity: any, property: string | symbol): string[] {
+    return Reflect.ownKeys(entity).filter((key) => {
+        return typeof key === 'string' && Reflect.hasMetadata(property, entity, key);
+    }) as any;
+}
+
+export function sameMembers(arr1: any[], arr2: any[]): Boolean {
+    const set1 = new Set(arr1);
+    const set2 = new Set(arr2);
+    return arr1.every(item => set2.has(item)) &&
+        arr2.every(item => set1.has(item))
+}
+
+export function getTableName(entity: any) {
+
+    return camelToSnakeCase(Reflect.getMetadata(TABLE_NAME_TOKEN, entity.constructor) ?? entity.constructor.name);
+}
+
+export function getColumnName(entity: any, key: string) {
+
+    return camelToSnakeCase(Reflect.getMetadata(COLUMN_NAME_TOKEN, entity.constructor, key) ?? key);
+}

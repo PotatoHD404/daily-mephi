@@ -9,12 +9,13 @@ import {
     NextApiResponse,
     notFound, parseRequestUrl, pathToRegexp
 } from "./reflectionImports";
+import {CONTROLLERS_TOKEN} from "../lib/decorators/controller.decorator";
 
 @Module()
 export class ApiModule {
     controllers: any[];
 
-    constructor(@InjectAll("controllers") controllers: any[]) {
+    constructor(@InjectAll(CONTROLLERS_TOKEN) controllers: any[]) {
         this.controllers = controllers;
     }
 
@@ -34,7 +35,7 @@ export class ApiModule {
 
                 if (!method)
                     continue;
-
+                // console.log(this.controllers[i])
                 const cls: any = container.resolve(this.controllers[i]);
 
                 const methodFn = cls[method.propertyKey];

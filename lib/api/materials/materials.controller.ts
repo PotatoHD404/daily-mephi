@@ -1,8 +1,11 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 import {Controller} from "../../decorators/controller.decorator";
+import {MaterialsService} from "./materials.service";
 
 @Controller("/materials")
 export class MaterialsController {
+    constructor(private materialsService: MaterialsService) {
+    }
 
     @Get("/:id")
     public async get(@Param('id') id: string) {
