@@ -1,9 +1,9 @@
 import {Entity} from "../../decorators/entity.decorator";
 import {declareType, Types} from "ydb-sdk";
 import {BaseEntity} from "../../implementations/baseEntity";
-import {Column, Index, Primary} from "../../decorators/column.decorators";
+import {Column, Index} from "../../decorators/column.decorators";
 
-@Entity()
+@Entity("materials1")
 export class Materials extends BaseEntity {
     constructor(id: number, a: string, b: string) {
         super();
@@ -12,11 +12,10 @@ export class Materials extends BaseEntity {
         this.b = b;
     }
 
-    @Column()
-    @Primary()
+    @Column({primary: true})
     private id: number;
     @Index()
-    @Column()
+    @Column({name: "baobab"})
     private a: string;
     @Index("a")
     @Column()
@@ -24,4 +23,7 @@ export class Materials extends BaseEntity {
     @Index()
     @Column()
     private ba: string;
+    @Index()
+    @Column()
+    private bac: string;
 }

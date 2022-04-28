@@ -4,7 +4,8 @@ import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
 import type {NextApiResponse} from 'next';
 import {Types, Ydb} from "ydb-sdk";
-import {PRIMARY_KEY_TOKEN} from "../lib/decorators/column.decorators";
+import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../lib/decorators/column.decorators";
+import {TABLE_NAME_TOKEN} from "../lib/decorators/entity.decorator";
 
 
 interface Cookies {
@@ -89,4 +90,14 @@ export function sameMembers(arr1: any[], arr2: any[]): Boolean {
     const set2 = new Set(arr2);
     return arr1.every(item => set2.has(item)) &&
         arr2.every(item => set1.has(item))
+}
+
+export function getTableName(entity: any) {
+
+    return camelToSnakeCase(Reflect.getMetadata(TABLE_NAME_TOKEN, entity.constructor) ?? entity.constructor.name);
+}
+
+export function getColumnName(entity: any, key: string) {
+
+    return camelToSnakeCase(Reflect.getMetadata(COLUMN_NAME_TOKEN, entity.constructor, key) ?? key);
 }

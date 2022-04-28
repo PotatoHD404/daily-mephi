@@ -1,11 +1,15 @@
 import {declareType, Types, Ydb} from "ydb-sdk";
 import IType = Ydb.IType;
-import {camelToSnakeCase} from "../../helpers/utils";
+import {camelToSnakeCase, getColumnName, getTableName} from "../../helpers/utils";
 
 export const PRIMARY_KEY_TOKEN = Symbol('primary_key')
 export const INDEX_TOKEN = Symbol('indexes')
+export const COLUMN_NAME_TOKEN = Symbol('columns')
 
-export function Column(type?: IType) {
+
+type ColumnArgs = { type?: IType, name?: string, primary?: Boolean };
+
+export function Column({type, name, primary}: ColumnArgs = {}) {
     return function (target: any, key: string) {
         // declareType()(target)
         if (!type) {
@@ -31,19 +35,20 @@ export function Column(type?: IType) {
                     throw new Error("Not implemented");
             }
         }
+        Reflect.metadata(COLUMN_NAME_TOKEN, name ?? key)(target, key);
+        if (primary) {
+            Reflect.metadata(PRIMARY_KEY_TOKEN, true)(target, key);
+        }
+
         return declareType(type)(target, key);
     };
-}
-
-export function Primary() {
-    return Reflect.metadata(PRIMARY_KEY_TOKEN, true);
 }
 
 export function Index(indexName?: string) {
     return function (target: any, key: string) {
         let indexes: string[] = Reflect.getMetadata(INDEX_TOKEN, target) ?? [];
         if (!indexName)
-            indexName = camelToSnakeCase(target.constructor.name) + "_" + key
+            indexName = getTableName(target) + "_" + getColumnName(target, key)
         if (!indexes.includes(indexName)) {
             indexes.push(indexName);
         }
