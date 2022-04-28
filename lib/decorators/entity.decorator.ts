@@ -8,6 +8,6 @@ export function Entity() {
         // Reflect.defineMetadata(ENTITY_TOKEN, defaultPath, target);
         container.register(ENTITY_TOKEN, {useValue: target});
         container.register(target, {useValue: target});
-        return target;
+        // return target;
     };
 }

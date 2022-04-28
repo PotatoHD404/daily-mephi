@@ -3,6 +3,7 @@ import {ClientRequest} from "http";
 import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
 import type {NextApiResponse} from 'next';
+import {Types, Ydb} from "ydb-sdk";
 
 
 interface Cookies {
@@ -70,3 +71,8 @@ export function getHost() {
 export const camelToSnakeCase = (str: string) =>
     str.replace(/^[A-Z]/g, letter => letter.toLowerCase())
         .replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+
+export function typeToString(type: Ydb.IType) {
+    return Ydb.Type.PrimitiveTypeId[type.typeId ?? 0]
+}

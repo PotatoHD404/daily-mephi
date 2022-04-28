@@ -10,23 +10,12 @@ export class MigrationsController {
     constructor(private migrationService: MigrationService) {
     }
 
-    @Get("/down")
-    public async down() {
-        await this.migrationService.dropAll()
-
-        return "ok"
-    }
 
     @Get("/up")
     public async up() {
-        await this.migrationService.createAll()
+        await this.migrationService.migrate();
 
         return "ok"
     }
 
-    @Get("/down_up")
-    public async downUp() {
-        await this.migrationService.dropAndRecreateAll()
-        return "ok"
-    }
 }

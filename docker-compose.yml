@@ -16,6 +16,7 @@ services:
     volumes:
       - ydb_certs:/ydb_certs
       - ydb_data:/ydb_data
+    restart: unless-stopped
 #    networks:
 #      - app
 #

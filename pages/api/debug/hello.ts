@@ -27,64 +27,7 @@ class NormData extends TypedData {
     }
 }
 
-function typeToString(type: Ydb.IType) {
-    switch (type) {
-        case Types.BOOL:
-            return "Bool";
-        case Types.INT8:
-            return "Int8";
-        case Types.UINT8:
-            return "Uint8";
-        case Types.INT16:
-            return "Int16";
-        case Types.UINT16:
-            return "Uint16";
-        case Types.INT32:
-            return "Int32";
-        case Types.UINT32:
-            return "Uint32";
-        case Types.INT64:
-            return "Int64";
-        case Types.UINT64:
-            return "Uint64";
-        case Types.FLOAT:
-            return "Float";
-        case Types.DOUBLE:
-            return "Double";
-        case Types.STRING:
-            return "String";
-        case Types.UTF8:
-            return "Utf8";
-        case Types.YSON:
-            return "Yson";
-        case Types.JSON:
-            return "Json";
-        case Types.UUID:
-            return "Uuid";
-        case Types.JSON_DOCUMENT:
-            return "JsonDocument";
-        case Types.DATE:
-            return "Date";
-        case Types.DATETIME:
-            return "Datetime";
-        case Types.TIMESTAMP:
-            return "Timestamp";
-        case Types.INTERVAL:
-            return "Interval";
-        case Types.TZ_DATE:
-            return "TzDate";
-        case Types.TZ_DATETIME:
-            return "TzDateTime";
-        case Types.TZ_TIMESTAMP:
-            return "TzTimestamp";
-        case Types.DYNUMBER:
-            return "DyNumber";
-        case Types.VOID:
-            return "Void";
-        case Types.DEFAULT_DECIMAL:
-            return "DefaultDecimal";
-    }
-}
+
 
 
 class TestEntity extends NormData {

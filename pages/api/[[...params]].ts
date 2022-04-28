@@ -1,5 +1,6 @@
-import {ApiModule} from "helpers/reflectionModule";
 import {container} from "tsyringe";
+import {ApiModule} from "helpers/reflectionModule";
+
 import 'lib/api/comments/comments.controller.ts';
 import 'lib/api/cover/cover.controller.ts';
 import 'lib/api/disciplines/disciplines.controller.ts';
