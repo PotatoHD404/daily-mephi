@@ -14,9 +14,6 @@ export class MigrationsController {
     @Get("/up")
     public async up() {
         await this.migrationService.migrate();
-
-        console.log(await this.migrationService.getTableDesc('materials1'));
-        // console.log(await this.migrationService.getTableDesc('materials1'));
         return "ok";
     }
 
