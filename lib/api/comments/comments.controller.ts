@@ -1,5 +1,5 @@
 import {Catch, createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
-import {Controller} from "lib/decorators/controller.decorator";
+import {Controller} from "lib/decorators/injection/controller.decorator";
 import {CommentsService} from "./comments.service";
 
 

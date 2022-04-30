@@ -8,8 +8,8 @@ import {
     NextApiRequest,
     NextApiResponse,
     notFound, parseRequestUrl, pathToRegexp
-} from "./reflectionImports";
-import {CONTROLLERS_TOKEN} from "../lib/decorators/controller.decorator";
+} from "./injection.imports";
+import {CONTROLLERS_TOKEN} from "../lib/decorators/injection/controller.decorator";
 
 @Module()
 export class ApiModule {

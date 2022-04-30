@@ -1,4 +1,4 @@
-import {Repository} from "lib/decorators/repository.decorator";
+import {Repository} from "lib/decorators/db/repository.decorator";
 import {DB} from "lib/database/db";
 import {IRepo} from "../../interfaces/repo.interface";
 import {Comment} from "./comments.entity"

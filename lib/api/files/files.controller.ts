@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 // import {checkStatus, doRequest, setCookie} from "helpers/utils";
 import {Client} from "@notionhq/client";
 import {decrypt, encrypt} from "helpers/crypto";
-import { Controller } from 'lib/decorators/controller.decorator';
+import { Controller } from 'lib/decorators/injection/controller.decorator';
 
 @Controller("/files")
 class FilesController {

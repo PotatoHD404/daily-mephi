@@ -1,5 +1,5 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
-import {Controller} from "../../decorators/controller.decorator";
+import {Controller} from "../../decorators/injection/controller.decorator";
 
 @Controller("/search")
 class SearchController {

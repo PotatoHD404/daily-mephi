@@ -1,24 +1,32 @@
 import {DB} from "lib/database/db";
 import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
-import {getColumnName, getEntityProperty, getTableName, sameMembers, typeToString} from "helpers/utils";
+import {
+    camelToSnakeCase,
+    getColumnName,
+    getEntityProperty,
+    getTableName,
+    sameMembers,
+    typeToString
+} from "helpers/utils";
 import {
     AlterTableDescription,
     Column,
     CreateTableSettings,
-    Session,
+    Session, snakeToCamelCaseConversion,
     TableDescription,
     TableIndex,
     Types,
     Ydb
 } from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
-import {Service} from "lib/decorators/service.decorator";
+import {ENTITY_TOKEN} from "lib/decorators/db/entity.decorator";
+import {Service} from "lib/decorators/injection/service.decorator";
 import {BadRequest} from "ydb-sdk/build/errors";
 import {Materials} from "../materials/materials.entity";
-import {COLUMN_NAME_TOKEN, INDEX_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/column.decorators";
+import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/db/column.decorators";
 import {retryable} from "ydb-sdk/build/retries";
 import {pessimizable} from "ydb-sdk/build/utils";
 import {PatchedSession} from "../../database/patchedSession";
+import {INDEX_TOKEN} from "../../decorators/db/index.decorator";
 
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
@@ -48,8 +56,9 @@ export class MigrationService {
                 },
                 table)
         }
+
         // console.log(getEntityProperty(entity, PRIMARY_KEY_TOKEN))
-        table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN))
+        table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN).map(el => getColumnName(entity, el)))
         const indexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
         table = indexes.reduce((prev: TableDescription, indexName: string) => {
             const index = new TableIndex(indexName);

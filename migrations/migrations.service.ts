@@ -2,8 +2,8 @@ import {DB} from "lib/database/db";
 import {autoInjectable, inject, singleton} from "tsyringe";
 import {camelToSnakeCase} from "helpers/utils";
 import {Column, TableDescription, Types, Ydb} from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
-import {Service} from "lib/decorators/service.decorator";
+import {ENTITY_TOKEN} from "lib/decorators/db/entity.decorator";
+import {Service} from "lib/decorators/injection/service.decorator";
 
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql

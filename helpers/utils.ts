@@ -4,8 +4,9 @@ import {serialize} from "cookie";
 import {Cookie} from "next-auth/core/lib/cookie";
 import type {NextApiResponse} from 'next';
 import {Types, Ydb} from "ydb-sdk";
-import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../lib/decorators/column.decorators";
-import {TABLE_NAME_TOKEN} from "../lib/decorators/entity.decorator";
+import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../lib/decorators/db/column.decorators";
+import {TABLE_NAME_TOKEN} from "../lib/decorators/db/entity.decorator";
+import {INDEX_TOKEN} from "../lib/decorators/db/index.decorator";
 
 
 interface Cookies {
@@ -98,6 +99,11 @@ export function getTableName(entity: any) {
 }
 
 export function getColumnName(entity: any, key: string) {
+    // console.log(key)
+    return camelToSnakeCase(Reflect.getMetadata(COLUMN_NAME_TOKEN, entity, key) ?? key);
+}
 
-    return camelToSnakeCase(Reflect.getMetadata(COLUMN_NAME_TOKEN, entity.constructor, key) ?? key);
+export function getIndex(entity: any, key: string) {
+    // console.log(key)
+    return camelToSnakeCase(Reflect.getMetadata(INDEX_TOKEN, entity, key) ?? key);
 }

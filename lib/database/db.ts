@@ -3,7 +3,7 @@ import {
     AnonymousAuthService,
     TableDescription, Column, Types, Session,
 } from 'ydb-sdk'
-import {Database} from "../decorators/database.decorator";
+import {Database} from "../decorators/db/database.decorator";
 import {Ydb} from "ydb-sdk"
 import {ExecuteQuerySettings} from "ydb-sdk/build/table";
 

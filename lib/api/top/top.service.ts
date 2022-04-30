@@ -1,4 +1,4 @@
-import {Service} from "lib/decorators/service.decorator";
+import {Service} from "lib/decorators/injection/service.decorator";
 
 
 @Service()
