@@ -6,23 +6,52 @@ import {ManyToMany} from "../../decorators/db/manyToMany.decorator";
 import {OneToMany} from "../../decorators/db/oneToMany.decorator";
 import {OneToOne} from "../../decorators/db/oneToOne.decorator";
 import {string} from "prop-types";
-
-@Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
+import {User} from "../users/users.entity";
+import {Comment} from "lib/api/comments/comments.entity"
 
 @Entity()
 export class Material extends BaseEntity {
 
+    @Column(Types.UINT64, {primary: true})
+    public id: number;
 
-    constructor(id: number, block: string, description: string, discipline: string, faculty: number, header: number, time: Date, tutor: string, url: string, user: string) {
+    @Column(Types.STRING)
+    public block: string;
+
+    @Column(Types.STRING)
+    public description: string;
+
+    @Column(Types.STRING)
+    public discipline: string;
+
+    @Column(Types.STRING)
+    public faculty: number;
+
+    @Column(Types.STRING)
+    public header: number;
+
+    @Column(Types.DATETIME)
+    public time: Date;
+
+    @Column(Types.STRING)
+    public tutor: string;
+
+    @Column(Types.STRING)
+    public url: string;
+
+    @Column(Types.STRING)
+    public user: string;
+
+    @OneToMany(Comment, "reviewId")
+    public comments: Comment[];
+
+    @ManyToMany(User)
+    public dislikes: User[];
+
+    @ManyToMany(User)
+    public likes: User[];
+
+    constructor(id: number, block: string, description: string, discipline: string, faculty: number, header: number, time: Date, tutor: string, url: string, user: string, comments: Comment[], dislikes: User[], likes: User[]) {
         super();
         this.id = id;
         this.block = block;
@@ -34,48 +63,10 @@ export class Material extends BaseEntity {
         this.tutor = tutor;
         this.url = url;
         this.user = user;
+        this.comments = comments;
+        this.dislikes = dislikes;
+        this.likes = likes;
     }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-    @Column(Types.STRING)
-    private block: string;
-    @Column(Types.STRING)
-    private description: string;
-    @Column(Types.STRING)
-    private discipline: string;
-    @Column(Types.STRING)
-    private faculty: number;
-    @Column(Types.STRING)
-    private header: number;
-    @Column(Types.DATETIME)
-    private time: Date;
-    @Column(Types.STRING)
-    private tutor: string;
-    @Column(Types.STRING)
-    private url: string;
-    @Column(Types.STRING)
-    private user: string;
-    //TODO
-    // @Column(Types.STRING)
-    // private comments: string[];
-    // @Column(Types.STRING)
-    // private dislikes: string[];
-    // @Column(Types.STRING)
-    // private likes: string[];
-
-
-
-
-    // @ManyToMany(TestTable)
-    // private tests: TestTable[];
-    //
-    // @OneToMany(TestTable, "id")
-    // private tests1: TestTable[];
-    //
-    // @OneToOne(TestTable)
-    // private tests2: TestTable;
-
 }
 
 // export interface Material {

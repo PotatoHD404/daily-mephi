@@ -5,49 +5,39 @@ import {Column} from "../../decorators/db/column.decorators";
 import {ManyToMany} from "../../decorators/db/manyToMany.decorator";
 import {OneToMany} from "../../decorators/db/oneToMany.decorator";
 import {OneToOne} from "../../decorators/db/oneToOne.decorator";
-
-@Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
+import {Review} from "../reviews/reviews.entity";
 
 @Entity()
 export class Comment extends BaseEntity {
 
+    @Column(Types.UINT64, {primary: true})
+    public id: number;
 
-    constructor(id: number, text: string, time: Date, user: string, parent: string) {
+    @Column(Types.STRING)
+    public text: string;
+
+    @Column(Types.DATETIME)
+    public time: Date;
+
+    @Column(Types.STRING)
+    public user: string;
+
+    @OneToOne(Comment)
+    public parent: Comment | null;
+
+    @Column(Types.UINT64)
+    public reviewId: number;
+
+
+    constructor(id: number, text: string, time: Date, user: string, parent: Comment | null, reviewId: number) {
         super();
         this.id = id;
         this.text = text;
         this.time = time;
         this.user = user;
         this.parent = parent;
+        this.reviewId = reviewId;
     }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-    @Column(Types.STRING)
-    private text: string;
-    @Column(Types.DATETIME)
-    private time: Date;
-    @Column(Types.STRING)
-    private user: string;
-    @Column(Types.STRING)
-    private parent: string;
-
-    //TODO
-    // @Column(Types.STRING)
-    // private children: string[];
-    // @Column(Types.STRING)
-    // private next: string[];
-
-
 }
 
 // export interface Comment {

@@ -4,17 +4,6 @@ import {Column} from "../../decorators/db/column.decorators";
 import {Types} from "ydb-sdk";
 
 @Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
-
-@Entity()
 export class File extends BaseEntity {
 
 
@@ -25,7 +14,7 @@ export class File extends BaseEntity {
     }
 
     @Column(Types.UINT64, {primary: true})
-    private id: number;
+    public id: number;
     @Column(Types.STRING)
-    private url: String;
+    public url: String;
 }

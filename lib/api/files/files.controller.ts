@@ -1,6 +1,9 @@
 import {createHandler, Delete, Get, Param, Post} from '@storyofams/next-api-decorators';
 import {getSession} from "next-auth/react";
 import jwt from "jsonwebtoken";
+import "./files.entity"
+
+
 // import {checkStatus, doRequest, setCookie} from "helpers/utils";
 import {Client} from "@notionhq/client";
 import {decrypt, encrypt} from "helpers/crypto";

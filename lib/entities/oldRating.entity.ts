@@ -1,18 +1,7 @@
-import {Entity} from "../../../decorators/db/entity.decorator";
-import {BaseEntity} from "../../../implementations/baseEntity";
-import {Column} from "../../../decorators/db/column.decorators";
+import {Entity} from "../decorators/db/entity.decorator";
+import {BaseEntity} from "../implementations/baseEntity";
+import {Column} from "../decorators/db/column.decorators";
 import {Types} from "ydb-sdk";
-
-@Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
 
 @Entity()
 export class OldRating extends BaseEntity {
@@ -28,15 +17,19 @@ export class OldRating extends BaseEntity {
     }
 
     @Column(Types.UINT64, {primary: true})
-    private id: number;
+    public id: number;
+
     @Column(Types.UINT64)
-    private character: number;
+    public character: number;
+
     @Column(Types.UINT64)
-    private count: number;
+    public count: number;
+
     @Column(Types.UINT64)
-    private exams: number;
+    public exams: number;
+
     @Column(Types.UINT64)
-    private quality: number;
+    public quality: number;
 
 }
 

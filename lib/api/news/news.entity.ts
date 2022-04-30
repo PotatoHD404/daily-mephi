@@ -3,41 +3,36 @@ import {Entity} from "../../decorators/db/entity.decorator";
 import {BaseEntity} from "../../implementations/baseEntity";
 import {Column} from "../../decorators/db/column.decorators";
 import {Types} from "ydb-sdk";
-
-@Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
+import {OneToMany} from "../../decorators/db/oneToMany.decorator";
+import {Comment} from "lib/api/comments/comments.entity"
 
 @Entity()
 export class News extends BaseEntity {
 
+    @Column(Types.UINT64, {primary: true})
+    public id: number;
 
-    constructor(id: number, body: string, header: string, time: Date) {
+    @Column(Types.STRING)
+    public body: string;
+
+    @Column(Types.STRING)
+    public header: string;
+
+    @Column(Types.DATETIME)
+    public time: Date;
+
+    @OneToMany(Comment, "reviewId")
+    public comments: Comment[];
+
+
+    constructor(id: number, body: string, header: string, time: Date, comments: Comment[]) {
         super();
         this.id = id;
         this.body = body;
         this.header = header;
         this.time = time;
+        this.comments = comments;
     }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-    @Column(Types.STRING)
-    private body: string;
-    @Column(Types.STRING)
-    private header: string;
-    @Column(Types.DATETIME)
-    private time: Date;
-    //TODO
-    // @Column(Types.STRING)
-    // private comments: string[];
 
 }
 

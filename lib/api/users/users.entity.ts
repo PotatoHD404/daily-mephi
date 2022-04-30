@@ -5,17 +5,6 @@ import {Column} from "../../decorators/db/column.decorators";
 import {Types} from "ydb-sdk";
 
 @Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
-
-@Entity()
 export class User extends BaseEntity {
 
 
@@ -30,24 +19,21 @@ export class User extends BaseEntity {
     }
 
     @Column(Types.UINT64, {primary: true})
-    private id: number;
+    public id: number;
+    
     @Column(Types.STRING)
-    private image: string;
+    public image: string;
+    
     @Column(Types.DATETIME)
-    private joined: Date;
+    public joined: Date;
+    
     @Column(Types.STRING)
-    private name: string;
+    public name: string;
+    
     @Column(Types.STRING)
-    private role: string;
+    public role: string;
+    
     @Column(Types.UINT64)
-    private rating: number;
+    public rating: number;
 
 }
-
-
-// export interface User {
-//     image: string,
-//     joined: Date,
-//     name: string,
-//     role: "user" | "admin" | "tutor"
-// }

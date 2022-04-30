@@ -3,23 +3,51 @@ import {Entity} from "../../decorators/db/entity.decorator";
 import {BaseEntity} from "../../implementations/baseEntity";
 import {Column} from "../../decorators/db/column.decorators";
 import {Types} from "ydb-sdk";
-
-@Entity()
-class TestTable extends BaseEntity {
-    constructor(id: number) {
-        super();
-        this.id = id;
-    }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-}
+import {OneToMany} from "../../decorators/db/oneToMany.decorator";
+import {Comment} from "../comments/comments.entity";
+import {ManyToMany} from "../../decorators/db/manyToMany.decorator";
+import {User} from "../users/users.entity";
+import {OldRating, Rate} from "../../entities";
+import {OneToOne} from "../../decorators/db/oneToOne.decorator";
 
 @Entity()
 export class Review extends BaseEntity {
 
+    @Column(Types.UINT64, {primary: true})
+    public id: number;
 
-    constructor(id: number, body: string, header: string, time: Date, tutor: string, user: string) {
+    @Column(Types.STRING)
+    public body: string;
+
+    @Column(Types.STRING)
+    public header: string;
+
+    @Column(Types.DATETIME)
+    public time: Date;
+
+    @Column(Types.STRING)
+    public tutor: string;
+
+    @Column(Types.STRING)
+    public user: string;
+
+    @OneToOne(OldRating)
+    public oldRating: OldRating;
+
+    @ManyToMany(Rate)
+    public rates: Rate[];
+
+    @OneToMany(Comment, "reviewId")
+    public comments: Comment[];
+
+    @ManyToMany(User)
+    public dislikes: User[];
+
+    @ManyToMany(User)
+    public likes: User[];
+
+
+    constructor(id: number, body: string, header: string, time: Date, tutor: string, user: string, oldRating: OldRating, rates: Rate[], comments: Comment[], dislikes: User[], likes: User[]) {
         super();
         this.id = id;
         this.body = body;
@@ -27,43 +55,10 @@ export class Review extends BaseEntity {
         this.time = time;
         this.tutor = tutor;
         this.user = user;
+        this.oldRating = oldRating;
+        this.rates = rates;
+        this.comments = comments;
+        this.dislikes = dislikes;
+        this.likes = likes;
     }
-
-    @Column(Types.UINT64, {primary: true})
-    private id: number;
-    @Column(Types.STRING)
-    private body: string;
-    @Column(Types.STRING)
-    private header: string;
-    @Column(Types.DATETIME)
-    private time: Date;
-    @Column(Types.STRING)
-    private tutor: string;
-    @Column(Types.STRING)
-    private user: string;
-    //TODO
-    // @Column(Types.STRING)
-    // private comments: string[];
-    // @Column(Types.STRING)
-    // private dislikes: string[];
-    // @Column(Types.STRING)
-    // private likes: string[];
-
 }
-
-
-
-
-
-
-// export interface Review {
-//     id: string,
-//     body: string,
-//     comments: Array<string>,
-//     dislikes: Array<string>,
-//     header: string,
-//     likes: Array<string>,
-//     time: Date,
-//     tutor: string,
-//     user: string
-// }

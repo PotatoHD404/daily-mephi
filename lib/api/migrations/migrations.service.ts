@@ -26,7 +26,7 @@ import {retryable} from "ydb-sdk/build/retries";
 import {pessimizable} from "ydb-sdk/build/utils";
 import {PatchedSession} from "../../database/patchedSession";
 import {INDEX_TOKEN} from "../../decorators/db/index.decorator";
-
+import "lib/entities"
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 

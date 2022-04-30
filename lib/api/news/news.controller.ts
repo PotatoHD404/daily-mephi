@@ -1,5 +1,6 @@
 import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 import {Controller} from "../../decorators/injection/controller.decorator";
+import "./news.entity";
 
 @Controller("/news")
 class NewsController {
