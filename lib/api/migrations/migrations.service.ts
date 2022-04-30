@@ -21,7 +21,6 @@ import {
 import {ENTITY_TOKEN} from "lib/decorators/db/entity.decorator";
 import {Service} from "lib/decorators/injection/service.decorator";
 import {BadRequest} from "ydb-sdk/build/errors";
-import {Materials} from "../materials/materials.entity";
 import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/db/column.decorators";
 import {retryable} from "ydb-sdk/build/retries";
 import {pessimizable} from "ydb-sdk/build/utils";
@@ -224,6 +223,7 @@ export class MigrationService {
     public async getTableDesc(tableName: string){
         let res: {[p: string]: any} = {};
         await this.db.withSession(async (session) => {
+
             res = (await session.describeTable(tableName)).toJSON()
         });
         return res;

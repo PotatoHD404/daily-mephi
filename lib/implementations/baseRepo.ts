@@ -24,7 +24,7 @@ class BaseRepo<T> implements IRepo<T> {
     }
 
     findAndCount(params: Partial<T>): Promise<{ count: number; entities: T[] }> {
-        return Promise.resolve(undefined);
+        return Promise.resolve({undefined});
     }
 
     findOne(params: Partial<T>): Promise<T> {
