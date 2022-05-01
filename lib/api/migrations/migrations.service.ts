@@ -7,7 +7,6 @@ import {Service} from "lib/injection/decorators/service.decorator";
 import {PRIMARY_KEY_TOKEN} from "lib/database/decorators/column.decorators";
 import {PatchedSession} from "lib/database/patchedSession";
 import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
-import "lib/entities"
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 
