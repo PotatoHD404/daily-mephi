@@ -6,6 +6,9 @@ import "lib/api/news/news.entity";
 @Controller("/news")
 class NewsController {
 
+    constructor(private service: NewsService) {
+    }
+
     @Get("/:id")
     public async get(@Param('id') id: string) {
         return ""

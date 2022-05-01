@@ -5,6 +5,9 @@ import {Controller} from "lib/injection/decorators/controller.decorator";
 @Controller("/top")
 class TopController {
 
+    constructor(private service: TopService) {
+    }
+
     @Get("/")
     public async get() {
         return ""

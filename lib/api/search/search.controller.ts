@@ -5,6 +5,9 @@ import {Controller} from "lib/injection/decorators/controller.decorator";
 @Controller("/search")
 class SearchController {
 
+    constructor(private service: SearchService) {
+    }
+
     @Get("/tutors")
     public async getTutors() {
         return ""

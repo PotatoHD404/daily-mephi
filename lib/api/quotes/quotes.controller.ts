@@ -6,6 +6,9 @@ import "lib/api/quotes/quotes.entity";
 @Controller("/quotes")
 class QuotesController {
 
+    constructor(private service: QuotesService) {
+    }
+
     @Get("/:id")
     public async get(@Param('id') id: string) {
         return ""

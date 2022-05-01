@@ -6,6 +6,9 @@ import "lib/api/reviews/reviews.entity"
 @Controller("/reviews")
 class ReviewsController {
 
+    constructor(private service: ReviewsService) {
+    }
+
     @Get("/:id")
     public async get(@Param('id') id: string) {
         return ""

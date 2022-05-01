@@ -6,6 +6,9 @@ import "lib/api/users/users.entity"
 @Controller("/users")
 class UsersController {
 
+    constructor(private service: UsersService) {
+    }
+
     @Get("/:id")
     public async get(@Param('id') id: string) {
         return ""

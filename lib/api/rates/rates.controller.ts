@@ -5,4 +5,7 @@ import "lib/api/rates/rates.entity";
 
 @Controller("/rates")
 class RatesController {
+
+    constructor(private service: RatesService) {
+    }
 }
