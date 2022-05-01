@@ -1,10 +1,10 @@
-import {Entity} from "../../database/decorators/entity.decorator";
+import {Entity} from "lib/database/decorators/entity.decorator";
 import {Types} from "ydb-sdk";
-import {BaseEntity} from "../../database/baseEntity";
-import {Column} from "../../database/decorators/column.decorators";
-import {ManyToMany} from "../../database/decorators/manyToMany.decorator";
-import {OneToMany} from "../../database/decorators/oneToMany.decorator";
-import {User} from "../users/users.entity";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
+import {ManyToMany} from "lib/database/decorators/manyToMany.decorator";
+import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
+import {User} from "lib/api/users/users.entity";
 import {Comment} from "lib/api/comments/comments.entity"
 
 @Entity()

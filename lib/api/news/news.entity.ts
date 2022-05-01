@@ -1,8 +1,8 @@
-import {Entity} from "../../database/decorators/entity.decorator";
-import {BaseEntity} from "../../database/baseEntity";
-import {Column} from "../../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
-import {OneToMany} from "../../database/decorators/oneToMany.decorator";
+import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
 import {Comment} from "lib/api/comments/comments.entity"
 
 @Entity()

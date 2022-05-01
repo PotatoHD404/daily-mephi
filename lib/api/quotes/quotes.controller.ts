@@ -1,6 +1,6 @@
 import {Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
-import {Controller} from "../../decorators/injection/controller.decorator";
-import "./quotes.entity";
+import {Controller} from "lib/injection/decorators/controller.decorator";
+import "lib/api/quotes/quotes.entity";
 
 @Controller("/quotes")
 class QuotesController {

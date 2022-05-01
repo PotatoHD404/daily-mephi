@@ -1,10 +1,10 @@
 import {Repository} from "lib/database/decorators/repository.decorator";
 import {DB} from "lib/database/db";
-import {IRepo} from "../../database/interfaces/repo.interface";
-import {Comment} from "./comments.entity"
+import {IRepo} from "lib/database/interfaces/repo.interface";
+import {Comment} from "lib/api/comments/comments.entity"
 
 
-@Repository()
+@Repository(Comment)
 export class CommentsRepository implements IRepo<Comment> {
     constructor(private db: DB) {
     }
@@ -37,7 +37,7 @@ export class CommentsRepository implements IRepo<Comment> {
             parent: null,
             children: [],
             next: []
-        });
+        } as any);
     }
 
     remove(params: Partial<Comment>): Promise<boolean> {

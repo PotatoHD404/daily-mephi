@@ -1,6 +1,6 @@
 import {Get} from '@storyofams/next-api-decorators';
-import {Controller} from "lib/decorators/injection/controller.decorator";
-import {MigrationService} from "./migrations.service";
+import {Controller} from "lib/injection/decorators/controller.decorator";
+import {MigrationService} from "lib/api/migrations/migrations.service";
 
 
 // TODO: make it only for admins

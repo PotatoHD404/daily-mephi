@@ -1,6 +1,6 @@
-import {Service} from "lib/decorators/injection/service.decorator";
+import {Service} from "lib/injection/decorators/service.decorator";
 import {inject} from "tsyringe";
-import {Material} from "./materials.entity";
+import {Material} from "lib/api/materials/materials.entity";
 
 @Service()
 export class MaterialsService {

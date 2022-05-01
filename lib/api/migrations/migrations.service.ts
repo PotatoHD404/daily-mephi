@@ -3,10 +3,10 @@ import {injectAll} from "tsyringe";
 import {getColumnName, getEntityProperty, getTableName, sameMembers, typeToString} from "helpers/utils";
 import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
 import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
-import {Service} from "lib/decorators/injection/service.decorator";
-import {PRIMARY_KEY_TOKEN} from "../../database/decorators/column.decorators";
-import {PatchedSession} from "../../database/patchedSession";
-import {INDEX_TOKEN} from "../../database/decorators/index.decorator";
+import {Service} from "lib/injection/decorators/service.decorator";
+import {PRIMARY_KEY_TOKEN} from "lib/database/decorators/column.decorators";
+import {PatchedSession} from "lib/database/patchedSession";
+import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
 import "lib/entities"
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql

@@ -1,13 +1,13 @@
-import {Entity} from "../../database/decorators/entity.decorator";
-import {BaseEntity} from "../../database/baseEntity";
-import {Column} from "../../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
-import {OneToMany} from "../../database/decorators/oneToMany.decorator";
-import {Comment} from "../comments/comments.entity";
-import {ManyToMany} from "../../database/decorators/manyToMany.decorator";
+import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
+import {Comment} from "lib/api/comments/comments.entity";
+import {ManyToMany} from "lib/database/decorators/manyToMany.decorator";
 import {User} from "../users/users.entity";
-import {OldRating, Rate} from "../../entities";
-import {OneToOne} from "../../database/decorators/oneToOne.decorator";
+import {OldRating, Rate} from "lib/entities";
+import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
 
 @Entity()
 export class Review extends BaseEntity {

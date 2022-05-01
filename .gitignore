@@ -36,8 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-.idea/
-
 
 notes.txt
 

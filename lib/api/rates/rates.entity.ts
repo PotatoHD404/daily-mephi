@@ -1,9 +1,9 @@
-import {Entity} from "../database/decorators/entity.decorator";
-import {BaseEntity} from "../database/baseEntity";
-import {Column} from "../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
-import {OneToOne} from "../database/decorators/oneToOne.decorator";
-import {User} from "../api/users/users.entity";
+import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
+import {User} from "lib/api/users/users.entity";
 
 
 @Entity()
@@ -42,13 +42,3 @@ export class Rate extends BaseEntity {
         this.user = user;
     }
 }
-
-// export interface Rating {
-//     id: string,
-//     punctuality: number,
-//     character: number,
-//     exams: number,
-//     quality: number,
-//     tutor: string,
-//     user: string
-// }

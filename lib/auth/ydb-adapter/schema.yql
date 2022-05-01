@@ -1,0 +1,54 @@
+CREATE TABLE accounts
+  (
+    compound_id          Utf8,
+    user_id              Utf8,
+    provider_type        Utf8,
+    provider_id          Utf8,
+    provider_account_id  Utf8,
+    refresh_token        Utf8,
+    access_token         Utf8,
+    access_token_expires Uint64,
+    created_at           Uint64,
+    updated_at           Uint64,
+
+    PRIMARY KEY (compound_id),
+    INDEX accounts_provider_account_id GLOBAL ON (provider_id, provider_account_id),
+    INDEX accounts_user_id GLOBAL ON (user_id)
+  );
+
+CREATE TABLE sessions
+  (
+    session_token Utf8,
+    user_id       Utf8,
+    expires       Uint64,
+    access_token  Utf8,
+    created_at    Uint64,
+    updated_at    Uint64,
+    PRIMARY KEY (session_token),
+    INDEX sessions_access_token GLOBAL ON (access_token),
+    INDEX sessions_user_id GLOBAL ON (user_id)
+  );
+
+CREATE TABLE users
+  (
+    id             Utf8,
+    name           Utf8,
+    email          Utf8,
+    email_verified Uint64,
+    image          Utf8,
+    created_at     Uint64,
+    updated_at     Uint64,
+    PRIMARY KEY (id),
+    INDEX users_email GLOBAL ON (email)
+
+  );
+
+CREATE TABLE verification_requests
+  (
+    token      Utf8,
+    identifier Utf8,
+    expires    Uint64,
+    created_at Uint64,
+    updated_at Uint64,
+    PRIMARY KEY (token)
+  );

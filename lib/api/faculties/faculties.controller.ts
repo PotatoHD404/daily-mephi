@@ -1,6 +1,6 @@
 import {Get} from '@storyofams/next-api-decorators';
-import {Controller} from "../../decorators/injection/controller.decorator";
-import "./faculties.entity";
+import {Controller} from "lib/injection/decorators/controller.decorator";
+import "lib/api/faculties/faculties.entity";
 
 @Controller("/faculties")
 class FacultiesController {

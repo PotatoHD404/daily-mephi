@@ -1,9 +1,10 @@
-import {Entity} from "../database/decorators/entity.decorator";
-import {BaseEntity} from "../database/baseEntity";
-import {Column} from "../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
+import {Index} from "lib/database/decorators/index.decorator";
 import {Types} from "ydb-sdk";
-import {OneToOne} from "../database/decorators/oneToOne.decorator";
-import {User} from "../api/users/users.entity";
+import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
+import {User} from "lib/api/users/users.entity";
 
 @Entity()
 export class Account extends BaseEntity {
@@ -17,9 +18,11 @@ export class Account extends BaseEntity {
     @Column(Types.STRING)
     public type: string;
 
+    @Index("accounts_provider_account_id")
     @Column(Types.STRING)
     public provider: string;
 
+    @Index("accounts_provider_account_id")
     @Column(Types.STRING)
     public providerAccountId: string;
 

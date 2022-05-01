@@ -1,6 +1,6 @@
-import {Entity} from "../database/decorators/entity.decorator";
-import {BaseEntity} from "../database/baseEntity";
-import {Column} from "../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 
 @Entity()
@@ -28,10 +28,3 @@ export class OldRating extends BaseEntity {
     }
 
 }
-
-// old_rating: {
-//         character: number,
-//         count: number
-//         exams: number
-//         quality: number
-//     },

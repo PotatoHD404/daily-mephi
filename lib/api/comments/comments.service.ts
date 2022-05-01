@@ -1,5 +1,5 @@
-import {Service} from "lib/decorators/injection/service.decorator";
-import {CommentsRepository} from "./comments.repository";
+import {Service} from "lib/injection/decorators/service.decorator";
+import {CommentsRepository} from "lib/api/comments/comments.repository";
 
 
 @Service()

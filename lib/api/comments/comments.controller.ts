@@ -1,6 +1,6 @@
 import {Get, Post} from '@storyofams/next-api-decorators';
-import {Controller} from "lib/decorators/injection/controller.decorator";
-import {CommentsService} from "./comments.service";
+import {CommentsService} from "lib/api/comments/comments.service"
+import {Controller} from "lib/injection/decorators/controller.decorator";
 import "./comments.entity"
 
 

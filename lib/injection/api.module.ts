@@ -14,8 +14,8 @@ import {
     notFound,
     parseRequestUrl,
     pathToRegexp
-} from "./injection.imports";
-import {CONTROLLERS_TOKEN} from "../lib/decorators/injection/controller.decorator";
+} from "lib/injection/injection.imports";
+import {CONTROLLERS_TOKEN} from "lib/injection/decorators/controller.decorator";
 
 @Module()
 export class ApiModule {

@@ -1,3 +1,4 @@
+import {FieldDecorator} from "protobufjs";
 import {camelToSnakeCase, getColumnName, getTableName} from "../../../helpers/utils";
 import {Entity, TABLE_NAME_TOKEN} from "./entity.decorator";
 import {Column} from "./column.decorators";
@@ -7,7 +8,7 @@ import {BaseEntity} from "../baseEntity";
 export const MANY_TO_MANY_TOKEN = Symbol('manyToMany')
 
 
-export function ManyToMany(type: any, tableName?: string): MethodDecorator {
+export function ManyToMany(type: any, tableName?: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
         if (!tableName)
             tableName = getColumnName(target, key) + "_" + getTableName(target);

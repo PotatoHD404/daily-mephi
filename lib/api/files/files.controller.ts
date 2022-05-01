@@ -1,9 +1,9 @@
 import {Delete, Param} from '@storyofams/next-api-decorators';
-import "./files.entity"
+import "lib/api/files/files.entity"
 
 
 // import {checkStatus, doRequest, setCookie} from "helpers/utils";
-import {Controller} from 'lib/decorators/injection/controller.decorator';
+import {Controller} from 'lib/injection/decorators/controller.decorator';
 
 @Controller("/files")
 class FilesController {

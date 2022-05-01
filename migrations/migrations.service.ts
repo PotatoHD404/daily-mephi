@@ -3,7 +3,7 @@ import {inject} from "tsyringe";
 import {camelToSnakeCase} from "helpers/utils";
 import {Column, TableDescription, Ydb} from "ydb-sdk";
 import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
-import {Service} from "lib/decorators/injection/service.decorator";
+import {Service} from "lib/injection/decorators/service.decorator";
 
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql

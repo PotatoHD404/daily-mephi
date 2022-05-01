@@ -2,7 +2,7 @@ import getSvg from "components/getSvg";
 import {Get, Param, SetHeader} from '@storyofams/next-api-decorators';
 import sharp from 'sharp';
 import path from "path";
-import {Controller} from "../../decorators/injection/controller.decorator";
+import {Controller} from "lib/injection/decorators/controller.decorator";
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
