@@ -5,6 +5,6 @@ import {Material} from "lib/api/materials/materials.entity";
 
 @Service()
 export class MaterialsService {
-    constructor(@inject(Material) private materials: Material) {
+    constructor(private repository: MaterialsRepository) {
     }
 }

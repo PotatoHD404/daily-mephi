@@ -5,6 +5,8 @@ import {Service} from "lib/injection/decorators/service.decorator";
 
 @Service()
 export class DisciplinesService {
+    constructor(private repository: DisciplinesRepository) {
+    }
 
 
 }
