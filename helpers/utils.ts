@@ -1,12 +1,14 @@
-import https from "https";
-import {ClientRequest} from "http";
 import {serialize} from "cookie";
-import {Cookie} from "next-auth/core/lib/cookie";
+import {ClientRequest} from "http";
+import https from "https";
+import {Constructor} from "lib/database/types";
 import type {NextApiResponse} from 'next';
-import {Ydb} from "ydb-sdk";
-import {COLUMN_NAME_TOKEN} from "../lib/database/decorators/column.decorators";
+import {Cookie} from "next-auth/core/lib/cookie";
+import {TypedData, typeMetadataKey, Ydb} from "ydb-sdk";
+import {COLUMN_NAME_TOKEN, COLUMNS_TOKEN} from "../lib/database/decorators/column.decorators";
 import {TABLE_NAME_TOKEN} from "../lib/database/decorators/entity.decorator";
 import {INDEX_TOKEN} from "../lib/database/decorators/index.decorator";
+import IType = Ydb.IType;
 
 
 interface Cookies {
@@ -81,7 +83,7 @@ export function typeToString(type: Ydb.IType) {
 }
 
 export function getEntityProperty(entity: any, property: string | symbol): string[] {
-    return Reflect.ownKeys(entity).filter((key) => {
+    return (Reflect.getMetadata(COLUMNS_TOKEN, entity) ?? []).filter((key: string | symbol) => {
         return typeof key === 'string' && Reflect.hasMetadata(property, entity, key);
     }) as any;
 }
@@ -94,16 +96,40 @@ export function sameMembers(arr1: any[], arr2: any[]): Boolean {
 }
 
 export function getTableName(entity: any) {
-
-    return camelToSnakeCase(Reflect.getMetadata(TABLE_NAME_TOKEN, entity.constructor) ?? entity.constructor.name);
+    return camelToSnakeCase(Reflect.getMetadata(TABLE_NAME_TOKEN, entity) ?? entity.name);
 }
 
 export function getColumnName(entity: any, key: string | symbol) {
-    // console.log(key)
     return camelToSnakeCase(Reflect.getMetadata(COLUMN_NAME_TOKEN, entity, key) ?? key);
 }
 
 export function getIndex(entity: any, key: string) {
-    // console.log(key)
     return camelToSnakeCase(Reflect.getMetadata(INDEX_TOKEN, entity, key) ?? key);
+}
+
+
+export function getTypedProperties<T extends TypedData>(entity: Constructor<T>): string[] {
+    return (Reflect.getMetadata(COLUMNS_TOKEN, entity) ?? []).filter((key: string | symbol) => (
+        typeof key === 'string' && Reflect.hasMetadata(typeMetadataKey, entity, key)
+    )) as string[];
+}
+
+export function getType<T extends TypedData>(entity: Constructor<T>, propertyKey: string): IType {
+    const typeMeta = Reflect.getMetadata(typeMetadataKey, entity, propertyKey);
+    if (!typeMeta) {
+        throw new Error(`Property ${propertyKey} should be decorated with @declareType!`);
+    }
+    return typeMeta;
+}
+
+export function getRowType<T extends TypedData>(entity: Constructor<T>) {
+    // const converter = getNameConverter(entity.p.__options, 'jsToYdb');
+    return {
+        structType: {
+            members: getTypedProperties(entity).map((propertyKey) => ({
+                name: propertyKey,
+                type: getType(entity, propertyKey)
+            }))
+        }
+    };
 }

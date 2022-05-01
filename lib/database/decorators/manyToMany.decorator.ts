@@ -1,15 +1,16 @@
 import {FieldDecorator} from "protobufjs";
-import {camelToSnakeCase, getColumnName, getTableName} from "../../../helpers/utils";
-import {Entity, TABLE_NAME_TOKEN} from "./entity.decorator";
-import {Column} from "./column.decorators";
 import {Types} from "ydb-sdk";
+import {camelToSnakeCase, getColumnName, getTableName} from "../../../helpers/utils";
 import {BaseEntity} from "../baseEntity";
+import {Column} from "./column.decorators";
+import {Entity, TABLE_NAME_TOKEN} from "./entity.decorator";
 
 export const MANY_TO_MANY_TOKEN = Symbol('manyToMany')
 
 
 export function ManyToMany(type: any, tableName?: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
+        target = target.constructor;
         if (!tableName)
             tableName = getColumnName(target, key) + "_" + getTableName(target);
 

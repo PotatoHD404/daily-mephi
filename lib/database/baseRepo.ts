@@ -1,4 +1,4 @@
-import {getTableName, typeToString} from "helpers/utils";
+import {getRowType, getTableName, typeToString} from "helpers/utils";
 import {BaseEntity} from "lib/database/baseEntity";
 import {TARGET_ENTITY_TOKEN} from "lib/database/decorators/repository.decorator";
 import {Constructor} from "lib/database/types";
@@ -13,22 +13,22 @@ export const SYNTAX_V1 = '--!syntax_v1';
 @autoInjectable()
 export class BaseRepo<T extends BaseEntity> implements IRepo<T> {
 
-    protected target: T;
+    protected target: Constructor<T>;
 
     constructor(protected db: DB) {
-        console.log(this.constructor)
-        const entity: Constructor<T> | undefined = Reflect.getMetadata(TARGET_ENTITY_TOKEN, this);
+        // console.log(this)
+        const entity: Constructor<T> | undefined = Reflect.getMetadata(TARGET_ENTITY_TOKEN, this.constructor);
         if (!entity)
             throw new Error("Undefined entity in repository, add @Repository(Entity) decorator")
-        this.target = new entity;
+        this.target = entity;
         // console.log(type)
     }
 
     getDeclaration(): string {
         let declaration = `DECLARE ${getTableName(this.target)} AS `
-        if (this.target.getRowType()['structType'] != undefined) {
-            declaration += "Struct<"
-            this.target.getRowType().structType.members.forEach(
+        if (getRowType(this.target)['structType'] != undefined) {
+            declaration += "Struct<";
+            getRowType(this.target).structType.members.forEach(
                 (el: { name: any; type: Ydb.IType; }) => {
                     declaration += `\n    ${el.name}: ${typeToString(el.type)}`
                 })
@@ -40,7 +40,7 @@ export class BaseRepo<T extends BaseEntity> implements IRepo<T> {
 
     add(dto: Partial<T>): Promise<boolean> {
 
-        console.log(this.getDeclaration())
+        console.log(this.getDeclaration());
         return Promise.resolve(false);
     }
 

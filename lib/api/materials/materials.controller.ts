@@ -1,7 +1,6 @@
 import {Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
-import {Controller} from "lib/injection/decorators/controller.decorator";
 import {MaterialsService} from "lib/api/materials/materials.service";
-import "lib/api/materials/materials.entity";
+import {Controller} from "lib/injection/decorators/controller.decorator";
 
 @Controller("/materials")
 export class MaterialsController {

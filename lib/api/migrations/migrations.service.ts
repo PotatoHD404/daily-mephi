@@ -1,12 +1,12 @@
+import {getColumnName, getEntityProperty, getRowType, getTableName, sameMembers, typeToString} from "helpers/utils";
 import {DB} from "lib/database/db";
-import {injectAll} from "tsyringe";
-import {getColumnName, getEntityProperty, getTableName, sameMembers, typeToString} from "helpers/utils";
-import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
-import {Service} from "lib/injection/decorators/service.decorator";
 import {PRIMARY_KEY_TOKEN} from "lib/database/decorators/column.decorators";
-import {PatchedSession} from "lib/database/patchedSession";
+import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
 import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
+import {PatchedSession} from "lib/database/patchedSession";
+import {Service} from "lib/injection/decorators/service.decorator";
+import {injectAll} from "tsyringe";
+import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 
@@ -19,7 +19,7 @@ export class MigrationService {
     private readonly entities: any[]
 
     constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[]) {
-        this.entities = entities.map(entity => new entity);
+        this.entities = entities;
     }
 
     private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
@@ -32,9 +32,9 @@ export class MigrationService {
 
     getTableDescription(entity: any): TableDescription {
         let table = new TableDescription();
-        // console.log(entity.getRowType()['structType'])
-        if (entity.getRowType()['structType'] != undefined) {
-            table = entity.getRowType().structType.members.reduce(
+        console.log(getRowType(entity))
+        if (getRowType(entity)['structType'] != undefined) {
+            table = getRowType(entity).structType.members.reduce(
                 (prev: TableDescription, curr: Col) => {
                     return prev.withColumn(new Column(
                         getColumnName(entity, curr.name),
@@ -80,7 +80,7 @@ export class MigrationService {
                     const tableDescription = (await session.describeTable(tableName)).toJSON();
                     console.log(tableDescription)
 
-                    const rowType = entity.getRowType();
+                    const rowType = getRowType(entity);
                     type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
                     const columns: Col[] = tableDescription['columns'];
                     const primaryKeys: string[] = tableDescription['primaryKey'];
