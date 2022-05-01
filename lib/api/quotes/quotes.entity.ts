@@ -26,10 +26,3 @@ export class Quote extends BaseEntity {
         this.likes = likes;
     }
 }
-
-// export interface Quote {
-//     id: string,
-//     comments: Array<string>,
-//     dislikes: Array<string>
-//     likes: Array<string>
-// }

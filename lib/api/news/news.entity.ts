@@ -34,11 +34,3 @@ export class News extends BaseEntity {
     }
 
 }
-
-// export interface News {
-//     id: string,
-//     body: string,
-//     comments: Array<string>,
-//     header: string,
-//     time: Date
-// }

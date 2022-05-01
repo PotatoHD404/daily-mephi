@@ -1,4 +1,5 @@
 import {Delete, Param} from '@storyofams/next-api-decorators';
+import {FilesService} from "lib/api/files/files.service";
 import "lib/api/files/files.entity"
 
 

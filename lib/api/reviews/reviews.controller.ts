@@ -1,4 +1,5 @@
 import {Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
+import {ReviewsService} from "lib/api/reviews/reviews.service";
 import {Controller} from "lib/injection/decorators/controller.decorator";
 import "lib/api/reviews/reviews.entity"
 

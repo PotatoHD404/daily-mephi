@@ -1,4 +1,5 @@
 import {Get} from '@storyofams/next-api-decorators';
+import {SearchService} from "lib/api/search/search.service";
 import {Controller} from "lib/injection/decorators/controller.decorator";
 
 @Controller("/search")

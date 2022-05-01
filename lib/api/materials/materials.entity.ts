@@ -66,19 +66,3 @@ export class Material extends BaseEntity {
         this.likes = likes;
     }
 }
-
-// export interface Material {
-//     id: string,
-//     block: string | null
-//     comments: Array<string>,
-//     description: string,
-//     discipline: string,
-//     dislikes: Array<string>
-//     faculty: string | null,
-//     header: string
-//     likes: Array<string>,
-//     time: Date,
-//     tutor: string | null,
-//     url: string | null,
-//     user: string
-// }

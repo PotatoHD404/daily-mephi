@@ -17,7 +17,7 @@ class CommentsController {
 
     @Get("/")
     public async test() {
-        await this.service.test();
+        // await this.service.test();
         return "123"
     }
 
