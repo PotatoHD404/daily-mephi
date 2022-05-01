@@ -9,8 +9,8 @@ export class FacultiesService {
 
     }
 
-    getAll() {
-        return this.repository.add(new Faculty({name: "ИИКС"}))
+    async getAll() {
+        return await this.repository.add(new Faculty({name: "ИИКС"}))
     }
 
 }
