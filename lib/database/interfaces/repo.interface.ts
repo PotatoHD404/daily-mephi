@@ -4,6 +4,6 @@ export interface IRepo<T> {
     add: (dto: Partial<T>) => Promise<boolean>;
     remove: (params: Partial<T>) => Promise<boolean>;
     count: (params: Partial<T>) => Promise<number>;
-    findAndCount: (params: Partial<T>) => Promise<{count: number, entities: T[]}>;
+    findAndCount: (params: Partial<T>) => Promise<{ count: number, entities: T[] }>;
     update: (params: Partial<T>) => Promise<boolean>;
 }

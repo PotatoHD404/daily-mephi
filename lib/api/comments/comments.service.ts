@@ -6,7 +6,8 @@ import {CommentsRepository} from "./comments.repository";
 export class CommentsService {
     constructor(private repository: CommentsRepository) {
     }
-    async test(){
+
+    async test() {
         await this.repository.find({});
     }
 }

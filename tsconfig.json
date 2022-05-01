@@ -21,7 +21,7 @@
     "jsx": "preserve",
     "incremental": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": ".",
+    "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",

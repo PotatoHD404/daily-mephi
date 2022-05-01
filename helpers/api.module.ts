@@ -1,13 +1,19 @@
 import {
     BASE_PATH_TOKEN,
     container,
-    getCallerInfo, getParams, HandlerMethod, HTTP_METHOD_TOKEN,
-    InjectAll, Key,
+    getCallerInfo,
+    getParams,
+    HandlerMethod,
+    HTTP_METHOD_TOKEN,
+    InjectAll,
+    Key,
     Module,
     NextApiHandler,
     NextApiRequest,
     NextApiResponse,
-    notFound, parseRequestUrl, pathToRegexp
+    notFound,
+    parseRequestUrl,
+    pathToRegexp
 } from "./injection.imports";
 import {CONTROLLERS_TOKEN} from "../lib/decorators/injection/controller.decorator";
 
@@ -61,7 +67,7 @@ export class ApiModule {
 
         let methods: Array<HandlerMethod> = Reflect.getMetadata(HTTP_METHOD_TOKEN, cls);
         const basePath: string = Reflect.getMetadata(BASE_PATH_TOKEN, cls);
-        if(!basePath)
+        if (!basePath)
             return [[], undefined, undefined];
         methods = methods.map(f => {
             return {

@@ -1,31 +1,12 @@
 import {DB} from "lib/database/db";
-import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
-import {
-    camelToSnakeCase,
-    getColumnName,
-    getEntityProperty,
-    getTableName,
-    sameMembers,
-    typeToString
-} from "helpers/utils";
-import {
-    AlterTableDescription,
-    Column,
-    CreateTableSettings,
-    Session, snakeToCamelCaseConversion,
-    TableDescription,
-    TableIndex,
-    Types,
-    Ydb
-} from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/decorators/db/entity.decorator";
+import {injectAll} from "tsyringe";
+import {getColumnName, getEntityProperty, getTableName, sameMembers, typeToString} from "helpers/utils";
+import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
+import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
 import {Service} from "lib/decorators/injection/service.decorator";
-import {BadRequest} from "ydb-sdk/build/errors";
-import {COLUMN_NAME_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/db/column.decorators";
-import {retryable} from "ydb-sdk/build/retries";
-import {pessimizable} from "ydb-sdk/build/utils";
+import {PRIMARY_KEY_TOKEN} from "../../database/decorators/column.decorators";
 import {PatchedSession} from "../../database/patchedSession";
-import {INDEX_TOKEN} from "../../decorators/db/index.decorator";
+import {INDEX_TOKEN} from "../../database/decorators/index.decorator";
 import "lib/entities"
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
@@ -41,6 +22,14 @@ export class MigrationService {
     constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[]) {
         this.entities = entities.map(entity => new entity);
     }
+
+    private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
+        const index = new TableIndex(curr);
+        index.withIndexColumns(...indexColumns);
+        prev.addIndexes.push(index)
+    }
+
+    //
 
     getTableDescription(entity: any): TableDescription {
         let table = new TableDescription();
@@ -69,8 +58,6 @@ export class MigrationService {
         // table.withIndexes(...getEntityProperty(entity, INDEX_TOKEN))
         return table;
     }
-
-    //
 
     public async dropAll(session: Session) {
         for (const entity of this.entities) {
@@ -176,6 +163,8 @@ export class MigrationService {
                         return;
                     }
                     console.log(desc)
+                    // if(desc.alterColumns[0]?.type?.optionalType?.item)
+                    //     console.log(desc.alterColumns[0]?.type?.optionalType?.item)
                     if (desc.addColumns.length > 0 ||
                         desc.alterColumns.length > 0 ||
                         desc.dropColumns.length > 0 ||
@@ -191,12 +180,6 @@ export class MigrationService {
         );
     }
 
-    private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
-        const index = new TableIndex(curr);
-        index.withIndexColumns(...indexColumns);
-        prev.addIndexes.push(index)
-    }
-
     public async createAll(session: Session): Promise<void> {
         for (const entity of this.entities) {
 
@@ -209,6 +192,7 @@ export class MigrationService {
         // console.log(tableName)
         // console.log(this.getTableDescription(new entity))
         const desc = this.getTableDescription(entity);
+        console.log(tableName);
         console.log(desc);
         if (desc.columns.length > 0 && desc.primaryKey.length > 0)
             await session.createTable(
@@ -220,8 +204,8 @@ export class MigrationService {
         }
     }
 
-    public async getTableDesc(tableName: string){
-        let res: {[p: string]: any} = {};
+    public async getTableDesc(tableName: string) {
+        let res: { [p: string]: any } = {};
         await this.db.withSession(async (session) => {
 
             res = (await session.describeTable(tableName)).toJSON()

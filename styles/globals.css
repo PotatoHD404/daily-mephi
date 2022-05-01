@@ -37,7 +37,7 @@ body::-webkit-scrollbar-thumb {
 
 /* set button(top and bottom of the scrollbar) */
 body::-webkit-scrollbar-button {
-    display:none;
+    display: none;
 }
 
 .greenBox {

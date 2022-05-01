@@ -1,12 +1,10 @@
 // import {Service as Repository} from "./service.decorator"
 import {autoInjectable, singleton} from "tsyringe";
 
-export function Repository() {
+export function Repository(entity: any): ClassDecorator {
 
-    return (target: new (...args: any[]) => any) => {
+    return (target: any) => {
         target = autoInjectable()(target);
         singleton()(target);
-
-        return target;
     };
 }

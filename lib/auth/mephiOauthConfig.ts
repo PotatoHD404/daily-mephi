@@ -22,7 +22,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         token: {
             url: "http://localhost:3000/api/debug",
             async request({params}) {
-                if(!params.code)
+                if (!params.code)
                     throw new Error("There is no cas ticket");
                 const query = new URLSearchParams({service: host, ticket: params.code});
                 const response = await fetch('https://login.mephi.ru/validate?' + query)

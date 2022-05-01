@@ -1,9 +1,8 @@
-import {string} from "prop-types";
-import {Entity} from "../../decorators/db/entity.decorator";
-import {BaseEntity} from "../../implementations/baseEntity";
-import {Column} from "../../decorators/db/column.decorators";
+import {Entity} from "../../database/decorators/entity.decorator";
+import {BaseEntity} from "../../database/baseEntity";
+import {Column} from "../../database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
-import {ManyToMany} from "../../decorators/db/manyToMany.decorator";
+import {ManyToMany} from "../../database/decorators/manyToMany.decorator";
 import {User} from "../users/users.entity";
 
 

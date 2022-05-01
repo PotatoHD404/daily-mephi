@@ -1,4 +1,4 @@
-import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
+import {Get} from '@storyofams/next-api-decorators';
 import {Controller} from "../lib/decorators/injection/controller.decorator";
 import {MigrationService} from "./migrations.service";
 

@@ -7,9 +7,7 @@ import Image from "next/image";
 import CloseIcon from 'images/close_icon.svg';
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
-import styles from "styles/warning.module.css";
 import {signIn} from "next-auth/react";
-
 
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
@@ -34,7 +32,7 @@ const StyledButton = styled(Button)(() => ({
     fontFamily: 'Montserrat'
 }));
 
-const StyledIconButton = styled(IconButton)(()=>({
+const StyledIconButton = styled(IconButton)(() => ({
     width: '3.5rem',
     height: '3.5rem',
     gridColumnStart: 13,

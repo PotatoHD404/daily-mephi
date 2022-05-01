@@ -1,8 +1,8 @@
 import {container, singleton} from "tsyringe";
 
-export function Database() {
+export function Database(): ClassDecorator {
 
-    return (target: new (...args: any[]) => any) => {
+    return function (target: any) {
         singleton()(target);
         container.register(target, {useClass: target});
 

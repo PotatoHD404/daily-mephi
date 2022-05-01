@@ -1,6 +1,4 @@
-import {Catch} from "@storyofams/next-api-decorators";
-import {autoInjectable, container, singleton} from "tsyringe";
-import {BASE_PATH_TOKEN} from "./controller.decorator";
+import {container, singleton} from "tsyringe";
 
 export function Module() {
 

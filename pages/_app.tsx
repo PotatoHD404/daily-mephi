@@ -4,17 +4,15 @@ import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
 import {JSXInternal} from "preact/src/jsx";
-import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
 import React, {ReactNode} from "react";
 import Footer from "components/footer";
 import Image from "next/image";
-import template from "images/template11.png";
 import Background from 'images/bg.svg'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
-import {orange} from "@mui/material/colors";
 import {createTheme, ThemeProvider} from "@mui/material";
+import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
 
 
 declare module '@mui/material/styles' {

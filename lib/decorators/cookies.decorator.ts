@@ -1,5 +1,5 @@
 import {createParamDecorator} from '@storyofams/next-api-decorators';
-import { NextApiRequest } from 'next';
+import {NextApiRequest} from 'next';
 
 export const Cookies = createParamDecorator<NextApiRequest["cookies"]>(
     req => {

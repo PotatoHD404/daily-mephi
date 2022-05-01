@@ -1,8 +1,7 @@
-import {Repository} from "lib/decorators/db/repository.decorator";
+import {Repository} from "lib/database/decorators/repository.decorator";
 import {DB} from "lib/database/db";
-import {IRepo} from "../../interfaces/repo.interface";
+import {IRepo} from "../../database/interfaces/repo.interface";
 import {Comment} from "./comments.entity"
-import {string} from "prop-types";
 
 
 @Repository()

@@ -1,12 +1,11 @@
-import {IRepo} from "../interfaces/repo.interface";
-import {DB} from "../database/db";
+import {IRepo} from "./interfaces/repo.interface";
+import {DB} from "./db";
 
 
-class BaseRepo<T> implements IRepo<T> {
+export class BaseRepo<T> implements IRepo<T> {
 
 
-
-    constructor(private db: DB, private entity: new (...args: any[]) => T) {
+    constructor(protected db: DB, protected entity: new (...args: any[]) => T) {
 
         // console.log(type)
     }
@@ -24,11 +23,11 @@ class BaseRepo<T> implements IRepo<T> {
     }
 
     findAndCount(params: Partial<T>): Promise<{ count: number; entities: T[] }> {
-        return Promise.resolve({undefined});
+        return Promise.resolve({count: 0, entities: []});
     }
 
     findOne(params: Partial<T>): Promise<T> {
-        return Promise.resolve(undefined);
+        return Promise.resolve(Object.prototype as any);
     }
 
     remove(params: Partial<T>): Promise<boolean> {

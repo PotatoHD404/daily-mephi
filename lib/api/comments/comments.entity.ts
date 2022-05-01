@@ -1,11 +1,8 @@
-import {Entity} from "../../decorators/db/entity.decorator";
-import {declareType, Types} from "ydb-sdk";
-import {BaseEntity} from "../../implementations/baseEntity";
-import {Column} from "../../decorators/db/column.decorators";
-import {ManyToMany} from "../../decorators/db/manyToMany.decorator";
-import {OneToMany} from "../../decorators/db/oneToMany.decorator";
-import {OneToOne} from "../../decorators/db/oneToOne.decorator";
-import {Review} from "../reviews/reviews.entity";
+import {Entity} from "../../database/decorators/entity.decorator";
+import {Types} from "ydb-sdk";
+import {BaseEntity} from "../../database/baseEntity";
+import {Column} from "../../database/decorators/column.decorators";
+import {OneToOne} from "../../database/decorators/oneToOne.decorator";
 
 @Entity()
 export class Comment extends BaseEntity {

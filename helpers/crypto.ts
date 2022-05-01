@@ -41,7 +41,7 @@ export async function decrypt(ciphertext: string, key?: string): Promise<string>
     const buf: Buffer = Buffer.from(ciphertext, 'base64');
     const authTag: Buffer = buf.slice(-16);
     decipher.setAuthTag(authTag);
-    const realCiphertext: Buffer = buf.slice(0,-16);
+    const realCiphertext: Buffer = buf.slice(0, -16);
     const res: string = decipher.update(realCiphertext).toString('utf8');
     try {
         decipher.final();

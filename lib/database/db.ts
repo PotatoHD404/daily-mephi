@@ -1,10 +1,5 @@
-import {
-    Driver,
-    AnonymousAuthService,
-    TableDescription, Column, Types, Session,
-} from 'ydb-sdk'
-import {Database} from "../decorators/db/database.decorator";
-import {Ydb} from "ydb-sdk"
+import {AnonymousAuthService, Column, Driver, Session, TableDescription, Types, Ydb,} from 'ydb-sdk'
+import {Database} from "./decorators/database.decorator";
 import {ExecuteQuerySettings} from "ydb-sdk/build/table";
 
 type IQueryParams = { [k: string]: Ydb.ITypedValue };
@@ -55,7 +50,7 @@ export class DB {
         });
     }
 
-    async withSession(func:(session: Session) => Promise<void>){
+    async withSession(func: (session: Session) => Promise<void>) {
         await this.driver.tableClient.withSession(func);
     }
 

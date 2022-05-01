@@ -1,8 +1,8 @@
 import {DB} from "lib/database/db";
-import {autoInjectable, inject, singleton} from "tsyringe";
+import {inject} from "tsyringe";
 import {camelToSnakeCase} from "helpers/utils";
-import {Column, TableDescription, Types, Ydb} from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/decorators/db/entity.decorator";
+import {Column, TableDescription, Ydb} from "ydb-sdk";
+import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
 import {Service} from "lib/decorators/injection/service.decorator";
 
 
@@ -47,7 +47,7 @@ export class MigrationService {
         });
     }
 
-    public async dropAll(){
+    public async dropAll() {
         await this.db.withSession(async (session) => {
             for (const entity of this.entities) {
                 const tableName = camelToSnakeCase(entity.name)
@@ -58,7 +58,7 @@ export class MigrationService {
         });
     }
 
-    public async createAll(){
+    public async createAll() {
         await this.db.withSession(async (session) => {
             for (const entity of this.entities) {
                 const tableName = camelToSnakeCase(entity.name)

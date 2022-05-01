@@ -1,13 +1,9 @@
-import {createHandler, Delete, Get, Param, Post} from '@storyofams/next-api-decorators';
-import {getSession} from "next-auth/react";
-import jwt from "jsonwebtoken";
+import {Delete, Param} from '@storyofams/next-api-decorators';
 import "./files.entity"
 
 
 // import {checkStatus, doRequest, setCookie} from "helpers/utils";
-import {Client} from "@notionhq/client";
-import {decrypt, encrypt} from "helpers/crypto";
-import { Controller } from 'lib/decorators/injection/controller.decorator';
+import {Controller} from 'lib/decorators/injection/controller.decorator';
 
 @Controller("/files")
 class FilesController {

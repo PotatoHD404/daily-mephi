@@ -1,8 +1,8 @@
-import {Entity} from "../decorators/db/entity.decorator";
-import {BaseEntity} from "../implementations/baseEntity";
-import {Column} from "../decorators/db/column.decorators";
+import {Entity} from "../database/decorators/entity.decorator";
+import {BaseEntity} from "../database/baseEntity";
+import {Column} from "../database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
-import {OneToOne} from "../decorators/db/oneToOne.decorator";
+import {OneToOne} from "../database/decorators/oneToOne.decorator";
 import {User} from "../api/users/users.entity";
 
 @Entity()
@@ -10,43 +10,43 @@ export class Account extends BaseEntity {
 
     @Column(Types.UINT64, {primary: true})
     public id: number;
-    
+
     @OneToOne(User)
     public user: User;
-    
+
     @Column(Types.STRING)
     public type: string;
-    
+
     @Column(Types.STRING)
     public provider: string;
-    
+
     @Column(Types.STRING)
     public providerAccountId: string;
-    
+
     @Column(Types.STRING)
     public refresh_token: string;
-    
+
     @Column(Types.STRING)
     public access_token: string;
-    
+
     @Column(Types.UINT64)
     public expires_at: number;
-    
+
     @Column(Types.STRING)
     public token_type: string;
-    
+
     @Column(Types.STRING)
     public scope: string;
-    
+
     @Column(Types.STRING)
     public id_token: string;
-    
+
     @Column(Types.STRING)
     public session_state: string;
-    
+
     @Column(Types.STRING)
     public oauth_token_secret: string;
-    
+
     @Column(Types.STRING)
     public oauth_token: string;
 

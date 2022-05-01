@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {Column, declareType, TableDescription, TypedData, typeMetadataKey, Types, Ydb} from "ydb-sdk";
+import {declareType, TypedData, Types, Ydb} from "ydb-sdk";
 import {typeToString} from "../../../helpers/utils";
 
 export const SYNTAX_V1 = '--!syntax_v1';
@@ -29,28 +29,24 @@ class NormData extends TypedData {
 }
 
 
-
-
 class TestEntity extends NormData {
-    constructor(a: string, b: string) {
-        super();
-        this.a = a;
-        this.b = b;
-    }
-
     @declareType(Types.STRING)
     private a: string;
     @declareType(Types.STRING)
 
     private b: string;
 
+    constructor(a: string, b: string) {
+        super();
+        this.a = a;
+        this.b = b;
+    }
+
 
     // test(){
     //     return this
     // }
 }
-
-
 
 
 export default async function handler(
@@ -76,7 +72,6 @@ export default async function handler(
 
         realQuery += ">;\n"
     }
-
 
 
     const query = `
