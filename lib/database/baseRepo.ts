@@ -1,12 +1,19 @@
+import {TARGET_ENTITY_TOKEN} from "lib/database/decorators/repository.decorator";
+import {Constructor} from "lib/database/types";
+import {autoInjectable, inject, injectable} from "tsyringe";
 import {IRepo} from "./interfaces/repo.interface";
 import {DB} from "./db";
 
-
+@autoInjectable()
 export class BaseRepo<T> implements IRepo<T> {
 
+    protected target: T;
 
-    constructor(protected db: DB, protected entity: new (...args: any[]) => T) {
-
+    constructor(protected db: DB) {
+        const entity : Constructor<T> | undefined = Reflect.getMetadata(TARGET_ENTITY_TOKEN, this);
+        if(!entity)
+            throw new Error("Undefined entity in repository, add @Repository(Entity) decorator")
+        this.target = new entity;
         // console.log(type)
     }
 

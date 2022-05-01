@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Tutor} from "lib/database/models";
+// import {Tutor} from "lib/database/models";
 import withSession from "components/withSession";
 import {Session} from "next-auth";
 import SEO from "components/seo";
@@ -35,23 +35,23 @@ class Home extends Component<{ session: Session }> {
         const input = document.querySelector("input");
         input?.focus();
         input?.select();
-        let data: Tutor = {
-            id: 'string',
-            name: 'string',
-            old_rating: {
-                character: -5,
-                count: 1000,
-                exams: -5,
-                quality: 5
-            },
-            description: 'string',
-            image: 'string',
-            url: 'string',
-            since: new Date(),
-            updated: new Date(),
-            disciplines: [],
-            faculties: []
-        };
+        // let data: Tutor = {
+        //     id: 'string',
+        //     name: 'string',
+        //     old_rating: {
+        //         character: -5,
+        //         count: 1000,
+        //         exams: -5,
+        //         quality: 5
+        //     },
+        //     description: 'string',
+        //     image: 'string',
+        //     url: 'string',
+        //     since: new Date(),
+        //     updated: new Date(),
+        //     disciplines: [],
+        //     faculties: []
+        // };
 
         // console.log(db);
         // await enableIndexedDbPersistence(db);

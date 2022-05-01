@@ -5,7 +5,7 @@ export class BaseEntity extends TypedData {
         super({});
     }
 
-    asTypedRow() {
+    public asTypedRow() {
         const value = this.getRowValue().items.reduce((previousValue: Ydb.IValue, currentValue: Ydb.IValue) => {
             return {...currentValue};
         }, {})

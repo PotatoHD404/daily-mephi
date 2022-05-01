@@ -1,19 +1,19 @@
-import {Entity} from "../../database/decorators/entity.decorator";
-import {BaseEntity} from "../../database/baseEntity";
-import {Column} from "../../database/decorators/column.decorators";
+import {Entity} from "lib/database/decorators/entity.decorator";
+import {BaseEntity} from "lib/database/baseEntity";
+import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 
 @Entity()
 export class Faculty extends BaseEntity {
 
     @Column(Types.UINT64, {primary: true})
-    public id: number;
+    public id: number | null
     @Column(Types.STRING)
     public name: string;
 
-    constructor(id: number, name: string) {
+    constructor({id, name} : {id?: number, name: string}) {
         super();
-        this.id = id;
+        this.id = id ?? null;
         this.name = name;
     }
 

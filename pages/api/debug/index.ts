@@ -3,7 +3,7 @@ import "reflect-metadata"
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {container, inject, singleton} from "tsyringe";
 import {declareType, TypedData, Types} from "ydb-sdk";
-import {DB} from "../../../lib/database/db";
+import {DB} from "lib/database/db";
 
 function logType(target: any, key: string) {
     let t = Reflect.getMetadata("design:type", target, key);
