@@ -108,35 +108,39 @@ export function getIndex(entity: any, key: string) {
 }
 
 
-export function getTypedProperties<T extends TypedData>(entity: Constructor<T>): string[] {
+export function getTypedProperties<T extends TypedData>(entity: Constructor<T> | Function): string[] {
     return (Reflect.getMetadata(COLUMNS_TOKEN, entity) ?? []).filter((key: string | symbol) => (
         typeof key === 'string' && Reflect.hasMetadata(typeMetadataKey, entity, key)
     )) as string[];
 }
 
-export function getDeclaration(entity: any): string {
-    let declaration = `DECLARE ${getTableName(entity)} AS `
+export function getDeclaration(entity: any, list: boolean = true): string {
+    let declaration = `DECLARE $${getTableName(entity)} AS `
     if (getRowType(entity)['structType'] != undefined) {
+        if(list)
+            declaration += "List<"
         declaration += "Struct<";
-        getRowType(entity).structType.members.forEach(
+        declaration += getRowType(entity).structType.members.map(
             (el: { name: any; type: Ydb.IType; }) => {
-                declaration += `\n${el.name}: ${typeToString(el.type)}`
-            })
-
+                return `\n${el.name}: ${typeToString(el.type)}`
+            }).join(",");
+        if(list)
+            declaration += ">"
         declaration += ">;\n"
+
     }
     return declaration;
 }
 
-export function getType<T extends TypedData>(entity: Constructor<T>, propertyKey: string): IType {
+export function getType<T extends TypedData>(entity: Constructor<T> | Function, propertyKey: string): IType {
     const typeMeta = Reflect.getMetadata(typeMetadataKey, entity, propertyKey);
     if (!typeMeta) {
-        throw new Error(`Property ${propertyKey} should be decorated with @declareType!`);
+        throw new Error(`Property ${propertyKey} should be decorated with @Column!`);
     }
     return typeMeta;
 }
 
-export function getRowType<T extends TypedData>(entity: Constructor<T>) {
+export function getRowType<T extends TypedData>(entity: Constructor<T> | Function) {
     // const converter = getNameConverter(entity.p.__options, 'jsToYdb');
     return {
         structType: {

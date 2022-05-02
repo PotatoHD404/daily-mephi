@@ -9,12 +9,13 @@ export class Faculty extends BaseEntity {
 
     @Column(Types.STRING, {primary: true})
     public id: string
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public name: string;
 
     constructor({id, name}: { id?: string, name: string }) {
-        super();
-        this.id = id ?? uuidV4();
+        id = id ?? uuidV4();
+        super({id, name});
+        this.id = id;
         this.name = name;
     }
 

@@ -11,6 +11,7 @@ type ColumnArgs = { name?: string, primary?: Boolean };
 
 export function Column(type: IType, {name, primary}: ColumnArgs = {}): FieldDecorator {
     return function (target: any, key: string) {
+        declareType(type)(target, key);
         target = target.constructor;
         // declareType()(target)
         // console.log(name ?? key)

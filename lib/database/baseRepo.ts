@@ -1,9 +1,9 @@
-import {getDeclaration, getTableName} from "helpers/utils";
+import {getDeclaration, getRowType, getTableName} from "helpers/utils";
 import {BaseEntity} from "lib/database/baseEntity";
 import {TARGET_ENTITY_TOKEN} from "lib/database/decorators/repository.decorator";
 import {Constructor} from "lib/database/types";
 import {autoInjectable} from "tsyringe";
-import {TypedData} from "ydb-sdk";
+import {TypedData, withRetries} from "ydb-sdk";
 import {Ydb} from "ydb-sdk-proto";
 import {DB} from "./db";
 import {IRepo} from "./interfaces/repo.interface";
@@ -34,51 +34,44 @@ export class BaseRepo<T extends BaseEntity> implements IRepo<T> {
 
 
     async addAll(dto: T[]): Promise<boolean> {
+        if (dto.length === 0)
+            return true;
+
         const query = `${SYNTAX_V1}
 
 ${this.declaration}
 
-REPLACE INTO $${this.tableName}
+REPLACE INTO ${this.tableName}
 SELECT
-    ${Object.getOwnPropertyNames(dto).join(",\n    ")}
+    ${Object.getOwnPropertyNames(dto[0]).join(",\n    ")}
 FROM AS_TABLE($${this.tableName});
 `;
+
         // `$${this.tableName}`: TypedData.asTypedCollection(dto)
         console.log(dto)
-        // console.log();
+        console.log();
         console.log(query);
-        await this.db.withSession(async (session) => {
-            const preparedQuery = await session.prepareQuery(query);
-            const params: IQueryParams = {};
-            params[`$${this.tableName}`] = TypedData.asTypedCollection(dto)
-            await session.executeQuery(preparedQuery, params);
-        })
+        let params: IQueryParams = {[`$${this.tableName}`]: TypedData.asTypedCollection(dto)};
+        console.log()
+        console.log()
 
-        return Promise.resolve(false);
+        await this.db.withSession(async (session) => {
+            await withRetries(async () => {
+                const preparedQuery = await session.prepareQuery(query);
+
+                await session.executeQuery(preparedQuery, params);
+            });
+
+
+        });
+        return false;
     }
 
-    async add(dto: Partial<T>): Promise<boolean> {
-        const query = `${SYNTAX_V1}
-
-${this.declaration}
-
-REPLACE INTO $${this.tableName}
-SELECT
-    ${Object.getOwnPropertyNames(dto).join(",\n    ")}
-FROM AS_TABLE($${this.tableName});
-`
-        console.log(dto)
-        console.log(query);
-        await this.db.withSession(async (session) => {
-            const preparedQuery = await session.prepareQuery(query);
-            await session.executeQuery(preparedQuery,
-            //     {
-            //     `$${this.tableName}`: TypedData.asTypedCollection()
-            // }
-            );
-        })
-
-        return Promise.resolve(false);
+    async add(dto: T): Promise<boolean> {
+        const arr = new Array<T>();
+        arr.push(dto);
+        console.log(await this.addAll(arr))
+        return this.addAll(arr);
     }
 
     async count(params: Partial<T>): Promise<number> {
