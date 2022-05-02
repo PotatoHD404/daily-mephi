@@ -1,8 +1,8 @@
 import {TypedData, Ydb} from "ydb-sdk";
 
 export class BaseEntity extends TypedData {
-    constructor(data: Record<string, any>) {
-        super(data);
+    constructor() {
+        super({});
     }
 
     public asTypedRow() {

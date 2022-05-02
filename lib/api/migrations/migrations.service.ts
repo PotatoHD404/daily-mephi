@@ -69,56 +69,63 @@ export class MigrationService {
         await session.dropTable(tableName);
     }
 
-    // SchemeError:
-    public async migrate() {
+    public async migrateAll() {
         await this.db.withSession(async (session) => {
-                await this.createAll(session);
-                for (const entity of this.entities) {
-                    const tableName = getTableName(entity);
+            await this.dropAll(session)
+            await this.createAll(session);
+        });
+    }
 
-                    let desc = new AlterTableDescription();
-                    const tableDescription = (await session.describeTable(tableName)).toJSON();
-                    console.log(tableDescription)
+    // SchemeError:
+    public async alterAll() {
+        await this.db.withSession(async (session) => {
+            await this.createAll(session);
+            for (const entity of this.entities) {
+                const tableName = getTableName(entity);
 
-                    const rowType = getRowType(entity);
-                    type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
-                    const columns: Col[] = tableDescription['columns'];
-                    const primaryKeys: string[] = tableDescription['primaryKey'];
-                    const indexes: Index[] = tableDescription['indexes'] ?? [];
-                    let withPrimary = false;
-                    const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
-                        return {name: el.name, type: el.type}
-                    });
-                    const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
+                let desc = new AlterTableDescription();
+                const tableDescription = (await session.describeTable(tableName)).toJSON();
+                console.log(tableDescription)
 
-                    desc = entityColumns.reduce(
-                        (prev: AlterTableDescription, curr: Col) => {
+                const rowType = getRowType(entity);
+                type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
+                const columns: Col[] = tableDescription['columns'];
+                const primaryKeys: string[] = tableDescription['primaryKey'];
+                const indexes: Index[] = tableDescription['indexes'] ?? [];
+                let withPrimary = false;
+                const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
+                    return {name: el.name, type: el.type}
+                });
+                const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
 
-                            if (withPrimary)
-                                return prev;
+                desc = entityColumns.reduce(
+                    (prev: AlterTableDescription, curr: Col) => {
 
-                            if (columns.find((col) => {
-                                return col.name === curr.name &&
-                                    // @ts-ignore
-                                    col.type.optionalType?.item?.typeId !== typeToString(curr.type)
-                            })) {
-                                if (primaryKeys.includes(curr.name)) {
-                                    withPrimary = true;
-                                    return prev;
-                                }
-                                return prev.withAlterColumn(new Column(
-                                    curr.name,
-                                    Types.optional(curr.type)
-                                ));
-                            } else if (!columns.find((col) => {
-                                return col.name === curr.name
-                            })) {
-                                return prev.withAddColumn(new Column(
-                                    curr.name,
-                                    Types.optional(curr.type)
-                                ));
-                            }
+                        if (withPrimary)
                             return prev;
+
+                        if (columns.find((col) => {
+                            return col.name === curr.name &&
+                                // @ts-ignore
+                                col.type.optionalType?.item?.typeId !== typeToString(curr.type)
+                        })) {
+                            if (primaryKeys.includes(curr.name)) {
+                                withPrimary = true;
+                                return prev;
+                            }
+                            return prev.withAlterColumn(new Column(
+                                curr.name,
+                                Types.optional(curr.type)
+                            ));
+                        } else if (!columns.find((col) => {
+                            return col.name === curr.name
+                        })) {
+                            return prev.withAddColumn(new Column(
+                                curr.name,
+                                Types.optional(curr.type)
+                            ));
+                        }
+                        return prev;
                         },
                         desc)
                     desc = columns.reduce((prev: AlterTableDescription, curr: Col) => {

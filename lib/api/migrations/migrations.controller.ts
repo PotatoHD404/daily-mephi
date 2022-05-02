@@ -11,10 +11,16 @@ export class MigrationsController {
     }
 
 
-    @Get("/up")
+    @Get("/")
     public async up() {
-        await this.migrationService.migrate();
-        return "ok";
+        await this.migrationService.alterAll();
+        return {status: "ok"};
     }
+
+    // @Get("/down")
+    // public async down() {
+    //     await this.migrationService.dropAll();
+    //     return "ok";
+    // }
 
 }

@@ -1,6 +1,5 @@
 import {FieldDecorator} from "protobufjs";
-import {Types} from "ydb-sdk";
-import {camelToSnakeCase, getColumnName, getTableName} from "../../../helpers/utils";
+import {camelToSnakeCase, getColumnName, getPrimaryKey, getTableName, getType} from "../../../helpers/utils";
 import {BaseEntity} from "../baseEntity";
 import {Column} from "./column.decorators";
 import {Entity, TABLE_NAME_TOKEN} from "./entity.decorator";
@@ -12,16 +11,19 @@ export function ManyToMany(type: any, tableName?: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
         target = target.constructor;
         if (!tableName)
-            tableName = getColumnName(target, key) + "_" + getTableName(target);
+            tableName = getTableName(target) + "_" + getColumnName(target, key);
+        const primaryKey1 = getPrimaryKey(target);
+        const primaryKeyType1 = getType(target, primaryKey1);
+        const primaryKey2 = getPrimaryKey(type);
+        const primaryKeyType2 = getType(type, primaryKey2);
 
-        // TODO remove hardcoded type
         @Entity(tableName)
         class ManyToManyTable extends BaseEntity {
-            @Column(Types.UINT64, {primary: true, name: getTableName(target) + "_id"})
+            @Column(primaryKeyType1, {primary: true, name: getTableName(target) + "_id"})
             private id1: any
-            @Column(Types.UINT64, {
+            @Column(primaryKeyType2, {
                 primary: true,
-                name: camelToSnakeCase(Reflect.getMetadata(TABLE_NAME_TOKEN, type) ?? type.name) + "_id"
+                name: getTableName(type) + "_id"
             })
             private id2: any
         }

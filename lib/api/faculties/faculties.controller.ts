@@ -11,6 +11,6 @@ class FacultiesController {
     @Get("/")
     public async get() {
         await this.service.getAll()
-        return "ok"
+        return {status: "ok"}
     }
 }

@@ -7,14 +7,13 @@ import {v4 as uuidV4} from "uuid"
 @Entity()
 export class Faculty extends BaseEntity {
 
-    @Column(Types.STRING, {primary: true})
-    public id: string
+    @Column(Types.UTF8, {primary: true})
+    public id: string | null
     @Column(Types.UTF8)
-    public name: string;
+    public name: string | null;
 
-    constructor({id, name}: { id?: string, name: string }) {
-        id = id ?? uuidV4();
-        super({id, name});
+    constructor({id = uuidV4(), name}: { id?: string | null, name: string | null }) {
+        super();
         this.id = id;
         this.name = name;
     }
