@@ -7,8 +7,7 @@ export const ONE_TO_MANY_TOKEN = Symbol('oneToMany')
 export function OneToMany(type: any, columnKey: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
         // TODO get rid of the type
-        target = target.constructor;
-        Reflect.metadata(ONE_TO_MANY_TOKEN, {key: columnKey, type})(target, key)
+        Reflect.metadata(ONE_TO_MANY_TOKEN, {key: columnKey, type})(target.constructor, key)
         Index()(type, columnKey);
     };
 }

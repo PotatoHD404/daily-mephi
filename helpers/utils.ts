@@ -114,6 +114,20 @@ export function getTypedProperties<T extends TypedData>(entity: Constructor<T>):
     )) as string[];
 }
 
+export function getDeclaration(entity: any): string {
+    let declaration = `DECLARE ${getTableName(entity)} AS `
+    if (getRowType(entity)['structType'] != undefined) {
+        declaration += "Struct<";
+        getRowType(entity).structType.members.forEach(
+            (el: { name: any; type: Ydb.IType; }) => {
+                declaration += `\n${el.name}: ${typeToString(el.type)}`
+            })
+
+        declaration += ">;\n"
+    }
+    return declaration;
+}
+
 export function getType<T extends TypedData>(entity: Constructor<T>, propertyKey: string): IType {
     const typeMeta = Reflect.getMetadata(typeMetadataKey, entity, propertyKey);
     if (!typeMeta) {
@@ -127,7 +141,7 @@ export function getRowType<T extends TypedData>(entity: Constructor<T>) {
     return {
         structType: {
             members: getTypedProperties(entity).map((propertyKey) => ({
-                name: propertyKey,
+                name: getColumnName(entity, propertyKey),
                 type: getType(entity, propertyKey)
             }))
         }

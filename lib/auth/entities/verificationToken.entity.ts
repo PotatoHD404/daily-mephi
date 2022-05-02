@@ -6,8 +6,8 @@ import {Types} from "ydb-sdk";
 @Entity()
 export class VerificationToken extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.STRING, {primary: true})
+    public id: string;
 
     @Column(Types.STRING)
     public token: number;
@@ -16,7 +16,7 @@ export class VerificationToken extends BaseEntity {
     public timestamp: Date;
 
 
-    constructor(id: number, token: number, timestamp: Date) {
+    constructor(id: string, token: number, timestamp: Date) {
         super();
         this.id = id;
         this.token = token;

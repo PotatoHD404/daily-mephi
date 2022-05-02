@@ -37,7 +37,7 @@ export class MigrationService {
             table = getRowType(entity).structType.members.reduce(
                 (prev: TableDescription, curr: Col) => {
                     return prev.withColumn(new Column(
-                        getColumnName(entity, curr.name),
+                        curr.name,
                         Types.optional(curr.type)
                     ));
                 },
@@ -87,7 +87,7 @@ export class MigrationService {
                     const indexes: Index[] = tableDescription['indexes'] ?? [];
                     let withPrimary = false;
                     const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
-                        return {name: getColumnName(entity, el.name), type: el.type}
+                        return {name: el.name, type: el.type}
                     });
                     const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
 
@@ -95,7 +95,7 @@ export class MigrationService {
                         (prev: AlterTableDescription, curr: Col) => {
 
                             if (withPrimary)
-                                return;
+                                return prev;
 
                             if (columns.find((col) => {
                                 return col.name === curr.name &&
@@ -136,6 +136,7 @@ export class MigrationService {
                         }
                         return prev;
                     }, desc);
+                    // console.log(desc);
 
                     desc = entityIndexes.reduce((prev: AlterTableDescription, curr: string) => {
                         const indexColumns = getEntityProperty(entity, curr);
@@ -167,7 +168,7 @@ export class MigrationService {
                     if (desc.addColumns.length > 0 ||
                         desc.alterColumns.length > 0 ||
                         desc.dropColumns.length > 0 ||
-                        desc.addIndexes.length > 0 ||
+                        desc.addIndexes.filter(el => el.indexColumns.length > 0).length > 0 ||
                         desc.dropIndexes.length > 0) {
                         await new PatchedSession(session).alterTable(tableName, desc);
                     }

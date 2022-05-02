@@ -3,12 +3,13 @@ import {Types} from "ydb-sdk";
 import {BaseEntity} from "lib/database/baseEntity";
 import {Column} from "lib/database/decorators/column.decorators";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
+import {v4 as uuidV4 } from "uuid"
 
 @Entity()
 export class Comment extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.STRING, {primary: true})
+    public id: string;
 
     @Column(Types.UTF8)
     public text: string;
@@ -26,9 +27,9 @@ export class Comment extends BaseEntity {
     public reviewId: number;
 
 
-    constructor(id: number, text: string, time: Date, userId: number, parent: Comment | null, reviewId: number) {
+    constructor(id: string, text: string, time: Date, userId: number, parent: Comment | null, reviewId: number) {
         super();
-        this.id = id;
+        this.id = id ?? uuidV4();
         this.text = text;
         this.time = time;
         this.userId = userId;

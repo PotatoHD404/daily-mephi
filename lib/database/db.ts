@@ -18,37 +18,37 @@ export class DB {
         this.driver = new Driver({endpoint, database, authService: authService});
     }
 
-    async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {
-        await this.connect();
-        const table = 'table';
-        await this.driver.tableClient.withSession(async (session) => {
-
-            await session.dropTable(table);
-
-            await session.createTable(
-                table,
-                new TableDescription()
-                    .withColumn(new Column(
-                        'key',
-                        Types.optional(Types.UTF8),
-                    ))
-                    .withColumn(new Column(
-                        'hash',
-                        Types.optional(Types.UINT64),
-                    ))
-                    .withColumn(new Column(
-                        'value',
-                        Types.optional(Types.UTF8),
-                    ))
-                    .withPrimaryKey('key')
-            );
-
-
-            const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
-
-            console.log();
-        });
-    }
+    // async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {
+    //     await this.connect();
+    //     const table = 'table';
+    //     await this.driver.tableClient.withSession(async (session) => {
+    //
+    //         await session.dropTable(table);
+    //
+    //         await session.createTable(
+    //             table,
+    //             new TableDescription()
+    //                 .withColumn(new Column(
+    //                     'key',
+    //                     Types.optional(Types.UTF8),
+    //                 ))
+    //                 .withColumn(new Column(
+    //                     'hash',
+    //                     Types.optional(Types.UINT64),
+    //                 ))
+    //                 .withColumn(new Column(
+    //                     'value',
+    //                     Types.optional(Types.UTF8),
+    //                 ))
+    //                 .withPrimaryKey('key')
+    //         );
+    //
+    //
+    //         const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
+    //
+    //         console.log();
+    //     });
+    // }
 
     async withSession(func: (session: Session) => Promise<void>) {
         await this.driver.tableClient.withSession(func);
