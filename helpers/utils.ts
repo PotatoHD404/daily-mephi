@@ -1,18 +1,22 @@
 import {serialize} from "cookie";
 import {ClientRequest} from "http";
 import https from "https";
+import {BaseEntity} from "lib/database/baseEntity";
 import {COLUMN_NAME_TOKEN, COLUMNS_TOKEN, PRIMARY_KEY_TOKEN} from "lib/database/decorators/column.decorators";
 import {TABLE_NAME_TOKEN} from "lib/database/decorators/entity.decorator";
 import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
 import {Constructor} from "lib/database/types";
+import Long from "long";
 import {DateTime} from 'luxon';
 import type {NextApiResponse} from 'next';
 import {Cookie} from "next-auth/core/lib/cookie";
 import {primitiveTypeToValue, TypedData, typeMetadataKey, Ydb} from "ydb-sdk";
 import {google} from "ydb-sdk-proto";
-import {fromDecimalString} from "ydb-sdk/build/decimal";
-import {uuidToValue} from "ydb-sdk/build/uuid";
+import {fromDecimalString, toDecimalString} from "ydb-sdk/build/decimal";
+import {uuidToNative, uuidToValue} from "ydb-sdk/build/uuid";
 import NullValue = google.protobuf.NullValue;
+import IColumn = Ydb.IColumn;
+import IResultSet = Ydb.IResultSet;
 import IStructMember = Ydb.IStructMember;
 import IType = Ydb.IType;
 import ITypedValue = Ydb.ITypedValue;
@@ -287,4 +291,148 @@ export function typeToValue(type: IType | null | undefined, value: any): IValue 
     } else {
         throw new Error(`Unknown type ${JSON.stringify(type)}`);
     }
+}
+
+export function objectFromValue(typeId: PrimitiveTypeId, value: unknown) {
+    switch (typeId) {
+        case PrimitiveTypeId.DATE:
+            return new Date((value as number) * 3600 * 1000 * 24);
+        case PrimitiveTypeId.DATETIME:
+            return new Date((value as number) * 1000);
+        case PrimitiveTypeId.TIMESTAMP:
+            return new Date((value as number) / 1000);
+        case PrimitiveTypeId.TZ_DATE:
+        case PrimitiveTypeId.TZ_DATETIME:
+        case PrimitiveTypeId.TZ_TIMESTAMP: {
+            const [datetime] = (value as string).split(',');
+            return new Date(datetime + 'Z');
+        }
+        default:
+            return value;
+    }
+}
+
+const parseLong = (input: string | number): Long | number => {
+    const long = typeof input === 'string' ? Long.fromString(input) : Long.fromNumber(input);
+    return long.high ? long : long.low;
+};
+
+
+const valueToNativeConverters: Record<string, (input: string | number) => any> = {
+    'boolValue': (input) => Boolean(input),
+    'int32Value': (input) => Number(input),
+    'uint32Value': (input) => Number(input),
+    'int64Value': (input) => parseLong(input),
+    'uint64Value': (input) => parseLong(input),
+    'floatValue': (input) => Number(input),
+    'doubleValue': (input) => Number(input),
+    'bytesValue': (input) => Buffer.from(input as string, 'base64').toString(),
+    'textValue': (input) => input,
+    'nullFlagValue': () => null,
+};
+
+export function convertYdbValueToNative(type: IType, value: IValue): any {
+    if (type.typeId) {
+        if (type.typeId === PrimitiveTypeId.UUID) {
+            return uuidToNative(value);
+        }
+        const label = primitiveTypeToValue[type.typeId];
+        if (!label) {
+            throw new Error(`Unknown PrimitiveTypeId: ${type.typeId}`);
+        }
+        const input = (value as any)[label];
+        return objectFromValue(type.typeId, valueToNativeConverters[label](input));
+    } else if (type.decimalType) {
+        const high128 = value.high_128 as number | Long;
+        const low128 = value.low_128 as number | Long;
+        const scale = type.decimalType.scale as number;
+        return toDecimalString(high128, low128, scale);
+    } else if (type.optionalType) {
+        const innerType = type.optionalType.item as IType;
+        if (value.nullFlagValue === NullValue.NULL_VALUE) {
+            return null;
+        }
+        return convertYdbValueToNative(innerType, value);
+    } else if (type.listType) {
+        const innerType = type.listType.item as IType;
+        return value?.items?.map((item) => convertYdbValueToNative(innerType, item));
+    } else if (type.tupleType) {
+        const types = type.tupleType.elements as IType[];
+        const values = value.items as IValue[];
+        return values.map((value, index) => convertYdbValueToNative(types[index], value));
+    } else if (type.structType) {
+        const members = type.structType.members as Ydb.IStructMember[];
+        const items = value.items as Ydb.IValue[];
+        const struct = {} as any;
+        items.forEach((item, index) => {
+            const member = members[index];
+            const memberName = member.name as string;
+            const memberType = member.type as IType;
+            struct[memberName] = convertYdbValueToNative(memberType, item);
+        });
+        return struct;
+    } else if (type.dictType) {
+        const keyType = type.dictType.key as IType;
+        const payloadType = type.dictType.payload as IType;
+
+        const dict = {} as any;
+        value.pairs?.forEach((pair) => {
+            const nativeKey = convertYdbValueToNative(keyType, pair.key as IValue);
+            dict[nativeKey] = convertYdbValueToNative(payloadType, pair.payload as IValue);
+        });
+        return dict;
+    } else if (type.variantType) {
+        if (type.variantType.tupleItems) {
+            const elements = type.variantType.tupleItems.elements as IType[];
+            const items = value.items as IValue[];
+            const variantIndex = value.variantIndex as number;
+
+            return items.map((item, index) => {
+                if (index === variantIndex) {
+                    return convertYdbValueToNative(elements[index], item);
+                }
+                return null;
+            });
+        } else if (type.variantType.structItems) {
+            const members = type.variantType.structItems.members as IStructMember[];
+            const items = value.items as IValue[];
+            const variantIndex = value.variantIndex as number;
+
+            return items.map((item, index) => {
+                if (index === variantIndex) {
+                    return convertYdbValueToNative(members[index].type as IType, item);
+                }
+                return null;
+            });
+        } else {
+            throw new Error('Either tupleItems or structItems should be present in VariantType!');
+        }
+    } else if (type.voidType === NullValue.NULL_VALUE) {
+        return null;
+    } else {
+        throw new Error(`Unknown type ${JSON.stringify(type)}`);
+    }
+}
+
+//TypedData[]
+export function createNativeObjects(resultSet: IResultSet): Record<string, any>[] {
+    const {rows, columns} = resultSet;
+    if (!columns || !rows) {
+        return [];
+    }
+    // const converter = getNameConverter(this.__options, 'ydbToJs');
+    return rows.map((row) => {
+        return row.items?.reduce((acc: Record<string, any>, value, index) => {
+            const column = columns[index] as IColumn;
+            if (column.name && column.type) {
+                acc[column.name] = convertYdbValueToNative(column.type, value);
+            }
+            return acc;
+        }, {}) ?? {};
+    });
+}
+
+export function createEntities<T extends BaseEntity>(entity: Constructor<T>, args: Record<string, any>[]){
+    // console.log(args)
+    return args.map((el: any) => new entity(el));
 }

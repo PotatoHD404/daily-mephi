@@ -1,4 +1,4 @@
-import {getTypedValue, typeToValue} from "helpers/utils";
+import {getTypedValue} from "helpers/utils";
 import {Faculty} from "lib/api/faculties/faculties.entity";
 import {FacultiesRepository} from "lib/api/faculties/faculties.repository";
 import {Service} from "lib/injection/decorators/service.decorator";
@@ -16,17 +16,24 @@ export class FacultiesService {
     }
 
     async getAll() {
+        // return await this.repository.findAll({
+        //     where: [{
+        //         firstName: getTypedValue(Types.UTF8, "TimBeR"),
+        //         lastName: getTypedValue(Types.UTF8, "Saw")
+        //     }, {firstName: getTypedValue(Types.UTF8, "TimBeR"), lastName: getTypedValue(Types.UTF8, "Saw")}],
+        //     select: ["test", "test2"],
+        //     order: {
+        //         columnName: "ASC",
+        //         columnName1: "DESC",
+        //     },
+        //     offset: 0,
+        //     limit: 10,
+        // });
         return await this.repository.findAll({
-            where: [{firstName: getTypedValue(Types.UTF8, "TimBeR"), lastName: getTypedValue(Types.UTF8, "Saw")}, {firstName: getTypedValue(Types.UTF8, "TimBeR"), lastName: getTypedValue(Types.UTF8, "Saw")}],
-            select: ["test", "test2"],
-            order: {
-                columnName: "ASC",
-                columnName1: "DESC",
-            },
-            offset: 0,
-            limit: 10,
+            where: [{
+                name: getTypedValue(Types.UTF8, "ИИКС")
+            }]
         });
-
     }
 
 }

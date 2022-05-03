@@ -1,5 +1,7 @@
-import {TypedData, Ydb} from "ydb-sdk";
 
+import {TypedData, withTypeOptions, Ydb} from "ydb-sdk";
+
+@withTypeOptions({})
 export class BaseEntity extends TypedData {
     constructor() {
         super({});

@@ -10,7 +10,7 @@ class FacultiesController {
 
     @Get("/")
     public async get() {
-        await this.service.getAll()
+        console.log(await this.service.getAll());
         return {status: "ok"}
     }
 }
