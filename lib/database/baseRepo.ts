@@ -63,9 +63,9 @@ export class BaseRepo<T extends BaseEntity> implements IRepo<T> {
     }
 
 
-    async addAll(dto: T[]): Promise<boolean> {
+    async addAll(dto: T[]) {
         if (dto.length === 0)
-            return true;
+            return;
 
         const query = `${SYNTAX_V1}
 
@@ -90,13 +90,12 @@ FROM AS_TABLE($${this.tableName});
                 await session.executeQuery(preparedQuery, params);
             });
         });
-        return true;
     }
 
-    async add(dto: T): Promise<boolean> {
+    async add(dto: T) {
         const arr = new Array<T>();
         arr.push(dto);
-        return this.addAll(arr);
+        await this.addAll(arr);
     }
 
 
@@ -175,16 +174,29 @@ FROM ${this.tableName}`;
         // return Promise.resolve([]);
     }
 
-    async remove(params: Partial<T>): Promise<boolean> {
-        return Promise.resolve(false);
+    countAll(params: Omit<FindAllParams, "select" | "order">): Promise<number> {
+        return Promise.resolve(0);
     }
 
-    async update(params: Partial<T>): Promise<boolean> {
-        return Promise.resolve(false);
+    find(params: Omit<FindAllParams, "limit" | "order">): Promise<T[]> {
+        return Promise.resolve([]);
     }
 
-    async updateAll(params: Partial<T>[]): Promise<boolean> {
-        return Promise.resolve(false);
+    remove(entity: T): Promise<void> {
+        return Promise.resolve(undefined);
     }
+
+    removeAll(entities: T[]): Promise<void> {
+        return Promise.resolve(undefined);
+    }
+
+    update(entity: T): Promise<void> {
+        return Promise.resolve(undefined);
+    }
+
+    updateAll(entities: T[]): Promise<void> {
+        return Promise.resolve(undefined);
+    }
+
 
 }

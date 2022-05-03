@@ -1,6 +1,5 @@
 import {google, Ydb} from "ydb-sdk-proto";
 import ITypedValue = Ydb.ITypedValue;
-import IValue = google.protobuf.IValue;
 
 
 export interface FindAllParams {
@@ -13,9 +12,12 @@ export interface FindAllParams {
 
 export interface IRepo<T> {
     findAll: (params: FindAllParams) => Promise<T[]>;
-    add: (dto: T) => Promise<boolean>;
-    addAll: (dto: T[]) => Promise<boolean>;
-    update: (dto: Partial<T>) => Promise<boolean>;
-    updateAll: (dto: Partial<T>[]) => Promise<boolean>;
-    remove: (params: Partial<T>) => Promise<boolean>;
+    find: (params: Omit<FindAllParams, "limit" | "order">) => Promise<T[]>;
+    countAll: (params: Omit<FindAllParams, "select" | "order">) => Promise<number>;
+    add: (entity: T) => Promise<void>;
+    addAll: (entities: T[]) => Promise<void>;
+    update: (entity: T) => Promise<void>;
+    updateAll: (entities: T[]) => Promise<void>;
+    remove: (entity: T) => Promise<void>;
+    removeAll: (entities: T[]) => Promise<void>;
 }
