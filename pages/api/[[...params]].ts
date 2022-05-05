@@ -1,5 +1,5 @@
 import {container} from "tsyringe";
-import {ApiModule} from "helpers/reflectionModule";
+import {ApiModule} from "lib/injection/api.module";
 
 import 'lib/api/comments/comments.controller.ts';
 import 'lib/api/cover/cover.controller.ts';

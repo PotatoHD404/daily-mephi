@@ -1,6 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import getSvg from "components/getSvg";
-import sharp from 'sharp';
 
 export default async function handler(
     req: NextApiRequest,

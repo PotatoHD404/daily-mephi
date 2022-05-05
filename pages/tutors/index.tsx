@@ -1,31 +1,8 @@
 import React from "react";
-import SEO from "components/seo";
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import {a11yProps} from "helpers/reactUtils";
-import Image from "next/image";
-import MiniCat from "images/minicat_transparent.svg";
-import LikeIco from "images/like.svg";
-import CommentIco from "images/comment.svg";
-import Comment from "components/comment";
-import ProfileIco from "images/profile3.png";
-import GoldenCrown from "images/golden_crown.svg";
-import SilverCrown from "images/silver_crown.svg";
-import BronzeCrown from "images/bronze_crown.svg";
-import SearchIcon from "@mui/icons-material/Search";
 import {styled} from "@mui/material/styles";
-import Checkbox from "@mui/material/Checkbox";
 import Input from "@mui/material/Input";
-import ArrowUp from "images/arrow_up.svg";
-import CheckIcon from '@mui/icons-material/Check';
-import Favorite from "@mui/icons-material/Favorite";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import blue from "@mui/material/colors/blue";
 import Slider from "@mui/material/Slider";
-import Star from "@mui/icons-material/Star";
 // import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 // import { useDemoData } from '@mui/x-data-grid-generator';
 
 

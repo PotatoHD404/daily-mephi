@@ -1,8 +1,12 @@
-import {createHandler, Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
-import {Controller} from "../../decorators/controller.decorator";
+import {Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
+import {ReviewsService} from "lib/api/reviews/reviews.service";
+import {Controller} from "lib/injection/decorators/controller.decorator";
 
 @Controller("/reviews")
 class ReviewsController {
+
+    constructor(private service: ReviewsService) {
+    }
 
     @Get("/:id")
     public async get(@Param('id') id: string) {

@@ -1,10 +1,5 @@
-import {
-    Driver,
-    AnonymousAuthService,
-    TableDescription, Column, Types, Session,
-} from 'ydb-sdk'
-import {Database} from "../decorators/database.decorator";
-import {Ydb} from "ydb-sdk"
+import {AnonymousAuthService, Column, Driver, Session, TableDescription, Types, Ydb,} from 'ydb-sdk'
+import {Database} from "./decorators/database.decorator";
 import {ExecuteQuerySettings} from "ydb-sdk/build/table";
 
 type IQueryParams = { [k: string]: Ydb.ITypedValue };
@@ -23,39 +18,39 @@ export class DB {
         this.driver = new Driver({endpoint, database, authService: authService});
     }
 
-    async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {
-        await this.connect();
-        const table = 'table';
-        await this.driver.tableClient.withSession(async (session) => {
+    // async query(query: string, params?: IQueryParams, settings?: ExecuteQuerySettings) {
+    //     await this.connect();
+    //     const table = 'table';
+    //     await this.driver.tableClient.withSession(async (session) => {
+    //
+    //         await session.dropTable(table);
+    //
+    //         await session.createTable(
+    //             table,
+    //             new TableDescription()
+    //                 .withColumn(new Column(
+    //                     'key',
+    //                     Types.optional(Types.UTF8),
+    //                 ))
+    //                 .withColumn(new Column(
+    //                     'hash',
+    //                     Types.optional(Types.UINT64),
+    //                 ))
+    //                 .withColumn(new Column(
+    //                     'value',
+    //                     Types.optional(Types.UTF8),
+    //                 ))
+    //                 .withPrimaryKey('key')
+    //         );
+    //
+    //
+    //         const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
+    //
+    //         console.log();
+    //     });
+    // }
 
-            await session.dropTable(table);
-
-            await session.createTable(
-                table,
-                new TableDescription()
-                    .withColumn(new Column(
-                        'key',
-                        Types.optional(Types.UTF8),
-                    ))
-                    .withColumn(new Column(
-                        'hash',
-                        Types.optional(Types.UINT64),
-                    ))
-                    .withColumn(new Column(
-                        'value',
-                        Types.optional(Types.UTF8),
-                    ))
-                    .withPrimaryKey('key')
-            );
-
-
-            const preparedQuery = await session.prepareQuery(`SELECT * FROM ${table}`);
-
-            console.log();
-        });
-    }
-
-    async withSession(func:(session: Session) => Promise<void>){
+    async withSession(func: (session: Session) => Promise<void>) {
         await this.driver.tableClient.withSession(func);
     }
 

@@ -1,25 +1,12 @@
+import {getColumnName, getEntityProperty, getRowType, getTableName, sameMembers, typeToString} from "helpers/utils";
 import {DB} from "lib/database/db";
-import {autoInjectable, inject, injectAll, singleton} from "tsyringe";
-import {getColumnName, getEntityProperty, getTableName, sameMembers, typeToString} from "helpers/utils";
-import {
-    AlterTableDescription,
-    Column,
-    CreateTableSettings,
-    Session,
-    TableDescription,
-    TableIndex,
-    Types,
-    Ydb
-} from "ydb-sdk";
-import {ENTITY_TOKEN} from "lib/decorators/entity.decorator";
-import {Service} from "lib/decorators/service.decorator";
-import {BadRequest} from "ydb-sdk/build/errors";
-import {Materials} from "../materials/materials.entity";
-import {COLUMN_NAME_TOKEN, INDEX_TOKEN, PRIMARY_KEY_TOKEN} from "../../decorators/column.decorators";
-import {retryable} from "ydb-sdk/build/retries";
-import {pessimizable} from "ydb-sdk/build/utils";
-import {PatchedSession} from "../../database/patchedSession";
-
+import {PRIMARY_KEY_TOKEN} from "lib/database/decorators/column.decorators";
+import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
+import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
+import {PatchedSession} from "lib/database/patchedSession";
+import {Service} from "lib/injection/decorators/service.decorator";
+import {injectAll} from "tsyringe";
+import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 
@@ -32,24 +19,33 @@ export class MigrationService {
     private readonly entities: any[]
 
     constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[]) {
-        this.entities = entities.map(entity => new entity);
+        this.entities = entities;
     }
+
+    private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
+        const index = new TableIndex(curr);
+        index.withIndexColumns(...indexColumns);
+        prev.addIndexes.push(index)
+    }
+
+    //
 
     getTableDescription(entity: any): TableDescription {
         let table = new TableDescription();
-        // console.log(entity.getRowType()['structType'])
-        if (entity.getRowType()['structType'] != undefined) {
-            table = entity.getRowType().structType.members.reduce(
+        console.log(getRowType(entity))
+        if (getRowType(entity)['structType'] != undefined) {
+            table = getRowType(entity).structType.members.reduce(
                 (prev: TableDescription, curr: Col) => {
                     return prev.withColumn(new Column(
-                        getColumnName(entity, curr.name),
+                        curr.name,
                         Types.optional(curr.type)
                     ));
                 },
                 table)
         }
+
         // console.log(getEntityProperty(entity, PRIMARY_KEY_TOKEN))
-        table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN))
+        table.withPrimaryKeys(...getEntityProperty(entity, PRIMARY_KEY_TOKEN).map(el => getColumnName(entity, el)))
         const indexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
         table = indexes.reduce((prev: TableDescription, indexName: string) => {
             const index = new TableIndex(indexName);
@@ -62,8 +58,6 @@ export class MigrationService {
         return table;
     }
 
-    //
-
     public async dropAll(session: Session) {
         for (const entity of this.entities) {
             await this.dropTable(session, entity);
@@ -75,56 +69,63 @@ export class MigrationService {
         await session.dropTable(tableName);
     }
 
-    // SchemeError:
-    public async migrate() {
+    public async migrateAll() {
         await this.db.withSession(async (session) => {
-                await this.createAll(session);
-                for (const entity of this.entities) {
-                    const tableName = getTableName(entity);
+            await this.dropAll(session)
+            await this.createAll(session);
+        });
+    }
 
-                    let desc = new AlterTableDescription();
-                    const tableDescription = (await session.describeTable(tableName)).toJSON();
-                    console.log(tableDescription)
+    // SchemeError:
+    public async alterAll() {
+        await this.db.withSession(async (session) => {
+            await this.createAll(session);
+            for (const entity of this.entities) {
+                const tableName = getTableName(entity);
 
-                    const rowType = entity.getRowType();
-                    type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
-                    const columns: Col[] = tableDescription['columns'];
-                    const primaryKeys: string[] = tableDescription['primaryKey'];
-                    const indexes: Index[] = tableDescription['indexes'] ?? [];
-                    let withPrimary = false;
-                    const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
-                        return {name: getColumnName(entity, el.name), type: el.type}
-                    });
-                    const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
+                let desc = new AlterTableDescription();
+                const tableDescription = (await session.describeTable(tableName)).toJSON();
+                console.log(tableDescription)
 
-                    desc = entityColumns.reduce(
-                        (prev: AlterTableDescription, curr: Col) => {
+                const rowType = getRowType(entity);
+                type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
+                const columns: Col[] = tableDescription['columns'];
+                const primaryKeys: string[] = tableDescription['primaryKey'];
+                const indexes: Index[] = tableDescription['indexes'] ?? [];
+                let withPrimary = false;
+                const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
+                    return {name: el.name, type: el.type}
+                });
+                const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
 
-                            if (withPrimary)
-                                return;
+                desc = entityColumns.reduce(
+                    (prev: AlterTableDescription, curr: Col) => {
 
-                            if (columns.find((col) => {
-                                return col.name === curr.name &&
-                                    // @ts-ignore
-                                    col.type.optionalType?.item?.typeId !== typeToString(curr.type)
-                            })) {
-                                if (primaryKeys.includes(curr.name)) {
-                                    withPrimary = true;
-                                    return prev;
-                                }
-                                return prev.withAlterColumn(new Column(
-                                    curr.name,
-                                    Types.optional(curr.type)
-                                ));
-                            } else if (!columns.find((col) => {
-                                return col.name === curr.name
-                            })) {
-                                return prev.withAddColumn(new Column(
-                                    curr.name,
-                                    Types.optional(curr.type)
-                                ));
-                            }
+                        if (withPrimary)
                             return prev;
+
+                        if (columns.find((col) => {
+                            return col.name === curr.name &&
+                                // @ts-ignore
+                                col.type.optionalType?.item?.typeId !== typeToString(curr.type)
+                        })) {
+                            if (primaryKeys.includes(curr.name)) {
+                                withPrimary = true;
+                                return prev;
+                            }
+                            return prev.withAlterColumn(new Column(
+                                curr.name,
+                                Types.optional(curr.type)
+                            ));
+                        } else if (!columns.find((col) => {
+                            return col.name === curr.name
+                        })) {
+                            return prev.withAddColumn(new Column(
+                                curr.name,
+                                Types.optional(curr.type)
+                            ));
+                        }
+                        return prev;
                         },
                         desc)
                     desc = columns.reduce((prev: AlterTableDescription, curr: Col) => {
@@ -142,6 +143,7 @@ export class MigrationService {
                         }
                         return prev;
                     }, desc);
+                    // console.log(desc);
 
                     desc = entityIndexes.reduce((prev: AlterTableDescription, curr: string) => {
                         const indexColumns = getEntityProperty(entity, curr);
@@ -168,10 +170,12 @@ export class MigrationService {
                         return;
                     }
                     console.log(desc)
+                    // if(desc.alterColumns[0]?.type?.optionalType?.item)
+                    //     console.log(desc.alterColumns[0]?.type?.optionalType?.item)
                     if (desc.addColumns.length > 0 ||
                         desc.alterColumns.length > 0 ||
                         desc.dropColumns.length > 0 ||
-                        desc.addIndexes.length > 0 ||
+                        desc.addIndexes.filter(el => el.indexColumns.length > 0).length > 0 ||
                         desc.dropIndexes.length > 0) {
                         await new PatchedSession(session).alterTable(tableName, desc);
                     }
@@ -181,12 +185,6 @@ export class MigrationService {
                 return;
             }
         );
-    }
-
-    private static addIndex(curr: string, indexColumns: string[], prev: AlterTableDescription) {
-        const index = new TableIndex(curr);
-        index.withIndexColumns(...indexColumns);
-        prev.addIndexes.push(index)
     }
 
     public async createAll(session: Session): Promise<void> {
@@ -201,6 +199,7 @@ export class MigrationService {
         // console.log(tableName)
         // console.log(this.getTableDescription(new entity))
         const desc = this.getTableDescription(entity);
+        console.log(tableName);
         console.log(desc);
         if (desc.columns.length > 0 && desc.primaryKey.length > 0)
             await session.createTable(
@@ -212,9 +211,10 @@ export class MigrationService {
         }
     }
 
-    public async getTableDesc(tableName: string){
-        let res: {[p: string]: any} = {};
+    public async getTableDesc(tableName: string) {
+        let res: { [p: string]: any } = {};
         await this.db.withSession(async (session) => {
+
             res = (await session.describeTable(tableName)).toJSON()
         });
         return res;

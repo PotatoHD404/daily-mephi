@@ -1,6 +1,6 @@
-import {Catch, createHandler, Delete, Get, Param, Post, SetHeader} from '@storyofams/next-api-decorators';
-import {Controller} from "lib/decorators/controller.decorator";
-import {CommentsService} from "./comments.service";
+import {Get, Post} from '@storyofams/next-api-decorators';
+import {CommentsService} from "lib/api/comments/comments.service"
+import {Controller} from "lib/injection/decorators/controller.decorator";
 
 
 @Controller("/comments")
@@ -16,7 +16,7 @@ class CommentsController {
 
     @Get("/")
     public async test() {
-        await this.service.test();
+        // await this.service.test();
         return "123"
     }
 

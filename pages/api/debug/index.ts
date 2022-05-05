@@ -1,32 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import "reflect-metadata"
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {CommentsService} from "lib/api/comments/comments.service";
-import {
-    autoInjectable,
-    container,
-    inject,
-    injectable,
-    InjectionToken,
-    instanceCachingFactory,
-    singleton
-} from "tsyringe";
-import {
-    AnonymousAuthService, declareType,
-    Driver, getNameConverter,
-    ISslCredentials,
-    snakeToCamelCaseConversion,
-    TypedData, TypedDataOptions, typeMetadataKey, Types,
-    withTypeOptions, Ydb
-} from "ydb-sdk";
-import fs from "fs";
-import path from "path";
-import {IRepo} from "../../../lib/interfaces/repo.interface";
-import {DB} from "../../../lib/database/db";
-import IType = Ydb.IType;
-import IValue = Ydb.IValue;
-import ITypedValue = Ydb.ITypedValue;
-import IResultSet = Ydb.IResultSet;
+import {container, inject, singleton} from "tsyringe";
+import {declareType, TypedData, Types} from "ydb-sdk";
+import {DB} from "lib/database/db";
 
 function logType(target: any, key: string) {
     let t = Reflect.getMetadata("design:type", target, key);
@@ -53,6 +30,7 @@ class NormData extends TypedData {
         }
     }
 }
+
 class TestEntity extends NormData {
     @declareType(Types.STRING)
     private a: string = "1"

@@ -6,7 +6,7 @@
   "display": "browser",
   "orientation": "",
   "scope": "/",
-  "description" : "Студенческий портал МИФИ",
+  "description": "Студенческий портал МИФИ",
   "start_url": "/",
   "icons": [
     {

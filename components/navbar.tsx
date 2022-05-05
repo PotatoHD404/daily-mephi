@@ -14,14 +14,11 @@ import WarningDialog from 'components/warning';
 import {useRouter} from "next/router";
 import Image from "next/image";
 import miniCat from 'images/minicat_transparent.svg'
-import InputBase from "@mui/material/InputBase";
-import Button from "@mui/material/Button";
-import SearchIcon from "@mui/icons-material/Search";
 import {useSession} from "next-auth/react";
 
 
 function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => void }) {
-    const {data: session, status } = useSession()
+    const {data: session, status} = useSession()
     if (home)
         return (
             <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
