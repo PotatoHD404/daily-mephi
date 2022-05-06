@@ -41,7 +41,7 @@ for tutor in data["tutors"]:
         nickName = None
 
     del data["tutors"][tutor]['fullName']
-    del data["tutors"][tutor]['short_name']
+    del data["tutors"][tutor]['shortName']
     del data["tutors"][tutor]['skypeLink']
     data["tutors"][tutor]['cafedras'] = []
     data["tutors"][tutor]['directions'] = []
