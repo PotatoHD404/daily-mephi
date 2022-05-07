@@ -80,17 +80,19 @@ def getGroups(gdata):
 
 for cafedra, cafData in tempData["cafedras"].items():
     for cafedra1, tutor1, subjecs1 in getSubjects(data1):
-        if tutor1 in cafData.keys():
-            for subject1, groups1 in subjecs1.items():
-                subjects = tempData["cafedras"][cafedra]["tutors"][tutor1]
-                if subject1 in subjects.keys():
-                    groups = set(subjects[subject1])
-                    groupsSet = list(groups.union(set(groups1)))
-                    data["cafedras"][cafedra]["tutors"][tutor1][subject1] = groupsSet
-                else:
-                    data["cafedras"][cafedra]["tutors"][tutor1][subject1] = groups1
-        else:
-            data["cafedras"][cafedra]["tutors"][tutor1] = subjecs1
+        if cafedra1 == cafedra:
+            if tutor1 in cafData.keys():
+                for subject1, groups1 in subjecs1.items():
+                    subjects = tempData["cafedras"][cafedra]["tutors"][tutor1]
+                    if subject1 in subjects.keys():
+                        groups = set(subjects[subject1])
+                        groupsSet = list(groups.union(set(groups1)))
+                        data["cafedras"][cafedra]["tutors"][tutor1][subject1] = groupsSet
+                    else:
+                        data["cafedras"][cafedra]["tutors"][tutor1][subject1] = groups1
+            else:
+                data["cafedras"][cafedra]["tutors"][tutor1] = subjecs1
+
 
 
 def tutor_parse(pdata):
