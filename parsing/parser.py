@@ -1,7 +1,7 @@
 import json
 import unicodedata
 
-json_file = "parsed.json"
+json_file = "parsed1.json"
 
 with open(json_file, encoding='utf-8') as json_data:
     # shutil.copyfileobj(json_data, sys.stdout)
@@ -85,6 +85,6 @@ json_string = json.dumps(data, indent=4, ensure_ascii=False)
 # json_string.replace(u'\xa0', ' ')
 mydate = unicodedata.normalize("NFKD", json_string)
 
-with open('new.json', "w", encoding='utf-8') as file:
+with open('new1.json', "w", encoding='utf-8') as file:
     file.write(mydate)
     # json.dump(data, file, sort_keys=True, indent=4, ensure_ascii=False)

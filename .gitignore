@@ -44,3 +44,4 @@ public/service-worker.js
 /ydb_certs/
 
 parsing/parsed.json
+/parsing/parsed1.json

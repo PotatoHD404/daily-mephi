@@ -209,7 +209,7 @@ async function func($x) {
         resultData.groups[groupCode]['direction'] = $x(`/html/body/div/div/div/div[2]/a/h4`, doc)[0].innerText
 
         // Направленность
-        resultData.groups[groupCode]['orientation']  = $x(`/html/body/div/div/div/div[2]/a/div[1]`, doc)[0].innerText
+        resultData.groups[groupCode]['orientation'] = $x(`/html/body/div/div/div/div[2]/a/div[1]`, doc)[0].innerText
 
 
         // resultData
@@ -221,11 +221,40 @@ async function func($x) {
 await func($x)
 resultData
 
+async function func($x) {
+
+
+    for (let [tutorCode, tutorData] of Object.entries(resultData['tutors'])) {
+
+        console.log(tutorCode)
+        let doc = (new DOMParser).parseFromString(await (await fetch(tutorData.url, {
+            method: "GET",
+            headers: {
+                // 'Accept': 'application/json',
+                // 'Content-Type': 'application/json',
+                'Cookie': '_session_id=<session_id>'
+            },
+            credentials: 'include',
+            mode: 'no-cors'
+        })).text(), 'text/html');
+        // let doc = resultData['tutors'][tutorCode]['doc'];
+
+        console.log(doc)
+        resultData['tutors'][tutorCode].url = $x(`/html/body/div/div/div/div[3]/h1/a`, doc)[0] ? $x(`/html/body/div/div/div/div[3]/h1/a`, doc)[0].href : null;
+
+        // resultData
+    }
+
+}
+
+await func($x)
+resultData
 
 async function func($x) {
 
 
     for (let [tutorCode, tutorData] of Object.entries(resultData['tutors'])) {
+
 
         delete resultData['tutors'][tutorCode]['doc'];
 
@@ -242,6 +271,62 @@ async function func($x) {
     }
 }
 
+
+await func($x)
+resultData
+
+
+async function func($x) {
+
+    let keys = ['11840', '12037', '12234', '11839', '12231', '12092', '12055', '11804', '12089', '12067', '12038', '12083', '11749', '12062', '11808', '12085', '12058', '12056', '12054', '12063', '12087', '11716', '12113', '12045', '12141', '12105', '12235', '12230', '12061', '12059', '11836', '12091']
+
+    for (let [groupCode, groupData] of Object.entries(resultData['groups']).filter(([key, value]) => {
+        return keys.includes(key);
+    })) {
+        console.log(groupCode);
+        let doc = (new DOMParser).parseFromString(await (await fetch(groupData.url, {
+            method: "GET",
+            headers: {
+                'Cookie': '_session_id=<session_id>'
+            },
+            credentials: 'include',
+            mode: 'no-cors'
+        })).text(), 'text/html');
+        resultData.groups[groupCode]['doc'] = doc;
+
+        let planLink = $x(`/html/body/div/div/div/div[4]/a[3]`, doc)[0].href;
+
+        resultData.groups[groupCode]['planLink'] = planLink;
+
+        let planDoc = (new DOMParser).parseFromString(await (await fetch(planLink, {
+            method: "GET",
+            headers: {
+                // 'Accept': 'application/json',
+                // 'Content-Type': 'application/json',
+                'Cookie': '_session_id=<session_id>'
+            },
+            credentials: 'include',
+            mode: 'no-cors'
+        })).text(), 'text/html');
+
+        resultData.groups[groupCode]['planDoc'] = planDoc;
+        doc = resultData.groups[groupCode]['planDoc'];
+
+        // }
+        // console.log(planLink);
+        console.log(doc)
+        // Форма обучения; направление
+        resultData.groups[groupCode]['direction'] = $x(`/html/body/div/div/div/div[2]/a/h4`, doc)[0].innerText
+
+        // Направленность
+        resultData.groups[groupCode]['orientation'] = $x(`/html/body/div/div/div/div[2]/a/div[1]`, doc)[0].innerText
+
+
+        // resultData
+    }
+
+
+}
 
 await func($x)
 resultData
