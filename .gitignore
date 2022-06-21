@@ -43,7 +43,11 @@ public/workbox-*.js
 public/service-worker.js
 /ydb_certs/
 
-parsing/parsed.json
-/parsing/parsed1.json
+parsing/home/parsed.json
+/parsing/home/parsed1.json
 
-parsing/new1.json
+parsing/home/new1.json
+/parsing/mephist/materials/
+/parsing/mephist/old data/
+
+parsing/mephist/old_data/
