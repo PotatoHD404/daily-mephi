@@ -1,0 +1,2 @@
+$x("//html/body/div[1]/div/div/div/div[2]/main/div/div[2]/div/div/div[1]/div/div/div/div[2]/div/div/div/div[1]/div[2]/div/div").map(el=> el.innerText).filter(el => el[0] !== ".").
+map(el => `DROP TABLE ${el};`)
