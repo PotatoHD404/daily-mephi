@@ -4,13 +4,14 @@ import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 import {ManyToMany} from "lib/database/decorators/manyToMany.decorator";
 import {User} from "lib/api/users/users.entity";
+import {v4 as uuidV4} from "uuid";
 
 
 @Entity()
 export class Quote extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.UTF8, {primary: true})
+    public id: string | null;
 
     @ManyToMany(User)
     public dislikes: User[];
@@ -19,7 +20,7 @@ export class Quote extends BaseEntity {
     public likes: User[];
 
 
-    constructor(id: number, dislikes: User[], likes: User[]) {
+    constructor({id = uuidV4(), dislikes, likes}: { id?: string | null, dislikes: User[], likes: User[] }) {
         super();
         this.id = id;
         this.dislikes = dislikes;

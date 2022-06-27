@@ -4,17 +4,18 @@ import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
 import {Comment} from "lib/api/comments/comments.entity"
+import {v4 as uuidV4} from "uuid";
 
 @Entity()
 export class News extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.UTF8, {primary: true})
+    public id: string | null;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public body: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public header: string;
 
     @Column(Types.DATETIME)
@@ -24,7 +25,13 @@ export class News extends BaseEntity {
     public comments: Comment[];
 
 
-    constructor(id: number, body: string, header: string, time: Date, comments: Comment[]) {
+    constructor({
+                    id = uuidV4(),
+                    body,
+                    header,
+                    time,
+                    comments
+                }: { id?: string | null, body: string, header: string, time: Date, comments: Comment[] }) {
         super();
         this.id = id;
         this.body = body;

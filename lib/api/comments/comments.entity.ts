@@ -8,7 +8,7 @@ import {v4 as uuidV4 } from "uuid"
 @Entity()
 export class Comment extends BaseEntity {
 
-    @Column(Types.STRING, {primary: true})
+    @Column(Types.UTF8, {primary: true})
     public id: string;
 
     @Column(Types.UTF8)
@@ -27,7 +27,14 @@ export class Comment extends BaseEntity {
     public reviewId: number;
 
 
-    constructor(id: string, text: string, time: Date, userId: number, parent: Comment | null, reviewId: number) {
+    constructor({
+                    id,
+                    text,
+                    time,
+                    userId,
+                    parent,
+                    reviewId
+                }: { id: string, text: string, time: Date, userId: number, parent: Comment | null, reviewId: number }) {
         super();
         this.id = id ?? uuidV4();
         this.text = text;

@@ -5,8 +5,12 @@ import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
 import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
 import {PatchedSession} from "lib/database/patchedSession";
 import {Service} from "lib/injection/decorators/service.decorator";
-import {injectAll} from "tsyringe";
+import {autoInjectable, injectAll} from "tsyringe";
 import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
+import {readFile} from 'fs/promises';
+import {MaterialsService} from "../materials/materials.service";
+import {TutorsService} from "../tutors/tutors.service";
+import {OldRating} from "../tutors/oldRating.entity";
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 
@@ -18,7 +22,8 @@ export class MigrationService {
 
     private readonly entities: any[]
 
-    constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[]) {
+    @autoInjectable()
+    constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[], private materialsService: MaterialsService, private tutorsService: TutorsService) {
         this.entities = entities;
     }
 
@@ -79,53 +84,53 @@ export class MigrationService {
     // SchemeError:
     public async alterAll() {
         await this.db.withSession(async (session) => {
-            await this.createAll(session);
-            for (const entity of this.entities) {
-                const tableName = getTableName(entity);
+                await this.createAll(session);
+                for (const entity of this.entities) {
+                    const tableName = getTableName(entity);
 
-                let desc = new AlterTableDescription();
-                const tableDescription = (await session.describeTable(tableName)).toJSON();
-                console.log(tableDescription)
+                    let desc = new AlterTableDescription();
+                    const tableDescription = (await session.describeTable(tableName)).toJSON();
+                    console.log(tableDescription)
 
-                const rowType = getRowType(entity);
-                type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
-                const columns: Col[] = tableDescription['columns'];
-                const primaryKeys: string[] = tableDescription['primaryKey'];
-                const indexes: Index[] = tableDescription['indexes'] ?? [];
-                let withPrimary = false;
-                const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
-                    return {name: el.name, type: el.type}
-                });
-                const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
+                    const rowType = getRowType(entity);
+                    type Index = { name: string; indexColumns: string[], globalIndex: object, status: string };
+                    const columns: Col[] = tableDescription['columns'];
+                    const primaryKeys: string[] = tableDescription['primaryKey'];
+                    const indexes: Index[] = tableDescription['indexes'] ?? [];
+                    let withPrimary = false;
+                    const entityColumns: any[] = rowType.structType.members.map((el: Col) => {
+                        return {name: el.name, type: el.type}
+                    });
+                    const entityIndexes: string[] = Reflect.getMetadata(INDEX_TOKEN, entity) ?? [];
 
-                desc = entityColumns.reduce(
-                    (prev: AlterTableDescription, curr: Col) => {
+                    desc = entityColumns.reduce(
+                        (prev: AlterTableDescription, curr: Col) => {
 
-                        if (withPrimary)
-                            return prev;
-
-                        if (columns.find((col) => {
-                            return col.name === curr.name &&
-                                // @ts-ignore
-                                col.type.optionalType?.item?.typeId !== typeToString(curr.type)
-                        })) {
-                            if (primaryKeys.includes(curr.name)) {
-                                withPrimary = true;
+                            if (withPrimary)
                                 return prev;
+
+                            if (columns.find((col) => {
+                                return col.name === curr.name &&
+                                    // @ts-ignore
+                                    col.type.optionalType?.item?.typeId !== typeToString(curr.type)
+                            })) {
+                                if (primaryKeys.includes(curr.name)) {
+                                    withPrimary = true;
+                                    return prev;
+                                }
+                                return prev.withAlterColumn(new Column(
+                                    curr.name,
+                                    Types.optional(curr.type)
+                                ));
+                            } else if (!columns.find((col) => {
+                                return col.name === curr.name
+                            })) {
+                                return prev.withAddColumn(new Column(
+                                    curr.name,
+                                    Types.optional(curr.type)
+                                ));
                             }
-                            return prev.withAlterColumn(new Column(
-                                curr.name,
-                                Types.optional(curr.type)
-                            ));
-                        } else if (!columns.find((col) => {
-                            return col.name === curr.name
-                        })) {
-                            return prev.withAddColumn(new Column(
-                                curr.name,
-                                Types.optional(curr.type)
-                            ));
-                        }
-                        return prev;
+                            return prev;
                         },
                         desc)
                     desc = columns.reduce((prev: AlterTableDescription, curr: Col) => {
@@ -218,5 +223,47 @@ export class MigrationService {
             res = (await session.describeTable(tableName)).toJSON()
         });
         return res;
+    }
+
+    public async importJson() {
+        const data = JSON.parse(await readFile("parsing/combined/data.json", "utf8"));
+        Object.entries(data["tutors"]).forEach(([key, value]: [key: string, value: any]) => {
+            console.log(value);
+            let url: string | null = value["url"];
+
+            let cafedras: string[] = value["cafedras"].filter((el: any) => el !== null);
+            let directions: string[] = value["directions"].filter((el: any) => el !== null);
+
+            let name: string | null = value["name"];
+            let lastName: string | null = value["lastName"];
+            let fatherName: string | null = value["fatherName"];
+            let nickName: string | null = value["nickName"];
+
+            let reviews: object[] = value["reviews"];
+
+            let mailReviews: object[] = value["mailReviews"].filter((el: any) => el !== null && el !== {noname: '\n'});
+            let mailNames: string[] = value["mailNames"].filter((el: any) => el !== null);
+
+            // let mailNames : string[] = value["quotes"];
+
+            let mailMark: number = +value["mailMark"]["value"];
+            let personality: number = +value["personality"]["value"];
+            let quality: number = +value["quality"]["value"];
+            let tests: number = +value["tests"]["value"];
+
+            let mailMarkCount: number = +value["mailMark"]["count"];
+            let qualityCount: number = +value["quality"]["count"];
+            let personalityCount: number = +value["personality"]["count"];
+            let testsCount: number = +value["tests"]["count"];
+
+            let materials: string[] = value["materials"];
+            let photos: string[] = [];
+            // this.materialsService.add({}); // TODO create adding materials method
+            let tutor = {oldRating: {personality, personalityCount, tests, testsCount, quality,qualityCount},}
+            //
+            this.tutorsService.add(tutor);
+
+
+        })
     }
 }

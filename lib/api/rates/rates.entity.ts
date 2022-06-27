@@ -4,19 +4,20 @@ import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
 import {User} from "lib/api/users/users.entity";
+import {v4 as uuidV4} from "uuid";
 
 
 @Entity()
 export class Rate extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.UTF8, {primary: true})
+    public id: string | null;
 
     @Column(Types.UINT8)
     public punctuality: number;
 
     @Column(Types.UINT8)
-    public character: number;
+    public personality: number;
 
     @Column(Types.UINT8)
     public exams: number;
@@ -31,11 +32,19 @@ export class Rate extends BaseEntity {
     public user: User;
 
 
-    constructor(id: number, punctuality: number, character: number, exams: number, quality: number, tutorId: number, user: User) {
+    constructor({
+                    id = uuidV4(),
+                    punctuality,
+                    character,
+                    exams,
+                    quality,
+                    tutorId,
+                    user
+                }: { id?: string | null, punctuality: number, character: number, exams: number, quality: number, tutorId: number, user: User }) {
         super();
         this.id = id;
         this.punctuality = punctuality;
-        this.character = character;
+        this.personality = character;
         this.exams = exams;
         this.quality = quality;
         this.tutorId = tutorId;

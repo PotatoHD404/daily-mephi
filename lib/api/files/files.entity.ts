@@ -7,7 +7,7 @@ import {Types} from "ydb-sdk";
 export class File extends BaseEntity {
 
 
-    @Column(Types.UINT64, {primary: true})
+    @Column(Types.UTF8, {primary: true})
     public id: number;
     @Column(Types.STRING)
     public url: String;

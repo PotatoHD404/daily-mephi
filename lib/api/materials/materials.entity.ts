@@ -6,50 +6,65 @@ import {ManyToMany} from "lib/database/decorators/manyToMany.decorator";
 import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
 import {User} from "lib/api/users/users.entity";
 import {Comment} from "lib/api/comments/comments.entity"
+import {v4 as uuidV4} from "uuid";
 
 @Entity()
 export class Material extends BaseEntity {
 
-    @Column(Types.UINT64, {primary: true})
-    public id: number;
+    @Column(Types.UTF8, {primary: true})
+    public id: string | null;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public block: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public description: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public discipline: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public faculty: number;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public header: number;
 
     @Column(Types.DATETIME)
     public time: Date;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public tutor: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public url: string;
 
-    @Column(Types.STRING)
+    @Column(Types.UTF8)
     public user: string;
 
     @OneToMany(Comment, "reviewId")
-    public comments: Comment[];
+    public comments: Comment[] | undefined;
 
     @ManyToMany(User)
-    public dislikes: User[];
+    public dislikes: User[] | undefined;
 
     @ManyToMany(User)
-    public likes: User[];
+    public likes: User[] | undefined;
 
-    constructor(id: number, block: string, description: string, discipline: string, faculty: number, header: number, time: Date, tutor: string, url: string, user: string, comments: Comment[], dislikes: User[], likes: User[]) {
+    constructor({
+                    id = uuidV4(),
+                    block,
+                    description,
+                    discipline,
+                    faculty,
+                    header,
+                    time,
+                    tutor,
+                    url,
+                    user,
+                    comments,
+                    dislikes,
+                    likes
+                }: { id: string | null, block: string, description: string, discipline: string, faculty: number, header: number, time: Date, tutor: string, url: string, user: string, comments?: Comment[], dislikes?: User[], likes?: User[] }) {
         super();
         this.id = id;
         this.block = block;
