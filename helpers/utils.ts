@@ -12,8 +12,7 @@ import type {NextApiResponse} from 'next';
 import {Cookie} from "next-auth/core/lib/cookie";
 import {primitiveTypeToValue, TypedData, typeMetadataKey, Ydb} from "ydb-sdk";
 import {google} from "ydb-sdk-proto";
-import {fromDecimalString, toDecimalString} from "ydb-sdk/build/decimal";
-import {uuidToNative, uuidToValue} from "ydb-sdk/build/uuid";
+import * as uuid from "uuid"
 import NullValue = google.protobuf.NullValue;
 import IColumn = Ydb.IColumn;
 import IResultSet = Ydb.IResultSet;
@@ -23,6 +22,125 @@ import ITypedValue = Ydb.ITypedValue;
 import IValue = Ydb.IValue;
 import PrimitiveTypeId = Ydb.Type.PrimitiveTypeId;
 
+
+const DECIMAL_REGEX = /^-?\d+(\.\d+)?/;
+
+
+const UUID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+
+function trimFractionalValue(value: string) {
+    if (value.indexOf('.') >= 0) {
+        value = value.replace(/0*$/, '');
+        if (value.endsWith('.')) {
+            value = value.substr(0, value.length - 1);
+        }
+    }
+    return value;
+}
+
+export function uuidToNative(value: IValue): string {
+    const high = toLong(value.high_128 as number | Long);
+    const low = toLong(value.low_128 as number | Long);
+
+    const highBytes = high.toBytesLE();
+    const lowBytes = low.toBytesBE();
+    const timeLowBytes = lowBytes.slice(4, 8);
+    const timeMidBytes = lowBytes.slice(2, 4);
+    const timeHighAndVersionBytes = lowBytes.slice(0, 2);
+    const uuidBytes = [...timeLowBytes, ...timeMidBytes, ...timeHighAndVersionBytes, ...highBytes];
+
+    return uuid.stringify(uuidBytes);
+}
+
+export function uuidToValue(value: string): IValue {
+    if (!UUID_REGEX.test(value)) {
+        throw new Error(`Incorrect UUID value: ${value}`);
+    }
+    const uuidBytes = Array.from(uuid.parse(value)) as number[];
+    const highBytes = uuidBytes.slice(8, 16);
+    const timeLowBytes = uuidBytes.slice(0, 4);
+    const timeMidBytes = uuidBytes.slice(4, 6);
+    const timeHiAndVersionBytes = uuidBytes.slice(6, 8);
+    const lowBytes = [...timeHiAndVersionBytes, ...timeMidBytes, ...timeLowBytes];
+
+    return {
+        high_128: Long.fromBytesLE(highBytes, true),
+        low_128: Long.fromBytesBE(lowBytes, true),
+    };
+}
+
+export function fromDecimalString(value: string, scale: number): IValue {
+    if (!DECIMAL_REGEX.test(value)) {
+        throw new Error(`Incorrect decimal value: ${value}`);
+    }
+    const [integerPart, fractionalPart = ''] = value.split('.');
+    const scaledValue = integerPart + fractionalPart.padEnd(scale, '0');
+    const numericValue = BigInt(scaledValue);
+    const low = numericValue & BigInt('0xffffffffffffffff');
+    const hi = numericValue >> BigInt('64');
+    return {
+        low_128: Long.fromString(low.toString()),
+        high_128: Long.fromString(hi.toString()),
+    };
+}
+
+export function toLong(value: Long | number): Long {
+    if (typeof value === 'number') {
+        return Long.fromNumber(value);
+    }
+    return value;
+}
+
+function toBigIntString(high: Long, low: Long): string {
+    const isNegative = high.toSigned().isNegative();
+    // Array of big-endian unsigned bytes
+    let bytes = [...high.toBytesBE(), ...low.toBytesBE()];
+
+    if (isNegative) {
+        // See https://en.wikipedia.org/wiki/Two%27s_complement#From_the_ones'_complement
+
+        // Inverse of bytes
+        bytes = bytes.map((b) => ~b + 256);
+
+        // Increment
+        let inc = true;
+        for (let index = bytes.length - 1; inc && index >= 0; index--) {
+            const byte = bytes[index];
+            if (byte === 255) {
+                bytes[index] = 0;
+            } else {
+                bytes[index]++;
+                inc = false;
+            }
+        }
+        if (inc) {
+            bytes.splice(0, 0, 1);
+        }
+    }
+    const hex = '0x' + bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    let bigInt = BigInt(hex);
+    if (isNegative) {
+        bigInt = -bigInt;
+    }
+    return bigInt.toString();
+}
+
+export function toDecimalString(high: Long|number, low: Long|number, scale: number): string {
+    const str = toBigIntString(toLong(high), toLong(low));
+    const isNegative = str.startsWith('-');
+    const positiveStr = isNegative ? str.substr(1) : str;
+    let scaledPositiveStr;
+    if (scale === 0) {
+        scaledPositiveStr = positiveStr;
+    } else if (positiveStr.length > scale) {
+        const dotIndex = positiveStr.length - scale;
+        scaledPositiveStr = positiveStr.substr(0, dotIndex) + '.' + positiveStr.substr(dotIndex);
+    } else {
+        scaledPositiveStr = '0.' + positiveStr.padStart(scale, '0');
+    }
+    return (isNegative ? '-' : '') + trimFractionalValue(scaledPositiveStr);
+}
 
 interface Cookies {
     [Key: string]: { Value: string, Domain: string, Path: string, Expires: Date };

@@ -3,7 +3,7 @@ import {ApiModule} from "lib/injection/api.module";
 
 // import 'lib/api/comments/comments.controller.ts';
 // import 'lib/api/cover/cover.controller.ts';
-// import 'lib/api/disciplines/disciplines.controller.ts';
+// import 'lib/api/disciplines/debug.controller.ts';
 // import 'lib/api/faculties/faculties.controller.ts';
 // import 'lib/api/files/files.controller.ts';
 // import 'lib/api/materials/materials.controller.ts';
