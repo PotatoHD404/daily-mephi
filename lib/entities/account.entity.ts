@@ -4,7 +4,7 @@ import {Column} from "lib/database/decorators/column.decorators";
 import {Index} from "lib/database/decorators/index.decorator";
 import {Types} from "ydb-sdk";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
-import {User} from "lib/api/users/users.entity";
+import {User} from ".";
 
 @Entity()
 export class Account extends BaseEntity {
@@ -12,7 +12,7 @@ export class Account extends BaseEntity {
     @Column(Types.UINT64, {primary: true})
     public id: number;
 
-    @OneToOne(User)
+    @OneToOne(() => User)
     public user: User;
 
     @Column(Types.STRING)

@@ -98,12 +98,20 @@ FROM AS_TABLE($${this.tableName});
         await this.addAll(arr);
     }
 
-
-    async findAll(params?: FindAllParams): Promise<T[]> {
+    buildQuery(params?: FindAllParams){
         let declarations = "";
+        if (!Array.isArray(params?.where) && params && params?.where) {
+            const tmp: {[p: string]: Ydb.ITypedValue}[] = [];
+            tmp.push(params.where)
+            params.where = [...tmp]
+        }
+        // @ts-ignore
+        params.where = params?.where as ({[p: string]: Ydb.ITypedValue}[] | undefined)
+
 
         if (params?.where?.length) {
-            declarations = `${params?.where.map((el, index) => Object.entries(el).map(([key, {type}]) => {
+
+            declarations = `${params?.where.map((el: {[p: string]: ITypedValue}, index: number) => Object.entries(el).map(([key, {type}]) => {
                 return `DECLARE $${key}${index} AS ${typeToString(type)};\n`;
             }).join("")).join("")}`
         }
@@ -117,7 +125,7 @@ ${params?.select?.join(",\n") ?? "*"}
 FROM ${this.tableName}`;
         const requestParams: { [k: string]: ITypedValue } = {};
         if (params?.where?.length) {
-            query += `\nWHERE\n${params.where.map((el, index) => "(\n" +
+            query += `\nWHERE\n${params.where.map((el: {[p: string]: ITypedValue}, index: number) => "(\n" +
                 Object.entries(el).map(([key, value]) => {
                     let res = `${key} `
                     let sep: string;
@@ -154,13 +162,19 @@ FROM ${this.tableName}`;
             query += `\nLIMIT ${params.limit}`
         query += ";";
         console.log(query)
-        let res : T[] = [];
+        return {query, requestParams};
+    }
+
+
+    async findAll(params?: FindAllParams): Promise<T[]> {
+        let {query, requestParams} = this.buildQuery(params);
+        let res: T[] = [];
         await this.db.withSession(async (session) => {
             await withRetries(async () => {
                 const preparedQuery = await session.prepareQuery(query);
 
                 const {resultSets} = await session.executeQuery(preparedQuery, requestParams);
-                const results = resultSets.reduce((prev : Record<string, any>[], curr) => {
+                const results = resultSets.reduce((prev: Record<string, any>[], curr) => {
                     prev.push(...createNativeObjects(curr))
                     return prev;
                 }, res);
@@ -174,28 +188,50 @@ FROM ${this.tableName}`;
         // return Promise.resolve([]);
     }
 
-    countAll(params: Omit<FindAllParams, "select" | "order">): Promise<number> {
-        return Promise.resolve(0);
+    // COUNT(*) AS cnt
+    async count(params: Omit<FindAllParams, "select" | "order">): Promise<number> {
+        let {query, requestParams} = this.buildQuery({...params, select: ["COUNT(*) as cnt"]});
+
+        let count: number = 0;
+        let res: T[] = [];
+        await this.db.withSession(async (session) => {
+            await withRetries(async () => {
+                const preparedQuery = await session.prepareQuery(query);
+
+                const {resultSets} = await session.executeQuery(preparedQuery, requestParams);
+
+                const results: any = resultSets.reduce((prev: Record<string, any>[], curr) => {
+                    prev.push(...createNativeObjects(curr))
+                    return prev;
+                }, res);
+                count = results["cnt"]
+                // console.log(resultSets);
+                // console.log(results);
+                // console.log();
+                // res = createEntities(this.target, results);
+            });
+        });
+        return count;
     }
 
-    find(params: Omit<FindAllParams, "limit" | "order">): Promise<T[]> {
-        return Promise.resolve([]);
+    async find(params: Omit<FindAllParams, "limit" | "order">): Promise<T | null> {
+        return (await this.findAll({...params, limit: 1}))[0] ?? null;
     }
 
-    remove(entity: T): Promise<void> {
-        return Promise.resolve(undefined);
+    async remove(entity: T): Promise<void> {
+        return undefined;
     }
 
-    removeAll(entities: T[]): Promise<void> {
-        return Promise.resolve(undefined);
+    async removeAll(entities: T[]): Promise<void> {
+        return undefined;
     }
 
-    update(entity: T): Promise<void> {
-        return Promise.resolve(undefined);
+    async update(entity: T): Promise<void> {
+        return undefined;
     }
 
-    updateAll(entities: T[]): Promise<void> {
-        return Promise.resolve(undefined);
+    async updateAll(entities: T[]): Promise<void> {
+        return undefined;
     }
 
 

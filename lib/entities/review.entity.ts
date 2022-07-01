@@ -1,6 +1,3 @@
-import {Comment} from "lib/api/comments/comments.entity";
-import {Rate} from "lib/api/rates/rates.entity";
-import {OldRating} from "lib/api/tutors/oldRating.entity";
 import {BaseEntity} from "lib/database/baseEntity";
 import {Column} from "lib/database/decorators/column.decorators";
 import {Entity} from "lib/database/decorators/entity.decorator";
@@ -8,9 +5,8 @@ import {ManyToMany} from "lib/database/decorators/manyToMany.decorator";
 import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
 import {Types} from "ydb-sdk";
-import {User} from "../users/users.entity";
 import {v4 as uuidV4} from "uuid";
-import {Tutor} from "../tutors/tutors.entity";
+import {Tutor, User, Comment} from ".";
 
 @Entity()
 export class Review extends BaseEntity {
@@ -27,20 +23,20 @@ export class Review extends BaseEntity {
     @Column(Types.DATETIME)
     public time: Date;
 
-    @OneToMany(Tutor)
-    public tutor: Tutor;
+    // @OneToMany(Tutor)
+    // public tutor: Tutor;
 
-    @OneToMany(User)
+    @OneToMany(() => User)
     public user: User;
 
-    @OneToMany(Comment, "reviewId")
+    @OneToMany(() => Comment, "reviewId")
     public comments: Comment[];
 
-    @ManyToMany(User)
-    public dislikes: User[];
-
-    @ManyToMany(User)
-    public likes: User[];
+    // @ManyToMany(User)
+    // public dislikes: User[];
+    //
+    // @ManyToMany(User)
+    // public likes: User[];
 
 
     constructor({

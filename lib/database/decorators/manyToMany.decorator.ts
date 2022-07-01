@@ -7,9 +7,17 @@ import {Entity, TABLE_NAME_TOKEN} from "./entity.decorator";
 export const MANY_TO_MANY_TOKEN = Symbol('manyToMany')
 
 
-export function ManyToMany(type: any, tableName?: string): FieldDecorator {
+export function ManyToMany(type: () => any, tableName?: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
+        console.log("ManyToMany")
         target = target.constructor;
+        type = type();
+
+        console.log(type)
+        console.log(target)
+        console.log(tableName)
+
+
         if (!tableName)
             tableName = getTableName(target) + "_" + getColumnName(target, key);
         const primaryKey1 = getPrimaryKey(target);

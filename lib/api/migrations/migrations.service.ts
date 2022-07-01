@@ -5,12 +5,20 @@ import {ENTITY_TOKEN} from "lib/database/decorators/entity.decorator";
 import {INDEX_TOKEN} from "lib/database/decorators/index.decorator";
 import {PatchedSession} from "lib/database/patchedSession";
 import {Service} from "lib/injection/decorators/service.decorator";
-import {autoInjectable, injectAll} from "tsyringe";
+import {injectAll} from "tsyringe";
 import {AlterTableDescription, Column, Session, TableDescription, TableIndex, Types, Ydb} from "ydb-sdk";
 import {readFile} from 'fs/promises';
 import {MaterialsService} from "../materials/materials.service";
 import {TutorsService} from "../tutors/tutors.service";
-import {OldRating} from "../tutors/oldRating.entity";
+import {ReviewsService} from "../reviews/reviews.service";
+import {Tutor} from "../../entities/tutor.entity";
+import {DisciplinesService} from "../disciplines/disciplines.service";
+import {FacultiesService} from "../faculties/faculties.service";
+import {RatesService} from "../rates/rates.service";
+import {Discipline} from "../../entities/discipline.entity";
+import {Faculty} from "../../entities/facultie.entity";
+import {Review} from "../../entities/review.entity";
+import {OldRating} from "../../entities/oldRating.entity";
 
 // https://github.com/SpaceYstudentProject/SpaceYbaseAPI/blob/837e0ee5d4ef07e55e7df16dc374157b6044065d/sql/spaceYdb.sql
 
@@ -20,10 +28,15 @@ type Col = { name: string; type: Ydb.IType; };
 @Service()
 export class MigrationService {
 
-    private readonly entities: any[]
+    private readonly entities: any[];
 
-    @autoInjectable()
-    constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[], private materialsService: MaterialsService, private tutorsService: TutorsService) {
+    constructor(private db: DB, @injectAll(ENTITY_TOKEN) entities: any[],
+                private materialsService: MaterialsService,
+                private tutorsService: TutorsService,
+                private reviewsService: ReviewsService,
+                private disciplinesService: DisciplinesService,
+                private facultiesService: FacultiesService,
+                private ratesService: RatesService) {
         this.entities = entities;
     }
 
@@ -227,17 +240,19 @@ export class MigrationService {
 
     public async importJson() {
         const data = JSON.parse(await readFile("parsing/combined/data.json", "utf8"));
-        Object.entries(data["tutors"]).forEach(([key, value]: [key: string, value: any]) => {
+        for (const el of Object.entries(data["tutors"])) {
+            const [key, value]: [key: string, value: any] = el;
             console.log(value);
             let url: string | null = value["url"];
 
             let cafedras: string[] = value["cafedras"].filter((el: any) => el !== null);
             let directions: string[] = value["directions"].filter((el: any) => el !== null);
 
-            let name: string | null = value["name"];
+            let firstName: string | null = value["name"];
             let lastName: string | null = value["lastName"];
             let fatherName: string | null = value["fatherName"];
             let nickName: string | null = value["nickName"];
+
 
             let reviews: object[] = value["reviews"];
 
@@ -251,7 +266,7 @@ export class MigrationService {
             let quality: number = +value["quality"]["value"];
             let tests: number = +value["tests"]["value"];
 
-            let mailMarkCount: number = +value["mailMark"]["count"];
+            let mailMarkCount: number = +value["mailMark"]["count"]; // TODO add mail reviews
             let qualityCount: number = +value["quality"]["count"];
             let personalityCount: number = +value["personality"]["count"];
             let testsCount: number = +value["tests"]["count"];
@@ -259,11 +274,54 @@ export class MigrationService {
             let materials: string[] = value["materials"];
             let photos: string[] = [];
             // this.materialsService.add({}); // TODO create adding materials method
-            let tutor = {oldRating: {personality, personalityCount, tests, testsCount, quality,qualityCount},}
+
+            let facultiesEntity: Faculty[] = await this.facultiesService.addAll({faculties: cafedras});
             //
-            this.tutorsService.add(tutor);
+            // let disciplinesEntity: Discipline[] = await this.disciplinesService.addAll({disciplines: directions});
+            //
+            //
+            // let tutor: Tutor = new Tutor({
+            //     oldRating: new OldRating({
+            //         personality,
+            //         personalityCount,
+            //         exams: tests,
+            //         examsCount: testsCount,
+            //         quality,
+            //         qualityCount
+            //     }),
+            //     materials: [],
+            //     // images: photos,
+            //     firstName,
+            //     lastName,
+            //     fatherName,
+            //     nickName,
+            //     url,
+            //     disciplines: disciplinesEntity,
+            //     faculties: facultiesEntity
+            // });
+            // //
+            // let tutorEntity: Tutor = await this.tutorsService.add(tutor);
+            //
+            // let reviewsEntity: Review[] = await this.reviewsService.addAll({
+            //     reviews: reviews.map((el: any) => {
+            //         let parts = el["Дата"].split("/");
+            //         let time = new Date(parseInt(parts[2], 10),
+            //             parseInt(parts[1], 10) - 1,
+            //             parseInt(parts[0], 10));
+            //         return new Review({
+            //             body: el["Текст"],
+            //             header: el["Название"],
+            //             tutor: tutorEntity,
+            //             user: el["Ник"],
+            //             time,
+            //             comments: [],
+            //             dislikes: [],
+            //             likes: []
+            //         });
+            //     })
+            // });
 
 
-        })
+        }
     }
 }

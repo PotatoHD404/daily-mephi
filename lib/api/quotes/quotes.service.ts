@@ -1,4 +1,4 @@
-import {Quote} from "lib/api/quotes/quotes.entity";
+import {Quote} from "lib/entities/quote.entity";
 import {QuotesRepository} from "lib/api/quotes/quotes.repository";
 import {Service} from "lib/injection/decorators/service.decorator";
 

@@ -1,4 +1,4 @@
-import {Comment} from "lib/api/comments/comments.entity";
+import {Comment} from "lib/entities/comment.entity";
 import {CommentsRepository} from "lib/api/comments/comments.repository";
 import {Service} from "lib/injection/decorators/service.decorator";
 

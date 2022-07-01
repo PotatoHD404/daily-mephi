@@ -6,8 +6,13 @@ import {FieldDecorator} from "protobufjs";
 export const ONE_TO_MANY_TOKEN = Symbol('oneToMany')
 
 
-export function OneToMany(type: any, columnKey?: string): FieldDecorator {
+export function OneToMany(type: () => any, columnKey?: string): FieldDecorator {
     return function (target: any, key: string | symbol) {
+        console.log("OneToMany")
+        type = type();
+
+        console.log(type)
+        console.log(target.constructor)
         if (!columnKey)
             columnKey = getPrimaryKey(type);
         Reflect.metadata(ONE_TO_MANY_TOKEN, {key: columnKey, type})(target.constructor, key)

@@ -4,7 +4,7 @@ import {Column} from "lib/database/decorators/column.decorators";
 import {Index} from "lib/database/decorators/index.decorator";
 import {Types} from "ydb-sdk";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
-import {User} from "lib/api/users/users.entity";
+import {User} from ".";
 
 @Entity()
 export class Session extends BaseEntity {
@@ -28,7 +28,7 @@ export class Session extends BaseEntity {
     @Column(Types.TIMESTAMP)
     public updatedAt: Date;
 
-    @OneToOne(User)
+    @OneToOne(() => User)
     public user: User;
 
 

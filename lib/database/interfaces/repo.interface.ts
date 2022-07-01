@@ -4,7 +4,7 @@ import ITypedValue = Ydb.ITypedValue;
 
 export interface FindAllParams {
     select?: string[],
-    where?: { [k: string]: ITypedValue }[],
+    where?: { [k: string]: ITypedValue} | { [k: string]: ITypedValue}[],
     order?: { [k: string]: "ASC" | "DESC" },
     offset?: number,
     limit?: number
@@ -12,8 +12,8 @@ export interface FindAllParams {
 
 export interface IRepo<T> {
     findAll: (params: FindAllParams) => Promise<T[]>;
-    find: (params: Omit<FindAllParams, "limit" | "order">) => Promise<T[]>;
-    countAll: (params: Omit<FindAllParams, "select" | "order">) => Promise<number>;
+    find: (params: Omit<FindAllParams, "limit" | "order">) => Promise<T | null>;
+    count: (params: Omit<FindAllParams, "select" | "order">) => Promise<number>;
     add: (entity: T) => Promise<void>;
     addAll: (entities: T[]) => Promise<void>;
     update: (entity: T) => Promise<void>;

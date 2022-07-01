@@ -3,9 +3,13 @@ import {BaseEntity} from "lib/database/baseEntity";
 import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 import {OneToOne} from "lib/database/decorators/oneToOne.decorator";
-import {User} from "lib/api/users/users.entity";
+import {User, Tutor} from ".";
 import {v4 as uuidV4} from "uuid";
+// import {Tutor} from "../tutors/tutors.entity";
 
+export const forwardRef = (fn: () => any) => ({
+    forwardRef: fn,
+});
 
 @Entity()
 export class Rate extends BaseEntity {
@@ -25,10 +29,10 @@ export class Rate extends BaseEntity {
     @Column(Types.UINT8)
     public quality: number;
 
-    @Column(Types.UINT64)
-    public tutorId: number;
+    @OneToOne(() => Tutor)
+    public tutor: Tutor;
 
-    @OneToOne(User)
+    @OneToOne(() => User)
     public user: User;
 
 
@@ -38,16 +42,16 @@ export class Rate extends BaseEntity {
                     character,
                     exams,
                     quality,
-                    tutorId,
+                    tutor,
                     user
-                }: { id?: string | null, punctuality: number, character: number, exams: number, quality: number, tutorId: number, user: User }) {
+                }: { id?: string | null, punctuality: number, character: number, exams: number, quality: number, tutor: Tutor, user: User }) {
         super();
         this.id = id;
         this.punctuality = punctuality;
         this.personality = character;
         this.exams = exams;
         this.quality = quality;
-        this.tutorId = tutorId;
+        this.tutor = tutor;
         this.user = user;
     }
 }

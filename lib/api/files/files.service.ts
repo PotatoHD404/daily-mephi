@@ -1,4 +1,4 @@
-import {File} from "lib/api/files/files.entity";
+import {File} from "lib/entities/file.entity";
 import {FilesRepository} from "lib/api/files/files.repository";
 import {Service} from "lib/injection/decorators/service.decorator";
 

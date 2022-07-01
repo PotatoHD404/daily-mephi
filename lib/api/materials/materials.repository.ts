@@ -1,4 +1,4 @@
-import {Material} from "lib/api/materials/materials.entity";
+import {Material} from "lib/entities";
 import {BaseRepo} from "lib/database/baseRepo";
 import {Repository} from "lib/database/decorators/repository.decorator";
 

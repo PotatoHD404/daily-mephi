@@ -3,7 +3,7 @@ import {BaseEntity} from "lib/database/baseEntity";
 import {Column} from "lib/database/decorators/column.decorators";
 import {Types} from "ydb-sdk";
 import {OneToMany} from "lib/database/decorators/oneToMany.decorator";
-import {Comment} from "lib/api/comments/comments.entity"
+import {Comment} from "."
 import {v4 as uuidV4} from "uuid";
 
 @Entity()
@@ -21,7 +21,7 @@ export class News extends BaseEntity {
     @Column(Types.DATETIME)
     public time: Date;
 
-    @OneToMany(Comment, "reviewId")
+    @OneToMany(() => Comment, "reviewId")
     public comments: Comment[];
 
 
