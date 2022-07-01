@@ -35,5 +35,8 @@
   "exclude": [
     "node_modules",
     "database"
-  ]
+  ],
+  "ts-node": {
+    "files": true,
+  }
 }
