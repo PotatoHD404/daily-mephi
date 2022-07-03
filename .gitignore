@@ -56,5 +56,20 @@ parsing/home/tutor_imgs/
 
 parsing/home/new1.zip
 
-*.json
+#*.json
 /parsing/mephist/photos/
+/parsing/combined/data.json
+/parsing/combined/data1.json
+/parsing/mephist/all_data.json
+/parsing/mephist/result.json
+/parsing/mephist/result1.json
+/parsing/mephist/result2.json
+/parsing/mephist/result3.json
+/templates/nodejs/node_modules/
+/frontend/node_modules/
+
+frontend/.next/
+
+templates/nodejs/dist/
+
+backend/.build/

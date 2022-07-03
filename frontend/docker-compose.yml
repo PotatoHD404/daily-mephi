@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  database:
+    image: cr.yandex/yc/yandex-docker-local-ydb:latest
+    hostname: localhost
+    environment:
+      YDB_CERTS: "/ydb_certs"
+      GRPC_TLS_PORT: 2135
+      GRPC_PORT: 2136
+      MON_PORT: 8765
+    ports: #This is used to map the container’s ports to the host machine.
+      - "2135:2135"
+      - "2136:2136"
+      - "8765:8765"
+    volumes:
+      - ydb_certs:/ydb_certs
+      - ydb_data:/ydb_data
+    restart: unless-stopped
+#    networks:
+#      - app
+#
+#networks:
+#  app:
+#    driver: bridge
+
+volumes:
+  ydb_data:
+  ydb_certs:

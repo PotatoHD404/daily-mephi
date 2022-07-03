@@ -1,0 +1,26 @@
+{
+  self: { name: 'materials', owner: 'root@builtin', type: 'TABLE' },
+  columns: [
+    { name: 'a', type: [Object] },
+    { name: 'b', type: [Object] },
+    { name: 'ab', type: [Object] }
+  ],
+  primaryKey: [ 'a' ],
+  storageSettings: {
+    tabletCommitLog0: { media: 'hdd' },
+    tabletCommitLog1: { media: 'hdd' },
+    storeExternalBlobs: 'DISABLED'
+  },
+  columnFamilies: [
+    {
+      name: 'default',
+      data: [Object],
+      compression: 'COMPRESSION_NONE'
+    }
+  ],
+  partitioningSettings: {
+    partitioningBySize: 'ENABLED',
+    partitionSizeMb: '2048',
+    partitioningByLoad: 'DISABLED'
+  }
+}
