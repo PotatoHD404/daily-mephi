@@ -8,6 +8,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     // Check whether the request is auth callback
+    // @ts-ignore
     if (req.query.nextauth.includes("callback")) {
         // CAS returns ticket, but OAUTH needs code parameter
         req.query.code = req.query.ticket;

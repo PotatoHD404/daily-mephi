@@ -4,17 +4,6 @@ const path = require("path");
 const nextConfig = {
     reactStrictMode: true,
     webpack: (config) => {
-        config = {
-            ...config, optimization: {minimize: false},
-            // output: {
-            //     libraryTarget: 'commonjs',
-            //     path: path.join(__dirname, '.next/server'),
-            //     filename: '[name].js',
-            // },
-            // resolve: {
-            //     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-            // },
-        }
         config.experiments = {layers: true, topLevelAwait: true};
         return config;
     },

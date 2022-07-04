@@ -56,5 +56,6 @@ parsing/home/tutor_imgs/
 
 parsing/home/new1.zip
 
-*.json
 /parsing/mephist/photos/
+/.env
+/parsing/
