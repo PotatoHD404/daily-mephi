@@ -83,15 +83,15 @@ function Tutor() {
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Преподавание(4.6):</div>
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Пунктуальность(4.6):</div>
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Прием зачетов/экзаменов(4.6):</div>
                                 <HoverRating/>
                             </div>
                         </div>

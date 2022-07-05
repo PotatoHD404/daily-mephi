@@ -17,7 +17,7 @@ const labels: { [index: string]: string } = {
 };
 
 export default function HoverRating() {
-    const [value, setValue] = React.useState<number | null>(2);
+    const [value, setValue] = React.useState<number | null>(-1);
     const [hover, setHover] = React.useState(-1);
 
     return (

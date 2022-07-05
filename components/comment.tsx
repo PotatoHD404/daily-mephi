@@ -24,7 +24,7 @@ type Children =
     | null
     | undefined;
 
-interface Comment1Params {
+interface CommentParams {
     nick?: string;
     date?: string;
     body?: string;
@@ -33,40 +33,43 @@ interface Comment1Params {
     repliesCount?: number;
 }
 
-export default function Comment(props: Comment1Params) {
-    props.nick = props.nick || "User1";
-    props.date = props.date || "15 февраля 2022";
-    props.body = props.body || "Comment body";
-    props.src = props.src || CommentIco;
-    props.repliesCount = props.repliesCount || 1;
+export default function Comment({
+                                    nick = "User1",
+                                    date = "15 февраля 2022",
+                                    body = "Comment body",
+                                    src = CommentIco,
+                                    repliesCount = 1,
+                                    children
+                                }: CommentParams) {
+
 
     return <div className="text-xl mt-2">
         <div className="flex">
             <ProfilePic/>
-            <span className="font-bold ml-2 my-auto">{props.nick}</span>
-            <span className="ml-2 my-auto ml-8">{props.date}</span>
+            <span className="font-bold ml-2 my-auto">{nick}</span>
+            <span className="ml-2 my-auto ml-8">{date}</span>
         </div>
         <div className="flex mt-1 ml-5">
             <div className="bg-black w-[2px] h-auto"/>
             <div className="w-full flex-wrap ml-5">
-                <div className="mb-1">{props.body}</div>
+                <div className="mb-1">{body}</div>
                 <div className="text-[1.1rem] font-bold flex">
                     <div className="h-5 w-5 mr-1 my-auto">
                         <Image
-                            src={props.src}
+                            src={src}
                             alt="Reply ico"
                         />
                     </div>
                     <div className="my-auto">Reply</div>
                 </div>
-                <div>{props.children}</div>
+                <div>{children}</div>
 
             </div>
 
         </div>
-        {props.repliesCount ?
+        {repliesCount ?
             <button className="ml-5 text-blue-500 text-[1.1rem] font-semibold">
-                {props.repliesCount} more repl{props.repliesCount > 1 ? "ies" : "y"}
+                {repliesCount} more repl{repliesCount > 1 ? "ies" : "y"}
             </button>
             : null}
     </div>;

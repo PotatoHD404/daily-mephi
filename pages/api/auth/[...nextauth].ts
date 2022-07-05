@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, {SessionStrategy} from "next-auth"
 import {nextAuthOptions} from "lib/auth/nextAuthOptions";
 import {NextApiRequest, NextApiResponse} from "next";
 
@@ -14,7 +14,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         req.query.code = req.query.ticket;
         delete req.query.ticket;
     }
-
     // Get a custom cookie value from the request
     // const someCookie = req.cookies["some-custom-cookie"]
 
