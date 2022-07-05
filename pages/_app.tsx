@@ -102,7 +102,7 @@ function MyApp(
             {/*        src={template}*/}
             {/*        alt="Picture of the author"*/}
             {/*        quality={100}*/}
-            {/*        objectFit="cover"*/}
+            {/*        objectFit="covers"*/}
             {/*    />*/}
             {/*</div>*/}
 

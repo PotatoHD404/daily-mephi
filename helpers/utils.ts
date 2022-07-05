@@ -62,7 +62,7 @@ export function getHost() {
     // if (process.env.VERCEL) return forwardedHost
     // If `NEXTAUTH_URL` is `undefined` we fall back to "http://localhost:3000"
     // return process.env.NEXTAUTH_URL
-    return process.env.VERCEL_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    return process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 }
 
 

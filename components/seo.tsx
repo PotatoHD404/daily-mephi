@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 
 
-function SEO({title}: { title?: string }) {
+function SEO({title, card = "/images/twitter-large.png"}: { title?: string, card?: string }) {
     let title1: string;
     let title2: string;
     if (title) {
@@ -44,12 +44,12 @@ function SEO({title}: { title?: string }) {
             <meta property="og:title" content={"Студенческий портал Daily MEPhi"}/>
             <meta property="og:title" content={title2}/>
 
-            <meta property="vk:image" content='/images/twitter-large.png'/>
+            <meta property="vk:image" content={card}/>
             <meta property="og:type" content="object"/>
             <meta name="twitter:title" content="Daily MEPhi"/>
             <meta name="twitter:card" content="summary_large_image"/>
-            <meta name="twitter:image:src" content="/images/twitter-large.png"/>
-            <meta property="og:image" content='/images/twitter-large.png'/>
+            <meta name="twitter:image:src" content={card}/>
+            <meta property="og:image" content={card}/>
             <meta property="og:image:width" content='1200'/>
             <meta property="og:image:height" content='630'/>
             <meta property="og:site_name" content="daily-mephi.ru"/>
