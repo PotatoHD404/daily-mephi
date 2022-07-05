@@ -45,9 +45,11 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             }
         },
         profile(profile) {
+            console.log(profile)
             return {
                 id: profile.id,
-                name: profile.id
+                name: null,
+                image: null
             };
         },
         clientId: '1'
