@@ -46,6 +46,8 @@ model User {
   image              String?
   rating             Int        @default(0)
   role               String     @default("default")
+  email              String?    @unique
+  emailVerified      DateTime?
   accounts           Account[]
   sessions           Session[]
   comments           Comment[]

@@ -1,15 +1,18 @@
-import {Get} from '@storyofams/next-api-decorators';
-import {DisciplinesService} from "lib/api/disciplines/disciplines.service"
+import {Delete, Get, Param, Post, Put} from '@storyofams/next-api-decorators';
 import {Controller} from "lib/injection/decorators/controller.decorator";
+import {PrismaClient} from "@prisma/client";
 
 @Controller("/debug")
 class DebugController {
 
-    constructor(private service: DisciplinesService) {
+    constructor(private service: PrismaClient) {
     }
 
     @Get("/")
     public async get() {
-        return "Hello world"
+        return ""
     }
+
+
+
 }

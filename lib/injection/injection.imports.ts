@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import {NextApiHandler, NextApiRequest, NextApiResponse} from "next";
 import {container, injectable, injectAll as InjectAll} from "tsyringe";
 import {getCallerInfo} from "@storyofams/next-api-decorators/dist/internals/getCallerInfo";
