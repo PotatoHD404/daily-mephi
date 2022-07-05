@@ -68,6 +68,31 @@ interface HomeNavbarParams {
     onClick: () => void;
 }
 
+function NewComponent(props: { status: "authenticated" | "unauthenticated" | "loading", session: Session | null, onClick: () => void }) {
+    if (props.status === "loading") {
+        return (
+            <div onClick={props.onClick}
+                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>Загрузка...</h3>
+            </div>
+        )
+    } else if (props.status === "unauthenticated" || !props.session) {
+        return (
+            <button onClick={props.onClick}
+                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>Войти</h3>
+            </button>
+        )
+    } else {
+        return (
+            <button
+                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>{props.session.user?.name}</h3>
+            </button>
+        )
+    }
+}
+
 function HomeNavbar(props: HomeNavbarParams) {
     return <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
         <div className="col-start-2 col-end-12 flex flex-wrap
@@ -84,15 +109,7 @@ function HomeNavbar(props: HomeNavbarParams) {
                     <a className="underlining"><h3>Преподаватели</h3></a>
                 </Link>
             </div>
-            {(props.status === "loading" || props.status === "unauthenticated" || !props.session) ?
-                <button onClick={props.onClick}
-                        className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                    <h3>Войти</h3>
-                </button> :
-                <button
-                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                    <h3>{props.session.user?.name}</h3>
-                </button>}
+            <NewComponent status={props.status} session={props.session} onClick={props.onClick}/>
 
 
         </div>
