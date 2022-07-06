@@ -1,35 +1,21 @@
-import next from 'next'
-import {parse} from 'url'
-import serverlessExpress from "@vendia/serverless-express";
-import {IncomingMessage, ServerResponse} from 'http';
+import next from 'next';
+import type { APIGatewayProxyEvent } from 'aws-lambda';
+import { eventToReqRes } from './eventToReqRes';
 
-const app = next({dev: false});
-const requestHandler = app.getRequestHandler();
+const app = next({ dev: false });
+const nextHandler = app.getRequestHandler();
 
-exports.handler = async function handler(event: any, context: any, callback: any) {
-    // try {
-    //   const result = await es.proxy(server, event, context, "PROMISE").promise;
-    //   return result;
-    // } catch (e) {
-    //   // TODO: better way to handle errors
-    //   console.error(e);
-    //   callback(null, {});
-    //   // callback(null, {await failure({ status: false }, e)});
-    // }
+export const handler = async (event: APIGatewayProxyEvent): Promise<any> => {
+    // eslint-disable-next-line no-console
+    console.info('event', event);
 
-    console.log({event, context, callback});
+    const { req, res, responsePromise } = eventToReqRes(event);
 
-    // type RequestListener = (req: IncomingMessage, res: ServerResponse) => void;
-    const app = async (req: IncomingMessage, res: ServerResponse) => {
-        // console.log({ req, res });
+    // eslint-disable-next-line no-console
+    console.info('url', req.url);
 
-        // @ts-ignore
-        const parsedUrl = parse(req.url, true, false);
+    // run request processing
+    await nextHandler(req, res);
 
-        // console.log(result);
-
-        return await requestHandler(req, res, parsedUrl);
-    };
-
-    await serverlessExpress({ app })(event, context, callback);
+    return await responsePromise;
 };

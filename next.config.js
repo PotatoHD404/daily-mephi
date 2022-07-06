@@ -7,8 +7,17 @@ const nextConfig = {
         config.experiments = {layers: true, topLevelAwait: true};
         return config;
     },
+    // experimental: {
+    //     esmExternals: false
+    // },
     experimental: {
-        esmExternals: false
+        images: {
+            unoptimized: true
+        }
+    },
+    images: {
+        // when true, every image will be unoptimized
+        unoptimized: true
     },
     // pwa: {
     //     dest: 'public',

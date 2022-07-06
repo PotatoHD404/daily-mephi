@@ -35,7 +35,7 @@
   "exclude": [
     "node_modules",
     "parsing",
-    "out",
+    "lambda/out",
     "next.config.js",
     ".next",
     "dist"

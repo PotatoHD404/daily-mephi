@@ -25,19 +25,13 @@ functions:
           method: GET
           path: /
 
-  nested:
-    handler: dist/index.handler
-    events:
-      - http:
-          method: GET
-          path: /nested/{any+}
-
   static:
-    handler: dist/index.handler
+    handler: dist/static.handler
     events:
       - http:
           method: GET
           path: /_next/static/{any+}
+
 
   fallback:
     handler: dist/index.handler
