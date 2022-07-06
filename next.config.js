@@ -18,16 +18,6 @@ const nextConfig = {
     //     sw: 'service-worker.js',
     //     //...
     // },
-    module: {
-        rules: [
-            {
-                test: /\.*$/,
-                exclude: [
-                    './database/'
-                ]
-            }
-        ],
-    },
     typescript: {
         // !! WARN !!
         // Dangerously allow production builds to successfully complete even if
