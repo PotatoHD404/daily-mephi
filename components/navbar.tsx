@@ -71,7 +71,7 @@ interface HomeNavbarParams {
 function NewComponent(props: { status: "authenticated" | "unauthenticated" | "loading", session: Session | null, onClick: () => void }) {
     if (props.status === "loading") {
         return (
-            <div onClick={props.onClick}
+            <div
                     className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
                 <h3>Загрузка...</h3>
             </div>

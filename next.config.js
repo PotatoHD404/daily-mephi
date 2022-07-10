@@ -8,7 +8,10 @@ const nextConfig = {
         return config;
     },
     experimental: {
-        esmExternals: false
+        esmExternals: false,
+        images: {
+            unoptimized: true,
+        }
     },
     // pwa: {
     //     dest: 'public',
@@ -23,7 +26,7 @@ const nextConfig = {
             {
                 test: /\.*$/,
                 exclude: [
-                    './database/'
+                    './parsing/'
                 ]
             }
         ],

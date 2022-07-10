@@ -87,7 +87,7 @@ paths:
         presigned_redirect: true
         service_account_id: ajeqc0lu3h37u8hol16f
       summary: Serve static file from Yandex Cloud Object Storage
-  /tutors/[id]:
+  /tutors/{id+}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
@@ -96,7 +96,15 @@ paths:
         presigned_redirect: true
         service_account_id: ajeqc0lu3h37u8hol16f
       summary: Serve static file from Yandex Cloud Object Storage
-  /users/[id]:
+      parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          style: simple
+  /users/{id+}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
@@ -105,75 +113,94 @@ paths:
         presigned_redirect: true
         service_account_id: ajeqc0lu3h37u8hol16f
       summary: Serve static file from Yandex Cloud Object Storage
+      parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          style: simple
   /api/{file+}:
-    get:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
-        tag: $latest
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-            type: string
-    post:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
-        tag: $latest
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-            type: string
-    put:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
-        tag: $latest
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-            type: string
-    patch:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
-        tag: $latest
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-            type: string
     delete:
       x-yc-apigateway-integration:
         type: cloud-functions
         function_id: d4eanciupdktt1jla8dr
         tag: $latest
       parameters:
-        - in: path
+        - explode: false
+          in: path
           name: file
           required: true
           schema:
             type: string
+          style: simple
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: d4eanciupdktt1jla8dr
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: file
+          required: true
+          schema:
+            type: string
+          style: simple
+    patch:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: d4eanciupdktt1jla8dr
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: file
+          required: true
+          schema:
+            type: string
+          style: simple
+    post:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: d4eanciupdktt1jla8dr
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: file
+          required: true
+          schema:
+            type: string
+          style: simple
+    put:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: d4eanciupdktt1jla8dr
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: file
+          required: true
+          schema:
+            type: string
+          style: simple
   /{file+}:
     get:
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-            type: string
       x-yc-apigateway-integration:
         type: object_storage
         bucket: daily-mephi
-        object: 'static/{file}'
+        object: static/{file}
         presigned_redirect: true
         service_account_id: ajeqc0lu3h37u8hol16f
+      parameters:
+        - explode: false
+          in: path
+          name: file
+          required: true
+          schema:
+            type: string
+          style: simple
       summary: Serve static file from Yandex Cloud Object Storage
-
