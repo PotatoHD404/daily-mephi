@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: ToDo list
+  title: daily-mephi
   version: 1.0.0
 servers:
   - url: https://d5dpvp15e201sqfqj6s0.apigw.yandexcloud.net

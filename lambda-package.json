@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@sls-next/next-aws-lambda": "^3.5.0"
+  }
+}

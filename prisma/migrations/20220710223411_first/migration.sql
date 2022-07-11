@@ -35,7 +35,12 @@ CREATE TABLE `User` (
     `image` VARCHAR(191) NULL,
     `rating` INTEGER NOT NULL DEFAULT 0,
     `role` VARCHAR(191) NOT NULL DEFAULT 'default',
+    `email` VARCHAR(191) NULL,
+    `emailVerified` DATETIME(3) NULL,
 
+    UNIQUE INDEX `User_name_key`(`name`),
+    UNIQUE INDEX `User_image_key`(`image`),
+    UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

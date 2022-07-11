@@ -13,6 +13,7 @@ import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
 import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
+import {MetricContainer} from "../components/yandexMetrika";
 
 
 declare module '@mui/material/styles' {
@@ -105,7 +106,6 @@ function MyApp(
             {/*        objectFit="covers"*/}
             {/*    />*/}
             {/*</div>*/}
-
             <BackgroundComp/>
             {/*w-[125rem]*/}
             <div className={"font-[Montserrat] relative min-h-screen pb-24 "

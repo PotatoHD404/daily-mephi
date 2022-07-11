@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import {MetricContainer} from "./yandexMetrika";
 
 
 function SEO({title, card = "/images/twitter-large.png"}: { title?: string, card?: string }) {
@@ -53,6 +54,7 @@ function SEO({title, card = "/images/twitter-large.png"}: { title?: string, card
             <meta property="og:image:width" content='1200'/>
             <meta property="og:image:height" content='630'/>
             <meta property="og:site_name" content="daily-mephi.ru"/>
+            <MetricContainer/>
         </Head>
     );
 }
