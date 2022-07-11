@@ -6,7 +6,7 @@ export interface Profile {
     id: string
 }
 
-const host = getHost() + "/api/auth/callback/home";
+let host = getHost() + "/api/auth/callback/home";
 
 // It's a little dirty code, but it's working! It's converting CAS auth to OAuth formatting
 
@@ -22,6 +22,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         token: {
             url: "http://localhost:3000/api/debug",
             async request({params}) {
+                console.log("we are here")
                 if (!params.code)
                     throw new Error("There is no cas ticket");
                 const query = new URLSearchParams({service: host, ticket: params.code});
@@ -45,9 +46,11 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             }
         },
         profile(profile) {
+            console.log(profile)
             return {
                 id: profile.id,
-                name: profile.id
+                name: null,
+                image: null
             };
         },
         clientId: '1'

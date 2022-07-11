@@ -7,7 +7,7 @@ import {Controller} from "lib/injection/decorators/controller.decorator";
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
-@Controller("/cover")
+@Controller("/covers")
 class CoverController {
     @Get("/tutors/:id")
     @SetHeader('Content-Type', 'image/png')

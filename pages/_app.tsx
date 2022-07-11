@@ -13,6 +13,7 @@ import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
 import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
+import {MetricContainer} from "../components/yandexMetrika";
 
 
 declare module '@mui/material/styles' {
@@ -66,6 +67,18 @@ const theme = createTheme({
 //     },
 // };
 
+function BackgroundComp() {
+    return <div className={styles.bgWrap}>
+        <Image
+            src={Background}
+            alt="background gradient"
+            quality={100}
+            objectFit="cover"
+            layout="fill"
+        />
+    </div>;
+}
+
 function MyApp(
     {
         Component,
@@ -90,19 +103,10 @@ function MyApp(
             {/*        src={template}*/}
             {/*        alt="Picture of the author"*/}
             {/*        quality={100}*/}
-            {/*        objectFit="cover"*/}
+            {/*        objectFit="covers"*/}
             {/*    />*/}
             {/*</div>*/}
-
-            <div className={styles.bgWrap}>
-                <Image
-                    src={Background}
-                    alt="Picture of the author"
-                    quality={100}
-                    objectFit="cover"
-                    layout="fill"
-                />
-            </div>
+            <BackgroundComp/>
             {/*w-[125rem]*/}
             <div className={"font-[Montserrat] relative min-h-screen pb-24 "
                 + (home ? "" : "max-w-[85rem] mx-auto")}>
@@ -110,8 +114,11 @@ function MyApp(
 
                 <Navbar/>
                 {home ?
+                    // @ts-ignore
+
                     <Component {...pageProps} /> :
                     <div className="rounded-2xl flex pt-6 pb-10 px-8 my-12 bg-white bg-opacity-[36%]">
+                        {/* @ts-ignore */}
                         <Component {...pageProps} />
                     </div>}
                 <Footer/>

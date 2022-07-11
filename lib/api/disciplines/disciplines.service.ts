@@ -1,12 +1,13 @@
-import {Discipline} from "lib/api/disciplines/disciplines.entity";
-import {DisciplinesRepository} from "lib/api/disciplines/disciplines.repository";
 import {Service} from "lib/injection/decorators/service.decorator";
 
 
 @Service()
 export class DisciplinesService {
-    constructor(private repository: DisciplinesRepository) {
+    constructor() {
     }
 
 
+    async addAll(param: { disciplines: string[] }) {
+        return [];
+    }
 }

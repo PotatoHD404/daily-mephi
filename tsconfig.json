@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "target": "es2022",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -21,6 +21,10 @@
     "jsx": "preserve",
     "incremental": true,
     "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "declaration": true,
+    "pretty":true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "."
   },
   "include": [
@@ -30,6 +34,8 @@
   ],
   "exclude": [
     "node_modules",
-    "database"
-  ]
+    "./parsing",
+    "./lambda.js",
+    "./.vercel"
+  ],
 }

@@ -13,10 +13,12 @@ import QuoteIco from "images/quote.svg";
 import DownloadIco from 'images/download.svg';
 import {a11yProps} from 'helpers/reactUtils'
 import SEO from "components/seo";
+import {useRouter} from "next/router";
 
 
 function Tutor() {
-
+    const router = useRouter()
+    const { id } = router.query
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -37,7 +39,8 @@ function Tutor() {
     // ID: {this.state.id}
     return (
         <>
-            <SEO title={'Трифоненков В.П.'}/>
+            {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
+            <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
 
             <div className="flex-wrap w-full">
                 <div className="font-bold text-3xl w-fit mx-auto mb-5">Трифоненков Владимир Петрович</div>
@@ -83,15 +86,15 @@ function Tutor() {
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Преподавание(4.6):</div>
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Пунктуальность(4.6):</div>
                                 <HoverRating/>
                             </div>
                             <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
+                                <div>Прием зачетов/экзаменов(4.6):</div>
                                 <HoverRating/>
                             </div>
                         </div>

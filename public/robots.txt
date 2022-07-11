@@ -1,4 +1,9 @@
+# *
 User-agent: *
 Allow: /
 
+# Host
+Host: https://daily-mephi.ru
+
+# Sitemaps
 Sitemap: https://daily-mephi.ru/sitemap.xml

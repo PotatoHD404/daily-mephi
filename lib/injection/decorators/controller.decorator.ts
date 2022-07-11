@@ -1,6 +1,5 @@
 import {Catch, UseMiddleware} from "@storyofams/next-api-decorators";
 import {Cors} from "lib/auth/middlewares/cors.middleware";
-import {RateLimit} from "lib/auth/middlewares/rateLimit.middleware";
 import {NextApiRequest, NextApiResponse} from "next";
 import {autoInjectable, container, singleton} from "tsyringe";
 
@@ -20,7 +19,8 @@ export function Controller(prefix?: string, ...middlewares: any[]) {
 
     return (target: new (...args: any[]) => any) => {
         Catch(errorHandler)(target);
-        UseMiddleware(Cors, RateLimit, ...middlewares)(target);
+        // RateLimit
+        UseMiddleware(Cors, ...middlewares)(target);
         target = autoInjectable()(target);
         Reflect.defineMetadata(BASE_PATH_TOKEN, defaultPath, target);
         singleton()(target);

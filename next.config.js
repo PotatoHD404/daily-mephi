@@ -1,4 +1,5 @@
 // const withPWA = require('next-pwa');
+const path = require("path");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
@@ -7,7 +8,10 @@ const nextConfig = {
         return config;
     },
     experimental: {
-        esmExternals: false
+        esmExternals: false,
+        images: {
+            unoptimized: true,
+        }
     },
     // pwa: {
     //     dest: 'public',
@@ -22,17 +26,17 @@ const nextConfig = {
             {
                 test: /\.*$/,
                 exclude: [
-                    './database/'
+                    './parsing/'
                 ]
             }
-        ]
+        ],
     },
     typescript: {
         // !! WARN !!
         // Dangerously allow production builds to successfully complete even if
         // your project has type errors.
         // !! WARN !!
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: false,
     },
 }
 //https://www.npmjs.com/package/next-pwa

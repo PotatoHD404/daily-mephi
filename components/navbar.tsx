@@ -15,81 +15,136 @@ import {useRouter} from "next/router";
 import Image from "next/image";
 import miniCat from 'images/minicat_transparent.svg'
 import {useSession} from "next-auth/react";
+import {Session} from "next-auth";
 
 
-function Nav({home, handleClickOpen}: { home: boolean, handleClickOpen: () => void }) {
+interface DefaultNavbarParams {
+    onClick: () => void;
+}
+
+function DefaultNavbar(props: DefaultNavbarParams) {
+    return <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
+                     justify-between align-middle bg-white bg-opacity-[36%] pl-8">
+
+        <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
+
+
+            <Link href="/">
+                <a className="flex h-14 my-auto w-14">
+                    <Image
+                        src={miniCat}
+                        alt="Mini cat"
+                    />
+                </a>
+            </Link>
+
+
+            <Link href="/about">
+                <a className="underlining my-auto"><h3>О нас</h3></a>
+            </Link>
+
+            <Link href="/materials">
+                <a className="underlining my-auto"><h3>Материалы</h3></a>
+            </Link>
+
+            <Link href="/tutors">
+                <a className="underlining my-auto"><h3>Преподаватели</h3></a>
+            </Link>
+
+        </div>
+        <div className="col-start-12 col-end-13 flex">
+            <button onClick={props.onClick}
+                    className="text-left my-auto underlining -ml-2">
+                <h3>Войти</h3>
+            </button>
+        </div>
+
+    </nav>;
+}
+
+interface HomeNavbarParams {
+    status: "authenticated" | "unauthenticated" | "loading";
+    session: Session | null;
+    onClick: () => void;
+}
+
+function NewComponent(props: { status: "authenticated" | "unauthenticated" | "loading", session: Session | null, onClick: () => void }) {
+    if (props.status === "loading") {
+        return (
+            <div
+                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>Загрузка...</h3>
+            </div>
+        )
+    } else if (props.status === "unauthenticated" || !props.session) {
+        return (
+            <button onClick={props.onClick}
+                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>Войти</h3>
+            </button>
+        )
+    } else {
+        return (
+            <button
+                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                <h3>{props.session.user?.name}</h3>
+            </button>
+        )
+    }
+}
+
+function HomeNavbar(props: HomeNavbarParams) {
+    return <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
+        <div className="col-start-2 col-end-12 flex flex-wrap
+                     justify-between items-center grid-cols-12 grid">
+            <div className="flex col-start-1 col-end-10 justify-between">
+                <Link href="/about">
+                    <a className="underlining"><h3>О нас</h3></a>
+                </Link>
+                <Link href="/materials">
+                    <a className="underlining"><h3>Материалы</h3></a>
+                </Link>
+
+                <Link href="/tutors">
+                    <a className="underlining"><h3>Преподаватели</h3></a>
+                </Link>
+            </div>
+            <NewComponent status={props.status} session={props.session} onClick={props.onClick}/>
+
+
+        </div>
+    </nav>;
+}
+
+interface NavParams {
+    home: boolean;
+    handleClickOpen: () => void;
+}
+
+function Nav({home, handleClickOpen}: NavParams) {
     const {data: session, status} = useSession()
     if (home)
         return (
-            <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
-                <div className="col-start-2 col-end-12 flex flex-wrap
-                     justify-between items-center grid-cols-12 grid">
-                    <div className="flex col-start-1 col-end-10 justify-between">
-                        <Link href="/about">
-                            <a className="underlining"><h3>О нас</h3></a>
-                        </Link>
-                        <Link href="/materials">
-                            <a className="underlining"><h3>Материалы</h3></a>
-                        </Link>
-
-                        <Link href="/tutors">
-                            <a className="underlining"><h3>Преподаватели</h3></a>
-                        </Link>
-                    </div>
-                    {(status === "loading" || status === "unauthenticated" || !session) ?
-                        <button onClick={handleClickOpen}
-                                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                            <h3>Войти</h3>
-                        </button> :
-                        <button onClick={handleClickOpen}
-                                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
-                            <h3>{session.user?.name}</h3>
-                        </button>}
-
-
-                </div>
-            </nav>);
+            <HomeNavbar status={status} session={session} onClick={handleClickOpen}/>);
     else
         return (
-            <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
-                     justify-between align-middle bg-white bg-opacity-[36%] pl-8">
-
-                <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
-
-
-                    <Link href="/">
-                        <a className="flex h-14 my-auto w-14">
-                            <Image
-                                src={miniCat}
-                                alt="Mini cat"
-                            />
-                        </a>
-                    </Link>
-
-
-                    <Link href="/about">
-                        <a className="underlining my-auto"><h3>О нас</h3></a>
-                    </Link>
-
-                    <Link href="/materials">
-                        <a className="underlining my-auto"><h3>Материалы</h3></a>
-                    </Link>
-
-                    <Link href="/tutors">
-                        <a className="underlining my-auto"><h3>Преподаватели</h3></a>
-                    </Link>
-
-                </div>
-                <div className="col-start-12 col-end-13 flex">
-                    <button onClick={handleClickOpen}
-                            className="text-left my-auto underlining -ml-2">
-                        <h3>Войти</h3>
-                    </button>
-                </div>
-
-            </nav>);
+            <DefaultNavbar onClick={handleClickOpen}/>);
 }
 
+
+function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void, callbackfn: (text: any, index: any) => JSX.Element }) {
+    return <Box
+        sx={{width: 300}}
+        role="presentation"
+        onClick={props.onClick}
+        onKeyDown={props.onClick}
+    >
+        <List>
+            {["Inbox", "Starred", "Send email", "Drafts"].map(props.callbackfn)}
+        </List>
+        <Divider/>
+    </Box>;
+}
 
 function Navbar() {
     const [state, setState] = React.useState({
@@ -124,24 +179,15 @@ function Navbar() {
             };
 
     const list = (
-        <Box
-            sx={{width: 300}}
-            role="presentation"
-            onClick={toggleDrawer()}
-            onKeyDown={toggleDrawer()}
-        >
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>
-                            {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}
-                        </ListItemIcon>
-                        <ListItemText primary={text}/>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider/>
-        </Box>
+        <ItemsList onClick={toggleDrawer()} callbackfn={(text, index) => (
+            // TODO: checkout deprecated property
+            <ListItem button key={text}>
+                <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}
+                </ListItemIcon>
+                <ListItemText primary={text}/>
+            </ListItem>
+        )}/>
     );
 
     //greenBox
@@ -149,6 +195,7 @@ function Navbar() {
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{home, handleClickOpen}}/>
             <WarningDialog handleClose={handleClose} opened={state.warning}/>
+            {/* @ts-ignore*/}
             <SwappableDrawer
                 className={'lg:hidden'}
                 anchor={'left'}
@@ -164,6 +211,6 @@ function Navbar() {
 
         </header>
     );
-};
+}
 
 export default Navbar;

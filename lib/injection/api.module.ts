@@ -19,23 +19,20 @@ import {CONTROLLERS_TOKEN} from "lib/injection/decorators/controller.decorator";
 
 @Module()
 export class ApiModule {
-    controllers: any[];
 
-    constructor(@InjectAll(CONTROLLERS_TOKEN) controllers: any[]) {
-        this.controllers = controllers;
+    constructor(@InjectAll(CONTROLLERS_TOKEN) private controllers: any[]) {
     }
 
     getHandler(): NextApiHandler {
 
-
-        const [directory, fileName] = getCallerInfo();
 
         return (req: NextApiRequest, res: NextApiResponse) => {
             if (!req.url || !req.method) {
                 return notFound(req, res);
             }
 
-            const path = parseRequestUrl(req, directory, fileName);
+            const path = req.url.replace("/api", "")
+
             for (let i = 0; i < this.controllers.length; ++i) {
                 const [keys, match, method] = this.findRoute(this.controllers[i], req.method, path);
 
@@ -70,6 +67,7 @@ export class ApiModule {
         if (!basePath)
             return [[], undefined, undefined];
         methods = methods.map(f => {
+            // console.log((basePath + (f.path === "/" ? "" : f.path)).replace("//", "/"))
             return {
                 ...f,
                 path: (basePath + (f.path === "/" ? "" : f.path)).replace("//", "/")
