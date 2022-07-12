@@ -3,6 +3,10 @@ import getSvg from "components/getSvg";
 import sharp from 'sharp';
 import path from "path";
 
+// export const config = {
+//     runtime: 'experimental-edge',
+// }
+
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
