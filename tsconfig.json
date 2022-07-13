@@ -36,6 +36,7 @@
     "node_modules",
     "./parsing",
     "./lambda.js",
-    "./.vercel"
+    "./.vercel",
+    "./tests/rest"
   ],
 }
