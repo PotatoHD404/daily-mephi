@@ -103,13 +103,44 @@ interface JsonType {
 }
 
 type LegacyRatingDTO = Omit<LegacyRating, "id" | "tutorId">;
-type QuoteDTO = Omit<Quote, "id" | "tutorId">;
-type MaterialDTO = Omit<Material, "id" | "facultyId" | "tutorId">;
-type ReviewDTO = Omit<Review, "id" | "tutorId">;
-
+type QuoteDTO = Omit<Quote, "id" | "tutorId" | "userId">;
+type MaterialDTO =
+    Omit<Material, "id" | "tutorId" | "userId"> & {
+    faculty: { connect: { id: string }[] } | undefined,
+    discipline: { connect: { id: string } } | undefined,
+    semesters: { connect: { id: string }[] }
+};
+type ReviewDTO = Omit<Review, "id" | "tutorId" | "userId">;
+type Semester =
+    "Б1"
+    | "Б2"
+    | "Б3"
+    | "Б4"
+    | "Б5"
+    | "Б6"
+    | "Б7"
+    | "Б8"
+    | "М1"
+    | "М2"
+    | "М3"
+    | "М4"
+    | "А1"
+    | "А2"
+    | "А3"
+    | "А4"
+    | "А5"
+    | "А6"
+    | "А7"
+    | "А8"
 type TutorDTO =
-    Omit<Tutor, "id" | "updated">
-    & { legacyRating: { create: LegacyRatingDTO }, quotes: { create: QuoteDTO[] }, materials: { create: MaterialDTO[] }, reviews: { create: ReviewDTO[] } };
+    Omit<Tutor, "id" | "updated"> & {
+    legacyRating: { create: LegacyRatingDTO },
+    quotes: { create: QuoteDTO[] },
+    materials: { create: MaterialDTO[] },
+    reviews: { create: ReviewDTO[] },
+    faculties: { connect: { id: string }[] },
+    disciplines: { connect: { id: string }[] }
+};
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
@@ -119,11 +150,26 @@ export default async function handler(
         return;
     }
     const data = json as JsonType;
-    const tutors: { [id: string]: TutorDTO } = {}
+    const tutors: TutorDTO[] = []
 
     const newTutors = new Set<string>();
     const disciplines = new Set<string>();
     const faculties = new Set<string>();
+    const semestersMapping: { [id: string]: string } = {
+        "Б1": "01",
+        "Б2": "02",
+        "Б3": "03",
+        "Б4": "04",
+        "Б5": "05",
+        "Б6": "06",
+        "Б7": "07",
+        "Б8": "08",
+        "М1": "09",
+        "М2": "10",
+        "М3": "11",
+        "М4": "12"
+    };
+
     for (const {tutors} of Object.values(data.cafedras)) {
         for (const id of Object.keys(tutors)) {
             newTutors.add(id)
@@ -135,25 +181,55 @@ export default async function handler(
             }
         }
     }
+
+    for (const material of Object.values(data.materials)) {
+        const jsonMaterial = material as unknown as JsonMaterial;
+        jsonMaterial.Факультет?.split("; ").forEach(faculty => faculties.add(faculty.trim()));
+        if (jsonMaterial.Предмет) {
+            disciplines.add(jsonMaterial.Предмет)
+        }
+    }
+
     await prisma.discipline.deleteMany();
     await prisma.faculty.deleteMany();
+    await prisma.semester.deleteMany();
 
-    const disciplineModels = await prisma.discipline.createMany({
+    await prisma.discipline.createMany({
         data: Array.from(disciplines).map(el => {
             return {name: el}
-        })
+        }),
+        skipDuplicates: true
     })
 
-    const facultyModels = await prisma.faculty.createMany({
+    await prisma.faculty.createMany({
         data: Array.from(faculties).map(el => {
             return {name: el}
-        })
+        }),
+        skipDuplicates: true
     })
-    console.log()
+
+    await prisma.semester.createMany({
+        data: Object.keys(semestersMapping).map(el => {
+            return {name: el}
+        }),
+        skipDuplicates: true
+    })
+    const facultyModels = (await prisma.faculty.findMany()).reduce((obj: { [name: string]: string }, el) => {
+        obj[el.name] = el.id;
+        return obj;
+    }, {});
+    const disciplineModels = (await prisma.discipline.findMany()).reduce((obj: { [name: string]: string }, el) => {
+        obj[el.name] = el.id;
+        return obj;
+    }, {});
+    const semesterModels = (await prisma.semester.findMany()).reduce((obj: { [name: string]: string }, el) => {
+        obj[semestersMapping[el.name]] = el.id;
+        return obj;
+    }, {});
 
     for (let [id, tutorData] of Object.entries(data.tutors)) {
         const jsonTutor = tutorData as unknown as JsonTutor;
-        tutors[id] = {
+        const tutor: TutorDTO = {
             firstName: jsonTutor.name,
             lastName: jsonTutor.lastName,
             fatherName: jsonTutor.fatherName,
@@ -171,43 +247,56 @@ export default async function handler(
             },
             quotes: {create: []},
             materials: {create: []},
-            reviews: {create: []}
+            reviews: {create: []},
+            faculties: {connect: []},
+            disciplines: {connect: []}
         }
         for (const quote of jsonTutor.quotes) {
-            tutors[id].quotes.create.push({
+            tutor.quotes.create.push({
                 body: quote.Текст,
-                userId: null,
                 uploaded: strToDateTime(quote["Ник и дата"].split(' ').slice(-2).join(' '))
             })
         }
         for (const materialId of jsonTutor.materials) {
             const jsonMaterial = data.materials[materialId as any] as unknown as JsonMaterial;
-            tutors[id].materials.create.push({
+
+            tutor.materials.create.push({
                 description: jsonMaterial.Описание,
                 header: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
-                disciplineId: jsonMaterial.Предмет,
-                userId: null,
-                uploaded: new Date(jsonMaterial["Дата добавления"])
+                faculty: {
+                    connect: jsonMaterial.Факультет?.split("; ").map(el => {
+                        return {
+                            id: facultyModels[el.trim()]
+                        }
+                    }) || []
+                },
+                discipline: jsonMaterial.Предмет !== null ? {connect: {id: disciplineModels[jsonMaterial.Предмет]}} : undefined,
+                uploaded: new Date(jsonMaterial["Дата добавления"]),
+                semesters: {
+                    connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
+                        jsonMaterial.Семестр.split("; ").map(el => {
+                            return {id: semesterModels[el]}
+                        }) : []
+                }
             })
         }
         for (const review of jsonTutor.reviews) {
             const jsonReview = review as unknown as JsonReview;
-            tutors[id].reviews.create.push({
+            tutor.reviews.create.push({
                 body: jsonReview.Текст,
-                userId: null,
                 header: jsonReview.Название === null || jsonReview.Название === "" ? "Без названия" : jsonReview.Название,
                 legacyNickname: jsonReview.Ник,
                 uploaded: strToDate(jsonReview.Дата)
             })
 
         }
+
         for (const [name, review] of Object.entries(jsonTutor.mailReviews)) {
-            tutors[id].reviews.create.push({
+            tutor.reviews.create.push({
                 body: review,
-                userId: null,
                 header: "Отзыв с мифиста",
                 legacyNickname: name,
-                uploaded: new Date("01/01/2004")
+                uploaded: new Date("01/01/2005")
             })
         }
         if (!newTutors.has(id)) {
@@ -219,9 +308,11 @@ export default async function handler(
                 faculties.add(el)
             }
         }
+        tutors.push(tutor)
     }
     await prisma.tutor.deleteMany();
-    for (const tutor of Object.values(tutors)) {
+    await prisma.quote.deleteMany();
+    for (const tutor of tutors) {
         console.log(JSON.stringify(tutor))
 
         const newTutor = await prisma.tutor.create({

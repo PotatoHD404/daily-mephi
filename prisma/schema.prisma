@@ -31,6 +31,8 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([type, provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -39,6 +41,8 @@ model Session {
   userId       String   @db.Char(36)
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -64,6 +68,8 @@ model User {
   files              File[]
   materials          Material[]
   quotes             Quote[]
+
+  @@index([rating(sort: "Desc")])
 }
 
 model VerificationToken {
@@ -88,6 +94,11 @@ model Comment {
   news     News      @relation(map: "news_comments", fields: [postId], references: [id], onDelete: Cascade)
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
+
+  @@index([time])
+  @@index([userId])
+  @@index([postId])
+  @@index([parentId])
 }
 
 model Discipline {
@@ -99,15 +110,15 @@ model Discipline {
 
 model Faculty {
   id        String     @id @default(uuid()) @db.Char(36)
-  name      String     @unique @db.VarChar(400)
+  name      String     @unique @db.VarChar(200)
   tutors    Tutor[]
   materials Material[]
 }
 
 model File {
   id         String   @id @default(uuid()) @db.Char(36)
-  url        String
-  block      String
+  url        String   @db.VarChar(200)
+  block      String   @db.Char(36)
   uploaded   DateTime @default(now())
   userId     String?  @db.Char(36)
   tutorId    String?  @db.Char(36)
@@ -116,35 +127,48 @@ model File {
   tutor    Tutor?     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user     User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   material Material[]
+  @@index([userId])
+  @@index([tutorId])
+  @@index([materialId])
+  @@index([uploaded])
 }
 
 model Material {
-  id           String    @id @default(uuid()) @db.Char(36)
-  description  String?   @db.MediumText
-  header       String    @db.VarChar(400)
-  disciplineId String?   @db.Char(36)
-  facultyId    String?   @db.Char(36)
-  userId       String?   @db.Char(36)
-  tutorId      String?   @db.Char(36)
-  uploaded     DateTime? @default(now())
+  id          String    @id @default(uuid()) @db.Char(36)
+  description String?   @db.Text
+  header      String    @db.VarChar(280)
+  userId      String?   @db.Char(36)
+  tutorId     String?   @db.Char(36)
+  uploaded    DateTime? @default(now())
 
   file       File[]
-  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor      Tutor?      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  faculty    Faculty?    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  discipline Discipline? @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  user       User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor      Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  faculty    Faculty[]
+  discipline Discipline[]
   comments   Comment[]
-  likes      User[]      @relation(name: "materials_likes")
-  dislikes   User[]      @relation(name: "materials_dislikes")
+  likes      User[]       @relation(name: "materials_likes")
+  dislikes   User[]       @relation(name: "materials_dislikes")
+  semesters  Semester[]
+  @@index([uploaded])
+  @@index([userId])
+  @@index([tutorId])
+}
+
+model Semester {
+  id       String     @id @default(uuid()) @db.Char(36)
+  name     String     @unique @db.Char(3)
+  material Material[]
 }
 
 model News {
   id     String   @id @default(uuid()) @db.Char(36)
-  body   String   @db.MediumText
-  header String   @db.VarChar(400)
+  body   String   @db.Text
+  header String   @db.VarChar(280)
   time   DateTime @default(now())
 
   comments Comment[]
+  @@index([time])
 }
 
 model LegacyRating {
@@ -158,11 +182,18 @@ model LegacyRating {
   tutorId          String @unique @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  @@index([tutorId])
+  @@index([personality])
+  @@index([personalityCount])
+  @@index([exams])
+  @@index([examsCount])
+  @@index([quality])
+  @@index([qualityCount])
 }
 
 model Quote {
   id       String    @id @default(uuid()) @db.Char(36)
-  body     String    @db.MediumText
+  body     String    @db.Text
   tutorId  String    @db.Char(36)
   userId   String?   @db.Char(36)
   uploaded DateTime? @default(now())
@@ -171,6 +202,9 @@ model Quote {
   tutor    Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   likes    User[] @relation(name: "quotes_likes")
   dislikes User[] @relation(name: "quotes_dislikes")
+  @@index([uploaded])
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Rate {
@@ -184,12 +218,14 @@ model Rate {
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Review {
   id             String   @id @default(uuid()) @db.Char(36)
-  header         String   @db.VarChar(400)
-  body           String   @db.MediumText
+  header         String   @db.VarChar(280)
+  body           String   @db.Text
   uploaded       DateTime @default(now())
   legacyNickname String?  @db.VarChar(200)
   userId         String?  @db.Char(36)
@@ -202,6 +238,8 @@ model Review {
   dislikes User[]    @relation(name: "reviews_dislikes")
 
   @@unique([userId, tutorId])
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Tutor {
@@ -209,7 +247,7 @@ model Tutor {
   firstName  String?   @db.VarChar(64)
   lastName   String?   @db.VarChar(64)
   fatherName String?   @db.VarChar(64)
-  nickName   String?   @db.VarChar(64)
+  nickName   String?   @unique @db.VarChar(64)
   url        String?
   updated    DateTime? @default(now())
 
@@ -221,4 +259,10 @@ model Tutor {
   materials    Material[]
   legacyRating LegacyRating?
   quotes       Quote[]
+}
+
+model Internal {
+  name    String    @id @db.VarChar(200)
+  value   String    @db.Text
+  expires DateTime?
 }
