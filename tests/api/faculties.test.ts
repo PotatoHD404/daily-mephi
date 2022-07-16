@@ -4,7 +4,7 @@ import * as http from 'http';
 import supertest from 'supertest';
 
 import {apiResolver} from "next/dist/server/api-utils/node";
-import debugHandler from '../../pages/api/debug/index';
+import debugHandler from '../../pages/api/v1/debug/index';
 import prisma from "../../lib/database/prisma";
 
 jest.setTimeout(5 * 10e2);

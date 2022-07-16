@@ -7,14 +7,21 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    console.log(req.method === "GET")
     // const allUsers = {status: "ok"}
-    let allUsers = await prisma.user.findMany(
+    let allUsers = await prisma.user.findMany({
+            select: {
+                name: true,
+                id: true,
+                image: true,
+                rating: true,
+            },
+            orderBy: {
+                rating: 'desc',
+            },
+            take: 20,
+        }
     )
 
-    // allUsers = await prisma.user.findMany(
-    // )
-
-    // use `console.dir` to print nested objects
-    // console.dir(, {depth: null})
     res.status(200).json(allUsers);
 }

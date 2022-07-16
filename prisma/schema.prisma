@@ -4,7 +4,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -15,8 +15,8 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
+  id                String  @id @default(uuid()) @db.Char(36)
+  userId            String  @db.Char(36)
   type              String
   provider          String
   providerAccountId String
@@ -34,21 +34,22 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Char(36)
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Char(36)
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id                 String     @id @default(uuid())
-  name               String?    @unique
-  image              String?    @unique
-  rating             Int        @default(0)
-  role               String     @default("default")
-  email              String?    @unique
-  emailVerified      DateTime?
+  id            String    @id @default(uuid()) @db.Char(36)
+  name          String?   @unique @db.VarChar(100)
+  image         String?   @unique
+  rating        Int       @default(0)
+  role          String    @default("default")
+  email         String?   @unique
+  emailVerified DateTime?
+
   accounts           Account[]
   sessions           Session[]
   comments           Comment[]
@@ -62,6 +63,7 @@ model User {
   reviews_dislikes   Review[]   @relation(name: "reviews_dislikes")
   files              File[]
   materials          Material[]
+  quotes             Quote[]
 }
 
 model VerificationToken {
@@ -73,12 +75,12 @@ model VerificationToken {
 }
 
 model Comment {
-  id       String   @id @default(uuid())
-  text     String
+  id       String   @id @default(uuid()) @db.Char(36)
+  text     String   @db.MediumText
   time     DateTime @default(now())
-  userId   String
-  postId   String
-  parentId String?
+  userId   String   @db.Char(36)
+  postId   String   @db.Char(36)
+  parentId String?  @db.Char(36)
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   review   Review    @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
@@ -89,42 +91,45 @@ model Comment {
 }
 
 model Discipline {
-  id        String     @id @default(uuid())
-  name      String     @unique
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.VarChar(400)
   tutors    Tutor[]
   materials Material[]
 }
 
 model Faculty {
-  id        String     @id @default(uuid())
-  name      String     @unique
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.VarChar(400)
   tutors    Tutor[]
   materials Material[]
 }
 
 model File {
-  id     String   @id @default(uuid())
-  url    String
-  block  String
-  time   DateTime @default(now())
-  userId String?
+  id         String   @id @default(uuid()) @db.Char(36)
+  url        String
+  block      String
+  uploaded   DateTime @default(now())
+  userId     String?  @db.Char(36)
+  tutorId    String?  @db.Char(36)
+  materialId String?  @db.Char(36)
 
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor    Tutor?     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user     User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  material Material[]
 }
 
 model Material {
-  id           String   @id @default(uuid())
-  url          String
-  block        String
-  time         DateTime @default(now())
-  description  String?
-  header       String
-  disciplineId String?
-  facultyId    String?
-  userId       String
-  tutorId      String?
+  id           String    @id @default(uuid()) @db.Char(36)
+  description  String?   @db.MediumText
+  header       String    @db.VarChar(400)
+  disciplineId String?   @db.Char(36)
+  facultyId    String?   @db.Char(36)
+  userId       String?   @db.Char(36)
+  tutorId      String?   @db.Char(36)
+  uploaded     DateTime? @default(now())
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  file       File[]
+  user       User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor      Tutor?      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   faculty    Faculty?    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
   discipline Discipline? @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
@@ -134,60 +139,64 @@ model Material {
 }
 
 model News {
-  id     String   @id @default(uuid())
-  body   String
-  header String
+  id     String   @id @default(uuid()) @db.Char(36)
+  body   String   @db.MediumText
+  header String   @db.VarChar(400)
   time   DateTime @default(now())
 
   comments Comment[]
 }
 
 model LegacyRating {
-  id               String @id @default(uuid())
+  id               String @id @default(uuid()) @db.Char(36)
   personality      Float
   personalityCount Int
   exams            Float
   examsCount       Int
   quality          Float
   qualityCount     Int
-  tutorId          String @unique
+  tutorId          String @unique @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
 }
 
 model Quote {
-  id      String @id @default(uuid())
-  body    String
-  tutorId String
+  id       String    @id @default(uuid()) @db.Char(36)
+  body     String    @db.MediumText
+  tutorId  String    @db.Char(36)
+  userId   String?   @db.Char(36)
+  uploaded DateTime? @default(now())
 
+  user     User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   likes    User[] @relation(name: "quotes_likes")
   dislikes User[] @relation(name: "quotes_dislikes")
 }
 
 model Rate {
-  id          String @id @default(uuid())
+  id          String @id @default(uuid()) @db.Char(36)
   punctuality Int
   personality Int
   exams       Int
   quality     Int
-  tutorId     String
-  userId      String
+  tutorId     String @db.Char(36)
+  userId      String @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Review {
-  id      String   @id @default(uuid())
-  header  String
-  body    String
-  time    DateTime @default(now())
-  userId  String
-  tutorId String
+  id             String   @id @default(uuid()) @db.Char(36)
+  header         String   @db.VarChar(400)
+  body           String   @db.MediumText
+  uploaded       DateTime @default(now())
+  legacyNickname String?  @db.VarChar(200)
+  userId         String?  @db.Char(36)
+  tutorId        String   @db.Char(36)
 
   tutor    Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments Comment[]
   likes    User[]    @relation(name: "reviews_likes")
   dislikes User[]    @relation(name: "reviews_dislikes")
@@ -196,14 +205,15 @@ model Review {
 }
 
 model Tutor {
-  id         String   @id @default(uuid())
-  firstName  String?
-  lastName   String
-  fatherName String?
-  nickName   String?
+  id         String    @id @default(uuid()) @db.Char(36)
+  firstName  String?   @db.VarChar(64)
+  lastName   String?   @db.VarChar(64)
+  fatherName String?   @db.VarChar(64)
+  nickName   String?   @db.VarChar(64)
   url        String?
-  updated    DateTime @default(now())
+  updated    DateTime? @default(now())
 
+  images       File[]
   rates        Rate[]
   reviews      Review[]
   disciplines  Discipline[]

@@ -22,7 +22,6 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         token: {
             url: "http://localhost:3000/api/debug",
             async request({params}) {
-                console.log("we are here")
                 if (!params.code)
                     throw new Error("There is no cas ticket");
                 const query = new URLSearchParams({service: host, ticket: params.code});

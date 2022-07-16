@@ -183,7 +183,7 @@ async function func($x) {
         // let doc = resultData.groups[groupCode]['planDoc'];
 
         // if (!$x(`/html/body/div/div/div/div[2]/a/h4`, doc)[0]) {
-        // console.log('we are here')
+
         let planLink = $x(`/html/body/div/div/div/div[4]/a[3]`, doc)[0].href;
 
         resultData.groups[groupCode]['planLink'] = planLink;
