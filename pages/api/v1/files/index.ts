@@ -11,7 +11,6 @@ import notion from "lib/database/notion";
 import {checkStatus, doRequest} from "../../../../helpers/utils";
 
 
-
 const extToMimes = {
     'png': 'image/png',
     'jpg': 'image/jpeg',
@@ -226,21 +225,18 @@ async function putFile(
         ext,
         filename
     } = data as { signedPutUrl: string, block: string, ext: string, filename: string };
-    const dbFile = await prisma.file.findFirst({where: {block}})
-    if(dbFile){
+    const dbFile = await prisma.file.findFirst({where: {id: block}})
+    if (dbFile) {
         res.status(409).json({status: 'File already exists'});
         return;
     }
-    const url: string = signedPutUrl.split('?')[0];
-    // console.log(`https://www.notion.so/signed/${encodeURIComponent(url)}?table=block&cache=v2&id=${block}`)
+    const unsignedUrl: string = signedPutUrl.split('?')[0];
+    // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
     const {code, redirect} = await checkStatus({
         hostname: 'www.notion.so',
         port: 443,
-        path: `/signed/${encodeURIComponent(url)}?table=block&cache=v2&id=${block}`,
+        path: `/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`,
         method: 'GET',
-        headers: {
-            'Cookie': `token_v2=${await getNotionToken()}`
-        }
     });
     if (code !== 302 || !redirect) {
         res.status(500).json({status: 'Something went wrong #2'});
@@ -269,23 +265,25 @@ async function putFile(
     const isImage = ext === 'png' || ext === 'jpg' || ext === 'jpeg';
     await notion.blocks.update({
         block_id: block,
-        ...(isImage ? {
-            image: {external: {url: redirect}}
-        } : {
-            file: {external: {url: redirect}}
-        })
+        type: 'file',
+        file: {external: {url: redirect}}
     });
-    const unsignedUrl = redirect.split('?')[0];
+    const createdUrl = 'https://www.notion.so/' + (isImage ? 'image' : 'signed') + `/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`;
     await prisma.file.create({
         data: {
-            url: unsignedUrl,
-            block,
-            filename,
+            url: createdUrl,
+            id: block,
+            filename: filename + (ext ? '.' + ext : ''),
+            isImage,
             user: session.id ? {connect: {id: session.id as string}} : undefined
         },
     });
     // redirect = isImage ?
-    res.status(200).json({status: 'ok', url: redirect});
+    res.status(200).json({
+        status: 'ok',
+        block,
+        url: createdUrl
+    });
 }
 
 
