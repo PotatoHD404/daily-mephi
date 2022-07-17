@@ -9,6 +9,7 @@ import {Runtime} from "inspector";
 import prisma from "lib/database/prisma";
 import notion from "lib/database/notion";
 import {checkStatus, doRequest} from "../../../../helpers/utils";
+import {getToken} from "next-auth/jwt";
 
 
 const extToMimes = {
@@ -204,7 +205,7 @@ async function putFile(
     res: NextApiResponse<Object>
 ) {
     const {cookies} = req;
-    const session = await getSession({req});
+    const session = await getToken({ req })
     if (!cookies['FILE_JWT'] || !session) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
@@ -275,17 +276,17 @@ async function putFile(
             id: block,
             filename: filename + (ext ? '.' + ext : ''),
             isImage,
-            user: session.id ? {connect: {id: session.id as string}} : undefined
+            user: session.sub ? {connect: {id: session.sub as string}} : undefined
         },
     });
     // redirect = isImage ?
     res.status(200).json({
         status: 'ok',
-        block,
+        id: block,
         url: createdUrl
     });
 }
-
+// TODO: add file size limit and file type limit
 
 export default async function handler(
     req: NextApiRequest,

@@ -1,6 +1,6 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
+import {PrismaAdapter} from "@next-auth/prisma-adapter"
+import {PrismaClient} from "@prisma/client"
 import {NextAuthOptions, SessionStrategy} from "next-auth";
 import {getHost} from "../../helpers/utils";
 
@@ -68,7 +68,7 @@ export const nextAuthOptions: NextAuthOptions = {
                 secure: true,
             },
         },
-    }
+    },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',
