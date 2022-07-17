@@ -1,19 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
-import {Client} from '@notionhq/client'
-import jwt from 'jsonwebtoken';
+import jwt, {JwtPayload} from 'jsonwebtoken';
 
 // import app from "../../lib/firebase/initApp";
 import {decrypt, encrypt} from "helpers/crypto";
 import {getSession} from "next-auth/react";
 import {Runtime} from "inspector";
 import prisma from "lib/database/prisma";
-import {Cookie} from "tough-cookie"
-import {checkStatus} from "../../../../helpers/utils";
+import notion from "lib/database/notion";
+import {checkStatus, doRequest} from "../../../../helpers/utils";
 
-const notion = new Client({
-    auth: process.env.NOTION_TOKEN,
-});
+
 
 const extToMimes = {
     'png': 'image/png',
@@ -62,6 +59,60 @@ const extToMimes = {
     'java': 'text/plain',
 }
 
+async function getNotionToken() {
+    let token_v2: string | null = null;
+    const db_token_data = await prisma.internal.findUnique({where: {name: 'notion_token_v2'}});
+
+    let expires: Date | null = null;
+
+    if (db_token_data) {
+        let {value: enc_token} = db_token_data;
+        expires = db_token_data.expires
+        try {
+            token_v2 = await decrypt(enc_token, process.env.DATABASE_KEY);
+        } catch (e) {
+        }
+    }
+    const d = new Date();
+    d.setHours(d.getHours() - 24);
+    let res1: Response
+    if (!expires || expires < d || !token_v2) {
+        token_v2 = null
+        let expires: Date | null = null;
+        const {cookies} = await doRequest({
+                hostname: 'www.notion.so',
+                port: 443,
+                path: `/api/v3/loginWithEmail`,
+                method: 'POST',
+            },
+            {
+                email: process.env.NOTION_EMAIL,
+                password: process.env.NOTION_PASSWORD
+            });
+        token_v2 = cookies["token_v2"].value;
+        expires = cookies["token_v2"].expires !== 'Infinity' ? cookies["token_v2"].expires : null;
+        if (!token_v2)
+            throw new Error('There is no token_v2');
+        if (!expires)
+            throw new Error('There is no expires');
+        token_v2 = await encrypt(token_v2, process.env.DATABASE_KEY)
+
+        await prisma.internal.upsert({
+            where: {name: 'notion_token_v2'},
+            create: {
+                name: 'notion_token_v2',
+                value: token_v2,
+                expires: expires
+            },
+            update: {
+                value: token_v2,
+                expires: expires
+            }
+        });
+    }
+    return token_v2;
+}
+
 async function newFile(
     req: NextApiRequest,
     res: NextApiResponse<Object>
@@ -71,13 +122,13 @@ async function newFile(
         return;
     }
 
-    if(!req.body.filename) {
+    if (!req.body.filename) {
         res.status(400).json({status: "Filename not provided"});
         return;
     }
 
     let [filename, ext] = req.body.filename.split('.');
-    if(filename === '') {
+    if (filename === '') {
         filename = ext;
         ext = '';
     }
@@ -105,72 +156,16 @@ async function newFile(
     }
 
     if (i === 3) {
-        res.status(500).json({status: 'Something went wrong'});
+        res.status(500).json({status: 'Something went wrong #1'});
         return;
     }
-    const db_token_data = await prisma.internal.findUnique({where: {name: 'notion_token_v2'}});
+    let token_v2: string = await getNotionToken();
 
-    let expires: Date | null = null;
-    let token_v2: string | null = null
-
-    if (db_token_data) {
-        let {value: enc_token} = db_token_data;
-        expires = db_token_data.expires
-        try {
-            token_v2 = await decrypt(enc_token, process.env.DATABASE_KEY);
-        } catch (e) {
-        }
-    }
-    const d = new Date();
-    d.setHours(d.getHours() - 24);
-    let res1: Response
-    if (!expires || expires < d || !token_v2) {
-        token_v2 = null
-        let expires: Date | null = null;
-        res1 = await fetch("https://www.notion.so/api/v3/loginWithEmail", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: process.env.NOTION_EMAIL,
-                    password: process.env.NOTION_PASSWORD
-                })
-            },
-        );
-        console.log(res1)
-        for (const [key, value] of res1.headers) {
-            if (key === 'set-cookie') {
-                console.log(value, key)
-                const cookie = Cookie.parse(value);
-                if (cookie && cookie.key === 'token_v2') {
-                    token_v2 = cookie.value;
-                    expires = cookie.expires === "Infinity" ? null : cookie.expires;
-                    break;
-                }
-            }
-        }
-        if (!token_v2)
-            throw new Error('There is no token_v2');
-        if (!expires)
-            throw new Error('There is no expires');
-        await prisma.internal.upsert({
-            where: {name: 'notion_token_v2'},
-            create: {
-                name: 'notion_token_v2',
-                value: await encrypt(token_v2, process.env.DATABASE_KEY),
-                expires: expires
-            },
-            update: {
-                value: await encrypt(token_v2, process.env.DATABASE_KEY),
-                expires: expires
-            }
-        });
-    }
 
     // const token_v2 = '';
     // https://www.notion.so/api/v3/getUploadFileUrl
-    res1 = await fetch("https://www.notion.so/api/v3/getUploadFileUrl", {
+
+    const res1 = await fetch("https://www.notion.so/api/v3/getUploadFileUrl", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -192,7 +187,12 @@ async function newFile(
     const links = await res1.json();
     if (!process.env.JWT_PRIVATE)
         throw new Error('Jwt key is undefined');
-    let token = jwt.sign({signedPutUrl: links['signedPutUrl'], block: block_id}, process.env.JWT_PRIVATE);
+    let token = jwt.sign({
+        signedPutUrl: links['signedPutUrl'],
+        block: block_id,
+        ext,
+        filename
+    }, process.env.JWT_PRIVATE);
 
     // Set cookie
     res.setHeader('set-cookie', `FILE_JWT=${token}; Path=/; HttpOnly; Secure; SameSite=Strict`);
@@ -212,9 +212,25 @@ async function putFile(
     }
     if (!process.env.JWT_PRIVATE)
         throw new Error('Jwt key is undefined');
-    const data = jwt.verify(cookies['FILE_JWT'], process.env.JWT_PRIVATE);
+    let data: JwtPayload | string
+    try {
+        data = jwt.verify(cookies['FILE_JWT'], process.env.JWT_PRIVATE);
+    } catch (e) {
+        res.status(401).json({status: 'You are not authenticated'});
+        return;
+    }
 
-    const {signedPutUrl, block} = data as { signedPutUrl: string, block: string };
+    const {
+        signedPutUrl,
+        block,
+        ext,
+        filename
+    } = data as { signedPutUrl: string, block: string, ext: string, filename: string };
+    const dbFile = await prisma.file.findFirst({where: {block}})
+    if(dbFile){
+        res.status(409).json({status: 'File already exists'});
+        return;
+    }
     const url: string = signedPutUrl.split('?')[0];
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(url)}?table=block&cache=v2&id=${block}`)
     const {code, redirect} = await checkStatus({
@@ -222,10 +238,12 @@ async function putFile(
         port: 443,
         path: `/signed/${encodeURIComponent(url)}?table=block&cache=v2&id=${block}`,
         method: 'GET',
+        headers: {
+            'Cookie': `token_v2=${await getNotionToken()}`
+        }
     });
-
     if (code !== 302 || !redirect) {
-        res.status(500).json({status: 'Something went wrong'});
+        res.status(500).json({status: 'Something went wrong #2'});
         return;
     }
     // console.log(redirect);
@@ -245,12 +263,29 @@ async function putFile(
         }
     });
     if (actual_code !== 200) {
-        res.status(500).json({status: 'Something went wrong #2'});
+        res.status(500).json({status: 'Something went wrong #3'});
         return;
     }
-
-
-    res.status(200).json({status: 'ok', url: fileUrl});
+    const isImage = ext === 'png' || ext === 'jpg' || ext === 'jpeg';
+    await notion.blocks.update({
+        block_id: block,
+        ...(isImage ? {
+            image: {external: {url: redirect}}
+        } : {
+            file: {external: {url: redirect}}
+        })
+    });
+    const unsignedUrl = redirect.split('?')[0];
+    await prisma.file.create({
+        data: {
+            url: unsignedUrl,
+            block,
+            filename,
+            user: session.id ? {connect: {id: session.id as string}} : undefined
+        },
+    });
+    // redirect = isImage ?
+    res.status(200).json({status: 'ok', url: redirect});
 }
 
 

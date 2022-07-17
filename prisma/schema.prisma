@@ -117,9 +117,10 @@ model Faculty {
 
 model File {
   id         String   @id @default(uuid()) @db.Char(36)
-  url        String   @db.VarChar(200)
-  block      String   @db.Char(36)
+  url        String   @db.VarChar(400)
+  block      String   @unique @db.Char(36)
   uploaded   DateTime @default(now())
+  filename   String   @db.VarChar(200)
   userId     String?  @db.Char(36)
   tutorId    String?  @db.Char(36)
   materialId String?  @db.Char(36)
@@ -131,6 +132,7 @@ model File {
   @@index([tutorId])
   @@index([materialId])
   @@index([uploaded])
+  @@index([block])
 }
 
 model Material {

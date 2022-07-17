@@ -56,7 +56,6 @@
     "@storybook/manager-webpack5": "^6.5.9",
     "@storybook/react": "^6.5.9",
     "@storybook/testing-library": "^0.0.13",
-    "@types/cookie": "^0.4.1",
     "@types/cors": "^2.8.12",
     "@types/jest": "^28.1.5",
     "@types/jsonwebtoken": "^8.5.8",
