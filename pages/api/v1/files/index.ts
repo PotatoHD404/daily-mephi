@@ -183,7 +183,10 @@ async function newFile(
 
         })
     });
-
+    if (!res1.ok) {
+        res.status(500).json({status: 'Something went wrong #2'});
+        return;
+    }
     const links = await res1.json();
     if (!process.env.JWT_PRIVATE)
         throw new Error('Jwt key is undefined');
