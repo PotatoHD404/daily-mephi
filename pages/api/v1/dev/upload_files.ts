@@ -6,8 +6,10 @@ import {getToken} from "next-auth/jwt";
 import jwt from "jsonwebtoken";
 import {readFile} from "fs/promises";
 import * as fs from "fs";
-import pLimit from 'p-limit';
 
+export function timeout(ms: number | undefined) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function uploadFile(upload_filename: string, fileMap: { [p: string]: string }, path: string) {
     let session_token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..TTimqbEJ3vebNVFo.sSr_QlLT2MrlhwXfXqqaUa4BPJG3ip5N8WWTYKCTNd-0jCXT5xRMEn18v_etRvuQ-noMZ6cKRTKs1X5BILu0BJxb0GPXPP8b5n1oqoF91QWfoc9lHCIXeHh0DIeiPndhDoZON_pK35fofBPtSyAnx5zVEs4h6HiMrz6JpcBwzv4pTnguxqCpbpgnuUKHtL33aqgYRxe2LU-t2OBNsFDkQa39IvP8FD7hXKoZ.QeMrhDXr7lIGcQFwbs612w"
@@ -22,6 +24,9 @@ async function uploadFile(upload_filename: string, fileMap: { [p: string]: strin
             "filename": upload_filename
         })
     });
+    if (!res1.ok) {
+        throw new Error("Something went wrong during uploading file");
+    }
     const jwt_token = (await res1.json())["token"];
     const {
         signedPutUrl,
@@ -63,14 +68,19 @@ export default async function handler(
     }
     let fileMap: { [id: string]: string } = {};
     // let upload_filename: string = "19679.jpg"
-    const limit = pLimit(1);
     const files = fs.readdirSync('parsing/home/tutor_imgs');
-    const promises = files.slice(0, 1).map((filename) => {
-        return limit(() => uploadFile(filename, fileMap, `parsing/home/tutor_imgs/${filename}`))
-    });
-    console.log(promises)
-
-    await Promise.all(promises);
+    const promises = files.map((filename) => () => uploadFile(filename, fileMap, `parsing/home/tutor_imgs/${filename}`));
+    let time: number
+    while (promises.length) {
+        // 1 at a time
+        time = new Date().getMilliseconds();
+        await Promise.all(promises.splice(0, 1).map(f => f()))
+        time = 3000 - ((new Date()).getMilliseconds() - time)
+        if (time > 0) {
+            console.log(`Waiting ${time} ms`)
+            await timeout(time)
+        }
+    }
     // await uploadFile(upload_filename, fileMap, `parsing/home/tutor_imgs/${upload_filename}`);
 
     res.status(200).json({status: "ok", fileMap});
