@@ -12,7 +12,7 @@ export default async function handler(
         res.status(400).json({status: "bad request"});
         return;
     }
-    const file = prisma.news.findUnique({
+    const news = prisma.news.findUnique({
         where: {
             id
         },
@@ -63,6 +63,6 @@ export default async function handler(
 
 
     res.status(200).json({
-        file
+        news
     });
 }

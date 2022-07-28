@@ -40,7 +40,7 @@ export default async function handler(
     res: NextApiResponse<object>
 ) {
     const session = await getToken({req})
-    if (!session) {
+    if (!session?.sub) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }

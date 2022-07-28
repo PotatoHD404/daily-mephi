@@ -90,9 +90,9 @@ model Comment {
   parentId  String?  @db.Char(36)
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  review   Review    @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
-  material Material  @relation(map: "materials_comments", fields: [postId], references: [id], onDelete: Cascade)
-  news     News      @relation(map: "news_comments", fields: [postId], references: [id], onDelete: Cascade)
+  review   Review?   @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
+  material Material? @relation(map: "materials_comments", fields: [postId], references: [id], onDelete: Cascade)
+  news     News?     @relation(map: "news_comments", fields: [postId], references: [id], onDelete: Cascade)
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
 
