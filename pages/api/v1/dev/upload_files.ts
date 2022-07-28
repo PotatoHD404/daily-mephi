@@ -6,6 +6,8 @@ import {getToken} from "next-auth/jwt";
 import jwt from "jsonwebtoken";
 import {readFile} from "fs/promises";
 import * as fs from "fs";
+import {extToMimes} from "../files";
+import axios, {AxiosResponse} from "axios";
 
 export function timeout(ms: number | undefined) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -30,14 +32,53 @@ async function uploadFile(upload_filename: string, fileMap: { [p: string]: strin
     const jwt_token = (await res1.json())["token"];
     const {
         signedPutUrl,
-    } = jwt.decode(jwt_token) as { signedPutUrl: string };
-
+        ext
+    } = jwt.decode(jwt_token) as { signedPutUrl: string, ext: string };
+    console.log(signedPutUrl)
+    console.log(path)
     // Read file and upload it
     const file = await readFile(path);
-    const res2 = await fetch(signedPutUrl, {
-        method: "PUT",
-        body: file
-    });
+
+    // const timeout = 2* 60 * 1000;
+    // const controller = new AbortController();
+    // let id = setTimeout(() => controller.abort(), timeout);
+    // const res2 = await fetch(signedPutUrl, {
+    //     method: "PUT",
+    //     body: file,
+    //     signal: controller.signal,
+    //     headers: {
+    //         'Content-Length': file.byteLength.toString(),
+    //         // @ts-ignore
+    //         'Content-Type': extToMimes[ext.toLowerCase()],
+    //     }
+    // });
+    // clearTimeout(id);
+
+    // if (res2.status !== 200) {
+    //     throw new Error(`Error uploading file: ${res2.status}, filename: ${upload_filename}`);
+    // }
+    let res2: AxiosResponse | null = null;
+    while (res2 === null) {
+        const config = {
+            headers: {
+                'Content-Length': file.byteLength.toString(),
+                // @ts-ignore
+                'Content-Type': extToMimes[ext.toLowerCase()] || "application/octet-stream",
+            },
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+            // calculate timeout based on file size if size > 10MB
+            timeout: file.byteLength > 15 * 1024 * 1024 ? Math.ceil(15 + (file.byteLength / 1024 / 1024 - 15) / 2) * 1000 : 15 * 1000
+        }
+        try {
+            res2 = await axios.put(signedPutUrl, file, config);
+        } catch (e) {
+            console.log("Retrying...", config, e);
+
+            await timeout(200);
+        }
+    }
+
 
     if (res2.status !== 200) {
         throw new Error(`Error uploading file: ${res2.status}, filename: ${upload_filename}`);
@@ -68,20 +109,39 @@ export default async function handler(
     }
     let fileMap: { [id: string]: string } = {};
     // let upload_filename: string = "19679.jpg"
-    const files = fs.readdirSync('parsing/home/tutor_imgs');
-    const promises = files.map((filename) => () => uploadFile(filename, fileMap, `parsing/home/tutor_imgs/${filename}`));
-    let time: number
+    // const files = fs.readdirSync('parsing/home/tutor_imgs');
+    // const promises = files.map((filename) => () => uploadFile(filename, fileMap, `parsing/home/tutor_imgs/${filename}`));
+
+    const folders = fs.readdirSync('parsing/mephist/materials/files');
+    let promises: (() => Promise<void>)[] = [];
+    folders.forEach((folder) => {
+        fs.readdirSync(`parsing/mephist/materials/files/${folder}`).forEach((filename) => {
+            promises.push(() => uploadFile(`${folder}-${filename}`, fileMap, `parsing/mephist/materials/files/${folder}/${filename}`))
+        })
+    });
+
+    promises = promises.slice(10+1000+800);
+    // const promises: (() => Promise<void>)[] = [];
+    let time: number = 0;
     while (promises.length) {
         // 1 at a time
-        time = new Date().getMilliseconds();
-        await Promise.all(promises.splice(0, 1).map(f => f()))
-        time = 3000 - ((new Date()).getMilliseconds() - time)
-        if (time > 0) {
-            console.log(`Waiting ${time} ms`)
-            await timeout(time)
+        let completed = false;
+        time = (new Date()).getTime();
+        const promise = promises.shift();
+        while (!completed) {
+            try {
+                // @ts-ignore
+                await promise();
+                break;
+            } catch (e) {
+                console.log(e)
+            }
         }
+        time = (new Date()).getTime() - time;
+        console.log(`Uploaded ${1} file in ${time} ms`)
     }
+    console.log()
     // await uploadFile(upload_filename, fileMap, `parsing/home/tutor_imgs/${upload_filename}`);
 
-    res.status(200).json({status: "ok", fileMap});
+    res.status(200).json({fileMap});
 }

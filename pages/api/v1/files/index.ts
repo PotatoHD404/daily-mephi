@@ -10,9 +10,10 @@ import prisma from "lib/database/prisma";
 import notion from "lib/database/notion";
 import {checkStatus, doRequest} from "../../../../helpers/utils";
 import {getToken} from "next-auth/jwt";
+import {timeout} from "../dev/upload_files";
 
 
-const extToMimes = {
+export const extToMimes = {
     'png': 'image/png',
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
@@ -57,10 +58,45 @@ const extToMimes = {
     'cs': 'text/plain',
     'go': 'text/plain',
     'java': 'text/plain',
+    'djvu': 'image/vnd.djvu',
+    'tiff': 'image/tiff',
+    'tif': 'image/tiff',
+    'bmp': 'image/bmp',
+    'psd': 'image/vnd.adobe.photoshop',
+    'ai': 'application/postscript',
+    'eps': 'application/postscript',
+    'ps': 'application/postscript',
+    'dxf': 'application/postscript',
+    'svgz': 'image/svg+xml',
+    'ttf': 'application/x-font-ttf',
+    'otf': 'application/x-font-otf',
+    'woff': 'application/x-font-woff',
+    'woff2': 'application/x-font-woff2',
+    'eot': 'application/vnd.ms-fontobject',
+    'sfnt': 'application/font-sfnt',
+    'wasm': 'application/wasm',
+    'mjs': 'application/javascript',
+    'map': 'application/json',
+    'ico': 'image/x-icon',
+    'icns': 'image/x-icns',
+    'bin': 'application/octet-stream',
+    'exe': 'application/octet-stream',
+    'dll': 'application/octet-stream',
+    'deb': 'application/octet-stream',
+    'dmg': 'application/octet-stream',
+    'iso': 'application/octet-stream',
+    'img': 'application/octet-stream',
+    'msi': 'application/octet-stream',
+    "odt": "application/vnd.oasis.opendocument.text",
+
 }
+if (!process.env.NOTION_YC_IDS)
+    throw new Error('There is no notion_yc_ids');
+const func_ids = process.env.NOTION_YC_IDS.split(';');
 
 async function getNotionToken() {
-    let token_v2: string | null = null;
+    return process.env.NOTION_TOKEN_V2 ?? ""
+    /*let token_v2: string | null = null;
     const db_token_data = await prisma.internal.findUnique({where: {name: 'notion_token_v2'}});
 
     let expires: Date | null = null;
@@ -110,7 +146,7 @@ async function getNotionToken() {
             }
         });
     }
-    return token_v2;
+    return token_v2;*/
 }
 
 async function newFile(
@@ -126,10 +162,11 @@ async function newFile(
         res.status(400).json({status: "Filename not provided"});
         return;
     }
-
-    let [filename, ext] = req.body.filename.split('.');
+    const tmp = req.body.filename.split('.');
+    let ext = tmp.pop();
+    let filename = tmp.join('.').substring(0, 64 - (ext ? ext.length + 1 : 0));
     if (filename === '') {
-        filename = ext;
+        filename = '.' + ext;
         ext = '';
     }
     const mime = extToMimes[ext as keyof typeof extToMimes] || 'text/plain';
@@ -162,27 +199,32 @@ async function newFile(
     let token_v2: string = await getNotionToken();
 
 
-    // const token_v2 = '';
-    // https://www.notion.so/api/v3/getUploadFileUrl
+    let func_id: string
 
-    const res1 = await fetch("https://www.notion.so/api/v3/getUploadFileUrl", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Cookie': `token_v2=${token_v2}`
-        },
-        body: JSON.stringify({
-            bucket: "secure",
-            name: req.body.filename,
-            contentType: mime,
-            record: {
-                table: "block",
-                id: block_id,
-                spaceId: "0ef770c4-d60f-4f3b-bb1c-35398b2e65b8"
-            }
-
-        })
+    const params = new URLSearchParams({
+        block: block_id,
+        token_v2,
+        filename: filename + (ext ? '.' + ext : ''),
+        mime,
+        space_id: "0ef770c4-d60f-4f3b-bb1c-35398b2e65b8"
     });
+    let url: string
+    let res1: Response | null = null
+    let ms = 200
+    // console.log(url)
+    while (!res1?.ok) {
+        func_id = func_ids[Math.floor(Math.random() * func_ids.length)];
+        url = `https://functions.yandexcloud.net/${func_id}?${params.toString()}`;
+        // console.log(url)
+        res1 = await fetch(url);
+        if (!res1?.ok) {
+            await timeout(ms)
+            if (ms < 1000 * 60 * 15)
+                ms *= 2;
+            console.log("Retrying...")
+        }
+    }
+
     if (!res1.ok) {
         res.status(500).json({status: 'Something went wrong #2'});
         return;
@@ -208,7 +250,7 @@ async function putFile(
     res: NextApiResponse<Object>
 ) {
     const {cookies} = req;
-    const session = await getToken({ req })
+    const session = await getToken({req})
     if (!cookies['FILE_JWT'] || !session) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
@@ -236,43 +278,24 @@ async function putFile(
     }
     const unsignedUrl: string = signedPutUrl.split('?')[0];
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
-    const {code, redirect} = await checkStatus({
-        hostname: 'www.notion.so',
-        port: 443,
-        path: `/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`,
-        method: 'GET',
-    });
-    if (code !== 302 || !redirect) {
-        res.status(500).json({status: 'Something went wrong #2'});
-        return;
-    }
-    // console.log(redirect);
+    console.log(unsignedUrl)
+    // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
+    const res1 = await fetch(unsignedUrl)
 
-    const fileUrl = new URL(redirect);
-    const {code: actual_code} = await checkStatus({
-        hostname: fileUrl.hostname,
-        port: 443,
-        path: `${fileUrl.pathname}?${redirect.split('?')[1]}`,
-        method: 'GET',
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36',
-            'Connection': 'keep-alive',
-            'Host': 's3.us-west-2.amazonaws.com',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-        }
-    });
-    if (actual_code !== 200) {
+    if (!res1.ok) {
+        console.log('Something went wrong #3')
+
         res.status(500).json({status: 'Something went wrong #3'});
         return;
     }
-    const isImage = ext === 'png' || ext === 'jpg' || ext === 'jpeg';
+
+    const isImage = ext.toLowerCase() === 'png' || ext.toLowerCase() === 'jpg' || ext.toLowerCase() === 'jpeg';
     await notion.blocks.update({
         block_id: block,
         type: 'file',
-        file: {external: {url: redirect}}
+        file: {caption: [{text: {content: filename + (ext ? '.' + ext : '')}}], external: {url: unsignedUrl}}
     });
-    const createdUrl = 'https://www.notion.so/' + (isImage ? 'image' : 'signed') + `/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`;
+    const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
     await prisma.file.create({
         data: {
             url: createdUrl,
@@ -302,7 +325,7 @@ export default async function handler(
     }
     if (req.method === "POST") {
         await newFile(req, res);
-    } else if (req.method === "PUT") {
+    } else if (req.method === "PATCH") {
         await putFile(req, res);
     } else {
         res.status(405).json({status: 'Method not allowed'});

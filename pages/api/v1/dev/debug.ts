@@ -1,12 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {timeout} from "./upload_files";
-import HttpsProxyAgent from "https-proxy-agent";
-import {doRequest} from "../../../../helpers/utils";
-import axios, {AxiosPromise, AxiosResponse} from "axios";
-import {Cookie, CookieJar} from "tough-cookie";
-
+import files from "parsing/files.json"
 
 export default async function handler(
     req: NextApiRequest,
@@ -16,10 +11,12 @@ export default async function handler(
         res.status(403).json({status: "not allowed"});
         return;
     }
+    // add files to database from json file
+    const json = await prisma.file.createMany({data: files["files"], skipDuplicates: true});
 
-
-
-    res.status(200).json({status: "ok"});
+    res.status(200).json({
+        status: "ok"
+    });
     // const allUsers = {status: "ok"}
     // let allUsers = await prisma.user.findMany(
     // )

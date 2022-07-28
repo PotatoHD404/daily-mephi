@@ -1,7 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import json from "parsing/combined/data.json"
-import {LegacyRating, Material, Tutor, Quote, Review} from '@prisma/client';
+import tutor_imgs from "parsing/tutor_imgs.json"
+import mephist_imgs from "parsing/mephist_imgs.json"
+import mephist_fils from "parsing/mephist_files.json"
+import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 import prisma from "../../../../lib/database/prisma";
 
 function strToDateTime(dtStr: string): Date {
@@ -108,7 +111,8 @@ type MaterialDTO =
     Omit<Material, "id" | "tutorId" | "userId"> & {
     faculty: { connect: { id: string }[] } | undefined,
     discipline: { connect: { id: string } } | undefined,
-    semesters: { connect: { id: string }[] }
+    semesters: { connect: { id: string }[] },
+    files: {connect: {id: string}[]}
 };
 type ReviewDTO = Omit<Review, "id" | "tutorId" | "userId">;
 type Semester =
@@ -139,8 +143,14 @@ type TutorDTO =
     materials: { create: MaterialDTO[] },
     reviews: { create: ReviewDTO[] },
     faculties: { connect: { id: string }[] },
-    disciplines: { connect: { id: string }[] }
+    disciplines: { connect: { id: string }[] },
+    images: { connect: { id: string }[] }
 };
+type FileDTO = {
+    status: string,
+    fileMap: { [id: string]: string }
+};
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
@@ -149,12 +159,19 @@ export default async function handler(
         res.status(403).json({status: "not allowed"});
         return;
     }
-    const data = json as JsonType;
     const tutors: TutorDTO[] = []
+
+    // await prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
+    const data = json as JsonType;
+
+    const tutor_images: FileDTO = tutor_imgs;
+    const mephist_images: FileDTO = mephist_imgs;
+    const mephist_files: FileDTO = mephist_fils;
 
     const newTutors = new Set<string>();
     const disciplines = new Set<string>();
     const faculties = new Set<string>();
+    const addedMaterials = new Set<string>();
     const semestersMapping: { [id: string]: string } = {
         "Б1": "01",
         "Б2": "02",
@@ -193,6 +210,7 @@ export default async function handler(
     await prisma.discipline.deleteMany();
     await prisma.faculty.deleteMany();
     await prisma.semester.deleteMany();
+    await prisma.material.deleteMany();
 
     await prisma.discipline.createMany({
         data: Array.from(disciplines).map(el => {
@@ -249,8 +267,17 @@ export default async function handler(
             materials: {create: []},
             reviews: {create: []},
             faculties: {connect: []},
-            disciplines: {connect: []}
+            disciplines: {connect: []},
+            // @ts-ignore
+            images: tutor_imgs["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_imgs["fileMap"][`${id}.jpg`]}]} : {connect: []}
         }
+
+        for (const [key, value] of Object.entries(mephist_images.fileMap)) {
+            if (key.startsWith(id + "-")) {
+                tutor.images.connect.push({id: value})
+            }
+        }
+
         for (const quote of jsonTutor.quotes) {
             tutor.quotes.create.push({
                 body: quote.Текст,
@@ -259,7 +286,12 @@ export default async function handler(
         }
         for (const materialId of jsonTutor.materials) {
             const jsonMaterial = data.materials[materialId as any] as unknown as JsonMaterial;
-
+            const files: { id: string }[] = [];
+            for (const [key, value] of Object.entries(mephist_files.fileMap)) {
+                if (key.startsWith(materialId + "-")) {
+                    files.push({id: value})
+                }
+            }
             tutor.materials.create.push({
                 description: jsonMaterial.Описание,
                 header: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
@@ -277,8 +309,10 @@ export default async function handler(
                         jsonMaterial.Семестр.split("; ").map(el => {
                             return {id: semesterModels[el]}
                         }) : []
-                }
+                },
+                files: {connect: files}
             })
+            addedMaterials.add(materialId)
         }
         for (const review of jsonTutor.reviews) {
             const jsonReview = review as unknown as JsonReview;
@@ -310,6 +344,36 @@ export default async function handler(
         }
         tutors.push(tutor)
     }
+
+    for (const [id, value] of Object.entries(data.materials)) {
+        if (!addedMaterials.has(id)) {
+            const jsonMaterial = value as unknown as JsonMaterial;
+            const els = Object.entries(mephist_files["fileMap"]).filter(([key]) => key.startsWith(id + "-"))
+            await prisma.material.create({
+                    data: {
+                        files: {connect: els.length ? els.map(([key, value]) => ({id: value})) : undefined}, description: jsonMaterial.Описание,
+                        header: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
+                        faculty: {
+                            connect: jsonMaterial.Факультет?.split("; ").map(el => {
+                                return {
+                                    id: facultyModels[el.trim()]
+                                }
+                            }) || []
+                        },
+                        discipline: jsonMaterial.Предмет !== null ? {connectOrCreate: {where: {name: jsonMaterial.Предмет}, create: {name: jsonMaterial.Предмет}}} : undefined,
+                        uploaded: new Date(jsonMaterial["Дата добавления"]),
+                        semesters: {
+                            connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
+                                jsonMaterial.Семестр.split("; ").map(el => {
+                                    return {id: semesterModels[el]}
+                                }) : []
+                        },
+                    }
+                }
+            )
+        }
+    }
+
     await prisma.tutor.deleteMany();
     await prisma.quote.deleteMany();
     for (const tutor of tutors) {
@@ -320,7 +384,8 @@ export default async function handler(
         })
         console.log(newTutor)
     }
-
+    // });
     res.status(200).json({tutors});
 
 }
+

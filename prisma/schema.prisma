@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
   binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
@@ -53,6 +53,7 @@ model User {
   role          String    @default("default")
   email         String?   @unique
   emailVerified DateTime?
+  createdAt     DateTime  @default(now())
 
   accounts           Account[]
   sessions           Session[]
@@ -81,12 +82,12 @@ model VerificationToken {
 }
 
 model Comment {
-  id       String   @id @default(uuid()) @db.Char(36)
-  text     String   @db.MediumText
-  time     DateTime @default(now())
-  userId   String   @db.Char(36)
-  postId   String   @db.Char(36)
-  parentId String?  @db.Char(36)
+  id        String   @id @default(uuid()) @db.Char(36)
+  text      String   @db.MediumText
+  createdAt DateTime @default(now())
+  userId    String   @db.Char(36)
+  postId    String   @db.Char(36)
+  parentId  String?  @db.Char(36)
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   review   Review    @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
@@ -95,7 +96,7 @@ model Comment {
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
 
-  @@index([time])
+  @@index([createdAt])
   @@index([userId])
   @@index([postId])
   @@index([parentId])
@@ -117,7 +118,7 @@ model Faculty {
 
 model File {
   id         String   @id @db.Char(36)
-  url        String   @db.VarChar(400)
+  url        String   @db.VarChar(1400)
   uploaded   DateTime @default(now())
   filename   String   @db.VarChar(200)
   isImage    Boolean  @default(false)
@@ -125,9 +126,10 @@ model File {
   tutorId    String?  @db.Char(36)
   materialId String?  @db.Char(36)
 
-  tutor    Tutor?     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  user     User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  material Material[]
+  tutor    Tutor?    @relation(fields: [tutorId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
+  material Material? @relation(fields: [materialId], references: [id])
+
   @@index([userId])
   @@index([tutorId])
   @@index([materialId])
@@ -142,34 +144,36 @@ model Material {
   tutorId     String?   @db.Char(36)
   uploaded    DateTime? @default(now())
 
-  file       File[]
-  user       User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor      Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  faculty    Faculty[]
-  discipline Discipline[]
-  comments   Comment[]
-  likes      User[]       @relation(name: "materials_likes")
-  dislikes   User[]       @relation(name: "materials_dislikes")
-  semesters  Semester[]
+  files       File[]
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor       Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  faculties   Faculty[]
+  disciplines Discipline[]
+  comments    Comment[]
+  likes       User[]       @relation(name: "materials_likes")
+  dislikes    User[]       @relation(name: "materials_dislikes")
+  semesters   Semester[]
+
   @@index([uploaded])
   @@index([userId])
   @@index([tutorId])
 }
 
 model Semester {
-  id       String     @id @default(uuid()) @db.Char(36)
-  name     String     @unique @db.Char(3)
-  material Material[]
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.Char(3)
+  materials Material[]
 }
 
 model News {
-  id     String   @id @default(uuid()) @db.Char(36)
-  body   String   @db.Text
-  header String   @db.VarChar(280)
-  time   DateTime @default(now())
+  id        String   @id @default(uuid()) @db.Char(36)
+  body      String   @db.Text
+  header    String   @db.VarChar(280)
+  createdAt DateTime @default(now())
 
   comments Comment[]
-  @@index([time])
+
+  @@index([createdAt])
 }
 
 model LegacyRating {
@@ -183,6 +187,7 @@ model LegacyRating {
   tutorId          String @unique @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
   @@index([tutorId])
   @@index([personality])
   @@index([personalityCount])
@@ -203,6 +208,7 @@ model Quote {
   tutor    Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   likes    User[] @relation(name: "quotes_likes")
   dislikes User[] @relation(name: "quotes_dislikes")
+
   @@index([uploaded])
   @@index([userId])
   @@index([tutorId])
@@ -219,6 +225,7 @@ model Rate {
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([tutorId])
 }

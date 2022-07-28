@@ -3,7 +3,7 @@ module.exports.handler = async function (event, context) {
     const params = event["queryStringParameters"]
 
     let data = JSON.stringify({
-      "bucket": "secure",
+      "bucket": "public",
       "name": params["filename"],
       "contentType": params["mime"],
       "record": {

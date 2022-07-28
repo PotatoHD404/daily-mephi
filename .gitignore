@@ -61,3 +61,5 @@ parsing/home/new1.zip
 /parsing/
 /storybook-static/
 /build-storybook.log
+/notion-api/node_modules/
+/notion-api/notion-api.zip
