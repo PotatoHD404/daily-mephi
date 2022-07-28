@@ -17,7 +17,6 @@ type Children =
     React.ReactElement<any, string | React.JSXElementConstructor<any>>
     | string
     | number
-    | {}
     | Iterable<React.ReactNode>
     | React.ReactPortal
     | boolean
