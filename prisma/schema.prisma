@@ -3,8 +3,8 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -15,8 +15,8 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
+  id                String  @id @default(uuid()) @db.Char(36)
+  userId            String  @db.Char(36)
   type              String
   provider          String
   providerAccountId String
@@ -31,24 +31,30 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([type, provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Char(36)
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Char(36)
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
-  id                 String     @id @default(uuid())
-  name               String?    @unique
-  image              String?    @unique
-  rating             Int        @default(0)
-  role               String     @default("default")
-  email              String?    @unique
-  emailVerified      DateTime?
+  id            String    @id @default(uuid()) @db.Char(36)
+  name          String?   @unique @db.VarChar(100)
+  image         String?   @unique
+  rating        Int       @default(0)
+  role          String    @default("default")
+  email         String?   @unique
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+
   accounts           Account[]
   sessions           Session[]
   comments           Comment[]
@@ -62,6 +68,9 @@ model User {
   reviews_dislikes   Review[]   @relation(name: "reviews_dislikes")
   files              File[]
   materials          Material[]
+  quotes             Quote[]
+
+  @@index([rating(sort: "Desc")])
 }
 
 model VerificationToken {
@@ -73,12 +82,12 @@ model VerificationToken {
 }
 
 model Comment {
-  id       String   @id @default(uuid())
-  text     String
-  time     DateTime @default(now())
-  userId   String
-  postId   String
-  parentId String?
+  id        String   @id @default(uuid()) @db.Char(36)
+  text      String   @db.MediumText
+  createdAt DateTime @default(now())
+  userId    String   @db.Char(36)
+  postId    String   @db.Char(36)
+  parentId  String?  @db.Char(36)
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   review   Review    @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
@@ -86,124 +95,171 @@ model Comment {
   news     News      @relation(map: "news_comments", fields: [postId], references: [id], onDelete: Cascade)
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([postId])
+  @@index([parentId])
 }
 
 model Discipline {
-  id        String     @id @default(uuid())
-  name      String     @unique
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.VarChar(400)
   tutors    Tutor[]
   materials Material[]
 }
 
 model Faculty {
-  id        String     @id @default(uuid())
-  name      String     @unique
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.VarChar(200)
   tutors    Tutor[]
   materials Material[]
 }
 
 model File {
-  id     String   @id @default(uuid())
-  url    String
-  block  String
-  time   DateTime @default(now())
-  userId String?
+  id         String   @id @db.Char(36)
+  url        String   @db.VarChar(1400)
+  uploaded   DateTime @default(now())
+  filename   String   @db.VarChar(200)
+  isImage    Boolean  @default(false)
+  userId     String?  @db.Char(36)
+  tutorId    String?  @db.Char(36)
+  materialId String?  @db.Char(36)
 
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor    Tutor?    @relation(fields: [tutorId], references: [id])
+  user     User?     @relation(fields: [userId], references: [id])
+  material Material? @relation(fields: [materialId], references: [id])
+
+  @@index([userId])
+  @@index([tutorId])
+  @@index([materialId])
+  @@index([uploaded])
 }
 
 model Material {
-  id           String   @id @default(uuid())
-  url          String
-  block        String
-  time         DateTime @default(now())
-  description  String?
-  header       String
-  disciplineId String?
-  facultyId    String?
-  userId       String
-  tutorId      String?
+  id          String    @id @default(uuid()) @db.Char(36)
+  description String?   @db.Text
+  header      String    @db.VarChar(280)
+  userId      String?   @db.Char(36)
+  tutorId     String?   @db.Char(36)
+  uploaded    DateTime? @default(now())
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor      Tutor?      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  faculty    Faculty?    @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  discipline Discipline? @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
-  comments   Comment[]
-  likes      User[]      @relation(name: "materials_likes")
-  dislikes   User[]      @relation(name: "materials_dislikes")
+  files       File[]
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor       Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  faculties   Faculty[]
+  disciplines Discipline[]
+  comments    Comment[]
+  likes       User[]       @relation(name: "materials_likes")
+  dislikes    User[]       @relation(name: "materials_dislikes")
+  semesters   Semester[]
+
+  @@index([uploaded])
+  @@index([userId])
+  @@index([tutorId])
+}
+
+model Semester {
+  id        String     @id @default(uuid()) @db.Char(36)
+  name      String     @unique @db.Char(3)
+  materials Material[]
 }
 
 model News {
-  id     String   @id @default(uuid())
-  body   String
-  header String
-  time   DateTime @default(now())
+  id        String   @id @default(uuid()) @db.Char(36)
+  body      String   @db.Text
+  header    String   @db.VarChar(280)
+  createdAt DateTime @default(now())
 
   comments Comment[]
+
+  @@index([createdAt])
 }
 
 model LegacyRating {
-  id               String @id @default(uuid())
+  id               String @id @default(uuid()) @db.Char(36)
   personality      Float
   personalityCount Int
   exams            Float
   examsCount       Int
   quality          Float
   qualityCount     Int
-  tutorId          String @unique
+  tutorId          String @unique @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId])
+  @@index([personality])
+  @@index([personalityCount])
+  @@index([exams])
+  @@index([examsCount])
+  @@index([quality])
+  @@index([qualityCount])
 }
 
 model Quote {
-  id      String @id @default(uuid())
-  body    String
-  tutorId String
+  id       String    @id @default(uuid()) @db.Char(36)
+  body     String    @db.Text
+  tutorId  String    @db.Char(36)
+  userId   String?   @db.Char(36)
+  uploaded DateTime? @default(now())
 
+  user     User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   likes    User[] @relation(name: "quotes_likes")
   dislikes User[] @relation(name: "quotes_dislikes")
+
+  @@index([uploaded])
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Rate {
-  id          String @id @default(uuid())
+  id          String @id @default(uuid()) @db.Char(36)
   punctuality Int
   personality Int
   exams       Int
   quality     Int
-  tutorId     String
-  userId      String
+  tutorId     String @db.Char(36)
+  userId      String @db.Char(36)
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Review {
-  id      String   @id @default(uuid())
-  header  String
-  body    String
-  time    DateTime @default(now())
-  userId  String
-  tutorId String
+  id             String   @id @default(uuid()) @db.Char(36)
+  header         String   @db.VarChar(280)
+  body           String   @db.Text
+  uploaded       DateTime @default(now())
+  legacyNickname String?  @db.VarChar(200)
+  userId         String?  @db.Char(36)
+  tutorId        String   @db.Char(36)
 
   tutor    Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments Comment[]
   likes    User[]    @relation(name: "reviews_likes")
   dislikes User[]    @relation(name: "reviews_dislikes")
 
   @@unique([userId, tutorId])
+  @@index([userId])
+  @@index([tutorId])
 }
 
 model Tutor {
-  id         String   @id @default(uuid())
-  firstName  String?
-  lastName   String
-  fatherName String?
-  nickName   String?
+  id         String    @id @default(uuid()) @db.Char(36)
+  firstName  String?   @db.VarChar(64)
+  lastName   String?   @db.VarChar(64)
+  fatherName String?   @db.VarChar(64)
+  nickName   String?   @unique @db.VarChar(64)
   url        String?
-  updated    DateTime @default(now())
+  updated    DateTime? @default(now())
 
+  images       File[]
   rates        Rate[]
   reviews      Review[]
   disciplines  Discipline[]
@@ -211,4 +267,10 @@ model Tutor {
   materials    Material[]
   legacyRating LegacyRating?
   quotes       Quote[]
+}
+
+model Internal {
+  name    String    @id @db.VarChar(200)
+  value   String    @db.Text
+  expires DateTime?
 }

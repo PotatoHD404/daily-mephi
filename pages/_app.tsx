@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import 'styles/globals.css'
-import {SessionProvider} from "next-auth/react"
+import {getSession, SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
 import {JSXInternal} from "preact/src/jsx";
@@ -12,7 +12,7 @@ import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
+// import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
 import {MetricContainer} from "../components/yandexMetrika";
 
 
@@ -85,7 +85,7 @@ function MyApp(
         pageProps: {session, ...pageProps}
     }: {
         Component: NextComponentType,
-        pageProps: IntrinsicAttributes &
+        pageProps: any &
             {
                 children?: ReactNode,
                 session: Session
@@ -125,7 +125,6 @@ function MyApp(
             </div>
         </ThemeProvider>
     </SessionProvider>
-
 
 }
 

@@ -7,4 +7,4 @@ export default {
     component: Home
 }
 
-export const HomePage = () => <SessionProvider><Home /></SessionProvider>
+export const HomePage = () => <Home />
