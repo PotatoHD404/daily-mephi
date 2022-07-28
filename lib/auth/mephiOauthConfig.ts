@@ -32,22 +32,28 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 if (resArr[0] !== 'yes' || !resArr[1])
                     throw new Error("Something went wrong during cas login");
                 const access_token: string = await hash(resArr[1]);
-
-                return {tokens: {access_token}}
+                return {
+                    tokens: {
+                        access_token,
+                        id_token: !resArr[1].match(/^[a-z]{3}[0-9]{3}$/) ? "tutor" : "default"
+                    }
+                };
             }
         },
         userinfo: {
             url: "https://example.com/oauth/userinfo",
-            async request({tokens: {access_token}}) {
+            // @ts-ignore
+            async request({tokens: {access_token, id_token}}) {
                 if (!access_token)
                     throw new Error("Something went wrong during getting user info");
-                return {id: access_token}
+                return {id: access_token, role: id_token}
             }
         },
         profile(profile) {
-            console.log(profile)
+            // console.log(profile)
             return {
                 id: profile.id,
+                role: profile.role,
                 name: null,
                 image: null
             };

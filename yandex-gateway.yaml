@@ -193,6 +193,7 @@ paths:
         type: object_storage
         bucket: daily-mephi
         object: static/{file}
+        error_object: static/404.html
         presigned_redirect: true
         service_account_id: ajeqc0lu3h37u8hol16f
       parameters:

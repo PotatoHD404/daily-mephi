@@ -251,7 +251,7 @@ async function putFile(
 ) {
     const {cookies} = req;
     const session = await getToken({req})
-    if (!cookies['FILE_JWT'] || !session) {
+    if (!cookies['FILE_JWT'] || !session?.sub) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
@@ -318,8 +318,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Object>
 ) {
-    const session = await getSession({req});
-    if (!session) {
+    const session = await getToken({req})
+    if (!session?.sub) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
