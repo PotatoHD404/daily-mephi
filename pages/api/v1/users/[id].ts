@@ -7,13 +7,12 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    let {id, name}: { id: string | undefined, name: string | undefined } = req.query as any;
+    let {id}: { id: string | undefined, name: string | undefined } = req.query as any;
     // const allUsers = {status: "ok"}
     const user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    {id: {equals: id}},
-                    {name: {equals: name}},
+                    {id: {equals: id}}
                 ]
             },
             select: {

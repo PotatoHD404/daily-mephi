@@ -353,14 +353,14 @@ export default async function handler(
                     data: {
                         files: {connect: els.length ? els.map(([key, value]) => ({id: value})) : undefined}, description: jsonMaterial.Описание,
                         header: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
-                        faculty: {
+                        faculties: {
                             connect: jsonMaterial.Факультет?.split("; ").map(el => {
                                 return {
                                     id: facultyModels[el.trim()]
                                 }
                             }) || []
                         },
-                        discipline: jsonMaterial.Предмет !== null ? {connectOrCreate: {where: {name: jsonMaterial.Предмет}, create: {name: jsonMaterial.Предмет}}} : undefined,
+                        disciplines: jsonMaterial.Предмет !== null ? {connectOrCreate: {where: {name: jsonMaterial.Предмет}, create: {name: jsonMaterial.Предмет}}} : undefined,
                         uploaded: new Date(jsonMaterial["Дата добавления"]),
                         semesters: {
                             connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
