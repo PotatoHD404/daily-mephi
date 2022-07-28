@@ -162,7 +162,7 @@ export default async function handler(
     const tutors: TutorDTO[] = []
 
     // await prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
-    const data = json as JsonType;
+    const data = json as unknown as JsonType;
 
     const tutor_images: FileDTO = tutor_imgs;
     const mephist_images: FileDTO = mephist_imgs;
