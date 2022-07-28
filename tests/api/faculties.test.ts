@@ -4,11 +4,11 @@ import * as http from 'http';
 import supertest from 'supertest';
 
 import {apiResolver} from "next/dist/server/api-utils/node";
-import debugHandler from '../../pages/api/v1/debug/index';
+import debugHandler from 'pages/api/v1/top';
 import prisma from "../../lib/database/prisma";
 
 jest.setTimeout(5 * 10e2);
-describe('[GET] /api/debug', () => {
+describe('[GET] /api/v1/top', () => {
     let server: http.Server;
 
     beforeAll(() => {
@@ -33,28 +33,20 @@ describe('[GET] /api/debug', () => {
     });
 
 
-    it('Debug test', async () => {
+    it('Test top', async () => {
         const users: any = [{
-            "id": "3d87919c-3da9-4956-8db3-7d5af7c7863f",
             "name": "PotatoHD",
             "image": null,
-            "rating": 0,
-            "role": "default",
-            "email": null,
-            "emailVerified": null
+            "rating": 1,
         }, {
-            "id": "da38c896-22ed-4259-82d8-b5134e943cca",
             "name": "Ponchik",
             "image": null,
             "rating": 0,
-            "role": "default",
-            "email": null,
-            "emailVerified": null
         }]
         prisma.user.findMany = jest.fn().mockResolvedValue(users);
 
         const result = await supertest(server)
-            .get('/api/debug')
+            .get('/api/v1/top')
             .expect(200)
             .expect('Content-Type', /json/);
 
