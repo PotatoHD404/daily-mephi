@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 // import BuyMeACoffee from "components/buyMeCoffee";
 import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
+import {getSession} from "next-auth/react";
 
 
 export const StyledInput = styled(Input)(() => ({

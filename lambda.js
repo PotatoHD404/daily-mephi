@@ -43,18 +43,11 @@ function parseParams(body) {
 let slsHandler;
 
 async function handler(event, context) {
-    // if(event.method === "POST")  {
-    //     console.log("We are here")
-    //     console.log(event)
-    // }
     event.path = event["url"].split("?")[0]
     if (!slsHandler) {
         const app = {
             handle: (request, response) => {
                 request.headers = {};
-                // for (const [key, value] of Object.entries(event.headers)) {
-                //     headers.append(key.toLowerCase(), value);
-                // }
                 for (const [key, value] of Object.entries(request.apiGateway.event.multiValueHeaders)) {
                     request.headers[key.toLowerCase()] = value.join("; ")
                 }
@@ -77,9 +70,6 @@ async function handler(event, context) {
                     }
                 }
 
-                // console.log(request)
-                // if ('cookie' in headers) {
-                //     request['cookie'] = request[Symbol('kHeaders')].length
                 return (0, ___next_launcher_cjs_1.default)(request, response)
             }
         };

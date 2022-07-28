@@ -1,17 +1,65 @@
-import {serialize} from "cookie";
 import {ClientRequest} from "http";
 import https from "https";
-import type {NextApiResponse} from 'next';
-import {Cookie} from "next-auth/core/lib/cookie";
+import {Cookie} from "tough-cookie"
 
 interface Cookies {
-    [Key: string]: { Value: string, Domain: string, Path: string, Expires: Date };
+    [Key: string]: Cookie;
 }
 
 // export function getHost(req: NextApiRequest) {
 //     const proto: string = req.headers["x-forwarded-proto"] ? "https" : "http";
 //     const host: string = `${proto}://${req.headers.host}${req.url?.split('?')[0]}`;
 // }
+export function doRequest(options: https.RequestOptions, data?: any): Promise<{
+    response: string,
+    cookies: Cookies,
+    code: number
+}> {
+    return new Promise((resolve, reject) => {
+        if (data) {
+            data = JSON.stringify(data);
+            if (!options.headers)
+                options.headers = {}
+            options.headers['Content-Length'] = data.length;
+            options.headers['Content-Type'] = 'application/json';
+        }
+        const req: ClientRequest = https.request(options, (res) => {
+            res.setEncoding('utf8');
+            let responseBody: string = '';
+
+            res.on('data', (chunk) => {
+                responseBody += chunk;
+            });
+            // for (const [key, value] of res1.headers) {
+            //     if (key === 'set-cookie') {
+            //         console.log(value, key)
+            //         const cookie = Cookie.parse(value);
+            //         if (cookie && cookie.key === 'token_v2') {
+            //             token_v2 = cookie.value;
+            //             expires = cookie.expires === "Infinity" ? null : cookie.expires;
+            //             break;
+            //         }
+            //     }
+            // }
+            res.on('end', () => {
+                const tmp: Cookie[] = res.headers["set-cookie"]?.map((el) => Cookie.parse(el)).filter(el => el !== undefined) as unknown as Cookie[];
+                const cookies: Cookies = {};
+                tmp?.reduce((acc, el) => {
+                    acc[el.key] = el;
+                    return acc;
+                }, cookies);
+                resolve({response: responseBody, cookies, code: res.statusCode ?? 500});
+            });
+        });
+
+        req.on('error', (err) => {
+            throw err;
+        });
+        if (data)
+            req.write(data);
+        req.end();
+    });
+}
 
 export function checkStatus(options: https.RequestOptions, data?: any): Promise<{ code: number | undefined, redirect: string | undefined }> {
     return new Promise((resolve, reject) => {
@@ -33,27 +81,6 @@ export function checkStatus(options: https.RequestOptions, data?: any): Promise<
             req.write(data);
         req.end();
     });
-}
-
-export function setCookie(res: NextApiResponse, cookie: Cookie) {
-    // Preserve any existing cookies that have already been set in the same session
-    let setCookieHeader = res.getHeader("Set-Cookies") ?? [];
-    // If not an array (i.e. a string with a single cookie) convert it into an array
-    // if(!setCookieHeader)
-    //     throw new Error("");
-    if (!Array.isArray(setCookieHeader)) {
-        setCookieHeader = [setCookieHeader.toString()];
-    }
-    const {name, value, options} = cookie;
-    const cookieHeader = serialize(name, value, options);
-    setCookieHeader.push(cookieHeader);
-    res.setHeader("Set-Cookies", setCookieHeader);
-}
-
-export function redirect(res: NextApiResponse, url: string, cookies?: Cookie[]) {
-    if (cookies)
-        cookies.forEach((cookie) => setCookie(res, cookie));
-    res.status(301).redirect(url);
 }
 
 
