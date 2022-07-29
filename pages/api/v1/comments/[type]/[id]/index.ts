@@ -90,34 +90,60 @@ async function getComments(
         res.status(400).json({status: "bad request"});
         return;
     }
-    let comments = await prisma.$queryRaw`
-WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId") AS (
+    let comments:   {
+        id: string,
+        text: string,
+        createdAt: Date,
+        parentId: string | null,
+        userId: string,
+        path: string[],
+        childrenCount: bigint | number
+    }[] = await prisma.$queryRaw`
+WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
     SELECT
     id,
     text,
     "createdAt",
     "parentId",
-    "userId"
+    "userId",
+    array[id] AS path
 FROM public."Comment"
 WHERE "Comment"."parentId" IS NULL AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
 UNION ALL
-SELECT     c.id,
+SELECT     
+    c.id,
     c.text,
     c."createdAt",
     c."parentId",
-    c."userId"
-FROM       "Comment" c
+    c."userId",
+    cte.path || c.id
+FROM "Comment" c
 INNER JOIN cte
-on c."parentId" = cte.id
+ON c."parentId" = cte.id
 )
-SELECT * FROM cte
+SELECT
+cte.id,
+cte.text,
+cte."createdAt",
+cte."parentId",
+cte."userId",
+cte.path as path,
+count(cte2.id) - 1 as "childrenCount"
+FROM cte
 LEFT JOIN public."User"
 ON
 "User"."id" = cte."userId"
+LEFT JOIN cte cte2
+ON cte.id = ANY(cte2.path)
+GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path
 LIMIT 10;
 `
-
-
+    // console.log(comments)
+    // @ts-ignore
+    comments = comments.map(comment => {
+        comment.childrenCount = Number(comment.childrenCount);
+        return comment;
+    });
     res.status(200).json({
         comments
     });
