@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `File` ADD COLUMN `isImage` BOOLEAN NOT NULL DEFAULT false;

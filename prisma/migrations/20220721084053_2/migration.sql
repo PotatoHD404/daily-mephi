@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `File` MODIFY `url` VARCHAR(1400) NOT NULL;

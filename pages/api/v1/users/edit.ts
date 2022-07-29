@@ -24,16 +24,23 @@ export default async function handler(
         return;
     }
     // const allUsers = {status: "ok"}
-    await prisma.user.update({
-            where:{
-                id: session.sub
-            },
-            data: {
-                name,
-                image,
+    try {
+        await prisma.user.update({
+                where:{
+                    id: session.sub
+                },
+                data: {
+                    name,
+                    image,
+                }
             }
-        }
-    )
+        )
+    }
+    catch (e) {
+        res.status(500).json({status: "internal server error"});
+        return;
+    }
+
 
     res.status(200).json({status: "ok"});
 }

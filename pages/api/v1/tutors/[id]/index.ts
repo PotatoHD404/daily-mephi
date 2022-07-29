@@ -29,70 +29,52 @@ export default async function handler(
         url: string | null,
     }[] = await prisma.$queryRaw`
 SELECT
-Tutor.id AS id,
-firstName,
-lastName,
-fatherName,
-updated,
-nickName,
-Tutor.url as url,
-(IFNULL(LegacyRating.exams / NULLIF(LegacyRating.examsCount, 0), 0) + IFNULL(LegacyRating.quality / NULLIF(LegacyRating.qualityCount, 0), 0) + IFNULL(LegacyRating.personality / NULLIF(LegacyRating.personalityCount, 0), 0)) / 3 AS legacyRating,
-IFNULL(AVG(Rate.quality), 0) AS quality,
-IFNULL(AVG(Rate.exams), 0) AS exams,
-IFNULL(AVG(Rate.personality), 0) AS personality,
-IFNULL(AVG(Rate.punctuality), 0) AS punctuality,
-COUNT(Review.id) as reviewsCount,
-File.images AS images,
-Faculty.faculties as faculties,
-Discipline.disciplines as disciplines
-FROM Tutor
-LEFT JOIN LegacyRating
+"Tutor".id as id,
+"firstName",
+"lastName",
+"fatherName",
+"updated",
+"nickName",
+(COALESCE("LegacyRating"."exams" / CAST(NULLIF("LegacyRating"."examsCount", 0) AS FLOAT), 0.0) + COALESCE("LegacyRating".quality / CAST(NULLIF("LegacyRating"."qualityCount", 0) AS FLOAT), 0.0) + COALESCE("LegacyRating".personality / CAST(NULLIF("LegacyRating"."personalityCount", 0) AS FLOAT), 0.0)) / 3 AS "legacyRating",
+IFNULL(AVG("Rate".quality), 0) AS quality,
+IFNULL(AVG("Rate".exams), 0) AS exams,
+IFNULL(AVG("Rate".personality), 0) AS personality,
+IFNULL(AVG("Rate".punctuality), 0) AS punctuality,
+COUNT("Review".id) as "reviewsCount",
+COUNT("Material".id) as "materialsCount",
+IF(COUNT("File".id) > 0, ARRAY_AGG("File".url), '{}') as images,
+IF(COUNT("Discipline".name) > 0, ARRAY_AGG("Discipline".name), '{}') as disciplines,
+IF(COUNT("Faculty".name) > 0, ARRAY_AGG("Faculty".name), '{}') as faculties
+FROM "Tutor"
+LEFT JOIN "LegacyRating"
 ON
-LegacyRating.tutorId = Tutor.id
-LEFT JOIN Rate
+"LegacyRating"."tutorId" = "Tutor".id
+LEFT JOIN "Rate"
 ON
-Rate.tutorId = Tutor.id
-LEFT JOIN Review
+"Rate"."tutorId" = "Tutor".id
+LEFT JOIN "Review"
 ON
-Review.tutorId = Tutor.id
-LEFT JOIN Material
+"Review"."tutorId" = "Tutor".id
+LEFT JOIN "Material"
 ON
-Material.tutorId = Tutor.id
-LEFT JOIN (
-    SELECT Tutor.id as id, IF(COUNT(File.url) = 0, JSON_ARRAY(), JSON_ARRAYAGG(File.url)) AS images
-    FROM Tutor
-    LEFT JOIN File
-    ON
-    File.tutorId = Tutor.id
-    GROUP BY Tutor.id
-) AS File
-ON File.id = Tutor.id
-LEFT JOIN (
-    SELECT Tutor.id as id, IF(COUNT(Faculty.name) = 0, JSON_ARRAY(), JSON_ARRAYAGG(Faculty.name)) AS faculties
-    FROM Tutor
-    LEFT JOIN _FacultyToTutor
-    ON
-    _FacultyToTutor.B = Tutor.id
-    LEFT JOIN Faculty
-    ON
-    _FacultyToTutor.A = Faculty.id
-    GROUP BY Tutor.id
-) AS Faculty
-ON Faculty.id = Tutor.id
-LEFT JOIN (
-    SELECT Tutor.id as id, IF(COUNT(Discipline.name) = 0, JSON_ARRAY(), JSON_ARRAYAGG(Discipline.name)) AS disciplines
-    FROM Tutor
-    LEFT JOIN _DisciplineToTutor
-    ON
-    _DisciplineToTutor.B = Tutor.id
-    LEFT JOIN Discipline
-    ON
-    _DisciplineToTutor.A = Discipline.id
-    GROUP BY Tutor.id
-) AS Discipline
-ON Discipline.id = Tutor.id
-WHERE Tutor.id = ${id}
-GROUP BY Tutor.id;
+"Material"."tutorId" = "Tutor".id
+LEFT JOIN "File"
+ON
+"File"."tutorId" = "Tutor".id
+LEFT JOIN "_FacultyToTutor"
+ON
+"_FacultyToTutor"."B" = "Tutor".id
+LEFT JOIN "Faculty"
+ON
+"_FacultyToTutor"."A" = "Faculty".id
+LEFT JOIN "_DisciplineToTutor"
+ON
+"_DisciplineToTutor"."B" = "Tutor".id
+LEFT JOIN "Discipline"
+ON
+"_DisciplineToTutor"."A" = "Discipline".id
+WHERE "Tutor".id = ${id}
+GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality", "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
 `
 
     result = result.map(item => {
@@ -101,5 +83,10 @@ GROUP BY Tutor.id;
         item.materialsCount = Number(item.materialsCount)
         return item
     });
-    res.status(200).json(result);
+    if(result[0] === undefined) {
+        res.status(404).json({status: "not found"});
+        return;
+    }
+
+    res.status(200).json(result[0]);
 }

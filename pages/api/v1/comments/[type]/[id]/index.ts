@@ -24,8 +24,8 @@ async function newComment(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
+    console.log(session.sub, parentId, id)
     const comment = await prisma.comment.create({
-        // @ts-ignore
         data: {
             text,
             review: type === "review" ? {
@@ -62,7 +62,25 @@ async function newComment(
         id: comment.id,
     });
 }
-
+// WITH RECURSIVE cte (id, text, createdAt, parentId, userId) as (
+//     SELECT     id,
+//     text,
+//     createdAt,
+//     parentId,
+//     userId
+// WHERE      postId = d8db9556-ba99-4f85-9787-49d618f8bcf2 AND
+// parentId IS NULL
+// UNION ALL
+// SELECT     c.id,
+//     c.text,
+//     c.createdAt,
+//     c.parentId,
+//     c.userId
+// FROM       Comment c
+// INNER JOIN cte
+// on c.parentId = cte.id
+// )
+// SELECT * FROM cte;
 async function getComments(
     req: NextApiRequest,
     res: NextApiResponse<Object>
@@ -72,35 +90,32 @@ async function getComments(
         res.status(400).json({status: "bad request"});
         return;
     }
-    const comments = await prisma.comment.findMany({
-        where: {
-            postId: id,
-        },
-        select: {
-            text: true,
-            createdAt: true,
-            comments: {
-                select: {
-                    id: true,
-                    text: true,
-                    createdAt: true,
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                        }
-                    },
-                    _count: true,
-                },
-                orderBy: {
-                    createdAt: 'asc',
-                },
-                take: 10,
-            }
-        },
-        take: 10,
-    });
+    let comments = await prisma.$queryRaw`
+WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId") AS (
+    SELECT
+    id,
+    text,
+    "createdAt",
+    "parentId",
+    "userId"
+FROM public."Comment"
+WHERE "Comment"."parentId" IS NULL AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
+UNION ALL
+SELECT     c.id,
+    c.text,
+    c."createdAt",
+    c."parentId",
+    c."userId"
+FROM       "Comment" c
+INNER JOIN cte
+on c."parentId" = cte.id
+)
+SELECT * FROM cte
+LEFT JOIN public."User"
+ON
+"User"."id" = cte."userId"
+LIMIT 10;
+`
 
 
     res.status(200).json({

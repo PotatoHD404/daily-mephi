@@ -3,29 +3,27 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
+  previewFeatures = ["interactiveTransactions"]
   binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
-  id                String  @id @default(uuid()) @db.Char(36)
-  userId            String  @db.Char(36)
+  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String  @db.Uuid
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -36,9 +34,9 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(uuid()) @db.Char(36)
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   sessionToken String   @unique
-  userId       String   @db.Char(36)
+  userId       String   @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -46,8 +44,8 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(uuid()) @db.Char(36)
-  name          String?   @unique @db.VarChar(100)
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?   @unique @db.String(100)
   image         String?   @unique
   rating        Int       @default(0)
   role          String    @default("default")
@@ -82,49 +80,53 @@ model VerificationToken {
 }
 
 model Comment {
-  id        String   @id @default(uuid()) @db.Char(36)
-  text      String   @db.MediumText
-  createdAt DateTime @default(now())
-  userId    String   @db.Char(36)
-  postId    String   @db.Char(36)
-  parentId  String?  @db.Char(36)
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  text       String
+  createdAt  DateTime @default(now())
+  userId     String   @db.Uuid
+  reviewId   String?  @db.Uuid
+  materialId String?  @db.Uuid
+  newsId     String?  @db.Uuid
+  parentId   String?  @db.Uuid
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  review   Review?   @relation(map: "reviews_comments", fields: [postId], references: [id], onDelete: Cascade)
-  material Material? @relation(map: "materials_comments", fields: [postId], references: [id], onDelete: Cascade)
-  news     News?     @relation(map: "news_comments", fields: [postId], references: [id], onDelete: Cascade)
+  review   Review?   @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
+  material Material? @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
+  news     News?     @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
 
   @@index([createdAt])
   @@index([userId])
-  @@index([postId])
+  @@index([reviewId])
+  @@index([materialId])
+  @@index([newsId])
   @@index([parentId])
 }
 
 model Discipline {
-  id        String     @id @default(uuid()) @db.Char(36)
-  name      String     @unique @db.VarChar(400)
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String     @unique @db.String(400)
   tutors    Tutor[]
   materials Material[]
 }
 
 model Faculty {
-  id        String     @id @default(uuid()) @db.Char(36)
-  name      String     @unique @db.VarChar(200)
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String     @unique @db.String(200)
   tutors    Tutor[]
   materials Material[]
 }
 
 model File {
-  id         String   @id @db.Char(36)
-  url        String   @db.VarChar(1400)
+  id         String   @id @db.Uuid
+  url        String   @db.String(1400)
   uploaded   DateTime @default(now())
-  filename   String   @db.VarChar(200)
+  filename   String   @db.String(200)
   isImage    Boolean  @default(false)
-  userId     String?  @db.Char(36)
-  tutorId    String?  @db.Char(36)
-  materialId String?  @db.Char(36)
+  userId     String?  @db.Uuid
+  tutorId    String?  @db.Uuid
+  materialId String?  @db.Uuid
 
   tutor    Tutor?    @relation(fields: [tutorId], references: [id])
   user     User?     @relation(fields: [userId], references: [id])
@@ -137,11 +139,11 @@ model File {
 }
 
 model Material {
-  id          String    @id @default(uuid()) @db.Char(36)
-  description String?   @db.Text
-  header      String    @db.VarChar(280)
-  userId      String?   @db.Char(36)
-  tutorId     String?   @db.Char(36)
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  description String?
+  header      String    @db.String(280)
+  userId      String?   @db.Uuid
+  tutorId     String?   @db.Uuid
   uploaded    DateTime? @default(now())
 
   files       File[]
@@ -160,15 +162,15 @@ model Material {
 }
 
 model Semester {
-  id        String     @id @default(uuid()) @db.Char(36)
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name      String     @unique @db.Char(3)
   materials Material[]
 }
 
 model News {
-  id        String   @id @default(uuid()) @db.Char(36)
-  body      String   @db.Text
-  header    String   @db.VarChar(280)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  body      String
+  header    String   @db.String(280)
   createdAt DateTime @default(now())
 
   comments Comment[]
@@ -177,14 +179,14 @@ model News {
 }
 
 model LegacyRating {
-  id               String @id @default(uuid()) @db.Char(36)
+  id               String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   personality      Float
   personalityCount Int
   exams            Float
   examsCount       Int
   quality          Float
   qualityCount     Int
-  tutorId          String @unique @db.Char(36)
+  tutorId          String @unique @db.Uuid
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
 
@@ -198,10 +200,10 @@ model LegacyRating {
 }
 
 model Quote {
-  id       String    @id @default(uuid()) @db.Char(36)
-  body     String    @db.Text
-  tutorId  String    @db.Char(36)
-  userId   String?   @db.Char(36)
+  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  body     String
+  tutorId  String    @db.Uuid
+  userId   String?   @db.Uuid
   uploaded DateTime? @default(now())
 
   user     User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -215,13 +217,13 @@ model Quote {
 }
 
 model Rate {
-  id          String @id @default(uuid()) @db.Char(36)
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   punctuality Int
   personality Int
   exams       Int
   quality     Int
-  tutorId     String @db.Char(36)
-  userId      String @db.Char(36)
+  tutorId     String @db.Uuid
+  userId      String @db.Uuid
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -231,13 +233,13 @@ model Rate {
 }
 
 model Review {
-  id             String   @id @default(uuid()) @db.Char(36)
-  header         String   @db.VarChar(280)
-  body           String   @db.Text
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  header         String   @db.String(280)
+  body           String
   uploaded       DateTime @default(now())
-  legacyNickname String?  @db.VarChar(200)
-  userId         String?  @db.Char(36)
-  tutorId        String   @db.Char(36)
+  legacyNickname String?  @db.String(200)
+  userId         String?  @db.Uuid
+  tutorId        String   @db.Uuid
 
   tutor    Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -251,11 +253,11 @@ model Review {
 }
 
 model Tutor {
-  id         String    @id @default(uuid()) @db.Char(36)
-  firstName  String?   @db.VarChar(64)
-  lastName   String?   @db.VarChar(64)
-  fatherName String?   @db.VarChar(64)
-  nickName   String?   @unique @db.VarChar(64)
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName  String?   @db.String(64)
+  lastName   String?   @db.String(64)
+  fatherName String?   @db.String(64)
+  nickName   String?   @unique @db.String(64)
   url        String?
   updated    DateTime? @default(now())
 
@@ -270,7 +272,7 @@ model Tutor {
 }
 
 model Internal {
-  name    String    @id @db.VarChar(200)
-  value   String    @db.Text
+  name    String    @id @db.String(200)
+  value   String
   expires DateTime?
 }
