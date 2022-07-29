@@ -109,8 +109,8 @@ type LegacyRatingDTO = Omit<LegacyRating, "id" | "tutorId">;
 type QuoteDTO = Omit<Quote, "id" | "tutorId" | "userId">;
 type MaterialDTO =
     Omit<Material, "id" | "tutorId" | "userId"> & {
-    faculty: { connect: { id: string }[] } | undefined,
-    discipline: { connect: { id: string } } | undefined,
+    faculties: { connect: { id: string }[] } | undefined,
+    disciplines: { connect: { id: string } } | undefined,
     semesters: { connect: { id: string }[] },
     files: {connect: {id: string}[]}
 };
@@ -268,8 +268,7 @@ export default async function handler(
             reviews: {create: []},
             faculties: {connect: []},
             disciplines: {connect: []},
-            // @ts-ignore
-            images: tutor_imgs["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_imgs["fileMap"][`${id}.jpg`]}]} : {connect: []}
+            images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []}
         }
 
         for (const [key, value] of Object.entries(mephist_images.fileMap)) {
@@ -295,14 +294,14 @@ export default async function handler(
             tutor.materials.create.push({
                 description: jsonMaterial.Описание,
                 header: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
-                faculty: {
+                faculties: {
                     connect: jsonMaterial.Факультет?.split("; ").map(el => {
                         return {
                             id: facultyModels[el.trim()]
                         }
                     }) || []
                 },
-                discipline: jsonMaterial.Предмет !== null ? {connect: {id: disciplineModels[jsonMaterial.Предмет]}} : undefined,
+                disciplines: jsonMaterial.Предмет !== null ? {connect: {id: disciplineModels[jsonMaterial.Предмет]}} : undefined,
                 uploaded: new Date(jsonMaterial["Дата добавления"]),
                 semesters: {
                     connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?

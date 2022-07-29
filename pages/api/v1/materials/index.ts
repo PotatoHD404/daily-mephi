@@ -33,7 +33,7 @@ export default async function handler(
 ) {
 // function that creates material from request body
     const session = await getToken({req})
-    if (!session || !session.sub) {
+    if (!session?.sub) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
