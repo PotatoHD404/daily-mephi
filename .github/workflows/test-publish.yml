@@ -1,0 +1,83 @@
+name: 'CI'
+on: push
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
+jobs:
+  jest:
+    name: 'Jest tests'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install modules
+        run: yarn
+      - name: Run tests
+        run: yarn test
+  chromatic:
+    name: 'Chromatic Deployment'
+    # Operating System
+    runs-on: ubuntu-latest
+    # Job steps
+    steps:
+      - uses: actions/checkout@v3
+      - run: yarn
+        #👇 Adds Chromatic as a step in the workflow
+      - uses: chromaui/action@v1
+        # Options required for Chromatic's GitHub Action
+        with:
+          #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/react/en/deploy/ to obtain it
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+  publish:
+    name: 'Publish on cloud'
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [ job1, job2 ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Pull Terraform CLI
+        uses: hashicorp/setup-terraform@v2
+      - name: Add .terraformrc
+        run: echo 'provider_installation {
+            network_mirror {
+            url = "https://terraform-mirror.yandexcloud.net/"
+            include = ["registry.terraform.io/*/*"]
+          }
+          direct {
+            exclude = ["registry.terraform.io/*/*"]
+          }
+          }' > ~/.terraformrc
+      #  your build commands
+      # - run: |
+      #    ng build --prod
+      - name: Setup and deploy to vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required
+          working-directory: ./
+      - name: Zip and copy results to S3
+        run: |
+          mv ./.vercel/output/static ./terraform/static
+          mv ./.vercel/output/functions/api ./terraform/main-lambda/api
+          yarn --cwd ./terraform/main-lambda install
+          zip -r ./terraform/main-lambda.zip ./terraform/main-lambda/
+      - name: Install
+        run: |
+          curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          aws s3 sync ./build s3://test-bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'ap-south-1'
+      - name: Run Terraform Apply
+        run: |
+          cd terraform
+          terraform apply --auto-approve
+      
+

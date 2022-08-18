@@ -1,7 +1,9 @@
 import type {NextApiRequest, NextApiResponse} from "next";
-import getSvg from "components/getSvg";
+import getTutorSvg from "components/getTutorSvg";
 import sharp from 'sharp';
 import path from "path";
+import prisma from "lib/database/prisma";
+import {getTutor} from "../../tutors/[id]";
 
 // export const config = {
 //     runtime: 'experimental-edge',
@@ -10,11 +12,49 @@ import path from "path";
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
+
+
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<Buffer>
+    res: NextApiResponse<object>
 ) {
-    const svg = getSvg('Test', 'Test2');
+    const {type, id} = req.query;
+    if (!type || typeof type !== "string" || !id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+        res.status(400).json({status: "bad request"});
+        return;
+    }
+
+    let svg: string;
+    switch (type) {
+        case "tutors":
+            // get tutor from prisma
+            const tutor = await getTutor(id);
+            if(tutor === undefined) {
+                res.status(404).json({status: "not found"});
+                return;
+            }
+
+
+            let image = tutor.images[0] ? tutor.images[0] : "";
+            svg = getTutorSvg({
+                tutor_name: "",
+                mephist_rating: "",
+                daily_rating: "",
+                reviews: "",
+                reviews_count: "",
+                materials: "",
+                materials_count: "",
+                rating: "",
+                rating_value: "",
+                image
+            });
+            break;
+        default:
+            res.status(404).json({status: "not found"});
+            return;
+    }
+
+
     const roundedCorners = Buffer.from(svg);
 
     const roundedCornerResizer = sharp(roundedCorners).png();

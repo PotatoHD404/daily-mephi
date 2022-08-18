@@ -21,16 +21,16 @@ const nextConfig = {
     //     sw: 'service-worker.js',
     //     //...
     // },
-    module: {
-        rules: [
-            {
-                test: /\.*$/,
-                exclude: [
-                    './parsing/'
-                ]
-            }
-        ],
-    },
+    // module: {
+    //     rules: [
+    //         {
+    //             test: /\.*$/,
+    //             exclude: [
+    //                 './parsing/'
+    //             ]
+    //         }
+    //     ],
+    // },
     typescript: {
         // !! WARN !!
         // Dangerously allow production builds to successfully complete even if

@@ -150,8 +150,6 @@ LIMIT 10;
 
 }
 
-// TODO: add file size limit and file type limit
-
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Object>

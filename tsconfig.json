@@ -35,7 +35,7 @@
   "exclude": [
     "node_modules",
     "./parsing",
-    "./lambda.js",
+    "./terraform/main-lambda/lambda.js",
     "./.vercel",
     "./tests/rest"
   ],

@@ -119,7 +119,7 @@ model Faculty {
 }
 
 model File {
-  id         String   @id @db.Uuid
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   url        String   @db.String(1400)
   uploaded   DateTime @default(now())
   filename   String   @db.String(200)

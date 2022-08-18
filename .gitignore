@@ -65,3 +65,5 @@ parsing/home/new1.zip
 /notion-api/notion-api.zip
 
 .env.old
+
+terraform/.tfvars
