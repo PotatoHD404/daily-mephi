@@ -67,3 +67,13 @@ parsing/home/new1.zip
 .env.old
 
 terraform/.tfvars
+
+terraform/config.s3.tfbackend
+/terraform/main-lambda.zip
+/terraform/notion-api.zip
+/terraform/terraform.tfstate.backup
+/terraform/terraform.tfstate
+/terraform/main-lambda-launcher/
+/terraform/main-lambda/api/
+/terraform/.terraform/
+/terraform/static/

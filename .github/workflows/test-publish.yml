@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     # Job steps
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v1
       - run: yarn
         #👇 Adds Chromatic as a step in the workflow
       - uses: chromaui/action@v1
@@ -28,10 +28,10 @@ jobs:
           #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/react/en/deploy/ to obtain it
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
-  publish:
+  deploy:
     name: 'Publish on cloud'
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [ job1, job2 ]
+    needs: [   jest, chromatic ]
     runs-on: ubuntu-latest
 
     steps:
@@ -49,35 +49,51 @@ jobs:
             exclude = ["registry.terraform.io/*/*"]
           }
           }' > ~/.terraformrc
-      #  your build commands
-      # - run: |
-      #    ng build --prod
-      - name: Setup and deploy to vercel
-        uses: amondnet/vercel-action@v25
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: '--prod' #Optional
-          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
-          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required
-          working-directory: ./
-      - name: Zip and copy results to S3
-        run: |
-          mv ./.vercel/output/static ./terraform/static
-          mv ./.vercel/output/functions/api ./terraform/main-lambda/api
-          yarn --cwd ./terraform/main-lambda install
-          zip -r ./terraform/main-lambda.zip ./terraform/main-lambda/
-      - name: Install
-        run: |
-          curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          aws s3 sync ./build s3://test-bucket
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'ap-south-1'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ru-central1
+      - name: Install vercel CLI
+        run: npm install --global vercel@latest
       - name: Run Terraform Apply
         run: |
           cd terraform
-          terraform apply --auto-approve
-      
+          terraform apply --auto-approve  \
+          -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+          -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        env:
+          TF_VAR_token : ${{secrets.TF_VAR_TOKEN}}
+          TF_VAR_cloud_id : ${{secrets.TF_VAR_CLOUD_ID}}
+          TF_VAR_folder_id : ${{secrets.TF_VAR_FOLDER_ID}}
+          TF_VAR_zone : ${{secrets.TF_VAR_ZONE}}
+
+          TF_VAR_DATABASE_URL : ${{secrets.TF_VAR_DATABASE_URL}}
+          TF_VAR_LOCAL : ${{secrets.TF_VAR_LOCAL}}
+
+          TF_VAR_NEXTAUTH_SECRET : ${{secrets.TF_VAR_NEXTAUTH_SECRET}}
+          TF_VAR_HASH_SECRET : ${{secrets.TF_VAR_HASH_SECRET}}
+          TF_VAR_HASH_SALT : ${{secrets.TF_VAR_HASH_SALT}}
+          TF_VAR_HASH_MEMORY_COST : ${{secrets.TF_VAR_HASH_MEMORY_COST}}
+          TF_VAR_HASH_TYPE : ${{secrets.TF_VAR_HASH_TYPE}}
+          TF_VAR_HASH_TIME_COST : ${{secrets.TF_VAR_HASH_TIME_COST}}
+          TF_VAR_HASH_PARALLELISM : ${{secrets.TF_VAR_HASH_PARALLELISM}}
+          TF_VAR_AES_NONCE : ${{secrets.TF_VAR_AES_NONCE}}
+          TF_VAR_AES_KEY256 : ${{secrets.TF_VAR_AES_KEY256}}
+          TF_VAR_NEXTAUTH_URL : ${{secrets.TF_VAR_NEXTAUTH_URL}}
+          TF_VAR_JWT_PRIVATE : ${{secrets.TF_VAR_JWT_PRIVATE}}
+          TF_VAR_NOTION_TOKEN : ${{secrets.TF_VAR_NOTION_TOKEN}}
+          TF_VAR_NOTION_PRIVATE_PAGE : ${{secrets.TF_VAR_NOTION_PRIVATE_PAGE}}
+          TF_VAR_NOTION_TOKEN_V2 : ${{secrets.TF_VAR_NOTION_TOKEN_V2}}
+          TF_VAR_NOTION_EMAIL : ${{secrets.TF_VAR_NOTION_EMAIL}}
+          TF_VAR_NOTION_PASSWORD : ${{secrets.TF_VAR_NOTION_PASSWORD}}
+          TF_VAR_RECAPTCHA_SECRET : ${{secrets.TF_VAR_RECAPTCHA_SECRET}}
+          TF_VAR_RECAPTCHA_PUBLIC : ${{secrets.TF_VAR_RECAPTCHA_PUBLIC}}
+          TF_VAR_DATABASE_KEY : ${{secrets.TF_VAR_DATABASE_KEY}}
+
+          TF_VAR_VERCEL_TOKEN : ${{secrets.TF_VAR_VERCEL_TOKEN}}
+          TF_VAR_certificate_id : ${{secrets.TF_VAR_CERTIFICATE_ID}}
+
+
 
