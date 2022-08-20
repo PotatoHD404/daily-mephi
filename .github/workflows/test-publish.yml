@@ -51,9 +51,7 @@ jobs:
           }' > ~/.terraformrc
       - name: Configure AWS Credentials
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          rm -rf ~/.aws
           mkdir -p ~/.aws
           echo '[default]
             aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
