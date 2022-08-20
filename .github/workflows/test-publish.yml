@@ -50,11 +50,16 @@ jobs:
           }
           }' > ~/.terraformrc
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ru-central1
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          mkdir -p ~/.aws
+          echo '[default]
+            aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}' > ~/.aws/credentials
+          echo '[default]
+            region=ru-central1' > ~/.aws/config
       - name: Install vercel CLI
         run: npm install --global vercel@latest
       - name: Run Terraform Apply
