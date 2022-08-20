@@ -14,7 +14,7 @@ export function timeout(ms: number | undefined) {
 }
 
 async function uploadFile(upload_filename: string, fileMap: { [p: string]: string }, path: string) {
-    let session_token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..TTimqbEJ3vebNVFo.sSr_QlLT2MrlhwXfXqqaUa4BPJG3ip5N8WWTYKCTNd-0jCXT5xRMEn18v_etRvuQ-noMZ6cKRTKs1X5BILu0BJxb0GPXPP8b5n1oqoF91QWfoc9lHCIXeHh0DIeiPndhDoZON_pK35fofBPtSyAnx5zVEs4h6HiMrz6JpcBwzv4pTnguxqCpbpgnuUKHtL33aqgYRxe2LU-t2OBNsFDkQa39IvP8FD7hXKoZ.QeMrhDXr7lIGcQFwbs612w"
+    let session_token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..z4VKtgpGor2SuNp_.MsmJi38LjcHIjxtAj5KddBhDuOXU23A3PEai4DRctbwQLz4QGqhl7ZcVxb9WF6-EWOy0wYmhWdngGcZYDnHWqtbpu_lXOCf4O3rPRh3MoMPVdK_P_JfBkzwF-LSW-nvB0Laz8JacK3fH5YRsVbXPkxADGRWQBmWn7WypHFj8mhwKbKN8im7YtadnnpRtxxCRUOVpRD4Dl4WkAKhCowgdU0mPx2zs.k2Lmu3W07NYsm4b2K_AbWg"
     console.log(upload_filename, path)
     const res1 = await fetch(`http://localhost:3000/api/v1/files`, {
         method: "POST",
@@ -85,7 +85,7 @@ async function uploadFile(upload_filename: string, fileMap: { [p: string]: strin
     }
 
     const res3 = await fetch('http://localhost:3000/api/v1/files', {
-        method: "PUT",
+        method: "PATCH",
         headers: {
             "Cookie": `next-auth.session-token=${session_token}; FILE_JWT=${jwt_token}`
         },
@@ -112,15 +112,16 @@ export default async function handler(
     // const files = fs.readdirSync('parsing/home/tutor_imgs');
     // const promises = files.map((filename) => () => uploadFile(filename, fileMap, `parsing/home/tutor_imgs/${filename}`));
 
-    const folders = fs.readdirSync('parsing/mephist/materials/files');
-    let promises: (() => Promise<void>)[] = [];
-    folders.forEach((folder) => {
-        fs.readdirSync(`parsing/mephist/materials/files/${folder}`).forEach((filename) => {
-            promises.push(() => uploadFile(`${folder}-${filename}`, fileMap, `parsing/mephist/materials/files/${folder}/${filename}`))
-        })
-    });
+    const files = fs.readdirSync('../nft-collections/wickensnft');
+    files.pop()
+    const promises = files.map((filename) => () => uploadFile(filename, fileMap, `../nft-collections/wickensnft/${filename}`));
+    // folders.forEach((folder) => {
+    //     fs.readdirSync(`parsing/mephist/materials/files/${folder}`).forEach((filename) => {
+    //         promises.push(() => uploadFile(`${folder}-${filename}`, fileMap, `parsing/mephist/materials/files/${folder}/${filename}`))
+    //     })
+    // });
 
-    promises = promises.slice(10+1000+800);
+    // promises = promises.slice(10+1000+800);
     // const promises: (() => Promise<void>)[] = [];
     let time: number = 0;
     while (promises.length) {

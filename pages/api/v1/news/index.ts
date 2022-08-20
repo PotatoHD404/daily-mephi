@@ -14,40 +14,8 @@ export default async function handler(
             createdAt: true,
             comments: {
                 select: {
-                    id: true,
-                    text: true,
-                    createdAt: true,
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                        }
-                    },
-                    comments: {
-                        select: {
-                            id: true,
-                            text: true,
-                            createdAt: true,
-                            user: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    image: true,
-                                }
-                            },
-                            _count: true,
-                        },
-                        orderBy: {
-                            createdAt: 'asc',
-                        },
-                        take: 10,
-                    }
+                    _count: true,
                 },
-                orderBy: {
-                    createdAt: "asc"
-                },
-                take: 10,
             },
         },
         take: 10,

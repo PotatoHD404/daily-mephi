@@ -2,19 +2,8 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<object>
-) {
-    if (req.method !== "GET") {
-        res.status(405).json({status: "method not allowed"});
-        return;
-    }
-    const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-        res.status(400).json({status: "bad request"});
-        return;
-    }
+
+export async function getTutor(id: string) {
     let result: {
         id: string,
         firstName: string | null,
@@ -27,6 +16,7 @@ export default async function handler(
         reviewsCount: number,
         materialsCount: number,
         url: string | null,
+        images: string[],
     }[] = await prisma.$queryRaw`
 SELECT
 "Tutor".id as id,
@@ -76,17 +66,33 @@ ON
 WHERE "Tutor".id = ${id}
 GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality", "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
 `
-
     result = result.map(item => {
         item.legacyRating = Number(item.legacyRating.toFixed(2))
         item.reviewsCount = Number(item.reviewsCount)
         item.materialsCount = Number(item.materialsCount)
         return item
     });
-    if(result[0] === undefined) {
+    return result[0];
+}
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<object>
+) {
+    if (req.method !== "GET") {
+        res.status(405).json({status: "method not allowed"});
+        return;
+    }
+    const {id} = req.query;
+    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+        res.status(400).json({status: "bad request"});
+        return;
+    }
+    const tutor = await getTutor(id);
+    if(tutor === undefined) {
         res.status(404).json({status: "not found"});
         return;
     }
 
-    res.status(200).json(result[0]);
+    res.status(200).json(tutor);
 }

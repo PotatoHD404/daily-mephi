@@ -2,9 +2,6 @@ openapi: 3.0.0
 info:
   title: daily-mephi
   version: 1.0.0
-servers:
-  - url: https://d5dpvp15e201sqfqj6s0.apigw.yandexcloud.net
-  - url: https://daily-mephi.ru
 paths:
   /:
     get:
@@ -13,7 +10,7 @@ paths:
         bucket: daily-mephi
         object: static/index.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /404:
     get:
@@ -22,7 +19,7 @@ paths:
         bucket: daily-mephi
         object: static/404.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /500:
     get:
@@ -31,7 +28,7 @@ paths:
         bucket: daily-mephi
         object: static/500.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /about:
     get:
@@ -40,7 +37,7 @@ paths:
         bucket: daily-mephi
         object: static/about.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /index:
     get:
@@ -49,7 +46,7 @@ paths:
         bucket: daily-mephi
         object: static/index.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /materials:
     get:
@@ -58,7 +55,7 @@ paths:
         bucket: daily-mephi
         object: static/materials.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /profile:
     get:
@@ -67,7 +64,7 @@ paths:
         bucket: daily-mephi
         object: static/profile.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /profile/create:
     get:
@@ -76,7 +73,7 @@ paths:
         bucket: daily-mephi
         object: static/profile/create.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /tutors:
     get:
@@ -85,7 +82,7 @@ paths:
         bucket: daily-mephi
         object: static/tutors.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
   /tutors/{id+}:
     get:
@@ -94,7 +91,7 @@ paths:
         bucket: daily-mephi
         object: static/tutors/[id].html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -111,7 +108,7 @@ paths:
         bucket: daily-mephi
         object: static/users/[id].html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -125,7 +122,7 @@ paths:
     delete:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
+        function_id: ${function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -138,7 +135,7 @@ paths:
     get:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
+        function_id: ${function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -151,7 +148,7 @@ paths:
     patch:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
+        function_id: ${function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -164,7 +161,7 @@ paths:
     post:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
+        function_id: ${function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -177,7 +174,7 @@ paths:
     put:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: d4eanciupdktt1jla8dr
+        function_id: ${function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -195,7 +192,7 @@ paths:
         object: static/{file}
         error_object: static/404.html
         presigned_redirect: true
-        service_account_id: ajeqc0lu3h37u8hol16f
+        service_account_id: ${service_account_id}
       parameters:
         - explode: false
           in: path

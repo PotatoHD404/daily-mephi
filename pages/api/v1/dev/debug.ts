@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
+import axios from "axios";
 import prisma from "lib/database/prisma";
-import files from "parsing/files.json"
 
 export default async function handler(
     req: NextApiRequest,
@@ -11,19 +11,20 @@ export default async function handler(
         res.status(403).json({status: "not allowed"});
         return;
     }
-    // add files to database from json file
-    const json = await prisma.file.createMany({data: files["files"], skipDuplicates: true});
-
-    res.status(200).json({
-        status: "ok"
+    let files = await prisma.file.findMany({
+        select: {
+            id: true,
+            filename: true,
+        },
+        where: {
+            uploaded: {gte: "2022-08-07T12:21:18.791Z"}
+        }
     });
-    // const allUsers = {status: "ok"}
-    // let allUsers = await prisma.user.findMany(
-    // )
-
-    // allUsers = await prisma.user.findMany(
-    // )
-
-    // use `console.dir` to print nested objects
-    // console.dir(, {depth: null})
+    res.status(200).json({
+        status: "ok",
+        fileMap: files.reduce((acc: {[key: string]: string}, file) => {
+            acc[file.filename] = file.id
+            return acc;
+        }, {})
+    });
 }

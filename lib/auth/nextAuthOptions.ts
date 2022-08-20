@@ -23,52 +23,14 @@ export const nextAuthOptions: NextAuthOptions = {
     providers: [
         HomeMEPhiOauth(),
     ],
-    cookies: {
-        sessionToken: {
-            name: 'next-auth.session-token',
-            options: {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        callbackUrl: {
-            name: 'next-auth.callback-url',
-            options: {
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        csrfToken: {
-            name: 'next-auth.csrf-token',
-            options: {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        pkceCodeVerifier: {
-            name: 'next-auth.pkce.code_verifier',
-            options: {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/',
-                secure: true
-            }
-        },
-        state: {
-            name: 'next-auth.state',
-            options: {
-                httpOnly: true,
-                sameSite: "lax",
-                path: "/",
-                secure: true,
-            },
-        },
-    },
+    // callbacks: {
+    //     jwt: async ({ user, token }) => {
+    //         if (user) {
+    //             token.id = user.id;
+    //         }
+    //         return token;
+    //     },
+    // },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',

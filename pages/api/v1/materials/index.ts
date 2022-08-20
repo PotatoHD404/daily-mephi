@@ -25,22 +25,60 @@ import {getToken} from "next-auth/jwt";
 //         "uploaded": "2022-07-26T20:57:19.931Z"
 // }
 // }
-
-
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<object>
-) {
-// function that creates material from request body
+async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
     const session = await getToken({req})
     if (!session?.sub) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    if (req.method !== "POST") {
-        res.status(405).json({status: "method not allowed"});
+    const materials = await prisma.material.findMany({
+        select: {
+            id: true,
+            header: true,
+            description: true,
+            uploaded: true,
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                }
+            },
+            likes: {
+                select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    role: true,
+                }
+            },
+            dislikes: {
+                select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    role: true,
+                }
+            },
+            comments: {
+                select: {
+                    _count: true,
+                }
+            }
+        },
+        take: 10
+        // take: req.query.take ? parseInt(req.query.take) : undefined,
+    });
+    res.status(200).json({materials});
+}
+
+async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
+    const session = await getToken({req})
+    if (!session?.sub) {
+        res.status(401).json({status: 'You are not authenticated'});
         return;
     }
+
     const {
         header,
         description,
@@ -104,5 +142,18 @@ export default async function handler(
     );
 
     res.status(200).json({material});
+}
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<object>
+) {
+    if (req.method === "POST") {
+        await newMaterial(req, res);
+    } else if (req.method === "GET") {
+        await getMaterials(req, res);
+    } else {
+        res.status(405).json({status: 'Method not allowed'});
+    }
 
 }

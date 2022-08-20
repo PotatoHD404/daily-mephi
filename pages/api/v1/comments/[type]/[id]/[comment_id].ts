@@ -7,26 +7,39 @@ export default async function handler(
     res: NextApiResponse<object>
 ) {
     const {id, type, comment_id} = req.query;
-    if (!id || typeof id !== "string" || !type || typeof type !== "string" || !comment_id || typeof comment_id !== "string") {
+    if (!id ||
+        typeof id !== "string" ||
+        !type ||
+        typeof type !== "string" ||
+        !comment_id ||
+        typeof comment_id !== "string" ||
+        type !== "news" && type !== "material" && type !== "review") {
         res.status(400).json({status: "bad request"});
         return;
     }
-    const comment = prisma.comment.findFirst({
+    // get column name from type
+
+
+
+    // get comments from column type by prisma
+    const comment = prisma.comment.findUnique({
         where: {
-            id: comment_id,
-            postId: id,
+            [`${type}Id`]: id,
         },
         select: {
+            id: true,
             text: true,
             createdAt: true,
-            comments: {
+            parentId: true,
+            user: {
                 select: {
-                    _count: true,
+                    id: true,
+                    name: true,
+                    image: true,
                 }
             }
         }
     });
-
 
 
     res.status(200).json({

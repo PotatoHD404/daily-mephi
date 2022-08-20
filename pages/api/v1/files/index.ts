@@ -302,7 +302,7 @@ async function putFile(
             id: block,
             filename: filename + (ext ? '.' + ext : ''),
             isImage,
-            user: session.sub ? {connect: {id: session.sub as string}} : undefined
+            user: session.sub ? {connect: {id: session.sub}} : undefined
         },
     });
     // redirect = isImage ?
