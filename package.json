@@ -32,7 +32,7 @@
     "jsonwebtoken": "^8.5.1",
     "luxon": "^3.0.1",
     "next": "^12.2.2",
-    "next-auth": "^4.9.0",
+    "next-auth": "^4.10.3",
     "next-sitemap": "^3.1.10",
     "p-limit": "^4.0.0",
     "path-to-regexp": "^6.2.0",
