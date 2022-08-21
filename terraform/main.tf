@@ -22,18 +22,6 @@ variable "zone" {
   sensitive = true
 }
 
-variable "s3_access_key" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "s3_secret_key" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
 variable "DATABASE_URL" {
   type     = string
   nullable = false
@@ -172,6 +160,13 @@ variable "certificate_id" {
   sensitive = true
 }
 
+variable "DOMAIN_ID" {
+  type     = string
+  nullable = false
+  sensitive = true
+}
+
+
 locals {
   mime_types = jsondecode(file("${path.module}/mimes.json"))
 }
@@ -202,8 +197,6 @@ provider "yandex" {
   folder_id = var.folder_id
   zone      = var.zone
 }
-
-provider "http-full" {}
 
 #data "terraform_remote_state" "state" {
 #  backend = "s3"
@@ -252,7 +245,7 @@ resource "yandex_storage_bucket" "public" {
   access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
   secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
   acl    = "public-read"
-
+#  force_destroy = true
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
@@ -261,9 +254,6 @@ resource "yandex_storage_bucket" "public" {
     max_age_seconds = 0
   }
 
-  versioning {
-    enabled = true
-  }
 
   bucket = "public-bucket"
 }
@@ -288,7 +278,6 @@ resource "null_resource" "build_notion" {
   }
   provisioner "local-exec" {
     #    interpreter = ["PowerShell", "-Command"]
-    interpreter = ["PowerShell", "-Command"]
     command = <<-EOT
     cd ${path.root}/../
     yarn --cwd ./notion-api/ install
@@ -380,6 +369,7 @@ resource "null_resource" "build" {
   }
   provisioner "local-exec" {
 #    interpreter = ["PowerShell", "-Command"]
+    #rm -rf ./terraform/main-lambda/api/v1
     command = <<-EOT
 cd ${path.root}/../
 vercel pull --yes --environment=preview --token=${var.VERCEL_TOKEN}
@@ -389,8 +379,12 @@ rm -rf ./terraform/static ./terraform/main-lambda/api
 mv ./.vercel/output/static ./terraform/static
 mv ./.vercel/output/functions/api ./terraform/main-lambda/api
 yarn --cwd ./terraform/main-lambda install
+rm -rf ./terraform/main-lambda/api/v1
+cd ./terraform/main-lambda/ && zip -r ./../main-lambda.zip . > /dev/null 2>&1
+cd ./../../
 aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ${path.root}/static/ s3://${yandex_storage_bucket.public.bucket}/static
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambda.zip s3://daily-service/main-lambda.zip
     EOT
   }
 }
@@ -398,56 +392,70 @@ aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ${path.root
 #access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
 #secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
 
-
-
-data "http" "example_json" {
-  provider = http-full
-  url = "https://serverless-apigateway.api.cloud.yandex.net/apigateways/v1/apigateways/${yandex_api_gateway.daily-mephi-gateway.id}:addDomain"
-
-  method = "POST"
-
-  request_headers = {
-    content-type = "application/json"
-    Authorization = "Bearer ${yandex_iam_service_account_api_key.sa-api-key.secret_key}"
-  }
-
-  request_body = jsonencode({
-    "domainName": "daily-mephi.ru",
-    "certificateId": var.certificate_id
-  })
-
-}
-resource "null_resource" "add_domain" {
+resource "null_resource" "set_domain" {
   depends_on = [yandex_api_gateway.daily-mephi-gateway]
-  triggers = {
-    build_number = yandex_api_gateway.daily-mephi-gateway.id
-  }
-  provisioner "local-exec" {
-    command     = <<-EOT
-    yc serverless api-gateway add-domain --id ${yandex_api_gateway.daily-mephi-gateway.id} --certificate-id fpqnqevnths37vkvhhqn
-    EOT
-  }
+    triggers = {
+        build_number = yandex_api_gateway.daily-mephi-gateway.id
+    }
+    provisioner "local-exec" {
+        command = "yc serverless api-gateway add-domain ${yandex_api_gateway.daily-mephi-gateway.id} --domain-id ${var.DOMAIN_ID}"
+    }
 }
 
-data "archive_file" "zip_main" {
+#resource "null_resource" "add_domain" {
+#  depends_on = [yandex_api_gateway.daily-mephi-gateway]
+#  triggers = {
+#    build_number = yandex_api_gateway.daily-mephi-gateway.id
+#  }
+#  provisioner "local-exec" {
+#    command     = <<-EOT
+#    yc serverless api-gateway add-domain --id ${yandex_api_gateway.daily-mephi-gateway.id} --certificate-id fpqnqevnths37vkvhhqn
+#    EOT
+#  }
+#}
+
+#data "archive_file" "zip_main" {
+#  depends_on = [null_resource.build]
+#  type        = "zip"
+#  source_dir = "./main-lambda/"
+#  output_path = "main-lambda.zip"
+##  excludes = fileset(path.module, "main-lambda/api/v1/**/*")
+#}
+
+#resource "yandex_storage_object" "static-object" {
+#  depends_on = [data.archive_file.zip_main]
+#
+#  bucket = yandex_storage_bucket.public.bucket
+#  key    = "static/${each.value}"
+#  source = "daily-mephi-terraform/${each.value}"
+#
+##  etag         = filesha256("${path.root}/static/${each.value}")
+#  content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
+#}
+
+#data "local_file" "input" {
+#  depends_on = [null_resource.build]
+#  filename = "main-lambda.zip"
+#}
+
+data "external" "zip_main" {
   depends_on = [null_resource.build]
-  type        = "zip"
-  source_dir = "./main-lambda/"
-  output_path = "main-lambda.zip"
-  excludes = []
+  program = ["./hash.sh", "main-lambda.zip"]
 }
 
 resource "yandex_function" "backend" {
-  depends_on = [null_resource.build]
-  name               = "daily-mephi-backend"
-  description        = "daily-mephi-backend"
-  user_hash          = data.archive_file.zip_main.output_sha
-  runtime            = "nodejs16"
-  entrypoint         = "lambda.handler"
-  memory             = "256"
-  execution_timeout  = "10"
-  content {
-    zip_filename   = data.archive_file.zip_main.output_path
+  depends_on        = [null_resource.build, data.external.zip_main]
+  name              = "daily-mephi-backend"
+  description       = "daily-mephi-backend"
+  user_hash         = data.external.zip_main.result.sha256
+  runtime           = "nodejs16"
+  entrypoint        = "lambda.handler"
+  memory            = "256"
+  execution_timeout = "10"
+  package {
+    sha_256     = data.external.zip_main.result.sha256
+    bucket_name = "daily-service"
+    object_name = "main-lambda.zip"
   }
 }
 
@@ -456,6 +464,7 @@ data "template_file" "api_gateway" {
   vars = {
     service_account_id = yandex_iam_service_account.sa.id
     function_id = yandex_function.backend.id
+    bucket_name = yandex_storage_bucket.public.bucket
   }
 }
 

@@ -10,7 +10,10 @@ import prisma from "lib/database/prisma";
 import notion from "lib/database/notion";
 import {checkStatus, doRequest} from "../../../../helpers/utils";
 import {getToken} from "next-auth/jwt";
-import {timeout} from "../dev/upload_files";
+
+export function timeout(ms: number | undefined) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 export const extToMimes = {
