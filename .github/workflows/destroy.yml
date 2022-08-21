@@ -1,37 +1,12 @@
-name: 'Test and deploy'
-on: push
+name: 'Destroy Terraform'
+on: workflow_dispatch
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
 jobs:
-  jest:
-    name: 'Jest tests'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install modules
-        run: yarn
-      - name: Run tests
-        run: yarn test
-  chromatic:
-    name: 'Chromatic Deployment'
-    # Operating System
-    runs-on: ubuntu-latest
-    # Job steps
-    steps:
-      - uses: actions/checkout@v1
-      - run: yarn
-        #👇 Adds Chromatic as a step in the workflow
-      - uses: chromaui/action@v1
-        # Options required for Chromatic's GitHub Action
-        with:
-          #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/react/en/deploy/ to obtain it
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          token: ${{ secrets.GITHUB_TOKEN }}
   deploy:
-    name: 'Deploy on cloud'
+    name: 'Publish on cloud'
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [ jest, chromatic ]
     runs-on: ubuntu-latest
 
     steps:
@@ -58,23 +33,22 @@ jobs:
             aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}' > ~/.aws/credentials
           echo '[default]
             region=ru-central1' > ~/.aws/config
-
+      - name: Install vercel CLI
+        run: npm install --global vercel@latest
       - name: Install Yandex Cloud CLI
         run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
 
       - name: Add Yandex Cloud CLI to $PATH
         run: echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
-
+      - name: Remove files from bucket
+        run: aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://public-bucket --recursive
       - name: Init Yandex Cloud CLI
         run: |
           yc config profile create github-actions
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
           yc config set token ${{ secrets.YC_TOKEN }}
-      
 
-      - name: Install vercel CLI
-        run: npm install --global vercel@latest
       - name: Run Terraform Apply
         run: |
           cd terraform
@@ -82,7 +56,7 @@ jobs:
           terraform init \
           -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
           -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          terraform apply -input=false --auto-approve
+          terraform destroy -input=false --auto-approve
         env:
           TF_VAR_token : ${{secrets.TF_VAR_TOKEN}}
           TF_VAR_cloud_id : ${{secrets.TF_VAR_CLOUD_ID}}

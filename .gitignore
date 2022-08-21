@@ -77,3 +77,8 @@ terraform/config.s3.tfbackend
 /terraform/main-lambda/api/
 /terraform/.terraform/
 /terraform/static/
+
+terraform/.terraform.lock.hcl
+/pages/api/v1/dev/
+
+pages/api/v1/dev1/
