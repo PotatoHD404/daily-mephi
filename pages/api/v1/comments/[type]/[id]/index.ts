@@ -99,7 +99,7 @@ async function getComments(
         path: string[],
         childrenCount: bigint | number
     }[] = await prisma.$queryRaw`
-WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
+WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
     SELECT
     id,
     text,
@@ -107,7 +107,7 @@ WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
     "parentId",
     "userId",
     array[id] AS path
-FROM public."Comment"
+FROM "Comment"
 WHERE "Comment"."parentId" IS NULL AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
 UNION ALL
 SELECT     
@@ -127,16 +127,23 @@ cte.text,
 cte."createdAt",
 cte."parentId",
 cte."userId",
-cte.path as path,
-count(cte2.id) - 1 as "childrenCount"
+count(cte2.id) as "childrenCount"
 FROM cte
 LEFT JOIN public."User"
 ON
 "User"."id" = cte."userId"
 LEFT JOIN cte cte2
-ON cte.id = ANY(cte2.path)
+ON
+cte.id = ANY(cte2.path) AND cte2."id" != cte."id"
 GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path
-LIMIT 10;
+LIMIT 10
+)
+SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"
+from results
+LEFT JOIN results AS results2
+ON
+results2."parentId" = results.id
+GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId", results."childrenCount";
 `
     // console.log(comments)
     // @ts-ignore
@@ -155,11 +162,12 @@ export default async function handler(
     res: NextApiResponse<Object>
 ) {
     const session = await getToken({req})
-    if (!session?.sub) {
-        res.status(401).json({status: 'You are not authenticated'});
-        return;
-    }
+
     if (req.method === "POST") {
+        if (!session?.sub) {
+            res.status(401).json({status: 'You are not authenticated'});
+            return;
+        }
         await newComment(req, res);
     } else if (req.method === "GET") {
         await getComments(req, res);
