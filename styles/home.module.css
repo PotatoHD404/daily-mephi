@@ -6,6 +6,13 @@
     z-index: -1;
 }
 
+/*.bgWrap2 {*/
+/*    height: 100vh;*/
+/*    width: 100vw;*/
+/*    overflow: hidden;*/
+/*    z-index: -50;*/
+/*    background-image: url("");*/
+/*}*/
 .bgText {
     margin: 0;
     font-size: 2rem;

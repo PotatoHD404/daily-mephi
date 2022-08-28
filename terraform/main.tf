@@ -461,6 +461,12 @@ resource "yandex_function" "backend" {
   }
 }
 
+resource "yandex_function_iam_binding" "backend" {
+  function_id = yandex_function.backend.id
+  role        = "serverless.functions.invoker"
+  members     = ["system:allUsers"]
+}
+
 data "template_file" "api_gateway" {
   template = file("${path.module}/yandex-gateway.yaml")
   vars = {

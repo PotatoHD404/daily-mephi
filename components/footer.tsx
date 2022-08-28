@@ -18,8 +18,8 @@ function Footer() {
             <div className={home ? "col-start-2 col-end-12" : "col-start-1 col-end-13"}>
                 <div className="grid grid-cols-3 align-bottom">
                     <div className="bg-black rounded col-start-1 h-[2px] col-end-13 mb-8"/>
-                    <div className="flex justify-between col-start-1 col-end-13">
-                        <div className="text-left pl-1 text-2xl w-fit">
+                    <div className="flex justify-center md:justify-between col-start-1 col-end-13 ">
+                        <div className="text-left pl-1 text-2xl w-fit hidden md:flex">
                             support@daily-mephi.ru
                         </div>
 
@@ -27,7 +27,7 @@ function Footer() {
                             © {new Date().getFullYear()} Daily MEPhi
                         </div>
                         <div
-                            className="flex justify-end gap-3 text-2xl">
+                            className="justify-end gap-3 text-2xl hidden lg:flex">
                             <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
                                 <div className="w-8 h-8 flex">
                                     <Image
