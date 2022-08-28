@@ -61,8 +61,8 @@ parsing/home/new1.zip
 /parsing/
 /storybook-static/
 /build-storybook.log
-/notion-api/node_modules/
-/notion-api/notion-api.zip
+/functions/notion-api/node_modules/
+/functions/notion-api/notion-api.zip
 
 .env.old
 
@@ -73,7 +73,7 @@ terraform/config.s3.tfbackend
 /terraform/notion-api.zip
 /terraform/terraform.tfstate.backup
 /terraform/terraform.tfstate
-/terraform/main-lambda-launcher/
+/functions/main-lambda-launcher/
 /terraform/main-lambda/api/
 /terraform/.terraform/
 /terraform/static/
@@ -82,3 +82,6 @@ terraform/.terraform.lock.hcl
 /pages/api/v1/dev/
 
 pages/api/v1/dev1/
+/terraform/main-lambda/
+
+cloud-functions/notion-api/node_modules/

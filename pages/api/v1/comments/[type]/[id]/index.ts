@@ -100,7 +100,7 @@ async function getComments(
         childrenCount: bigint | number
     }[] = await prisma.$queryRaw`
 WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
-    SELECT
+SELECT
     id,
     text,
     "createdAt",
@@ -122,12 +122,12 @@ INNER JOIN cte
 ON c."parentId" = cte.id
 )
 SELECT
-cte.id,
-cte.text,
-cte."createdAt",
-cte."parentId",
-cte."userId",
-count(cte2.id) as "childrenCount"
+    cte.id,
+    cte.text,
+    cte."createdAt",
+    cte."parentId",
+    cte."userId",
+    count(cte2.id) as "childrenCount"
 FROM cte
 LEFT JOIN public."User"
 ON
@@ -136,6 +136,7 @@ LEFT JOIN cte cte2
 ON
 cte.id = ANY(cte2.path) AND cte2."id" != cte."id"
 GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path
+ORDER BY "childrenCount" DESC
 LIMIT 10
 )
 SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"

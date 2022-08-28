@@ -3,13 +3,18 @@ import CoffeeCup from 'images/coffee.svg'
 import Image from "next/image";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+function getElementByXpath(path: string) {
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
 const BuyMeACoffeeWidget = () => {
+
     const [state, setState] = useState({widget: false, triggered: false})
     const toggleWidget = () => {
-        setState({triggered: true, widget: !state.widget})
+        setState({triggered: true, widget: !state.widget});
     }
 
-    const path = `https://www.buymeacoffee.com/widget/page/${process.env.NEXT_PUBLIC_BUY_ME_A_COFFEE_USERNAME}?description=Support%20me%20on%20Buy%20me%20a%20coffee!&color=%235F7FFF`;
+    const path = `https://www.donationalerts.com/r/potatohd404`;
 
     return (
         <>
@@ -36,7 +41,8 @@ const BuyMeACoffeeWidget = () => {
                         <iframe className={"m-0 border-0 right-20 bottom-20 z-30 rounded-2xl " +
                             "transition-all duration-300 w-[335px] ease-in-out bg-white overflow:hidden " + (state.widget ? "h-[530px]" : "h-0 opacity-0")}
                                 src={path}
-                                title="Buy Me a Coffee"/> : null
+                                title="Buy Me a Coffee"
+                                id="donationFrame"/> : null
                 }
             </div>
         </>

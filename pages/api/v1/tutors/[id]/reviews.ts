@@ -15,7 +15,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             id: true,
             header: true,
             body: true,
-            uploaded: true,
+            createdAt: true,
             legacyNickname: true,
             user: {
                 select: {
@@ -47,7 +47,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             },
         },
         take: 10,
-        orderBy: {uploaded: 'desc'}
+        orderBy: {createdAt: 'desc'}
     });
 
     res.status(200).json(reviews);

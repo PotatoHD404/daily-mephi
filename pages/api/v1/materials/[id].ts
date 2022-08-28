@@ -9,7 +9,7 @@ import {getToken} from "next-auth/jwt";
 //     "material": {
 //     "header": "Лекции по дискве",
 //         "description": "",
-//         "uploaded": "2008-04-11T09:10:51.000Z",
+//         "createdAt": "2008-04-11T09:10:51.000Z",
 //         "files": [],
 //         "tutor": {
 //         "id": "5b2219c2-c2bf-41d6-8b4f-eb0a5763f717",
@@ -57,7 +57,7 @@ export default async function handler(
         select: {
             header: true,
             description: true,
-            uploaded: true,
+            createdAt: true,
             files: {
                 select: {
                     filename: true,

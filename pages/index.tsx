@@ -7,7 +7,7 @@ import Logo from 'images/logo.svg'
 import MiniCat from 'images/minicat.svg'
 
 import SearchIcon from '@mui/icons-material/Search';
-// import BuyMeACoffee from "components/buyMeCoffee";
+import BuyMeACoffee from "components/buyMeCoffee";
 import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import {getSession} from "next-auth/react";
@@ -87,7 +87,7 @@ class Home extends Component<{ session: Session }> {
                         </div>
                     </div>
                 </div>
-                {/*<BuyMeACoffee/>*/}
+                <BuyMeACoffee/>
             </>
         )
     }

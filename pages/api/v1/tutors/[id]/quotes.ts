@@ -16,7 +16,7 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
         select: {
             id: true,
             body: true,
-            uploaded: true,
+            createdAt: true,
             user: {
                 select: {
                     id: true,
@@ -42,7 +42,7 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
             },
         },
         take: 10,
-        orderBy: {uploaded: 'desc'}
+        orderBy: {createdAt: 'desc'}
     });
 
     res.status(200).json(quotes);
