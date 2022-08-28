@@ -280,7 +280,7 @@ resource "null_resource" "build_notion" {
     #    interpreter = ["PowerShell", "-Command"]
     command = <<-EOT
     cd ${path.root}/../
-    yarn --cwd ./notion-api/ install
+    yarn --cwd ./cloud-functions/notion-api/ install
     EOT
   }
 }
