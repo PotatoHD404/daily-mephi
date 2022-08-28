@@ -14,15 +14,18 @@ import WarningDialog from 'components/warning';
 import {useRouter} from "next/router";
 import Image from "next/image";
 import miniCat from 'images/minicat_transparent.svg'
+import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import {Session} from "next-auth";
+import MiniCat from "../images/minicat.svg";
 
 
 interface DefaultNavbarParams {
-    onClick: () => void;
+    handleClickOpenWarning: () => void;
+    toggleDrawer: () => void;
 }
 
-function DefaultNavbar(props: HomeNavbarParams) {
+function DefaultNavbar(props: DefaultNavbarParams) {
     return <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
                      justify-between align-middle bg-white bg-opacity-[36%] pl-8">
 
@@ -52,24 +55,12 @@ function DefaultNavbar(props: HomeNavbarParams) {
             </Link>
 
         </div>
-        <AuthSection onClick={props.onClick}/>
+        <AuthSection {...props}/>
 
     </nav>;
 }
 
-interface HomeNavbarParams {
-    // status: "authenticated" | "unauthenticated" | "loading";
-    // session: Session | null;
-    onClick: () => void;
-}
-
-interface AuthSectionParams {
-    // status: "authenticated" | "unauthenticated" | "loading";
-    // session: Session | null;
-    onClick: () => void;
-}
-
-function AuthSection(props: AuthSectionParams) {
+function AuthSection(props: DefaultNavbarParams) {
     const router = useRouter()
     const {data: session, status} = useSession()
     useEffect(() => {
@@ -104,7 +95,7 @@ function AuthSection(props: AuthSectionParams) {
         )
     } else if (status === "unauthenticated" || !session) {
         return (
-            <button onClick={props.onClick}
+            <button onClick={props.handleClickOpenWarning}
                     className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
                 <h3>Войти</h3>
             </button>
@@ -128,41 +119,67 @@ function AuthSection(props: AuthSectionParams) {
     }
 }
 
-function HomeNavbar(props: HomeNavbarParams) {
-    return <nav className="mb-0 flex grid-cols-12 grid text-4xl py-20">
-        <div className="col-start-2 col-end-12 flex flex-wrap
+function HomeNavbar(props: DefaultNavbarParams) {
+
+    return (
+        <nav>
+            <div className="hidden md:flex">
+                <div className="mb-0 flex grid-cols-12 grid 2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20">
+                    <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid">
-            <div className="flex col-start-1 col-end-10 justify-between">
-                <Link href="/about">
-                    <a className="underlining"><h3>О нас</h3></a>
-                </Link>
-                <Link href="/materials">
-                    <a className="underlining"><h3>Материалы</h3></a>
-                </Link>
+                        <div className="flex col-start-1 col-end-10 justify-between">
+                            <Link href="/about">
+                                <a className="underlining"><h3>О нас</h3></a>
+                            </Link>
+                            <Link href="/materials">
+                                <a className="underlining"><h3>Материалы</h3></a>
+                            </Link>
 
-                <Link href="/tutors">
-                    <a className="underlining"><h3>Преподаватели</h3></a>
-                </Link>
+                            <Link href="/tutors">
+                                <a className="underlining"><h3>Преподаватели</h3></a>
+                            </Link>
+                        </div>
+                        <AuthSection {...props}/>
+
+                    </div>
+                </div>
             </div>
-            <AuthSection onClick={props.onClick}/>
+            <div className="md:hidden">
+                <div className="flex justify-between h-12 mt-2  pl-5 pr-5">
+                    <div className="flexgrid h-full">
+                        {/* @ts-ignore */}
+                        <button className="h-full" onClick={props.toggleDrawer()}>
+                            <Image className="flex" src={burger}/>
+                        </button>
+                    </div>
+                    <Link href="/">
+                        <a className="flex h-full w-12">
+                            <Image src={MiniCat} alt="mini cat"
+                                   className="flex scale-"
+                                // layout="responsive"
+                            />
 
+                        </a>
+                    </Link>
+                </div>
+            </div>
 
-        </div>
-    </nav>;
+        </nav>);
 }
 
 interface NavParams {
     home: boolean;
-    handleClickOpen: () => void;
+    handleClickOpenWarning: () => void;
+    toggleDrawer: () => void;
 }
 
-function Nav({home, handleClickOpen}: NavParams) {
+function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
     if (home)
         return (
-            <HomeNavbar onClick={handleClickOpen}/>);
+            <HomeNavbar {...{handleClickOpenWarning, toggleDrawer}}/>);
     else
         return (
-            <DefaultNavbar onClick={handleClickOpen}/>);
+            <DefaultNavbar {...{handleClickOpenWarning, toggleDrawer}}/>);
 }
 
 
@@ -190,10 +207,10 @@ function Navbar() {
 
     const home: boolean = router.pathname === '/';
 
-    const handleClickOpen = () => {
+    const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
-    const handleClose = () => {
+    const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
 
@@ -227,8 +244,8 @@ function Navbar() {
     //greenBox
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{home, handleClickOpen}}/>
-            <WarningDialog handleClose={handleClose} opened={state.warning}/>
+            <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
+            <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {/* @ts-ignore*/}
             <SwappableDrawer
                 className={'lg:hidden'}

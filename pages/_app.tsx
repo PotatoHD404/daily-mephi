@@ -6,8 +6,13 @@ import {Session} from "next-auth";
 import {JSXInternal} from "preact/src/jsx";
 import React, {ReactNode} from "react";
 import Footer from "components/footer";
-import Image from "next/image";
+import Image from "next/future/image";
+import Image1 from "next/image";
 import Background from 'images/bg.svg'
+import Background1 from 'images/bg.png'
+import mobile_bg from 'images/mobile_bg.png'
+import ellipse_bg from 'images/mobile_bg.svg'
+import ellipse from 'images/ellipse.svg'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
@@ -67,17 +72,42 @@ const theme = createTheme({
 //     },
 // };
 
-function BackgroundComp() {
-    return <div className={styles.bgWrap}>
-        <Image
-            src={Background}
-            alt="background gradient"
-            quality={100}
-            objectFit="cover"
-            layout="fill"
-        />
-    </div>;
+function BackgroundComp({home}: { home: boolean }) {
+    return (
+        <div>
+            <div className={styles.bgWrap}>
+                <div className="hidden md:flex"><Image1
+                    src={Background}
+                    alt="background gradient"
+                    quality={100}
+                    objectFit="cover"
+                    layout="fill"
+                /></div>
+            </div>
+            <div className="-z-10 absolute overflow-clip w-full h-full md:hidden">
+                <div className="md:hidden justify-center items-center flex-wrap w-[300vw]">
+
+                    <Image
+                        src={Background1}
+                        alt="background gradient"
+                        quality={100}
+                        className="w-[200vw] h-[103.9vh]"
+                    />
+                    {/*<div className="greenBox w-[100vw] h-20"></div>*/}
+                    <Image
+                        src={ellipse}
+                        alt="background gradient"
+                        quality={100}
+                        className="-mt-[19vh] w-[300vw] -ml-[100vw]"
+                    />
+
+                </div>
+            </div>
+
+        </div>);
 }
+
+const css = {width: '100px', backgroundRepeat: "no-repeat"}
 
 function MyApp(
     {
@@ -106,9 +136,10 @@ function MyApp(
             {/*        objectFit="covers"*/}
             {/*    />*/}
             {/*</div>*/}
-            <BackgroundComp/>
+            <BackgroundComp {...{home}}/>
             {/*w-[125rem]*/}
-            <div className={"font-[Montserrat] relative min-h-screen pb-24 "
+
+            <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
                 + (home ? "" : "max-w-[85rem] mx-auto")}>
 
 

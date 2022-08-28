@@ -11,6 +11,7 @@ const nextConfig = {
         esmExternals: false,
         images: {
             unoptimized: true,
+            allowFutureImage: true,
         }
     },
     // pwa: {

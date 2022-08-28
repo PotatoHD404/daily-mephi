@@ -47,6 +47,29 @@ function confidence(ups: number, downs: number): number {
 
     return (left - right) / under;
 }
+// Translate confidence to simple sql statement without functions from js
+// SELECT id, (c3.left - c3.right) / c3.under as score
+// FROM (SELECT id,
+//     p + 1 / (2 * n) * z * z                         as left,
+//     z * SQRT(p * (1 - p) / n + z * z / (4 * n * n)) as right,
+//     1 + 1 / n * z * z                               as under
+// FROM (SELECT id,
+//     (ups + downs)       AS n,
+// ups / (ups + downs) AS p,
+//     z
+// FROM (SELECT id,
+//     count(cl."A")  as ups,
+//     count(cd."A")  as downs,
+//     1.281551565545 AS z
+// FROM "Comment"
+// LEFT JOIN "_comments_dislikes" cd on "Comment".id = cd."A"
+// LEFT JOIN "_comments_likes" cl on "Comment".id = cl."A"
+// group by id
+// ) as c1
+// WHERE ups + downs != 0) as c2) as c3;
+
+
+
 
 export default async function handler(
     req: NextApiRequest,
