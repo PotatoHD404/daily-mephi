@@ -22,7 +22,7 @@ import {getToken} from "next-auth/jwt";
 //         "header": "test header",
 //         "userId": "ef18eadb-34ea-4b3d-8705-b78d5d008009",
 //         "tutorId": "0009acc5-8edd-474e-8522-e803c3998065",
-//         "uploaded": "2022-07-26T20:57:19.931Z"
+//         "createdAt": "2022-07-26T20:57:19.931Z"
 // }
 // }
 async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
@@ -36,7 +36,7 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
             id: true,
             header: true,
             description: true,
-            uploaded: true,
+            createdAt: true,
             user: {
                 select: {
                     id: true,

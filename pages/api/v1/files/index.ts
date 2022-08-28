@@ -93,6 +93,7 @@ export const extToMimes = {
     "odt": "application/vnd.oasis.opendocument.text",
 
 }
+
 if (!process.env.NOTION_YC_IDS)
     throw new Error('There is no notion_yc_ids');
 const func_ids = process.env.NOTION_YC_IDS.split(';');

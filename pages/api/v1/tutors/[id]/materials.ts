@@ -18,7 +18,7 @@ export default async function handler(
             id: true,
             header: true,
             description: true,
-            uploaded: true,
+            createdAt: true,
             user: {
                 select: {
                     id: true,
@@ -49,7 +49,7 @@ export default async function handler(
             },
         },
         take: 10,
-        orderBy: {uploaded: 'desc'}
+        orderBy: {createdAt: 'desc'}
     });
 
     res.status(200).json(materials);

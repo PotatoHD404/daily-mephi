@@ -52,6 +52,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
+  score         Float     @default(0) @db.Float8
 
   accounts           Account[]
   sessions           Session[]
@@ -64,6 +65,8 @@ model User {
   quotes_dislikes    Quote[]    @relation(name: "quotes_dislikes")
   reviews_likes      Review[]   @relation(name: "reviews_likes")
   reviews_dislikes   Review[]   @relation(name: "reviews_dislikes")
+  comments_likes     Comment[]  @relation(name: "comments_likes")
+  comments_dislikes  Comment[]  @relation(name: "comments_dislikes")
   files              File[]
   materials          Material[]
   quotes             Quote[]
@@ -88,6 +91,7 @@ model Comment {
   materialId String?  @db.Uuid
   newsId     String?  @db.Uuid
   parentId   String?  @db.Uuid
+  score      Float    @default(0) @db.Float8
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   review   Review?   @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
@@ -95,7 +99,10 @@ model Comment {
   news     News?     @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
   parent   Comment?  @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   comments Comment[] @relation(name: "comment_parents")
+  likes    User[]    @relation(name: "comments_likes")
+  dislikes User[]    @relation(name: "comments_dislikes")
 
+  @@index([score(sort: "Desc")])
   @@index([createdAt])
   @@index([userId])
   @@index([reviewId])
@@ -121,7 +128,7 @@ model Faculty {
 model File {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   url        String   @db.String(1400)
-  uploaded   DateTime @default(now())
+  createdAt  DateTime @default(now())
   filename   String   @db.String(200)
   isImage    Boolean  @default(false)
   userId     String?  @db.Uuid
@@ -135,7 +142,7 @@ model File {
   @@index([userId])
   @@index([tutorId])
   @@index([materialId])
-  @@index([uploaded])
+  @@index([createdAt])
 }
 
 model Material {
@@ -144,7 +151,8 @@ model Material {
   header      String    @db.String(280)
   userId      String?   @db.Uuid
   tutorId     String?   @db.Uuid
-  uploaded    DateTime? @default(now())
+  createdAt   DateTime? @default(now())
+  score       Float     @default(0) @db.Float8
 
   files       File[]
   user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -156,7 +164,8 @@ model Material {
   dislikes    User[]       @relation(name: "materials_dislikes")
   semesters   Semester[]
 
-  @@index([uploaded])
+  @@index([score(sort: "Desc")])
+  @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
 }
@@ -200,18 +209,20 @@ model LegacyRating {
 }
 
 model Quote {
-  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  body     String
-  tutorId  String    @db.Uuid
-  userId   String?   @db.Uuid
-  uploaded DateTime? @default(now())
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  body      String
+  tutorId   String    @db.Uuid
+  userId    String?   @db.Uuid
+  createdAt DateTime? @default(now())
+  score     Float     @default(0) @db.Float8
 
   user     User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   likes    User[] @relation(name: "quotes_likes")
   dislikes User[] @relation(name: "quotes_dislikes")
 
-  @@index([uploaded])
+  @@index([score(sort: "Desc")])
+  @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
 }
@@ -236,10 +247,12 @@ model Review {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   header         String   @db.String(280)
   body           String
-  uploaded       DateTime @default(now())
+  createdAt      DateTime @default(now())
   legacyNickname String?  @db.String(200)
   userId         String?  @db.Uuid
   tutorId        String   @db.Uuid
+  score          Float    @default(0) @db.Float8
+
 
   tutor    Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -248,6 +261,7 @@ model Review {
   dislikes User[]    @relation(name: "reviews_dislikes")
 
   @@unique([userId, tutorId])
+  @@index([score(sort: "Desc")])
   @@index([userId])
   @@index([tutorId])
 }
@@ -259,7 +273,8 @@ model Tutor {
   fatherName String?   @db.String(64)
   nickName   String?   @unique @db.String(64)
   url        String?
-  updated    DateTime? @default(now())
+  updatedAt  DateTime? @default(now())
+  score      Float     @default(0) @db.Float8
 
   images       File[]
   rates        Rate[]

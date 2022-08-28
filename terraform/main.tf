@@ -288,7 +288,7 @@ resource "null_resource" "build_notion" {
 data "archive_file" "zip_notion" {
   depends_on = [null_resource.build_notion]
   type        = "zip"
-  source_dir = "../notion-api/"
+  source_dir = "../cloud-functions/notion-api/"
   output_path = "notion-api.zip"
   excludes = []
 }
@@ -375,9 +375,11 @@ cd ${path.root}/../
 vercel pull --yes --environment=preview --token=${var.VERCEL_TOKEN}
 vercel build --token=${var.VERCEL_TOKEN}
 vercel deploy --prebuilt --token=${var.VERCEL_TOKEN}
-rm -rf ./terraform/static ./terraform/main-lambda/api
+rm -rf ./terraform/static ./terraform/main-lambda
+cp -R ./cloud-functions/main ./terraform/main-lambda
 mv ./.vercel/output/static ./terraform/static
 mv ./.vercel/output/functions/api ./terraform/main-lambda/api
+
 yarn --cwd ./terraform/main-lambda install
 rm -rf ./terraform/main-lambda/api/v1
 cd ./terraform/main-lambda/ && zip -r ./../main-lambda.zip . > /dev/null 2>&1
