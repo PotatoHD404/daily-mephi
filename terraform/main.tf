@@ -295,7 +295,7 @@ data "archive_file" "zip_notion" {
 
 resource "yandex_function" "notion" {
   depends_on = [data.archive_file.zip_notion]
-  for_each = toset( [for i in range(1, 9) : tostring(i)] )
+  for_each = toset( [for i in range(1, 7) : tostring(i)] )
   name               = "notion-api-${each.value}"
   description        = "notion-api-${each.value}"
   user_hash          = data.archive_file.zip_notion.output_sha
