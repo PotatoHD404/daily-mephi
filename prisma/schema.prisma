@@ -87,7 +87,16 @@ model Comment {
   materialId String?  @db.Uuid
   newsId     String?  @db.Uuid
   parentId   String?  @db.Uuid
-  score      Float    @default(0) @db.Float8
+
+  ups   Int   @default(dbgenerated())
+  downs Int   @default(dbgenerated())
+  z     Float @default(dbgenerated()) @db.Float8
+  n     Int   @default(dbgenerated())
+  p     Float @default(dbgenerated()) @db.Float8
+  left  Float @default(dbgenerated()) @db.Float8
+  right Float @default(dbgenerated()) @db.Float8
+  under Float @default(dbgenerated()) @db.Float8
+  score Float @default(dbgenerated()) @db.Float8
 
   user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   review   Review?       @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
@@ -147,7 +156,14 @@ model Material {
   userId      String?   @db.Uuid
   tutorId     String?   @db.Uuid
   createdAt   DateTime? @default(now())
-  score       Float     @default(0) @db.Float8
+
+  ups     Int   @default(dbgenerated())
+  downs   Int   @default(dbgenerated())
+  n       Int   @default(dbgenerated())
+  order   Float @default(dbgenerated()) @db.Float8
+  sign    Int   @default(dbgenerated())
+  seconds Int   @default(dbgenerated())
+  score   Float @default(dbgenerated()) @db.Float8
 
   files       File[]
   user        User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -208,7 +224,10 @@ model Quote {
   tutorId   String    @db.Uuid
   userId    String?   @db.Uuid
   createdAt DateTime? @default(now())
-  score     Float     @default(0) @db.Float8
+
+  order   Float @default(dbgenerated()) @db.Float8
+  seconds Int   @default(dbgenerated())
+  score   Float @default(dbgenerated()) @db.Float8
 
   user  User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
@@ -244,7 +263,14 @@ model Review {
   legacyNickname String?  @db.String(200)
   userId         String?  @db.Uuid
   tutorId        String   @db.Uuid
-  score          Float    @default(0) @db.Float8
+
+  ups     Int   @default(dbgenerated())
+  downs   Int   @default(dbgenerated())
+  n       Int   @default(dbgenerated())
+  order   Float @default(dbgenerated()) @db.Float8
+  sign    Int   @default(dbgenerated())
+  seconds Int   @default(dbgenerated())
+  score   Float @default(dbgenerated()) @db.Float8
 
   tutor    Tutor        @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user     User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -317,7 +343,8 @@ model Tutor {
   nickName   String?   @unique @db.String(64)
   url        String?
   updatedAt  DateTime? @default(now())
-  score      Float     @default(0) @db.Float8
+
+  score Float @default(dbgenerated()) @db.Float8
 
   images       File[]
   rates        Rate[]

@@ -36,6 +36,7 @@ CREATE TABLE "User" (
     "email" STRING,
     "emailVerified" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -53,8 +54,11 @@ CREATE TABLE "Comment" (
     "text" STRING NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" UUID NOT NULL,
-    "postId" UUID NOT NULL,
+    "reviewId" UUID,
+    "materialId" UUID,
+    "newsId" UUID,
     "parentId" UUID,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
@@ -77,9 +81,9 @@ CREATE TABLE "Faculty" (
 
 -- CreateTable
 CREATE TABLE "File" (
-    "id" UUID NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "url" STRING(1400) NOT NULL,
-    "uploaded" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "filename" STRING(200) NOT NULL,
     "isImage" BOOL NOT NULL DEFAULT false,
     "userId" UUID,
@@ -96,7 +100,8 @@ CREATE TABLE "Material" (
     "header" STRING(280) NOT NULL,
     "userId" UUID,
     "tutorId" UUID,
-    "uploaded" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Material_pkey" PRIMARY KEY ("id")
 );
@@ -139,7 +144,8 @@ CREATE TABLE "Quote" (
     "body" STRING NOT NULL,
     "tutorId" UUID NOT NULL,
     "userId" UUID,
-    "uploaded" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Quote_pkey" PRIMARY KEY ("id")
 );
@@ -162,12 +168,49 @@ CREATE TABLE "Review" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "header" STRING(280) NOT NULL,
     "body" STRING NOT NULL,
-    "uploaded" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "legacyNickname" STRING(200),
     "userId" UUID,
     "tutorId" UUID NOT NULL,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ReviewLike" (
+    "userId" UUID NOT NULL,
+    "reviewId" UUID NOT NULL,
+    "like" BOOL NOT NULL,
+
+    CONSTRAINT "ReviewLike_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
+CREATE TABLE "CommentLike" (
+    "userId" UUID NOT NULL,
+    "commentId" UUID NOT NULL,
+    "like" BOOL NOT NULL,
+
+    CONSTRAINT "CommentLike_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
+CREATE TABLE "MaterialLike" (
+    "userId" UUID NOT NULL,
+    "materialId" UUID NOT NULL,
+    "like" BOOL NOT NULL,
+
+    CONSTRAINT "MaterialLike_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
+CREATE TABLE "QuoteLike" (
+    "userId" UUID NOT NULL,
+    "quoteId" UUID NOT NULL,
+    "like" BOOL NOT NULL,
+
+    CONSTRAINT "QuoteLike_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
@@ -178,7 +221,8 @@ CREATE TABLE "Tutor" (
     "fatherName" STRING(64),
     "nickName" STRING(64),
     "url" STRING,
-    "updated" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Tutor_pkey" PRIMARY KEY ("id")
 );
@@ -217,43 +261,7 @@ CREATE TABLE "_FacultyToMaterial" (
 );
 
 -- CreateTable
-CREATE TABLE "_materials_likes" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_materials_dislikes" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "_MaterialToSemester" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_quotes_likes" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_quotes_dislikes" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_reviews_likes" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "_reviews_dislikes" (
     "A" UUID NOT NULL,
     "B" UUID NOT NULL
 );
@@ -292,13 +300,22 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
+CREATE INDEX "Comment_score_idx" ON "Comment"("score");
+
+-- CreateIndex
 CREATE INDEX "Comment_createdAt_idx" ON "Comment"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "Comment_userId_idx" ON "Comment"("userId");
 
 -- CreateIndex
-CREATE INDEX "Comment_postId_idx" ON "Comment"("postId");
+CREATE INDEX "Comment_reviewId_idx" ON "Comment"("reviewId");
+
+-- CreateIndex
+CREATE INDEX "Comment_materialId_idx" ON "Comment"("materialId");
+
+-- CreateIndex
+CREATE INDEX "Comment_newsId_idx" ON "Comment"("newsId");
 
 -- CreateIndex
 CREATE INDEX "Comment_parentId_idx" ON "Comment"("parentId");
@@ -319,10 +336,13 @@ CREATE INDEX "File_tutorId_idx" ON "File"("tutorId");
 CREATE INDEX "File_materialId_idx" ON "File"("materialId");
 
 -- CreateIndex
-CREATE INDEX "File_uploaded_idx" ON "File"("uploaded");
+CREATE INDEX "File_createdAt_idx" ON "File"("createdAt");
 
 -- CreateIndex
-CREATE INDEX "Material_uploaded_idx" ON "Material"("uploaded");
+CREATE INDEX "Material_score_idx" ON "Material"("score");
+
+-- CreateIndex
+CREATE INDEX "Material_createdAt_idx" ON "Material"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "Material_userId_idx" ON "Material"("userId");
@@ -361,7 +381,10 @@ CREATE INDEX "LegacyRating_quality_idx" ON "LegacyRating"("quality");
 CREATE INDEX "LegacyRating_qualityCount_idx" ON "LegacyRating"("qualityCount");
 
 -- CreateIndex
-CREATE INDEX "Quote_uploaded_idx" ON "Quote"("uploaded");
+CREATE INDEX "Quote_score_idx" ON "Quote"("score");
+
+-- CreateIndex
+CREATE INDEX "Quote_createdAt_idx" ON "Quote"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "Quote_userId_idx" ON "Quote"("userId");
@@ -376,6 +399,9 @@ CREATE INDEX "Rate_userId_idx" ON "Rate"("userId");
 CREATE INDEX "Rate_tutorId_idx" ON "Rate"("tutorId");
 
 -- CreateIndex
+CREATE INDEX "Review_score_idx" ON "Review"("score");
+
+-- CreateIndex
 CREATE INDEX "Review_userId_idx" ON "Review"("userId");
 
 -- CreateIndex
@@ -383,6 +409,42 @@ CREATE INDEX "Review_tutorId_idx" ON "Review"("tutorId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Review_userId_tutorId_key" ON "Review"("userId", "tutorId");
+
+-- CreateIndex
+CREATE INDEX "ReviewLike_reviewId_idx" ON "ReviewLike"("reviewId");
+
+-- CreateIndex
+CREATE INDEX "ReviewLike_like_idx" ON "ReviewLike"("like");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ReviewLike_userId_reviewId_key" ON "ReviewLike"("userId", "reviewId");
+
+-- CreateIndex
+CREATE INDEX "CommentLike_commentId_idx" ON "CommentLike"("commentId");
+
+-- CreateIndex
+CREATE INDEX "CommentLike_like_idx" ON "CommentLike"("like");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CommentLike_userId_commentId_key" ON "CommentLike"("userId", "commentId");
+
+-- CreateIndex
+CREATE INDEX "MaterialLike_materialId_idx" ON "MaterialLike"("materialId");
+
+-- CreateIndex
+CREATE INDEX "MaterialLike_like_idx" ON "MaterialLike"("like");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MaterialLike_userId_materialId_key" ON "MaterialLike"("userId", "materialId");
+
+-- CreateIndex
+CREATE INDEX "QuoteLike_quoteId_idx" ON "QuoteLike"("quoteId");
+
+-- CreateIndex
+CREATE INDEX "QuoteLike_like_idx" ON "QuoteLike"("like");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "QuoteLike_userId_quoteId_key" ON "QuoteLike"("userId", "quoteId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Tutor_nickName_key" ON "Tutor"("nickName");
@@ -412,46 +474,10 @@ CREATE UNIQUE INDEX "_FacultyToMaterial_AB_unique" ON "_FacultyToMaterial"("A", 
 CREATE INDEX "_FacultyToMaterial_B_index" ON "_FacultyToMaterial"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_materials_likes_AB_unique" ON "_materials_likes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_materials_likes_B_index" ON "_materials_likes"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_materials_dislikes_AB_unique" ON "_materials_dislikes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_materials_dislikes_B_index" ON "_materials_dislikes"("B");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_MaterialToSemester_AB_unique" ON "_MaterialToSemester"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_MaterialToSemester_B_index" ON "_MaterialToSemester"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_quotes_likes_AB_unique" ON "_quotes_likes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_quotes_likes_B_index" ON "_quotes_likes"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_quotes_dislikes_AB_unique" ON "_quotes_dislikes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_quotes_dislikes_B_index" ON "_quotes_dislikes"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_reviews_likes_AB_unique" ON "_reviews_likes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_reviews_likes_B_index" ON "_reviews_likes"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_reviews_dislikes_AB_unique" ON "_reviews_dislikes"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_reviews_dislikes_B_index" ON "_reviews_dislikes"("B");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -463,13 +489,13 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "reviews_comments" FOREIGN KEY ("postId") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "reviews_comments" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "materials_comments" FOREIGN KEY ("postId") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "materials_comments" FOREIGN KEY ("materialId") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "news_comments" FOREIGN KEY ("postId") REFERENCES "News"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "news_comments" FOREIGN KEY ("newsId") REFERENCES "News"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Comment"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -511,6 +537,30 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_tutorId_fkey" FOREIGN KEY ("tutorId"
 ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ReviewLike" ADD CONSTRAINT "ReviewLike_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReviewLike" ADD CONSTRAINT "ReviewLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CommentLike" ADD CONSTRAINT "CommentLike_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CommentLike" ADD CONSTRAINT "CommentLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MaterialLike" ADD CONSTRAINT "MaterialLike_materialId_fkey" FOREIGN KEY ("materialId") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MaterialLike" ADD CONSTRAINT "MaterialLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuoteLike" ADD CONSTRAINT "QuoteLike_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "Quote"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "QuoteLike" ADD CONSTRAINT "QuoteLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "_DisciplineToTutor" ADD CONSTRAINT "_DisciplineToTutor_A_fkey" FOREIGN KEY ("A") REFERENCES "Discipline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -535,43 +585,7 @@ ALTER TABLE "_FacultyToMaterial" ADD CONSTRAINT "_FacultyToMaterial_A_fkey" FORE
 ALTER TABLE "_FacultyToMaterial" ADD CONSTRAINT "_FacultyToMaterial_B_fkey" FOREIGN KEY ("B") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_materials_likes" ADD CONSTRAINT "_materials_likes_A_fkey" FOREIGN KEY ("A") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_materials_likes" ADD CONSTRAINT "_materials_likes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_materials_dislikes" ADD CONSTRAINT "_materials_dislikes_A_fkey" FOREIGN KEY ("A") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_materials_dislikes" ADD CONSTRAINT "_materials_dislikes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "_MaterialToSemester" ADD CONSTRAINT "_MaterialToSemester_A_fkey" FOREIGN KEY ("A") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_MaterialToSemester" ADD CONSTRAINT "_MaterialToSemester_B_fkey" FOREIGN KEY ("B") REFERENCES "Semester"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_quotes_likes" ADD CONSTRAINT "_quotes_likes_A_fkey" FOREIGN KEY ("A") REFERENCES "Quote"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_quotes_likes" ADD CONSTRAINT "_quotes_likes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_quotes_dislikes" ADD CONSTRAINT "_quotes_dislikes_A_fkey" FOREIGN KEY ("A") REFERENCES "Quote"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_quotes_dislikes" ADD CONSTRAINT "_quotes_dislikes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_reviews_likes" ADD CONSTRAINT "_reviews_likes_A_fkey" FOREIGN KEY ("A") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_reviews_likes" ADD CONSTRAINT "_reviews_likes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_reviews_dislikes" ADD CONSTRAINT "_reviews_dislikes_A_fkey" FOREIGN KEY ("A") REFERENCES "Review"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_reviews_dislikes" ADD CONSTRAINT "_reviews_dislikes_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

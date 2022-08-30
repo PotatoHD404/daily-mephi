@@ -47,6 +47,7 @@ function confidence(ups: number, downs: number): number {
 
     return (left - right) / under;
 }
+
 // Translate confidence to simple sql statement without functions from js
 // SELECT id, (c3.left - c3.right) / c3.under as score
 // FROM (SELECT id,
@@ -69,21 +70,19 @@ function confidence(ups: number, downs: number): number {
 // WHERE ups + downs != 0) as c2) as c3;
 
 
-
-
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    if (req.method !== "GET") {
-        res.status(405).json({status: "method not allowed"});
-        return;
-    }
-    let quotes = await prisma.quote.findMany({
-        orderBy: {
-            score: "desc"
-        }
-    });
+    // if (req.method !== "GET") {
+    res.status(405).json({status: "method not allowed"});
+    return;
+    // }
+    // let quotes = await prisma.quote.findMany({
+    //     orderBy: {
+    //         score: "desc"
+    //     }
+    // });
 
-    res.status(200).json({});
+    // res.status(200).json({});
 }
