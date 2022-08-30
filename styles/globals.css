@@ -44,34 +44,66 @@ body::-webkit-scrollbar-button {
     background-color: rgba(0, 255, 0, 0.2);
 }
 
-.underlining {
+/*.underlining {*/
 
-    line-height: 1;
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-}
+/*    line-height: 1;*/
+/*    text-decoration: none;*/
+/*    cursor: pointer;*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*}*/
 
-.underlining:after {
-    background-color: black;
-    display: block;
-    content: "";
-    height: 0.1rem;
-    width: 0;
-    left: 50%;
-    position: absolute;
-    -webkit-transition: width 0.3s ease-in-out;
-    -moz-transition: width 0.3s ease-in-out;
-    transition: width 0.3s ease-in-out;
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    transform: translateX(-50%);
-}
+/*.underlining:after {*/
+/*    background-color: black;*/
+/*    display: block;*/
+/*    content: "";*/
+/*    height: 0.1rem;*/
+/*    width: 0;*/
+/*    left: 50%;*/
+/*    position: absolute;*/
+/*    -webkit-transition: width 0.3s ease-in-out;*/
+/*    -moz-transition: width 0.3s ease-in-out;*/
+/*    transition: width 0.3s ease-in-out;*/
+/*    -webkit-transform: translateX(-50%);*/
+/*    -moz-transform: translateX(-50%);*/
+/*    transform: translateX(-50%);*/
+/*}*/
 
-.underlining:hover:after,
-.underlining:focus:after {
-    width: 100%;
+/*.underlining:hover:after,*/
+/*.underlining:focus:after {*/
+/*    width: 100%;*/
+/*}*/
+
+@layer utilities {
+    .underlining {
+
+        line-height: 1;
+        text-decoration: none;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+    }
+
+    .underlining:after {
+        background-color: black;
+        display: block;
+        content: "";
+        height: 0.1rem;
+        width: 0;
+        left: 50%;
+        position: absolute;
+        -webkit-transition: width 0.3s ease-in-out;
+        -moz-transition: width 0.3s ease-in-out;
+        transition: width 0.3s ease-in-out;
+        -webkit-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        transform: translateX(-50%);
+    }
+
+    .underlining:hover:after,
+    .underlining:focus:after {
+        width: 100%;
+    }
 }
 
 a {

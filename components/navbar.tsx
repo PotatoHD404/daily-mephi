@@ -17,7 +17,9 @@ import miniCat from 'images/minicat_transparent.svg'
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import {Session} from "next-auth";
-import MiniCat from "../images/minicat.svg";
+import MiniCat from "images/minicat.svg";
+import style from "styles/navbar.module.css";
+import {inspect} from "util";
 
 
 interface DefaultNavbarParams {
@@ -89,20 +91,20 @@ function AuthSection(props: DefaultNavbarParams) {
     if (status === "loading") {
         return (
             <div
-                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                className={style.authText}>
                 <h3>Загрузка...</h3>
             </div>
         )
     } else if (status === "unauthenticated" || !session) {
         return (
             <button onClick={props.handleClickOpenWarning}
-                    className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                    className={style.authText}>
                 <h3>Войти</h3>
             </button>
         )
     } else if (router.pathname === '/users/new') {
         return (
-            <button className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0"
+            <button className={style.authText}
                     onClick={() => {
                         signOut({redirect: false}).then(() => router.push("/"))
                     }}>
@@ -112,7 +114,7 @@ function AuthSection(props: DefaultNavbarParams) {
     } else {
         return (
             <button
-                className="flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0">
+                className={style.authText}>
                 <h3>{session.user?.name}</h3>
             </button>
         )
