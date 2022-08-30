@@ -48,8 +48,7 @@ function confidence(ups: number, downs: number): number {
     return (left - right) / under;
 }
 
-// Translate confidence to simple sql statement without functions from js
-// SELECT id, (c3.left - c3.right) / c3.under as score
+// WITH c4 as (SELECT id, '' as text, gen_random_uuid() as userId, (c3.left - c3.right) / c3.under as score
 // FROM (SELECT id,
 //     p + 1 / (2 * n) * z * z                         as left,
 //     z * SQRT(p * (1 - p) / n + z * z / (4 * n * n)) as right,
@@ -59,15 +58,18 @@ function confidence(ups: number, downs: number): number {
 // ups / (ups + downs) AS p,
 //     z
 // FROM (SELECT id,
-//     count(cl."A")  as ups,
-//     count(cd."A")  as downs,
+//     ups,
+//     downs,
 //     1.281551565545 AS z
-// FROM "Comment"
-// LEFT JOIN "_comments_dislikes" cd on "Comment".id = cd."A"
-// LEFT JOIN "_comments_likes" cl on "Comment".id = cl."A"
-// group by id
-// ) as c1
-// WHERE ups + downs != 0) as c2) as c3;
+// FROM "Comment") as c1
+// WHERE ups + downs != 0) as c2) as c3)
+// INSERT
+// INTO "Comment" (id, text, "userId", score)
+// SELECT *
+// FROM c4
+// ON CONFLICT (id)
+// DO UPDATE SET score = excluded.score;
+
 
 
 export default async function handler(
