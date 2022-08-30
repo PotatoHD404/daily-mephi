@@ -13,7 +13,10 @@ import GoldenCrown from "images/golden_crown.svg";
 import SilverCrown from "images/silver_crown.svg";
 import BronzeCrown from "images/bronze_crown.svg";
 import SEO from "components/seo";
-
+import {LikeComponent} from "components/like";
+import {DislikeComponent} from "components/dislike";
+import {CommentComponent} from "components/commentComponent";
+import {Comments} from "components/comments";
 
 interface CrownParams {
     place: number;
@@ -107,50 +110,6 @@ function TopUsers() {
     </div>;
 }
 
-function DislikeComp() {
-    return <div className="flex space-x-2 h-fit">
-        <div className="h-6 my-auto flex w-6 mt-2">
-            <Image
-                src={LikeIco}
-                alt="Dislike"
-                className="rotate-180"
-            />
-        </div>
-        <div className="text-xl my-auto">?</div>
-    </div>;
-}
-
-function LikeComp() {
-    return <div className="h-fit flex space-x-2">
-        <div className="h-6 my-auto flex w-6">
-            <Image
-                src={LikeIco}
-                alt="Like"
-            />
-        </div>
-        <div className="text-xl mt-0.5">?</div>
-    </div>;
-}
-
-function CommentComp() {
-    return <div className="flex space-x-2">
-        <div className="h-6 my-auto flex w-6  mt-2">
-            <Image
-                src={CommentIco}
-                alt="Comment"
-            />
-        </div>
-        <div className="text-xl my-auto">?</div>
-    </div>;
-}
-
-function Comments() {
-    return <div className="flex-wrap space-y-5">
-        <Comment><Comment/></Comment>
-        <Comment/>
-    </div>;
-}
-
 function Post() {
     return <>
         <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-90">
@@ -173,9 +132,9 @@ function Post() {
                 officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
             </div>
             <div className="flex space-x-4 font-semibold mb-4">
-                <LikeComp/>
-                <DislikeComp/>
-                <CommentComp/>
+                <LikeComponent/>
+                <DislikeComponent/>
+                <CommentComponent/>
             </div>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>

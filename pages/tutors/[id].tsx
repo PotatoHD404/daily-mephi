@@ -14,13 +14,82 @@ import DownloadIco from 'images/download.svg';
 import {a11yProps} from 'helpers/reactUtils'
 import SEO from "components/seo";
 import {useRouter} from "next/router";
+import styles from "styles/tutors.module.css";
+import {LikeComponent} from "components/like";
+import {DislikeComponent} from "components/dislike";
+import {CommentComponent} from "components/commentComponent";
+import {Comments} from "components/comments";
 
+function RatingComponent(props: { text: string }) {
+    return <div className="text-xl flex">
+        <div>{props.text}</div>
+        <HoverRating/>
+    </div>;
+}
+
+function ReviewHeaderComponent() {
+    return <div className="flex w-full text-[1rem] relative mb-2 pl-4">
+        <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
+        <div className="h-8 my-auto w-8">
+            <Image
+                src={ProfilePicture2}
+                alt="Profile picture"
+                className="rounded-full"
+            />
+        </div>
+        <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
+        <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
+    </div>;
+}
+
+function QuoteIconComponent(props: { src: any }) {
+    return <div className="flex h-10 my-auto">
+        <Image
+            src={props.src}
+            alt="Quotes ico"
+        />
+    </div>;
+}
+
+function ReviewsIconComponent(props: { src: any }) {
+    return <div className="flex h-10 my-auto">
+        <Image
+            src={props.src}
+            alt="Reviews ico"
+        />
+    </div>;
+}
+
+function MaterialsIconComponent(props: { src: any }) {
+    return <div className="flex h-10 my-auto">
+        <Image
+            src={props.src}
+            alt="Materials ico"
+        />
+    </div>;
+}
+
+function UserHeaderComponent(props: { alt: string, temp1: string, temp2: string }) {
+    return <div className="flex w-full mb-7">
+        <div className="h-14 my-auto w-14 ">
+            <Image
+                src={ProfilePicture2}
+                alt={props.alt}
+                className="rounded-full"
+            />
+        </div>
+        <span className="font-bold ml-2 my-auto">{props.temp1}</span>
+        <span className="ml-2 my-auto ml-8">{props.temp2}</span>
+    </div>;
+}
 
 function Tutor() {
     const router = useRouter()
     const { id } = router.query
     const [value, setValue] = React.useState(0);
-
+    const temp = "temp"
+    const temp1 = "temp1"
+    const temp2 = "temp2"
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -81,22 +150,10 @@ function Tutor() {
                             <span>30</span>
                         </div>
                         <div className="bottom-0 absolute w-full space-y-7 font-semibold">
-                            <div className="text-xl flex">
-                                <div>Характер(4.6):</div>
-                                <HoverRating/>
-                            </div>
-                            <div className="text-xl flex">
-                                <div>Преподавание(4.6):</div>
-                                <HoverRating/>
-                            </div>
-                            <div className="text-xl flex">
-                                <div>Пунктуальность(4.6):</div>
-                                <HoverRating/>
-                            </div>
-                            <div className="text-xl flex">
-                                <div>Прием зачетов/экзаменов(4.6):</div>
-                                <HoverRating/>
-                            </div>
+                            <RatingComponent text="Характер(4.6):"/>
+                            <RatingComponent text="Преподавание(4.6):"/>
+                            <RatingComponent text="Пунктуальность(4.6):"/>
+                            <RatingComponent text="Прием зачетов/экзаменов(4.6)"/>
                         </div>
                     </div>
                 </div>
@@ -106,12 +163,7 @@ function Tutor() {
                               TabIndicatorProps={{style: {background: 'white'}}}>
                             <Tab label={
                                 <div className="flex h-8  w-[11.5rem]">
-                                    {/*<div className="flex h-10 my-auto">*/}
-                                    {/*    <Image*/}
-                                    {/*        src={reviewsIco}*/}
-                                    {/*        alt="Reviews ico"*/}
-                                    {/*    />*/}
-                                    {/*</div>*/}
+                                    {/*<ReviewsIconComponent src={reviewsIco}/>*/}
                                     <div
                                         className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Отзывы
                                     </div>
@@ -120,12 +172,7 @@ function Tutor() {
                             />
                             <Tab label={
                                 <div className="flex h-8  w-[11rem]">
-                                    {/*<div className="flex h-10 my-auto">*/}
-                                    {/*    <Image*/}
-                                    {/*        src={quotesIco}*/}
-                                    {/*        alt="Quotes ico"*/}
-                                    {/*    />*/}
-                                    {/*</div>*/}
+                                    {/*<QuoteIconComponent src={quotesIco}/>*/}
                                     <div
                                         className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Цитаты
                                     </div>
@@ -134,12 +181,7 @@ function Tutor() {
                             />
                             <Tab label={
                                 <div className="flex h-8 w-[14.5rem]">
-                                    {/*<div className="flex h-10 my-auto">*/}
-                                    {/*    <Image*/}
-                                    {/*        src={materialsIco}*/}
-                                    {/*        alt="Materials ico"*/}
-                                    {/*    />*/}
-                                    {/*</div>*/}
+                                    {/*<MaterialsIconComponent src={materialsIco}/>*/}
                                     <div
                                         className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Материалы
                                     </div>
@@ -153,67 +195,20 @@ function Tutor() {
                         {value == 0 ?
                             <div className="flex-wrap space-y-10 w-full">
                                 <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
-                                    <div className="flex w-full mb-7">
-                                        <div className="h-14 my-auto w-14 ">
-                                            <Image
-                                                src={ProfilePicture2}
-                                                alt="Profile picture"
-                                                className="rounded-full"
-                                            />
-                                        </div>
-                                        <span className="font-bold ml-2 my-auto">User1</span>
-                                        <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
-                                    </div>
+                                    <UserHeaderComponent alt={"Profile picture"} temp1={"User1"} temp2={"15 февраля 2022"}/>
                                     <textarea
-                                        className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                 border border-gray-200 py-3 px-4 focus:outline-none
-                                  focus:bg-gray-100 focus:border-gray-500 transition-colors h-28 mb-3"
+                                        className={styles.reviewBody}
                                         placeholder="Оставить отзыв"/>
                                     <div className="flex space-x-4 font-semibold">
-                                        <div className="h-fit flex space-x-2">
-                                            <div className="h-6 my-auto flex w-6">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Like"
-                                                />
-                                            </div>
-                                            <div className="text-xl mt-0.5">?</div>
-                                        </div>
-                                        <div className="flex space-x-2 h-fit">
-                                            <div className="h-6 my-auto flex w-6 mt-2">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Dislike"
-                                                    className="rotate-180"
-                                                />
-                                            </div>
-                                            <div className="text-xl my-auto">?</div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <div className="h-6 my-auto flex w-6  mt-2">
-                                                <Image
-                                                    src={CommentIco}
-                                                    alt="Comment"
-                                                />
-                                            </div>
-                                            <div className="text-xl my-auto">?</div>
-                                        </div>
+                                        <LikeComponent/>
+                                        <DislikeComponent/>
+                                        <CommentComponent/>
                                     </div>
                                 </div>
 
 
                                 <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-90">
-                                    <div className="flex w-full mb-4">
-                                        <div className="h-14 my-auto w-14">
-                                            <Image
-                                                src={ProfilePicture2}
-                                                alt="Mini cat"
-                                                className="rounded-full"
-                                            />
-                                        </div>
-                                        <span className="font-bold ml-2 my-auto">User1</span>
-                                        <span className="ml-2 my-auto ml-8">15 февраля 2022</span>
-                                    </div>
+                                    <UserHeaderComponent alt={"Profile picture"} temp1={"User1"} temp2={"15 февраля 2022"}/>
                                     <div className="font-bold">Заголовок</div>
                                     <div className="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                         Adipisci
@@ -222,58 +217,19 @@ function Tutor() {
                                         officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
                                     </div>
                                     <div className="flex space-x-4 font-semibold mb-4">
-                                        <div className="h-fit flex space-x-2">
-                                            <div className="h-6 my-auto flex w-6">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Like"
-                                                />
-                                            </div>
-                                            <div className="text-xl mt-0.5">?</div>
-                                        </div>
-                                        <div className="flex space-x-2 h-fit">
-                                            <div className="h-6 my-auto flex w-6 mt-2">
-                                                <Image
-                                                    src={LikeIco}
-                                                    alt="Dislike"
-                                                    className="rotate-180"
-                                                />
-                                            </div>
-                                            <div className="text-xl my-auto">?</div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <div className="h-6 my-auto flex w-6  mt-2">
-                                                <Image
-                                                    src={CommentIco}
-                                                    alt="Comment"
-                                                />
-                                            </div>
-                                            <div className="text-xl my-auto">?</div>
-                                        </div>
+                                        <LikeComponent/>
+                                        <DislikeComponent/>
+                                        <CommentComponent/>
                                     </div>
                                     <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
-                                    <div className="flex-wrap space-y-5">
-                                        <Comment><Comment/></Comment>
-                                        <Comment/>
-                                    </div>
+                                    <Comments/>
                                 </div>
                             </div>
                             : null}
                         {value == 1 ?
                             <div className="flex-wrap space-y-10 w-full">
                                 <div>
-                                    <div className="flex w-full text-[1rem] relative mb-2 pl-4">
-                                        <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
-                                        <div className="h-8 my-auto w-8">
-                                            <Image
-                                                src={ProfilePicture2}
-                                                alt="Profile picture"
-                                                className="rounded-full"
-                                            />
-                                        </div>
-                                        <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
-                                        <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
-                                    </div>
+                                    <ReviewHeaderComponent/>
                                     <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
                                         <div className="relative flex mt-8">
                                             <div className="h-8 w-8">
@@ -300,25 +256,8 @@ function Tutor() {
                                         </div>
                                         <div className="text-center my-2 font-semibold">Трифоненков В.П.</div>
                                         <div className="flex space-x-4 font-semibold">
-                                            <div className="h-fit flex space-x-2">
-                                                <div className="h-6 my-auto flex w-6">
-                                                    <Image
-                                                        src={LikeIco}
-                                                        alt="Like"
-                                                    />
-                                                </div>
-                                                <div className="text-xl mt-0.5">?</div>
-                                            </div>
-                                            <div className="flex space-x-2 h-fit">
-                                                <div className="h-6 my-auto flex w-6 mt-2">
-                                                    <Image
-                                                        src={LikeIco}
-                                                        alt="Dislike"
-                                                        className="rotate-180"
-                                                    />
-                                                </div>
-                                                <div className="text-xl my-auto">?</div>
-                                            </div>
+                                            <LikeComponent/>
+                                            <DislikeComponent/>
                                         </div>
                                     </div>
                                 </div>
@@ -327,18 +266,7 @@ function Tutor() {
                         {value == 2 ?
                             <div className="flex-wrap space-y-10 w-full">
                                 <div>
-                                    <div className="flex w-full text-[1rem] relative mb-2 pl-4">
-                                        <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
-                                        <div className="h-8 my-auto w-8">
-                                            <Image
-                                                src={ProfilePicture2}
-                                                alt="Profile picture"
-                                                className="rounded-full"
-                                            />
-                                        </div>
-                                        <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
-                                        <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
-                                    </div>
+                                    <ReviewHeaderComponent/>
                                     <div className="rounded-2xl p-6 text-[1.7rem] w-full bg-white bg-opacity-[90%]">
                                         <div className="font-bold mt-3 mb-6">Название</div>
                                         <div className="relative flex">
@@ -361,34 +289,9 @@ function Tutor() {
                                         </div>
                                         <div className="flex space-x-4 font-semibold relative">
                                             <div className="flex space-x-4 font-semibold">
-                                                <div className="h-fit flex space-x-2">
-                                                    <div className="h-6 my-auto flex w-6">
-                                                        <Image
-                                                            src={LikeIco}
-                                                            alt="Like"
-                                                        />
-                                                    </div>
-                                                    <div className="text-xl mt-0.5">?</div>
-                                                </div>
-                                                <div className="flex space-x-2 h-fit">
-                                                    <div className="h-6 my-auto flex w-6 mt-2">
-                                                        <Image
-                                                            src={LikeIco}
-                                                            alt="Dislike"
-                                                            className="rotate-180"
-                                                        />
-                                                    </div>
-                                                    <div className="text-xl my-auto">?</div>
-                                                </div>
-                                                <div className="flex space-x-2">
-                                                    <div className="h-6 my-auto flex w-6  mt-2">
-                                                        <Image
-                                                            src={CommentIco}
-                                                            alt="Comment"
-                                                        />
-                                                    </div>
-                                                    <div className="text-xl my-auto">?</div>
-                                                </div>
+                                                <LikeComponent/>
+                                                <DislikeComponent/>
+                                                <CommentComponent/>
                                             </div>
                                             <div
                                                 className="absolute right-0 flex space-x-4 my-auto text-xl mt-0.5 inline-block">
@@ -407,8 +310,6 @@ function Tutor() {
                             </div>
                             : null}
                     </div>
-
-
                 </div>
             </div>
         </>);

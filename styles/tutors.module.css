@@ -1,0 +1,5 @@
+.reviewBody {
+    @apply rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
+    border border-gray-200 py-3 px-4 focus:outline-none
+    focus:bg-gray-100 focus:border-gray-500 transition-colors h-28 mb-3;
+}
