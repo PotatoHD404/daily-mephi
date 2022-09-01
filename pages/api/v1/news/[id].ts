@@ -20,11 +20,7 @@ export default async function handler(
             header: true,
             body: true,
             createdAt: true,
-            comments: {
-                select: {
-                    _count: true,
-                },
-            },
+            comment_count: true
         }
     });
 

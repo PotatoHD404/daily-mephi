@@ -54,18 +54,18 @@ model User {
   createdAt     DateTime  @default(now())
   score         Float     @default(0) @db.Float8
 
-  accounts        Account[]
-  sessions        Session[]
-  comments        Comment[]
-  reviews         Review[]
-  rates           Rate[]
-  materials_likes MaterialLike[]
-  quotes_likes    QuoteLike[]
-  reviews_likes   ReviewLike[]
-  comments_likes  CommentLike[]
-  files           File[]
-  materials       Material[]
-  quotes          Quote[]
+  accounts            Account[]
+  sessions            Session[]
+  comments            Comment[]
+  reviews             Review[]
+  rates               Rate[]
+  materials_reactions MaterialLike[]
+  quotes_reactions    QuoteLike[]
+  reviews_reactions   ReviewLike[]
+  comments_reactions  CommentLike[]
+  files               File[]
+  materials           Material[]
+  quotes              Quote[]
 
   @@index([rating(sort: "Desc")])
 }
@@ -88,17 +88,17 @@ model Comment {
   newsId     String?  @db.Uuid
   parentId   String?  @db.Uuid
 
-  ups   Int   @default(0)
-  downs Int   @default(0)
-  score Float @default(0) @db.Float8
+  likes    Int   @default(0)
+  dislikes Int   @default(0)
+  score    Float @default(0) @db.Float8
 
-  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  review   Review?       @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
-  material Material?     @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
-  news     News?         @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
-  parent   Comment?      @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  comments Comment[]     @relation(name: "comment_parents")
-  likes    CommentLike[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review?       @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
+  material  Material?     @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
+  news      News?         @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
+  parent    Comment?      @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comments  Comment[]     @relation(name: "comment_parents")
+  reactions CommentLike[]
 
   @@index([score(sort: "Desc")])
   @@index([createdAt])
@@ -151,9 +151,10 @@ model Material {
   tutorId     String?   @db.Uuid
   createdAt   DateTime? @default(now())
 
-  ups   Int   @default(0)
-  downs Int   @default(0)
-  score Float @default(0) @db.Float8
+  likes         Int   @default(0)
+  dislikes      Int   @default(0)
+  score         Float @default(0) @db.Float8
+  comment_count Int   @default(0)
 
   files       File[]
   user        User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -161,7 +162,7 @@ model Material {
   faculties   Faculty[]
   disciplines Discipline[]
   comments    Comment[]
-  likes       MaterialLike[]
+  reactions   MaterialLike[]
   semesters   Semester[]
 
   @@index([score(sort: "Desc")])
@@ -181,6 +182,7 @@ model News {
   body      String
   header    String   @db.String(280)
   createdAt DateTime @default(now())
+  comment_count Int   @default(0)
 
   comments Comment[]
 
@@ -215,11 +217,13 @@ model Quote {
   userId    String?   @db.Uuid
   createdAt DateTime? @default(now())
 
-  score Float @default(0) @db.Float8
+  likes    Int   @default(0)
+  dislikes Int   @default(0)
+  score    Float @default(0) @db.Float8
 
-  user  User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  likes QuoteLike[]
+  user      User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor     Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  reactions QuoteLike[]
 
   @@index([score(sort: "Desc")])
   @@index([createdAt])
@@ -252,12 +256,15 @@ model Review {
   userId         String?  @db.Uuid
   tutorId        String   @db.Uuid
 
-  score Float @default(0) @db.Float8
+  likes         Int   @default(0)
+  dislikes      Int   @default(0)
+  score         Float @default(0) @db.Float8
+  comment_count Int   @default(0)
 
-  tutor    Tutor        @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  user     User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comments Comment[]
-  likes    ReviewLike[]
+  tutor     Tutor        @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  reactions ReviewLike[]
 
   @@unique([userId, tutorId])
   @@index([score(sort: "Desc")])

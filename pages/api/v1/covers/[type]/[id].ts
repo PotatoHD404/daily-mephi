@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import path from "path";
 import prisma from "lib/database/prisma";
 import {getTutor} from "../../tutors/[id]";
+import {UUID_REGEX} from "../../tutors/[id]/materials";
 
 // export const config = {
 //     runtime: 'experimental-edge',
@@ -19,7 +20,7 @@ export default async function handler(
     res: NextApiResponse<object>
 ) {
     const {type, id} = req.query;
-    if (!type || typeof type !== "string" || !id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!type || typeof type !== "string" || !id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }

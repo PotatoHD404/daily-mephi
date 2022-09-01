@@ -2,10 +2,11 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "./materials";
 
 async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -24,27 +25,9 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: true,
                 }
             },
-            likes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            dislikes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            comments: {
-                select: {
-                    _count: true,
-                },
-            },
+            likes: true,
+            dislikes: true,
+            comment_count: true
         },
         take: 10,
         orderBy: {createdAt: 'desc'}
@@ -56,7 +39,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
 
 async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }

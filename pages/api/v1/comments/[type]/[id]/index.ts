@@ -2,7 +2,9 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 
 import prisma from "lib/database/prisma";
+import {Comment} from "@prisma/client";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "../../../tutors/[id]/materials";
 
 
 async function newComment(
@@ -15,7 +17,7 @@ async function newComment(
         return;
     }
     const {text, parentId} = req.body;
-    if (!text || typeof text !== "string" || parentId && typeof parentId === "string" && !parentId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!text || typeof text !== "string" || parentId && typeof parentId === "string" && !parentId.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -24,44 +26,52 @@ async function newComment(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    console.log(session.sub, parentId, id)
-    const comment = await prisma.comment.create({
-        data: {
-            text,
-            review: type === "review" ? {
-                connect: {
-                    id,
-                }
-            } : undefined,
-            material: type === "material" ? {
-                connect: {
-                    id,
-                }
-            } : undefined,
-            news: type === "news" ? {
-                connect: {
-                    id,
-                }
-            } : undefined,
-            parent: parentId ? {
-                connect: {
-                    id: parentId,
-                }
-            } : undefined,
-            user: {
-                connect: {
-                    id: session.sub
+    console.log(session.sub, parentId, id);
+
+    let typeMapping: Record<string, any> = {review: prisma.review, material: prisma.material, news: prisma.news};
+
+    let result: any = prisma.$transaction(async (prisma) => {
+        return [await prisma.comment.create({
+            data: {
+                text,
+                [type]: {
+                    connect: {
+                        id,
+                    }
+                },
+                parent: parentId ? {
+                    connect: {
+                        id: parentId,
+                    }
+                } : undefined,
+                user: {
+                    connect: {
+                        id: session.sub
+                    }
                 }
             }
-        }
+        }),
+            await typeMapping[type].update({
+                where: {
+                    id
+                },
+                data: {
+                    comments: {
+                        increment: 1
+                    }
+                }
+            })]
+    }, {
+        isolationLevel: "Serializable"
     });
 
 
     res.status(200).json({
         status: "ok",
-        id: comment.id,
+        id: result[0].id,
     });
 }
+
 // WITH RECURSIVE cte (id, text, createdAt, parentId, userId) as (
 //     SELECT     id,
 //     text,
@@ -90,7 +100,7 @@ async function getComments(
         res.status(400).json({status: "bad request"});
         return;
     }
-    let comments:   {
+    let comments: {
         id: string,
         text: string,
         createdAt: Date,
@@ -99,55 +109,59 @@ async function getComments(
         path: string[],
         childrenCount: bigint | number
     }[] = await prisma.$queryRaw`
-WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path") AS (
-SELECT
-    id,
-    text,
-    "createdAt",
-    "parentId",
-    "userId",
-    array[id] AS path
-FROM "Comment"
-WHERE "Comment"."parentId" IS NULL AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
-UNION ALL
-SELECT     
-    c.id,
-    c.text,
-    c."createdAt",
-    c."parentId",
-    c."userId",
-    cte.path || c.id
-FROM "Comment" c
-INNER JOIN cte
-ON c."parentId" = cte.id
-)
-SELECT
-    cte.id,
-    cte.text,
-    cte."createdAt",
-    cte."parentId",
-    cte."userId",
-    count(cte2.id) as "childrenCount"
-FROM cte
-LEFT JOIN public."User"
-ON
-"User"."id" = cte."userId"
-LEFT JOIN cte cte2
-ON
-cte.id = ANY(cte2.path) AND cte2."id" != cte."id"
-GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path
-ORDER BY "childrenCount" DESC
-LIMIT 10
-)
-SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"
-from results
-LEFT JOIN results AS results2
-ON
-results2."parentId" = results.id
-GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId", results."childrenCount";
-`
-    // console.log(comments)
-    // @ts-ignore
+        WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path", "likes", "dislikes")
+                                            AS (SELECT id,
+                                                       text,
+                                                       "createdAt",
+                                                       "parentId",
+                                                       "userId",
+                                                       "likes",
+                                                       "dislikes",
+                                                       array [id] AS path
+                                                FROM "Comment"
+                                                WHERE "Comment"."parentId" IS NULL
+                                                  AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
+                                                UNION ALL
+                                                SELECT
+                                                    c.id,
+                                                    c.text,
+                                                    c."createdAt",
+                                                    c."parentId",
+                                                    c."userId",
+                                                    "likes",
+                                                    "dislikes",
+                                                    cte.path || c.id
+                                                FROM "Comment" c
+                                                    INNER JOIN cte
+                                                ON c."parentId" = cte.id)
+                         SELECT cte.id,
+                                cte.text,
+                                cte."createdAt",
+                                cte."parentId",
+                                cte."userId",
+                                cte."likes",
+                                cte."dislikes",
+                                count(cte2.id) as "childrenCount"
+                         FROM cte
+                                  LEFT JOIN public."User"
+                                            ON
+                                                "User"."id" = cte."userId"
+                                  LEFT JOIN cte cte2
+                                            ON
+                                                cte.id = ANY (cte2.path) AND cte2."id" != cte."id"
+                         GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path,
+                                  cte."likes", cte."dislikes"
+                         ORDER BY "childrenCount" DESC
+                         LIMIT 10)
+        SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"
+        from results
+                 LEFT JOIN results AS results2
+                           ON
+                               results2."parentId" = results.id
+        GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId",
+                 results."childrenCount";
+    `
+
     comments = comments.map(comment => {
         comment.childrenCount = Number(comment.childrenCount);
         return comment;
