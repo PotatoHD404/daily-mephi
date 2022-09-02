@@ -178,11 +178,11 @@ model Semester {
 }
 
 model News {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  body      String
-  header    String   @db.String(280)
-  createdAt DateTime @default(now())
-  comment_count Int   @default(0)
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  body          String
+  header        String   @db.String(280)
+  createdAt     DateTime @default(now())
+  comment_count Int      @default(0)
 
   comments Comment[]
 
@@ -243,6 +243,7 @@ model Rate {
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, tutorId])
   @@index([userId])
   @@index([tutorId])
 }
@@ -326,8 +327,8 @@ model Tutor {
   url        String?
   updatedAt  DateTime? @updatedAt
 
-  score Float @default(0) @db.Float8
-
+  rating Float @default(0) @db.Float8
+  score  Float @default(0) @db.Float8
 
   images       File[]
   rates        Rate[]

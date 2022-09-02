@@ -132,7 +132,7 @@ async function getComments(
                                                        array [id] AS path
                                                 FROM "Comment"
                                                 WHERE "Comment"."parentId" IS NULL
-                                                  AND "Comment"."reviewId" = ${id}
+                                                  AND "Comment"."${type}Id" = ${id}
                                                 UNION ALL
                                                 SELECT
                                                     c.id,

@@ -50,73 +50,6 @@ function confidence(likes: number, dislikes: number): number {
     return (left - right) / under;
 }
 
-// WITH c4 as (SELECT id, '' as text, gen_random_uuid() as userId, (c3.left - c3.right) / c3.under as score
-// FROM (SELECT id,
-//     p + 1 / (2 * n) * z * z                         as left,
-//     z * SQRT(p * (1 - p) / n + z * z / (4 * n * n)) as right,
-//     1 + 1 / n * z * z                               as under
-// FROM (SELECT id,
-//     (likes + dislikes)       AS n,
-// likes / (likes + dislikes) AS p,
-//     z
-// FROM (SELECT id,
-//     likes,
-//     dislikes,
-//     1.281551565545 AS z
-// FROM "Comment") as c1
-// WHERE likes + dislikes != 0) as c2) as c3)
-// INSERT
-// INTO "Comment" (id, text, "userId", score)
-// SELECT *
-// FROM c4
-// ON CONFLICT (id)
-// DO UPDATE SET score = excluded.score;
-
-
-// WITH c4 as (SELECT id,
-//     ''                                              as "header",
-//     gen_random_uuid()                               as "userId",
-//     (c2."sign" * c2."order" + c2."seconds" / 45000) as score
-// FROM (SELECT id,
-//     LOG(((ABS("n") + 1) + ABS(ABS("n") - 1)) / 2, 10) as "order",
-//     SIGN("n")                                         as sign,
-//     seconds
-// FROM (SELECT id,
-//     likes,
-//     dislikes,
-//     likes - dislikes                             as n,
-//     (CAST("createdAt" AS INT) - 1661887626) as seconds
-// FROM "Material") as c1) as c2)
-// INSERT
-// INTO "Material" (id, "header", "userId", score)
-// SELECT *
-// FROM c4
-// ON CONFLICT (id)
-// DO UPDATE SET score = excluded.score;
-
-
-// WITH c4 as (SELECT id,
-//     ''                                              as "body",
-//     ''                                              as "header",
-//     gen_random_uuid()                               as "tutorId",
-//     (c2."sign" * c2."order" + c2."seconds" / 45000) as score
-// FROM (SELECT id,
-//     LOG(((ABS("n") + 1) + ABS(ABS("n") - 1)) / 2, 10) as "order",
-//     SIGN("n")                                         as sign,
-//     seconds
-// FROM (SELECT id,
-//     likes,
-//     dislikes,
-//     likes - dislikes                             as n,
-//     (CAST("createdAt" AS INT) - 1661887626) as seconds
-// FROM "Review") as c1) as c2)
-// INSERT
-// INTO "Review" (id, "body", "header", "tutorId", score)
-// SELECT *
-// FROM c4
-// ON CONFLICT (id)
-// DO UPDATE SET score = excluded.score;
-
 
 export default async function handler(
     req: NextApiRequest,
@@ -139,7 +72,7 @@ WITH c4 as (SELECT id,
                    gen_random_uuid()                               as "tutorId",
                    (c2."sign" * c2."order" + c2."seconds" / 45000) as score
             FROM (SELECT id,
-                         LOG(((ABS("n") + 1) + ABS(ABS("n") - 1)) / 2, 10) as "order",
+                         LOG(IF(ABS("n") > 1, ABS("n"), 1), 10) as "order",
                          SIGN("n")                                         as sign,
                          seconds
                   FROM (SELECT id,
@@ -183,7 +116,7 @@ DO UPDATE SET score = excluded.score;
                    gen_random_uuid()                               as "userId",
                    (c2."sign" * c2."order" + c2."seconds" / 45000) as score
             FROM (SELECT id,
-                         LOG(((ABS("n") + 1) + ABS(ABS("n") - 1)) / 2, 10) as "order",
+                         LOG(IF(ABS("n") > 1, ABS("n"), 1), 10) as "order",
                          SIGN("n")                                         as sign,
                          seconds
                   FROM (SELECT id,
@@ -204,7 +137,7 @@ DO UPDATE SET score = excluded.score;`,
                                    gen_random_uuid()                               as "tutorId",
                                    (c2."sign" * c2."order" + c2."seconds" / 45000) as score
                             FROM (SELECT id,
-                                         LOG(((ABS("n") + 1) + ABS(ABS("n") - 1)) / 2, 10) as "order",
+                                         LOG(IF(ABS("n") > 1, ABS("n"), 1), 10) as "order",
                                          SIGN("n")                                         as sign,
                                          seconds
                                   FROM (SELECT id,
@@ -218,7 +151,34 @@ DO UPDATE SET score = excluded.score;`,
                 SELECT *
                 FROM c4
                     ON CONFLICT (id)
-    DO UPDATE SET score = excluded.score;`];
+    DO UPDATE SET score = excluded.score;`,
+            await prisma.$executeRaw`
+                WITH c1 as (SELECT c2."tutorId", -1 / (SUM(score) + 1) + 1 as score
+                            FROM (SELECT "LegacyRating"."tutorId",
+                                         ((5 + personality) * IF("personalityCount" < 10, "personalityCount", 10)::float +
+                                        (5 + exams) * IF("examsCount" < 10, "examsCount", 10)::float +
+                                        (5 + quality) * IF("qualityCount" < 10, "qualityCount", 10)::float) / 30 as score
+                FROM "LegacyRating"
+                UNION
+                SELECT "Rate"."tutorId",
+                       SUM(("Rate".punctuality + "Rate".personality + "Rate".exams + "Rate".quality) / 40) as score
+                FROM "Rate"
+                GROUP BY "Rate"."tutorId") as c2
+                GROUP BY c2."tutorId")
+                INSERT
+                INTO "Tutor" (id, "score", "rating")
+                SELECT "Rate"."tutorId"                                                                   as id,
+                       AVG(("Rate".punctuality + "Rate".personality + "Rate".exams + "Rate".quality) / 4) as rating,
+                       score
+                FROM "Rate"
+                         INNER JOIN c1
+                                    ON c1."tutorId" = "Rate"."tutorId"
+                GROUP BY "Rate"."tutorId", score
+                    ON CONFLICT (id)
+    DO UPDATE SET score  = excluded.score,
+                               rating = excluded.rating;
+    `
+];
     },
     {
         isolationLevel: "Serializable"
