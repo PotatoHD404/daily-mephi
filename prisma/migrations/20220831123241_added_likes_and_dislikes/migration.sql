@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Review" ADD COLUMN     "downs" INT4 NOT NULL DEFAULT 0;
-ALTER TABLE "Review" ADD COLUMN     "ups" INT4 NOT NULL DEFAULT 0;

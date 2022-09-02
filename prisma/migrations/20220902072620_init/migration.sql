@@ -58,6 +58,8 @@ CREATE TABLE "Comment" (
     "materialId" UUID,
     "newsId" UUID,
     "parentId" UUID,
+    "likes" INT4 NOT NULL DEFAULT 0,
+    "dislikes" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
@@ -101,7 +103,10 @@ CREATE TABLE "Material" (
     "userId" UUID,
     "tutorId" UUID,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "likes" INT4 NOT NULL DEFAULT 0,
+    "dislikes" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
+    "comment_count" INT4 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Material_pkey" PRIMARY KEY ("id")
 );
@@ -120,6 +125,7 @@ CREATE TABLE "News" (
     "body" STRING NOT NULL,
     "header" STRING(280) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "comment_count" INT4 NOT NULL DEFAULT 0,
 
     CONSTRAINT "News_pkey" PRIMARY KEY ("id")
 );
@@ -145,6 +151,8 @@ CREATE TABLE "Quote" (
     "tutorId" UUID NOT NULL,
     "userId" UUID,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "likes" INT4 NOT NULL DEFAULT 0,
+    "dislikes" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Quote_pkey" PRIMARY KEY ("id")
@@ -172,7 +180,10 @@ CREATE TABLE "Review" (
     "legacyNickname" STRING(200),
     "userId" UUID,
     "tutorId" UUID NOT NULL,
+    "likes" INT4 NOT NULL DEFAULT 0,
+    "dislikes" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
+    "comment_count" INT4 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
@@ -183,7 +194,7 @@ CREATE TABLE "ReviewLike" (
     "reviewId" UUID NOT NULL,
     "like" BOOL NOT NULL,
 
-    CONSTRAINT "ReviewLike_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "ReviewLike_pkey" PRIMARY KEY ("userId","reviewId")
 );
 
 -- CreateTable
@@ -192,7 +203,7 @@ CREATE TABLE "CommentLike" (
     "commentId" UUID NOT NULL,
     "like" BOOL NOT NULL,
 
-    CONSTRAINT "CommentLike_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "CommentLike_pkey" PRIMARY KEY ("userId","commentId")
 );
 
 -- CreateTable
@@ -201,7 +212,7 @@ CREATE TABLE "MaterialLike" (
     "materialId" UUID NOT NULL,
     "like" BOOL NOT NULL,
 
-    CONSTRAINT "MaterialLike_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "MaterialLike_pkey" PRIMARY KEY ("userId","materialId")
 );
 
 -- CreateTable
@@ -210,7 +221,7 @@ CREATE TABLE "QuoteLike" (
     "quoteId" UUID NOT NULL,
     "like" BOOL NOT NULL,
 
-    CONSTRAINT "QuoteLike_pkey" PRIMARY KEY ("userId")
+    CONSTRAINT "QuoteLike_pkey" PRIMARY KEY ("userId","quoteId")
 );
 
 -- CreateTable
@@ -221,7 +232,7 @@ CREATE TABLE "Tutor" (
     "fatherName" STRING(64),
     "nickName" STRING(64),
     "url" STRING,
-    "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3),
     "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "Tutor_pkey" PRIMARY KEY ("id")
@@ -402,6 +413,9 @@ CREATE INDEX "Rate_tutorId_idx" ON "Rate"("tutorId");
 CREATE INDEX "Review_score_idx" ON "Review"("score");
 
 -- CreateIndex
+CREATE INDEX "Review_createdAt_idx" ON "Review"("createdAt");
+
+-- CreateIndex
 CREATE INDEX "Review_userId_idx" ON "Review"("userId");
 
 -- CreateIndex
@@ -411,43 +425,10 @@ CREATE INDEX "Review_tutorId_idx" ON "Review"("tutorId");
 CREATE UNIQUE INDEX "Review_userId_tutorId_key" ON "Review"("userId", "tutorId");
 
 -- CreateIndex
-CREATE INDEX "ReviewLike_reviewId_idx" ON "ReviewLike"("reviewId");
-
--- CreateIndex
-CREATE INDEX "ReviewLike_like_idx" ON "ReviewLike"("like");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ReviewLike_userId_reviewId_key" ON "ReviewLike"("userId", "reviewId");
-
--- CreateIndex
-CREATE INDEX "CommentLike_commentId_idx" ON "CommentLike"("commentId");
-
--- CreateIndex
-CREATE INDEX "CommentLike_like_idx" ON "CommentLike"("like");
-
--- CreateIndex
-CREATE UNIQUE INDEX "CommentLike_userId_commentId_key" ON "CommentLike"("userId", "commentId");
-
--- CreateIndex
-CREATE INDEX "MaterialLike_materialId_idx" ON "MaterialLike"("materialId");
-
--- CreateIndex
-CREATE INDEX "MaterialLike_like_idx" ON "MaterialLike"("like");
-
--- CreateIndex
-CREATE UNIQUE INDEX "MaterialLike_userId_materialId_key" ON "MaterialLike"("userId", "materialId");
-
--- CreateIndex
-CREATE INDEX "QuoteLike_quoteId_idx" ON "QuoteLike"("quoteId");
-
--- CreateIndex
-CREATE INDEX "QuoteLike_like_idx" ON "QuoteLike"("like");
-
--- CreateIndex
-CREATE UNIQUE INDEX "QuoteLike_userId_quoteId_key" ON "QuoteLike"("userId", "quoteId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Tutor_nickName_key" ON "Tutor"("nickName");
+
+-- CreateIndex
+CREATE INDEX "Tutor_score_idx" ON "Tutor"("score");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_DisciplineToTutor_AB_unique" ON "_DisciplineToTutor"("A", "B");

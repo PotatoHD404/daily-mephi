@@ -30,7 +30,15 @@ async function newComment(
 
     let typeMapping: Record<string, any> = {review: prisma.review, material: prisma.material, news: prisma.news};
 
-    let result: any = prisma.$transaction(async (prisma) => {
+
+    let result: any = await prisma.$transaction(async (prisma) => {
+        if (parentId) {
+            const parentComment = await prisma.comment.findFirst({where: {id: parentId}});
+            if (!parentComment) {
+                return {status: "parent comment not found"};
+            }
+        }
+
         return [await prisma.comment.create({
             data: {
                 text,
@@ -56,7 +64,7 @@ async function newComment(
                     id
                 },
                 data: {
-                    comments: {
+                    comment_count: {
                         increment: 1
                     }
                 }
@@ -65,6 +73,10 @@ async function newComment(
         isolationLevel: "Serializable"
     });
 
+    if (result.status) {
+        res.status(400).json(result);
+        return;
+    }
 
     res.status(200).json({
         status: "ok",
@@ -109,7 +121,7 @@ async function getComments(
         path: string[],
         childrenCount: bigint | number
     }[] = await prisma.$queryRaw`
-        WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "path", "likes", "dislikes")
+        WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "likes", "dislikes", "path")
                                             AS (SELECT id,
                                                        text,
                                                        "createdAt",
@@ -120,7 +132,7 @@ async function getComments(
                                                        array [id] AS path
                                                 FROM "Comment"
                                                 WHERE "Comment"."parentId" IS NULL
-                                                  AND "Comment"."reviewId" = ${'0000afcc-ee2e-45e0-9acf-e53992004ab7'}
+                                                  AND "Comment"."reviewId" = ${id}
                                                 UNION ALL
                                                 SELECT
                                                     c.id,
@@ -128,8 +140,8 @@ async function getComments(
                                                     c."createdAt",
                                                     c."parentId",
                                                     c."userId",
-                                                    "likes",
-                                                    "dislikes",
+                                                    c."likes",
+                                                    c."dislikes",
                                                     cte.path || c.id
                                                 FROM "Comment" c
                                                     INNER JOIN cte
@@ -158,7 +170,7 @@ async function getComments(
                  LEFT JOIN results AS results2
                            ON
                                results2."parentId" = results.id
-        GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId",
+        GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId", results.likes, results.dislikes,
                  results."childrenCount";
     `
 
@@ -179,10 +191,6 @@ export default async function handler(
     const session = await getToken({req})
 
     if (req.method === "POST") {
-        if (!session?.sub) {
-            res.status(401).json({status: 'You are not authenticated'});
-            return;
-        }
         await newComment(req, res);
     } else if (req.method === "GET") {
         await getComments(req, res);

@@ -52,7 +52,6 @@ export default async function handler(
                     }
                 },
                 select: {
-                    id: true,
                     like: true
                 }
             });
@@ -60,7 +59,14 @@ export default async function handler(
                 return;
             }
             if (likeExists && req.query.type === "unlike") {
-                await likeExists.delete();
+                await like.delete({
+                    where: {
+                        userId_commentId: {
+                            userId: session.sub,
+                            [`${type}Id`]: id
+                        }
+                    }
+                });
 
                 return await typeMap2[type].update({
                     where: {id},
@@ -77,7 +83,10 @@ export default async function handler(
                 }
                 await like.update({
                     where: {
-                        id: likeExists.id
+                        userId_commentId: {
+                            userId: session.sub,
+                            [`${type}Id`]: id
+                        }
                     },
                     data: {
                         like: req.query.type === "like"
@@ -87,10 +96,10 @@ export default async function handler(
                     where: {id},
                     data: {
                         [likeExists.like ? "likes" : "dislikes"]: {
-                            increment: 1
+                            decrement: 1
                         },
                         [likeExists.like ? "dislikes" : "likes"]: {
-                            decrement: 1
+                            increment: 1
                         }
                     }
                 });

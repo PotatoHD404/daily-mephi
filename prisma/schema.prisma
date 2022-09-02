@@ -268,60 +268,53 @@ model Review {
 
   @@unique([userId, tutorId])
   @@index([score(sort: "Desc")])
+  @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
 }
 
 model ReviewLike {
-  userId   String  @id @db.Uuid
+  userId   String  @db.Uuid
   reviewId String  @db.Uuid
   like     Boolean
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, reviewId])
-  @@index([reviewId])
-  @@index([like])
+  @@id([userId, reviewId])
 }
 
 model CommentLike {
-  userId    String  @id @db.Uuid
+  userId    String  @db.Uuid
   commentId String  @db.Uuid
   like      Boolean
 
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, commentId])
-  @@index([commentId])
-  @@index([like])
+  @@id([userId, commentId])
 }
 
 model MaterialLike {
-  userId     String  @id @db.Uuid
+  userId     String  @db.Uuid
   materialId String  @db.Uuid
   like       Boolean
 
   material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, materialId])
-  @@index([materialId])
-  @@index([like])
+  @@id([userId, materialId])
 }
 
 model QuoteLike {
-  userId  String  @id @db.Uuid
+  userId  String  @db.Uuid
   quoteId String  @db.Uuid
   like    Boolean
 
   quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, quoteId])
-  @@index([quoteId])
-  @@index([like])
+  @@id([userId, quoteId])
 }
 
 model Tutor {
@@ -331,9 +324,10 @@ model Tutor {
   fatherName String?   @db.String(64)
   nickName   String?   @unique @db.String(64)
   url        String?
-  updatedAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
-  score Float @default(dbgenerated()) @db.Float8
+  score Float @default(0) @db.Float8
+
 
   images       File[]
   rates        Rate[]
@@ -343,6 +337,8 @@ model Tutor {
   materials    Material[]
   legacyRating LegacyRating?
   quotes       Quote[]
+
+  @@index([score])
 }
 
 model Internal {
