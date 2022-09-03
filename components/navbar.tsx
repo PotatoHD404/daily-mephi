@@ -5,14 +5,16 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import NewsIcon from "images/news.svg";
+import MaterialsIcon from "images/materials.svg";
+import TutorsIcon from "images/news.svg";
+// import NewsIcon from "@mui/icons-material/News";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
 import WarningDialog from 'components/warning';
 import {useRouter} from "next/router";
-import Image from "next/image";
+import Image from "next/future/image";
 import miniCat from 'images/minicat_transparent.svg'
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
@@ -20,6 +22,7 @@ import {Session} from "next-auth";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
 import {inspect} from "util";
+import {ListItemButton} from "@mui/material";
 
 
 interface DefaultNavbarParams {
@@ -28,10 +31,10 @@ interface DefaultNavbarParams {
 }
 
 function DefaultNavbar(props: DefaultNavbarParams) {
-    return <nav className="grid-cols-12 grid text-[1.65rem] h-[5.5rem] w-full mx-auto rounded-b-2xl flex flex-wrap
-                     justify-between align-middle bg-white bg-opacity-[36%] pl-8">
+    return <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
+                     justify-between align-middle bg-white bg-opacity-[36%] md:pl-8">
 
-        <div className="flex col-start-1 col-end-11 w-11/12 justify-around">
+        <div className="hidden md:flex col-start-1 col-end-11 w-11/12 justify-around">
 
 
             <Link href="/">
@@ -57,7 +60,10 @@ function DefaultNavbar(props: DefaultNavbarParams) {
             </Link>
 
         </div>
-        <AuthSection {...props}/>
+        <div className="hidden md:flex">
+            <AuthSection {...props}/>
+        </div>
+        <div className="col-start-1 col-end-13 md:hidden"><MobileNavbar onClick={props.toggleDrawer}/></div>
 
     </nav>;
 }
@@ -121,50 +127,51 @@ function AuthSection(props: DefaultNavbarParams) {
     }
 }
 
+function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
+    return <div className="md:hidden w-full">
+        <div className={"flex justify-between h-12 pl-5 pr-5 " + (props.home ? "mt-2" : "")}>
+            {/* @ts-ignore */}
+            <button className="h-full" onClick={props.onClick()}>
+                <Image className="flex" src={burger}/>
+            </button>
+            <Link href="/">
+                <a className="flex h-full w-11">
+                    <Image src={MiniCat} alt="mini cat"
+                           className="flex"
+                        // layout="responsive"
+                    />
+
+                </a>
+            </Link>
+        </div>
+    </div>;
+}
+
 function HomeNavbar(props: DefaultNavbarParams) {
 
     return (
         <nav>
-            <div className="hidden md:flex">
-                <div className="mb-0 flex grid-cols-12 grid 2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20">
-                    <div className="col-start-2 col-end-12 flex flex-wrap
-                     justify-between items-center grid-cols-12 grid">
-                        <div className="flex col-start-1 col-end-10 justify-between">
-                            <Link href="/about">
-                                <a className="underlining"><h3>О нас</h3></a>
-                            </Link>
-                            <Link href="/materials">
-                                <a className="underlining"><h3>Материалы</h3></a>
-                            </Link>
+            <div
+                className="mb-0 hidden md:grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20">
+                <div className="col-start-2 col-end-12 flex flex-wrap
+                     justify-between items-center grid-cols-12 grid w-full">
+                    <div className="flex col-start-1 col-end-10 justify-between">
+                        <Link href="/about">
+                            <a className="underlining"><h3>О нас</h3></a>
+                        </Link>
+                        <Link href="/materials">
+                            <a className="underlining"><h3>Материалы</h3></a>
+                        </Link>
 
-                            <Link href="/tutors">
-                                <a className="underlining"><h3>Преподаватели</h3></a>
-                            </Link>
-                        </div>
-                        <AuthSection {...props}/>
-
+                        <Link href="/tutors">
+                            <a className="underlining"><h3>Преподаватели</h3></a>
+                        </Link>
                     </div>
+                    <AuthSection {...props}/>
+
                 </div>
             </div>
-            <div className="md:hidden">
-                <div className="flex justify-between h-12 mt-2  pl-5 pr-5">
-                    <div className="flexgrid h-full">
-                        {/* @ts-ignore */}
-                        <button className="h-full" onClick={props.toggleDrawer()}>
-                            <Image className="flex" src={burger}/>
-                        </button>
-                    </div>
-                    <Link href="/">
-                        <a className="flex h-full w-12">
-                            <Image src={MiniCat} alt="mini cat"
-                                   className="flex scale-"
-                                // layout="responsive"
-                            />
-
-                        </a>
-                    </Link>
-                </div>
-            </div>
+            <MobileNavbar onClick={props.toggleDrawer} home={true}/>
 
         </nav>);
 }
@@ -185,7 +192,7 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 }
 
 
-function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void, callbackfn: (text: any, index: any) => JSX.Element }) {
+function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -193,7 +200,18 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
         onKeyDown={props.onClick}
     >
         <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map(props.callbackfn)}
+            <ListItemButton>
+                <Image src={NewsIcon} className="w-6 mr-2"/>
+                <Link href="/about"><a>О нас</a></Link>
+            </ListItemButton>
+            <ListItemButton>
+                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3"/>
+                <Link href="/materials"><a>Материалы</a></Link>
+            </ListItemButton>
+            <ListItemButton>
+                <Image src={TutorsIcon} className="w-6 mr-2"/>
+                <Link href="/tutors"><a>Преподаватели</a></Link>
+            </ListItemButton>
         </List>
         <Divider/>
     </Box>;
@@ -231,26 +249,12 @@ function Navbar() {
                 setState({...state, opened: !state.opened});
             };
 
-    const list = (
-        <ItemsList onClick={toggleDrawer()} callbackfn={(text, index) => (
-            // TODO: checkout deprecated property
-            <ListItem button key={text}>
-                <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}
-                </ListItemIcon>
-                <ListItemText primary={text}/>
-            </ListItem>
-        )}/>
-    );
-
-    //greenBox
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
-            {/* @ts-ignore*/}
             <SwappableDrawer
-                className={'lg:hidden'}
+                className={'md:hidden'}
                 anchor={'left'}
                 open={state.opened}
                 onClose={toggleDrawer()}
@@ -258,7 +262,7 @@ function Navbar() {
                 disableBackdropTransition={false}
                 // disableDiscovery={true}
             >
-                {list}
+                <ItemsList onClick={toggleDrawer()}/>
             </SwappableDrawer>
 
 

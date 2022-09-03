@@ -113,7 +113,11 @@ function Tutor() {
 
             <div className="flex-wrap w-full">
                 <div className="font-bold text-3xl w-fit mx-auto mb-5">Трифоненков Владимир Петрович</div>
-                <div className="rounded-2xl flex bg-white bg-opacity-90 py-12 px-8">
+                <div className="rounded-2xl flex bg-white bg-opacity-90 py-6 px-4">
+                    <div className="rounded-full outline-black w-7 h-7 -mt-5 -ml-3
+                     z-10 absolute border-[0.12rem] border-gray-800 font-semibold text-center">
+                        47
+                    </div>
                     <div className="w-[36.8%] mr-12 text-2xl font-bold">
                         <div className="flex -mt-2 mb-10 w-fit relative mx-auto">
                             <Image
@@ -121,10 +125,7 @@ function Tutor() {
                                 alt="Tutor image"
                                 className="rounded-full z-0"
                             />
-                            <div className="rounded-full bg-gray-300 w-20 h-20 px-2 py-5 underline
-                     right-2 top-2 mt-2 z-10 absolute">
-                                №46
-                            </div>
+
                         </div>
 
                         <div className="flex flex-wrap w-[74%] mx-auto">
@@ -162,28 +163,28 @@ function Tutor() {
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
                               TabIndicatorProps={{style: {background: 'white'}}}>
                             <Tab label={
-                                <div className="flex h-8  w-[11.5rem]">
+                                <div className="flex h-8  md:w-[11.5rem]">
                                     {/*<ReviewsIconComponent src={reviewsIco}/>*/}
                                     <div
-                                        className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Отзывы
+                                        className="text-black md:text-[1.7rem] text-xl font-[Montserrat] normal-case my-auto">Отзывы
                                     </div>
                                 </div>
                             } {...a11yProps(0)}
                             />
                             <Tab label={
-                                <div className="flex h-8  w-[11rem]">
+                                <div className="flex h-8  md:w-[11rem]">
                                     {/*<QuoteIconComponent src={quotesIco}/>*/}
                                     <div
-                                        className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Цитаты
+                                        className="text-black md:text-[1.7rem] text-xl  font-[Montserrat] normal-case my-auto">Цитаты
                                     </div>
                                 </div>
                             } {...a11yProps(1)}
                             />
                             <Tab label={
-                                <div className="flex h-8 w-[14.5rem]">
+                                <div className="flex h-8 md:w-[14.5rem]">
                                     {/*<MaterialsIconComponent src={materialsIco}/>*/}
                                     <div
-                                        className="text-black text-[1.7rem] font-[Montserrat] normal-case my-auto">Материалы
+                                        className="text-black md:text-[1.7rem] text-xl  font-[Montserrat] normal-case my-auto">Материалы
                                     </div>
                                 </div>
                             } {...a11yProps(2)}

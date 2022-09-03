@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import 'styles/globals.css'
 import {getSession, SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
@@ -84,24 +83,33 @@ function BackgroundComp({home}: { home: boolean }) {
                     layout="fill"
                 /></div>
             </div>
-            <div className="-z-10 absolute overflow-clip w-full h-full md:hidden">
-                <div className="md:hidden justify-center items-center flex-wrap w-[300vw]">
+            <div className={`-z-10 absolute overflow-clip w-full h-full ${home ? "md:" : ""}hidden`}>
+                <div className="justify-center items-center flex-wrap w-[300vw]">
 
                     <Image
                         src={Background1}
                         alt="background gradient"
                         quality={100}
-                        className="w-[200vw] h-[103.9vh]"
+                        className="w-[200vw] h-[75vh] opacity-80"
                     />
-                    {/*<div className="greenBox w-[100vw] h-20"></div>*/}
-                    <Image
-                        src={ellipse}
-                        alt="background gradient"
-                        quality={100}
-                        className="-mt-[19vh] w-[300vw] -ml-[100vw]"
-                    />
+                    {/*<Image*/}
+                    {/*    src={ellipse}*/}
+                    {/*    alt="background gradient"*/}
+                    {/*    quality={100}*/}
+                    {/*    className="-mt-[32.5vh] scale-125 -ml-[25vw]"*/}
+                    {/*/>*/}
+                    {/*<div className="bg-white w-full h-20 -mt-2 absolute"></div>*/}
 
                 </div>
+            </div>
+            <div className={styles.bgWrap}>
+                <div className={`${home ? "" : "md:"}hidden`}><Image1
+                    src={Background1}
+                    alt="background gradient"
+                    quality={100}
+                    objectFit="cover"
+                    layout="fill"
+                /></div>
             </div>
 
         </div>);
@@ -128,16 +136,8 @@ function MyApp(
 
     return <SessionProvider session={session}>
         <ThemeProvider theme={theme}>
-            {/*<div className={styles.bgWrap}>*/}
-            {/*    <Image*/}
-            {/*        src={template}*/}
-            {/*        alt="Picture of the author"*/}
-            {/*        quality={100}*/}
-            {/*        objectFit="covers"*/}
-            {/*    />*/}
-            {/*</div>*/}
+
             <BackgroundComp {...{home}}/>
-            {/*w-[125rem]*/}
 
             <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
                 + (home ? "" : "max-w-[85rem] mx-auto")}>
@@ -145,11 +145,8 @@ function MyApp(
 
                 <Navbar/>
                 {home ?
-                    // @ts-ignore
-
                     <Component {...pageProps} /> :
-                    <div className="rounded-2xl flex pt-6 pb-10 px-8 my-12 bg-white bg-opacity-[36%]">
-                        {/* @ts-ignore */}
+                    <div className="rounded-2xl flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%]">
                         <Component {...pageProps} />
                     </div>}
                 <Footer/>

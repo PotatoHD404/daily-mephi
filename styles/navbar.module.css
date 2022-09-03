@@ -1,3 +1,4 @@
 .authText {
-    @apply flex col-start-12 col-end-13 flex flex-wrap justify-end underlining w-fit outline-0;
+    @apply flex col-start-12 col-end-13 flex flex-wrap justify-end w-fit outline-0;
 }
+ /*underlining*/

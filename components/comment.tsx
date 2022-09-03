@@ -2,6 +2,9 @@ import Image from "next/image";
 import ProfilePicture2 from "images/profile2.png";
 import CommentIco from 'images/comment.svg';
 import React from "react";
+import {LikeComponent} from "./like";
+import {DislikeComponent} from "./dislike";
+import {CommentComponent} from "./commentComponent";
 
 function ProfilePic() {
     return <div className="h-[2.6rem] w-[2.6rem]">
@@ -42,24 +45,31 @@ export default function Comment({
                                 }: CommentParams) {
 
 
-    return <div className="text-xl mt-2">
+    return <div className="text-xl mt-2 leading-5">
         <div className="flex">
             <ProfilePic/>
-            <span className="font-bold ml-2 my-auto">{nick}</span>
-            <span className="ml-2 my-auto ml-8">{date}</span>
+            <div className="ml-2 my-auto -mt-1">
+                <div className="font-bold text-[0.9rem]">Burunduk</div>
+                <div className="md:text-lg text-sm my-auto opacity-60">15 февраля 2022</div>
+            </div>
         </div>
         <div className="flex mt-1 ml-5">
             <div className="bg-black w-[2px] h-auto"/>
-            <div className="w-full flex-wrap ml-5">
+            <div className="w-full flex-wrap ml-5 md:text-xl text-[0.95rem]">
                 <div className="mb-1">{body}</div>
-                <div className="text-[1.1rem] font-bold flex">
-                    <div className="h-5 w-5 mr-1 my-auto">
-                        <Image
-                            src={src}
-                            alt="Reply ico"
-                        />
+                <div className="md:text-[1.1rem] text-[1rem] font-bold">
+                    {/*<div className="h-5 w-5 mr-1 my-auto">*/}
+                    {/*    <Image*/}
+                    {/*        src={src}*/}
+                    {/*        alt="Reply ico"*/}
+                    {/*    />*/}
+                    {/*</div>*/}
+                    {/*<div className="my-auto">Reply</div>*/}
+                    <div className="flex space-x-4 font-semibold mb-2">
+                        <LikeComponent/>
+                        <DislikeComponent/>
+                        <CommentComponent/>
                     </div>
-                    <div className="my-auto">Reply</div>
                 </div>
                 <div>{children}</div>
 
@@ -67,7 +77,7 @@ export default function Comment({
 
         </div>
         {repliesCount ?
-            <button className="ml-5 text-blue-500 text-[1.1rem] font-semibold">
+            <button className="ml-5 text-blue-500 md:text-[1.1rem] text-[0.9rem] font-semibold">
                 {repliesCount} more repl{repliesCount > 1 ? "ies" : "y"}
             </button>
             : null}

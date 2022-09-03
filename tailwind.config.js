@@ -12,6 +12,11 @@ module.exports = {
                 custom: ['Montserrat', ...defaultTheme.fontFamily.sans],
             },
         },
+        screens: {
+            'xxs': '335px',
+            'xs': '475px',
+            ...defaultTheme.screens,
+        },
     },
     variants: {
         extend: {},
