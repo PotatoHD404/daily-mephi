@@ -66,8 +66,8 @@ export default function Comment({
                     {/*<div className="my-auto">Reply</div>*/}
                     <div className="flex space-x-4 font-semibold my-2">
                         <LikeComponent/>
-                        <DislikeComponent up/>
-                        <CommentComponent up/>
+                        <DislikeComponent/>
+                        <CommentComponent/>
                     </div>
                 </div>
                 <div>{children}</div>

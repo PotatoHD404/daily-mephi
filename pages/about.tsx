@@ -84,11 +84,11 @@ function TopUser(props: TopUserParams) {
 
 function TopUsers() {
     return <div className="w-[23.5] hidden md:block">
-        <div className="text-[1.7rem] mt-[0.5rem] h-[3rem] text-center">Топ Мифистов</div>
+        <div className="md:text-[1.4rem] text-xl md:mt-[0.5rem] md:h-[3rem] flex items-center justify-center text-center pb-2">Топ Мифистов</div>
         <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
 
         <div
-            className="rounded-2xl pt-6 pb-4 px-3.5 text-[1.25rem] w-full bg-white bg-opacity-90 flex-wrap space-y-5
+            className="rounded-2xl pt-6 pb-4 px-3.5 text-[1.25rem] ml-auto w-[99.5%] bg-white bg-opacity-90 flex-wrap space-y-5
                     text-[#5B5959]">
 
             <table className="table-auto w-full">
@@ -112,7 +112,7 @@ function TopUsers() {
 
 function Post() {
     return <>
-        <div className="rounded-2xl p-5 px-4 md:text-[1.7rem] text-xl w-full bg-white bg-opacity-90">
+        <div className="rounded-2xl p-5 px-4 md:text-[1.7rem] text-xl w-[99.5%] bg-white bg-opacity-90">
             <div className="flex w-full mb-4">
                 <div className="h-12 my-auto w-12">
                     <Image
@@ -134,8 +134,8 @@ function Post() {
             </div>
             <div className="flex space-x-4 font-semibold mb-2">
                 <LikeComponent/>
-                <DislikeComponent up/>
-                <CommentComponent up/>
+                <DislikeComponent/>
+                <CommentComponent/>
             </div>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>
@@ -187,6 +187,8 @@ function About() {
                         </Tabs>
                     </Box>
                     {value == 0 ? <Post/> : null}
+                    {value == 1 ? <Post/> : null}
+                    {value == 2 ? <Post/> : null}
                 </div>
                 <TopUsers/>
             </div>

@@ -208,8 +208,8 @@ function Tutor() {
                                         placeholder="Оставить отзыв"/>
                                     <div className="flex space-x-4 font-semibold">
                                         <LikeComponent/>
-                                        <DislikeComponent up/>
-                                        <CommentComponent up/>
+                                        <DislikeComponent/>
+                                        <CommentComponent/>
                                     </div>
                                 </div>
 
@@ -227,8 +227,8 @@ function Tutor() {
                                     </div>
                                     <div className="flex space-x-4 font-semibold mb-2">
                                         <LikeComponent/>
-                                        <DislikeComponent up/>
-                                        <CommentComponent up/>
+                                        <DislikeComponent/>
+                                        <CommentComponent/>
                                     </div>
                                     <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
                                     <Comments/>
@@ -268,7 +268,7 @@ function Tutor() {
                                         <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
                                         <div className="flex space-x-4 font-semibold">
                                             <LikeComponent/>
-                                            <DislikeComponent up/>
+                                            <DislikeComponent/>
                                         </div>
                                     </div>
                                 </div>
@@ -326,8 +326,8 @@ function Tutor() {
                                             </div>
                                             <div className="flex space-x-4 font-semibold w-full md:w-fit">
                                                 <LikeComponent/>
-                                                <DislikeComponent up/>
-                                                <CommentComponent up/>
+                                                <DislikeComponent/>
+                                                <CommentComponent/>
                                             </div>
 
                                         </div>
