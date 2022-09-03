@@ -289,8 +289,8 @@ function Navbar() {
             <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             <SwappableDrawer
-                className={'md:hidden'}
-                anchor={'left'}
+                className='md:hidden'
+                anchor='left'
                 open={state.opened}
                 onClose={toggleDrawer()}
                 onOpen={toggleDrawer()}

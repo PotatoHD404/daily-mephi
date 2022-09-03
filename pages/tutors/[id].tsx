@@ -164,7 +164,8 @@ function Tutor() {
                     <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
                               TabIndicatorProps={{style: {background: 'white'}}}>
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
+                                label={
                                 <div className="flex h-8">
                                     {/*<ReviewsIconComponent src={reviewsIco}/>*/}
                                     <div
@@ -173,7 +174,7 @@ function Tutor() {
                                 </div>
                             } {...a11yProps(0)}
                             />
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content", maxWidth: "fit-content" , padding: '0.5rem', margin: 'auto' }} label={
                                 <div className="flex h-8">
                                     {/*<QuoteIconComponent src={quotesIco}/>*/}
                                     <div
@@ -182,7 +183,7 @@ function Tutor() {
                                 </div>
                             } {...a11yProps(1)}
                             />
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content", maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }} label={
                                 <div className="flex h-8">
                                     {/*<MaterialsIconComponent src={materialsIco}/>*/}
                                     <div
@@ -206,7 +207,7 @@ function Tutor() {
                                         focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
                                         text-[0.9rem] leading-6"
                                         placeholder="Оставить отзыв"/>
-                                    <div className="flex space-x-4 font-semibold">
+                                    <div className="flex space-x-2 font-semibold">
                                         <LikeComponent/>
                                         <DislikeComponent/>
                                         <CommentComponent/>
@@ -225,7 +226,7 @@ function Tutor() {
                                         dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                                         officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
                                     </div>
-                                    <div className="flex space-x-4 font-semibold mb-2">
+                                    <div className="flex space-x-2 font-semibold mb-2">
                                         <LikeComponent/>
                                         <DislikeComponent/>
                                         <CommentComponent/>
