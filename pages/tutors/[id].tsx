@@ -20,53 +20,41 @@ import {DislikeComponent} from "components/dislike";
 import {CommentComponent} from "components/commentComponent";
 import {Comments} from "components/comments";
 
+
+// function QuoteIconComponent(props: { src: any }) {
+//     return <div className="flex h-10 my-auto">
+//         <Image
+//             src={props.src}
+//             alt="Quotes ico"
+//         />
+//     </div>;
+// }
+//
+// function ReviewsIconComponent(props: { src: any }) {
+//     return <div className="flex h-10 my-auto">
+//         <Image
+//             src={props.src}
+//             alt="Reviews ico"
+//         />
+//     </div>;
+// }
+//
+// function MaterialsIconComponent(props: { src: any }) {
+//     return <div className="flex h-10 my-auto">
+//         <Image
+//             src={props.src}
+//             alt="Materials ico"
+//         />
+//     </div>;
+// }
+
 function RatingComponent(props: { text: string }) {
-    return <div className="text-xl flex">
-        <div>{props.text}</div>
-        <HoverRating/>
-    </div>;
-}
-
-function ReviewHeaderComponent() {
-    return <div className="flex w-full text-[1rem] relative mb-2 pl-4">
-        <span className="font-bold mr-4 my-auto text-[1rem]">Uploaded by:</span>
-        <div className="h-8 my-auto w-8">
-            <Image
-                src={ProfilePicture2}
-                alt="Profile picture"
-                className="rounded-full"
-            />
-        </div>
-        <span className="font-bold ml-2 my-auto text-[0.95rem]">User1</span>
-        <span className="absolute my-auto right-4 mt-1">15 февраля 2022</span>
-    </div>;
-}
-
-function QuoteIconComponent(props: { src: any }) {
-    return <div className="flex h-10 my-auto">
-        <Image
-            src={props.src}
-            alt="Quotes ico"
-        />
-    </div>;
-}
-
-function ReviewsIconComponent(props: { src: any }) {
-    return <div className="flex h-10 my-auto">
-        <Image
-            src={props.src}
-            alt="Reviews ico"
-        />
-    </div>;
-}
-
-function MaterialsIconComponent(props: { src: any }) {
-    return <div className="flex h-10 my-auto">
-        <Image
-            src={props.src}
-            alt="Materials ico"
-        />
-    </div>;
+    return (
+        <div className="flex justify-between w-auto text-[0.9rem]">
+            <div className="w-fit h-fit">{props.text}</div>
+            <div className="w-fit"><HoverRating/></div>
+        </div>)
+        ;
 }
 
 function UserHeaderComponent(props: { name: string, date: string }) {
@@ -112,61 +100,75 @@ function Tutor() {
             <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
 
             <div className="flex-wrap w-full">
-                {/*<div className="font-bold text-3xl w-fit mx-auto mb-5">Трифоненков Владимир Петрович</div>*/}
-                {/*<div className="rounded-2xl flex bg-white bg-opacity-90 py-6 px-4">*/}
-                {/*    <div className="rounded-full outline-black w-7 h-7 -mt-5 -ml-3*/}
-                {/*     z-10 absolute border-[0.12rem] border-gray-800 font-semibold text-center">*/}
-                {/*        47*/}
-                {/*    </div>*/}
-                {/*    <div className="w-[36.8%] mr-12 text-2xl font-bold">*/}
-                {/*        <div className="flex -mt-2 mb-10 w-fit relative mx-auto">*/}
-                {/*            <Image*/}
-                {/*                src={TutorImage}*/}
-                {/*                alt="Tutor image"*/}
-                {/*                className="rounded-full z-0"*/}
-                {/*            />*/}
+                <div className="rounded-2xl flex flex-wrap bg-white bg-opacity-90 p-6">
 
-                {/*        </div>*/}
+                    {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
+                    {/*    <div>Трифоненков</div>*/}
+                    {/*    <div>Владимир</div>*/}
+                    {/*    <div>Петрович</div>*/}
+                    {/*</div>*/}
+                    <div className="font-bold text-[1.0rem] xs:text-lg w-full mx-auto mb-5 text-center whitespace-nowrap">Трифоненков Владимир Петрович</div>
+                        <div className="flex flex-nowrap items-center">
+                            <div className="flex items-center w-fit hidden mr-4 md:block">
+                                <div className="w-fit text-[1.0rem] font-bold h-fit">
+                                    <div className="flex mb-3 w-32 md:w-60">
+                                        <Image
+                                            src={TutorImage}
+                                            alt="Tutor image"
+                                            className="rounded-full z-0"
+                                        />
 
-                {/*        <div className="flex flex-wrap w-[74%] mx-auto">*/}
-                {/*            <div className="my-auto flex w-full">*/}
-                {/*                <div>Daily Mephi:</div>*/}
-                {/*                <div className="ml-auto">4.5</div>*/}
-                {/*            </div>*/}
-                {/*            <div className="my-auto flex w-full mt-3">*/}
-                {/*                <div>mephist.ru:</div>*/}
-                {/*                <div className="ml-auto">2.1</div>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="w-[83%] text-2xl relative">*/}
-                {/*        <div>*/}
-                {/*            <span className="font-bold pr-4">Дисциплины:</span>*/}
-                {/*            <span>Теория функций копмплексных переменных, Математический анализ, Линейная алгебра, Интегральные*/}
-                {/*        уравнения, Дифференциальные уравнения*/}
-                {/*    </span>*/}
-                {/*        </div>*/}
-                {/*        <div className="mt-5">*/}
-                {/*            <span className="font-bold pr-4">Кафедра:</span>*/}
-                {/*            <span>30</span>*/}
-                {/*        </div>*/}
-                {/*        <div className="bottom-0 absolute w-full space-y-7 font-semibold">*/}
-                {/*            <RatingComponent text="Характер(4.6):"/>*/}
-                {/*            <RatingComponent text="Преподавание(4.6):"/>*/}
-                {/*            <RatingComponent text="Пунктуальность(4.6):"/>*/}
-                {/*            <RatingComponent text="Прием зачетов/экзаменов(4.6)"/>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+                                    </div>
+                                    <div className="flex space-x-2 items-center justify-center">
+                                        <div className="rounded-full outline-black w-8 h-8
+                                    border-[0.12rem] border-gray-800 font-semibold text-center pt-[0.1rem] leading-0">
+                                            47
+                                        </div>
+                                        <div className="font-semibold">место</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap w-fit h-fit">
+                                <h1 className="font-semibold">Дисциплины:</h1>
+                                <div className="my-2">
+                                    Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
+                                    Интегральные
+                                    уравнения, Дифференциальные уравнения
+                                </div>
+
+                                <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[10rem]">
+                                    <div className="my-auto flex w-full justify-between mb-1">
+                                        <div className="font-semibold">Кафедра:</div>
+                                        <div>30</div>
+                                    </div>
+                                    <div className="my-auto flex w-full justify-between">
+                                        <div className="font-semibold">Daily Mephi:</div>
+                                        <div>4.5</div>
+                                    </div>
+                                    <div className="my-auto flex w-full justify-between">
+                                        <div className="font-semibold">mephist.ru:</div>
+                                        <div>2.1</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full h-[1px] bg-black my-3"/>
+                        <div className="w-full space-y-1 font-semibold">
+                            <RatingComponent text="Характер(4.6):"/>
+                            <RatingComponent text="Преподавание(4.6):"/>
+                            <RatingComponent text="Пунктуальность(4.6):"/>
+                            <RatingComponent text="Прием экзаменов(4.6)"/>
+                        </div>
+                </div>
                 <div className="w-full mt-7">
                     <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
                               TabIndicatorProps={{style: {background: 'white'}}}>
                             <Tab label={
-                                <div className="flex h-8 ">
+                                <div className="flex h-8">
                                     {/*<ReviewsIconComponent src={reviewsIco}/>*/}
                                     <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Отзывы
+                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Отзывы
                                     </div>
                                 </div>
                             } {...a11yProps(0)}
@@ -175,7 +177,7 @@ function Tutor() {
                                 <div className="flex h-8">
                                     {/*<QuoteIconComponent src={quotesIco}/>*/}
                                     <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Цитаты
+                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Цитаты
                                     </div>
                                 </div>
                             } {...a11yProps(1)}
@@ -184,7 +186,7 @@ function Tutor() {
                                 <div className="flex h-8">
                                     {/*<MaterialsIconComponent src={materialsIco}/>*/}
                                     <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Материалы
+                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Материалы
                                     </div>
                                 </div>
                             } {...a11yProps(2)}
@@ -216,7 +218,8 @@ function Tutor() {
                                     <UserHeaderComponent name={"User1"}
                                                          date={"15 февраля 2022"}/>
                                     <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
-                                    <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                    <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet,
+                                        consectetur adipisicing elit.
                                         Adipisci
                                         aut autem
                                         dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
@@ -289,14 +292,27 @@ function Tutor() {
                                             </div>
 
                                         </div>
-                                        <div className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
-                                            <div className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет</div>
-                                            <div className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр 1</div>
-                                            <div className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ</div>
-                                            <div className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод</div>
-                                            <div className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен</div>
+                                        <div
+                                            className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
+                                            <div
+                                                className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
+                                            </div>
+                                            <div
+                                                className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
+                                                1
+                                            </div>
+                                            <div
+                                                className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
+                                            </div>
+                                            <div
+                                                className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
+                                            </div>
+                                            <div
+                                                className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
+                                            </div>
                                         </div>
-                                        <div className="flex flex-wrap md:flex-nowrap md:space-x-4 font-semibold relative">
+                                        <div
+                                            className="flex flex-wrap md:flex-nowrap md:space-x-4 font-semibold relative">
                                             <div
                                                 className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
                                                 <div className="font-medium">exam_file_1.pdf (50 MB)</div>

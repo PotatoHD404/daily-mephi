@@ -21,19 +21,12 @@ export default function HoverRating() {
     const [hover, setHover] = React.useState(-1);
 
     return (
-        <Box
-            sx={{
-                width: 400,
-                display: 'flex',
-                alignItems: 'center',
-                marginLeft: 'auto'
-            }}
-        >
+        <div className="flex flex-wrap md:w-[16rem] justify-end md:justify-between">
             <Rating
                 name="hover-feedback"
                 value={value}
                 precision={0.5}
-                size="large"
+                size="medium"
                 onChange={(event, newValue) => {
                     setValue(newValue);
                 }}
@@ -42,9 +35,9 @@ export default function HoverRating() {
                 }}
                 emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
             />
-            {value !== null && (
-                <Box sx={{ml: 2}}>{labels[hover !== -1 ? hover : value]}</Box>
-            )}
-        </Box>
+            <div className="w-fit hidden md:block">
+                {value !== null ? labels[hover !== -1 ? hover : value] : null}
+            </div>
+        </div>
     );
 }
