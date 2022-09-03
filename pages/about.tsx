@@ -83,7 +83,7 @@ function TopUser(props: TopUserParams) {
 }
 
 function TopUsers() {
-    return <div className="w-[23.5%] md:flex hidden">
+    return <div className="w-[23.5] hidden md:block">
         <div className="text-[1.7rem] mt-[0.5rem] h-[3rem] text-center">Топ Мифистов</div>
         <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
 
@@ -125,8 +125,9 @@ function Post() {
                     <div className="md:text-lg text-sm my-auto opacity-60">15 февраля 2022</div>
                 </div>
             </div>
-            <div className="font-bold text-[1.1rem] leading-6">Заголовок</div>
-            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci
+            <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
+            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Adipisci
                 aut autem
                 dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                 officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
@@ -143,7 +144,6 @@ function Post() {
 }
 
 
-
 function About() {
     const [value, setValue] = React.useState(0);
 
@@ -158,27 +158,28 @@ function About() {
                 <div className="md:w-[75%] w-[100%]">
                     <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
-                              TabIndicatorProps={{style: {background: 'white'}, }}>
+                              TabIndicatorProps={{style: {background: 'white'},}}>
                             <Tab label={
-                                <div className="flex h-8 md:w-[11.5rem]">
-                                    <div className="text-black md:text-[1.7rem] text-xl font-[Montserrat] normal-case my-auto">О
+                                <div className="flex h-8">
+                                    <div
+                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">О
                                         нас
                                     </div>
                                 </div>
                             } {...a11yProps(0)}
                             />
                             <Tab label={
-                                <div className="flex h-8 md:w-[11rem]">
+                                <div className="flex h-8">
                                     <div
-                                        className="text-black md:text-[1.7rem] text-xl font-[Montserrat] normal-case my-auto">Новости
+                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Новости
                                     </div>
                                 </div>
                             } {...a11yProps(1)}
                             />
                             <Tab label={
-                                <div className="flex h-8 md:w-[14.5rem]">
+                                <div className="flex h-8">
                                     <div
-                                        className="text-black md:text-[1.7rem] text-xl font-[Montserrat] normal-case my-auto">Правила
+                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Правила
                                     </div>
                                 </div>
                             } {...a11yProps(2)}

@@ -1,15 +1,14 @@
 import Image from "next/image";
 import ProfilePicture2 from "images/profile2.png";
-import CommentIco from 'images/comment.svg';
 import React from "react";
 import {LikeComponent} from "./like";
 import {DislikeComponent} from "./dislike";
 import {CommentComponent} from "./commentComponent";
 
-function ProfilePic() {
+function ProfilePic(props: {src: any}) {
     return <div className="h-[2.6rem] w-[2.6rem]">
         <Image
-            src={ProfilePicture2}
+            src={props.src}
             alt="Profile picture"
             className="rounded-full"
         />
@@ -39,7 +38,7 @@ export default function Comment({
                                     nick = "User1",
                                     date = "15 февраля 2022",
                                     body = "Comment body",
-                                    src = CommentIco,
+                                    src = ProfilePicture2,
                                     repliesCount = 1,
                                     children
                                 }: CommentParams) {
@@ -47,17 +46,17 @@ export default function Comment({
 
     return <div className="text-xl mt-2 leading-5">
         <div className="flex">
-            <ProfilePic/>
+            <ProfilePic src={src}/>
             <div className="ml-2 my-auto -mt-1">
-                <div className="font-bold text-[0.9rem]">Burunduk</div>
-                <div className="md:text-lg text-sm my-auto opacity-60">15 февраля 2022</div>
+                <div className="font-bold text-[0.9rem]">{nick}</div>
+                <div className="md:text-lg text-sm my-auto opacity-60">{date}</div>
             </div>
         </div>
         <div className="flex mt-1 ml-5">
             <div className="bg-black w-[2px] h-auto"/>
             <div className="w-full flex-wrap ml-5 md:text-xl text-[0.95rem]">
                 <div className="mb-1">{body}</div>
-                <div className="md:text-[1.1rem] text-[1rem] font-bold">
+                <div className="md:text-[1.1rem] text-[1rem] font-bold mb-3">
                     {/*<div className="h-5 w-5 mr-1 my-auto">*/}
                     {/*    <Image*/}
                     {/*        src={src}*/}
@@ -65,10 +64,10 @@ export default function Comment({
                     {/*    />*/}
                     {/*</div>*/}
                     {/*<div className="my-auto">Reply</div>*/}
-                    <div className="flex space-x-4 font-semibold mb-2">
+                    <div className="flex space-x-4 font-semibold my-2">
                         <LikeComponent/>
-                        <DislikeComponent/>
-                        <CommentComponent/>
+                        <DislikeComponent up/>
+                        <CommentComponent up/>
                     </div>
                 </div>
                 <div>{children}</div>

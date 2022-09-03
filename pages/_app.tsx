@@ -85,13 +85,15 @@ function BackgroundComp({home}: { home: boolean }) {
             </div>
             <div className={`-z-10 absolute overflow-clip w-full h-full ${home ? "md:" : ""}hidden`}>
                 <div className="justify-center items-center flex-wrap w-[300vw]">
+                    <div className="overflow-hidden h-[64vh] w-full xs:h-[85vh]">
+                        <Image
+                            src={Background1}
+                            alt="background gradient"
+                            quality={100}
+                            className="w-[200vw] h-[100vh] opacity-80"
+                        />
+                    </div>
 
-                    <Image
-                        src={Background1}
-                        alt="background gradient"
-                        quality={100}
-                        className="w-[200vw] h-[75vh] opacity-80"
-                    />
                     {/*<Image*/}
                     {/*    src={ellipse}*/}
                     {/*    alt="background gradient"*/}
@@ -146,8 +148,11 @@ function MyApp(
                 <Navbar/>
                 {home ?
                     <Component {...pageProps} /> :
-                    <div className="rounded-2xl flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%]">
-                        <Component {...pageProps} />
+                    <div className="w-full justify-center flex">
+                        <div
+                            className="rounded-2xl flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%] max-w-[1280px]">
+                            <Component {...pageProps} />
+                        </div>
                     </div>}
                 <Footer/>
             </div>
