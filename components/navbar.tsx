@@ -289,7 +289,7 @@ function Navbar() {
     });
     const router = useRouter();
 
-    const home: boolean = router.pathname === '/';
+    const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});

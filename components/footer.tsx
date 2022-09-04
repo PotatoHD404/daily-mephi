@@ -9,13 +9,14 @@ function Footer() {
     const router = useRouter();
 
     const home: boolean = router.pathname === '/';
+    const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
     return (
         <footer className="flex justify-center">
 
             <div className={`text-center grid grid-cols-12 justify-start
                 content-start items-start h-24 absolute bottom-0 w-full
-                 ${home ? "bg-[#F1F1F1] md:bg-transparent" : "max-w-[1280px] md:px-8"}`}>
-                <div className={home ? "col-start-2 col-end-12" : "col-start-1 col-end-13"}>
+                 ${home ? "bg-[#F1F1F1] md:bg-transparent" : (!home1 ? "max-w-[1280px]" : "") + "md:px-8"}`}>
+                <div className={home1 ? "col-start-2 col-end-12" : "col-start-1 col-end-13"}>
                     <div className="grid grid-cols-3 align-bottom">
                         <div className="md:bg-black rounded col-start-1 h-[2px] col-end-13 mb-8"/>
                         <div className="flex justify-center md:justify-between col-start-1 col-end-13 ">

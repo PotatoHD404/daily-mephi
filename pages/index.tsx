@@ -36,7 +36,7 @@ function SearchBar() {
     </div>;
 }
 
-function LogoText() {
+export function LogoText() {
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
      w-full justify-center md:justify-start">
         <div className="hidden md:flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">

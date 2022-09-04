@@ -135,6 +135,7 @@ function MyApp(
     const router = useRouter();
 
     const home: boolean = router.pathname === '/';
+    const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     return <SessionProvider session={session}>
         <ThemeProvider theme={theme}>
@@ -146,16 +147,15 @@ function MyApp(
 
 
                 <Navbar/>
-                {home ?
+                {home1 ?
                     <div className={"md:px-8 mx-auto"}>
                         <Component {...pageProps} />
                     </div>
                     :
-                    <div className="w-full justify-center flex">
-                        <div
-                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%] max-w-[1280px]">
-                            <Component {...pageProps} />
-                        </div>
+                    <div
+                        className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
+                         bg-white bg-opacity-[36%] max-w-[1280px]">
+                        <Component {...pageProps} />
                     </div>}
                 <Footer/>
             </div>
