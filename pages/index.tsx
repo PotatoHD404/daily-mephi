@@ -13,7 +13,7 @@ import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import {getSession, useSession} from "next-auth/react";
 import Button from "@mui/material/Button";
-import WarningDialog from "../components/warning";
+import WarningDialog from "../components/warningDialog";
 
 
 export const StyledInput = styled(Input)(() => ({
@@ -75,7 +75,7 @@ function Home() {
         <>
             <SEO/>
 
-            <div className="flex grid-cols-12 grid pb-12 h-auto">
+            <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
                 <div className="md:hidden">
                     <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
                 </div>

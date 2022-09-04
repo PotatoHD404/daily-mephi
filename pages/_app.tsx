@@ -147,10 +147,13 @@ function MyApp(
 
                 <Navbar/>
                 {home ?
-                    <Component {...pageProps} /> :
+                    <div className={"md:px-8 mx-auto"}>
+                        <Component {...pageProps} />
+                    </div>
+                    :
                     <div className="w-full justify-center flex">
                         <div
-                            className="rounded-2xl flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%] max-w-[1280px]">
+                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12 bg-white bg-opacity-[36%] max-w-[1280px]">
                             <Component {...pageProps} />
                         </div>
                     </div>}

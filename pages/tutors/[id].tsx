@@ -9,6 +9,7 @@ import ProfilePicture2 from 'images/profile2.png';
 import LikeIco from 'images/like.svg';
 import CommentIco from 'images/comment.svg'
 import Comment from "components/comment";
+
 import QuoteIco from "images/quote.svg";
 import DownloadIco from 'images/download.svg';
 import {a11yProps} from 'helpers/reactUtils'
@@ -48,10 +49,14 @@ import {Comments} from "components/comments";
 //     </div>;
 // }
 
-function RatingComponent(props: { text: string }) {
+function RatingComponent(props: { text: string, rate: string }) {
     return (
         <div className="flex justify-between w-auto text-[0.9rem]">
-            <div className="w-fit h-fit">{props.text}</div>
+            <div className="flex">
+                <div className="w-fit h-fit">{props.text}</div>
+                <div className="w-fit h-fit hidden xs:block">{props.rate}</div>
+                <div className="w-fit h-fit">:</div>
+            </div>
             <div className="w-fit"><HoverRating/></div>
         </div>)
         ;
@@ -100,81 +105,104 @@ function Tutor() {
             <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
 
             <div className="flex-wrap w-full">
-                <div className="rounded-2xl flex flex-wrap bg-white bg-opacity-90 p-6">
+                <div className="rounded-2xl flex flex-wrap bg-white bg-opacity-90 p-6 overflow-x-hidden">
 
                     {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
                     {/*    <div>Трифоненков</div>*/}
                     {/*    <div>Владимир</div>*/}
                     {/*    <div>Петрович</div>*/}
                     {/*</div>*/}
-                    <div className="font-bold text-[1.0rem] xs:text-lg w-full mx-auto mb-5 text-center whitespace-nowrap">Трифоненков Владимир Петрович</div>
-                        <div className="flex flex-nowrap items-center">
-                            <div className="flex items-center w-fit hidden mr-4 md:block">
-                                <div className="w-fit text-[1.0rem] font-bold h-fit">
-                                    <div className="flex mb-3 w-32 md:w-60">
-                                        <Image
-                                            src={TutorImage}
-                                            alt="Tutor image"
-                                            className="rounded-full z-0"
-                                        />
+                    <div className="flex items-center w-full mb-2">
+                        <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
+                            <Image
+                                src={TutorImage}
+                                alt="Tutor image"
+                                className="rounded-full z-0"
+                            />
 
-                                    </div>
-                                    <div className="flex space-x-2 items-center justify-center">
-                                        <div className="rounded-full outline-black w-8 h-8
+                        </div>
+                        <div className="font-bold text-[1.0rem] xs:text-lg
+                         mx-auto md:mb-5 text-center h-fit ">
+                            Трифоненков Владимир Петрович
+                        </div>
+                    </div>
+                    <div className="flex flex-nowrap items-center">
+                        <div className="flex items-center w-fit hidden mr-4 md:block">
+                            <div className="w-fit text-[1.0rem] font-bold h-fit">
+                                <div className="flex mb-3 w-32 md:w-60">
+                                    <Image
+                                        src={TutorImage}
+                                        alt="Tutor image"
+                                        className="rounded-full z-0"
+                                    />
+
+                                </div>
+                                <div className="flex space-x-2 items-center justify-center">
+                                    <div className="rounded-full outline-black w-8 h-8
                                     border-[0.12rem] border-gray-800 font-semibold text-center pt-[0.1rem] leading-0">
-                                            47
-                                        </div>
-                                        <div className="font-semibold">место</div>
+                                        47
                                     </div>
+                                    <div className="font-semibold">место</div>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap w-fit h-fit">
-                                <h1 className="font-semibold">Дисциплины:</h1>
-                                <div className="my-2">
-                                    Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
-                                    Интегральные
-                                    уравнения, Дифференциальные уравнения
-                                </div>
+                        </div>
+                        <div className="flex flex-wrap w-fit h-fit">
+                            <h1 className="font-semibold">Дисциплины:</h1>
+                            <div className="my-2">
+                                Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
+                                Интегральные
+                                уравнения, Дифференциальные уравнения
+                            </div>
 
-                                <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[10rem]">
-                                    <div className="my-auto flex w-full justify-between mb-1">
-                                        <div className="font-semibold">Кафедра:</div>
-                                        <div>30</div>
-                                    </div>
-                                    <div className="my-auto flex w-full justify-between">
-                                        <div className="font-semibold">Daily Mephi:</div>
-                                        <div>4.5</div>
-                                    </div>
-                                    <div className="my-auto flex w-full justify-between">
-                                        <div className="font-semibold">mephist.ru:</div>
-                                        <div>2.1</div>
-                                    </div>
+                            <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[10rem]">
+                                <div className="my-auto flex w-full justify-between mb-1">
+                                    <div className="font-semibold">Кафедра:</div>
+                                    <div>30</div>
+                                </div>
+                                <div className="my-auto flex w-full justify-between">
+                                    <div className="font-semibold">Daily Mephi:</div>
+                                    <div>4.5</div>
+                                </div>
+                                <div className="my-auto flex w-full justify-between">
+                                    <div className="font-semibold">mephist.ru:</div>
+                                    <div>2.1</div>
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full h-[1px] bg-black my-3"/>
-                        <div className="w-full space-y-1 font-semibold">
-                            <RatingComponent text="Характер(4.6):"/>
-                            <RatingComponent text="Преподавание(4.6):"/>
-                            <RatingComponent text="Пунктуальность(4.6):"/>
-                            <RatingComponent text="Прием экзаменов(4.6)"/>
-                        </div>
+                    </div>
+                    <div className="w-full h-[1px] bg-black my-3"/>
+                    <div className="w-full space-y-1 font-semibold">
+                        <RatingComponent text="Характер" rate="(4.6)"/>
+                        <RatingComponent text="Преподавание" rate="(4.6)"/>
+                        <RatingComponent text="Пунктуальность" rate="(4.6)"/>
+                        <RatingComponent text="Прием экзаменов" rate="(4.6)"/>
+                    </div>
                 </div>
                 <div className="w-full mt-7">
                     <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
                               TabIndicatorProps={{style: {background: 'white'}}}>
-                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
-                                label={
-                                <div className="flex h-8">
-                                    {/*<ReviewsIconComponent src={reviewsIco}/>*/}
-                                    <div
-                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Отзывы
-                                    </div>
-                                </div>
-                            } {...a11yProps(0)}
+                            <Tab sx={{
+                                minWidth: "fit-content",
+                                maxWidth: "fit-content",
+                                padding: '0.5rem',
+                                margin: 'auto'
+                            }}
+                                 label={
+                                     <div className="flex h-8">
+                                         {/*<ReviewsIconComponent src={reviewsIco}/>*/}
+                                         <div
+                                             className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Отзывы
+                                         </div>
+                                     </div>
+                                 } {...a11yProps(0)}
                             />
-                            <Tab sx={{ minWidth: "fit-content", maxWidth: "fit-content" , padding: '0.5rem', margin: 'auto' }} label={
+                            <Tab sx={{
+                                minWidth: "fit-content",
+                                maxWidth: "fit-content",
+                                padding: '0.5rem',
+                                margin: 'auto'
+                            }} label={
                                 <div className="flex h-8">
                                     {/*<QuoteIconComponent src={quotesIco}/>*/}
                                     <div
@@ -183,7 +211,12 @@ function Tutor() {
                                 </div>
                             } {...a11yProps(1)}
                             />
-                            <Tab sx={{ minWidth: "fit-content", maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }} label={
+                            <Tab sx={{
+                                minWidth: "fit-content",
+                                maxWidth: "fit-content",
+                                padding: '0.5rem',
+                                margin: 'auto'
+                            }} label={
                                 <div className="flex h-8">
                                     {/*<MaterialsIconComponent src={materialsIco}/>*/}
                                     <div
@@ -194,7 +227,6 @@ function Tutor() {
                             />
                         </Tabs>
                     </Box>
-                    {/* mt-14 */}
                     <div className="mt-6 mx-auto">
                         {value == 0 ?
                             <div className="flex-wrap space-y-10 w-full">

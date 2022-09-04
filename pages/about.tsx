@@ -159,7 +159,8 @@ function About() {
                     <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth"
                               TabIndicatorProps={{style: {background: 'white'},}}>
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
+                                label={
                                 <div className="flex h-8">
                                     <div
                                         className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">О
@@ -168,7 +169,8 @@ function About() {
                                 </div>
                             } {...a11yProps(0)}
                             />
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
+                                label={
                                 <div className="flex h-8">
                                     <div
                                         className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Новости
@@ -176,7 +178,8 @@ function About() {
                                 </div>
                             } {...a11yProps(1)}
                             />
-                            <Tab label={
+                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
+                                label={
                                 <div className="flex h-8">
                                     <div
                                         className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Правила

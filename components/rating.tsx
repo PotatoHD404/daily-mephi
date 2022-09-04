@@ -35,6 +35,19 @@ export default function HoverRating() {
                 }}
                 emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
             />
+            {/*<Rating*/}
+            {/*    name="hover-feedback"*/}
+            {/*    value={value}*/}
+            {/*    precision={0.5}*/}
+            {/*    size="medium"*/}
+            {/*    onChange={(event, newValue) => {*/}
+            {/*        setValue(newValue);*/}
+            {/*    }}*/}
+            {/*    onChangeActive={(event, newHover) => {*/}
+            {/*        setHover(newHover);*/}
+            {/*    }}*/}
+            {/*    emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}*/}
+            {/*/>*/}
             <div className="w-fit hidden md:block">
                 {value !== null ? labels[hover !== -1 ? hover : value] : null}
             </div>

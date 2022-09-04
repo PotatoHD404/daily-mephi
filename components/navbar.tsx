@@ -1,6 +1,6 @@
 /*  ./components/Navbar.jsx     */
 import Link from 'next/link';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -12,7 +12,7 @@ import TutorsIcon from "images/news.svg";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
-import WarningDialog from 'components/warning';
+import WarningDialog from 'components/warningDialog';
 import {useRouter} from "next/router";
 import Image from "next/future/image";
 import burger from 'images/burger.svg'
@@ -22,6 +22,7 @@ import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
 import {inspect} from "util";
 import {ListItemButton} from "@mui/material";
+import RegisterDialog from "./registerDialog";
 
 
 interface DefaultNavbarParams {
@@ -31,9 +32,11 @@ interface DefaultNavbarParams {
 
 function Minicat() {
     return (
-        <svg width="64" height="64" viewBox="0 0 435 363" fill="none" xmlns="http://www.w3.org/2000/svg" className="group">
+        <svg width="64" height="64" viewBox="0 0 435 363" fill="none" xmlns="http://www.w3.org/2000/svg"
+             className="group">
             <g filter="url(#filter0_d_909_11)">
-                <path fillRule="evenodd" clipRule="evenodd" className="ease-in-out duration-300 group-hover:fill-white fill-transparent"
+                <path fillRule="evenodd" clipRule="evenodd"
+                      className="ease-in-out duration-300 group-hover:fill-white fill-transparent"
                       d="M325.6 73.7162L385.532 27.583L385.532 88.3535H385.533V240.603H385.511C385.012 266.085 375.575 289.338 360.256 307.257C341.107 331.232 311.69 346.582 278.701 346.582C277.037 346.582 275.386 346.543 273.746 346.466H159.792C157.879 346.584 155.957 346.643 154.025 346.643C148.589 346.643 143.271 346.185 138.095 345.311C85.6945 338.267 47.4655 288.271 48.4249 237.227C48.4526 235.751 48.5182 234.278 48.6208 232.809V101.037L48.6211 101.037L48.621 27.5831L107.458 73.4352L107.473 73.4285L108.539 73.855L109.819 74.0682H110.885L112.378 73.7445L127.517 70.7592L135.194 69.5903L135.156 69.634C158.738 65.2951 187.052 62.7667 217.503 62.7667C253.458 62.7667 286.435 66.2919 312.161 72.1605L312.179 72.1483L322.376 74.1113L322.873 74.1372L325.279 73.8231L325.6 73.7162Z"
                       fill="white"/>
             </g>
@@ -104,11 +107,19 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 }
 
 function AuthSection(props: DefaultNavbarParams) {
-    const router = useRouter()
+    // const router = useRouter()
     const {data: session, status} = useSession()
+    const [open, setOpen] = useState(false)
+
+
     useEffect(() => {
+        // console.log("Auth section rerendered")
         if (session?.user && session.user.name === null) {
-            router.push('/users/new')
+            // setOpen(true);
+
+            // router.push('/users/new')
+
+
         }
     }, [status])
 
@@ -131,33 +142,50 @@ function AuthSection(props: DefaultNavbarParams) {
 
     if (status === "loading") {
         return (
-            <div
-                className={style.authText}>
-                <h3>Загрузка...</h3>
-            </div>
+            <>
+                <RegisterDialog
+                    handleClose={() => setOpen(false)}
+                    opened={open}/>
+                <div
+                    className={style.authText}>
+                    <h3>Загрузка...</h3>
+                </div>
+            </>
         )
     } else if (status === "unauthenticated" || !session) {
         return (
-            <button onClick={props.handleClickOpenWarning}
+            <>
+                <RegisterDialog
+                    handleClose={() => setOpen(false)}
+                    opened={open}/>
+                <button onClick={props.handleClickOpenWarning}
+                        className={style.authText}>
+                    <h3>Войти</h3>
+                </button>
+            </>
+        )
+    }
+        // else if (router.pathname === '/users/new') {
+        //     return (
+        //         <button className={style.authText}
+        //                 onClick={() => {
+        //                     signOut({redirect: false}).then(() => router.push("/"))
+        //                 }}>
+        //             <h3>Выход</h3>
+        //         </button>
+        //     )
+    // }
+    else {
+        return (
+            <>
+                <RegisterDialog
+                    handleClose={() => setOpen(false)}
+                    opened={open}/>
+                <button
                     className={style.authText}>
-                <h3>Войти</h3>
-            </button>
-        )
-    } else if (router.pathname === '/users/new') {
-        return (
-            <button className={style.authText}
-                    onClick={() => {
-                        signOut({redirect: false}).then(() => router.push("/"))
-                    }}>
-                <h3>Выход</h3>
-            </button>
-        )
-    } else {
-        return (
-            <button
-                className={style.authText}>
-                <h3>{session.user?.name}</h3>
-            </button>
+                    <h3>{session.user?.name || "Профиль"}</h3>
+                </button>
+            </>
         )
     }
 }
@@ -187,7 +215,8 @@ function HomeNavbar(props: DefaultNavbarParams) {
     return (
         <nav>
             <div
-                className="mb-0 hidden md:grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20">
+                className="mb-0 hidden md:grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20
+               mr-10">
                 <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
                     <div className="flex col-start-1 col-end-10 justify-between">
@@ -288,6 +317,7 @@ function Navbar() {
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
+
             <SwappableDrawer
                 className='md:hidden'
                 anchor='left'
