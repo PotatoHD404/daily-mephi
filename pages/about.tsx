@@ -83,7 +83,7 @@ function TopUser(props: TopUserParams) {
 }
 
 function TopUsers() {
-    return <div className="w-[23.5] hidden md:block">
+    return <div className="w-[23.5] hidden md:block -mt-2">
         <div className="md:text-[1.4rem] text-xl md:mt-[0.5rem] md:h-[3rem] flex items-center justify-center text-center pb-2">Топ Мифистов</div>
         <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
 

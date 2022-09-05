@@ -84,7 +84,7 @@ export default function WarningDialog(props: DialogProps) {
                                 <div>
                                     <span>Подробнее читайте в разделе </span>
                                     <Link href="/about">
-                                        <a className="underlining font-semibold">О нас</a>
+                                        <a className="underlining font-semibold" onClick={handleClose}>О нас</a>
                                     </Link>
                                 </div>
                             </div>

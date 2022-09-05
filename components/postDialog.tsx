@@ -12,6 +12,7 @@ import {a11yProps} from "../helpers/reactUtils";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import FileUpload from "images/file_upload.svg";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const StyledTextField = styled(TextField)({
     "& label": {
@@ -60,15 +61,52 @@ export interface DialogProps {
     handleClose: () => void;
 }
 
+function CustomSelect(props: { options: any, label: string, value?: any, onChange?: any }) {
+    return (
+        <Autocomplete
+            id="country-select-demo"
+            sx={{width: 300}}
+            options={props.options}
+            autoHighlight
+            getOptionLabel={(option: any) => option.label}
+            renderOption={(props, option) => (
+                <li className="shrink-0">
+                    {/*<img*/}
+                    {/*    loading="lazy"*/}
+                    {/*    width="20"*/}
+                    {/*    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}*/}
+                    {/*    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}*/}
+                    {/*    alt=""*/}
+                    {/*/>*/}
+                    {option.label}
+                </li>
+            )}
+            renderInput={(params) => (
+                <StyledTextField
+                    {...params}
+                    label={props.label}
+                    inputProps={{
+                        ...params.inputProps,
+                        autoComplete: 'new-password',
+                        className: "font-[Montserrat] text-xl greenBox p-0 h-[23px]",
+                    }}
+                    variant="outlined"
+                    // InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}
+                />
+            )}
+        />
+    );
+}
 
 function Review(props: { postForm: any }) {
-
+    const [file, setFile] = React.useState('');
     return (
         <div className="md:w-4/5 mx-auto">
             <FormControl className="w-full flex">
                 <StyledTextField label="Название"
                                  variant="outlined" className="w-full mb-8"
                                  InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
+                <CustomSelect options={[{label: 'Трифоненков Владимир Петрович'}]} label={'Выберите преподавателя'}/>
 
                 <div
                     className="mt-4 mb-2 font-bold flex flex-wrap w-full text-sm leading-4">
@@ -94,12 +132,17 @@ function Review(props: { postForm: any }) {
                                  multiline
                                  rows={8}/>
                 <div className="flex items-center justify-between mt-6">
-                    <IconButton aria-label="upload picture" component="label"
-                                className="md:w-[2.5rem] md:h-[2.5rem] -ml-1 w-[2.5rem] h-[2.5rem]">
-                        <input hidden accept="*" type="file"/>
-                        <Image src={FileUpload} alt="file upload" width={24} height={24}/>
-                    </IconButton>
-
+                    <div className="flex text-center items-center">
+                        <IconButton aria-label="upload picture" component="label"
+                                    className="md:w-[2.5rem] md:h-[2.5rem] -ml-1 w-[2.5rem] h-[2.5rem]">
+                            <input hidden accept="*" type="file"
+                                   onChange={(event) =>
+                                       setFile(event.target.value.split(/[\/\\]/).pop() || '')}
+                            />
+                            <Image src={FileUpload} alt="file upload" width={24} height={24}/>
+                        </IconButton>
+                        <div className="h-fit">{file}</div>
+                    </div>
                     <div
                         className="rounded-full border-2 border-black w-44 h-8">
                         <Button onClick={props.postForm}
