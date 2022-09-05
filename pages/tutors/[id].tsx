@@ -22,6 +22,7 @@ import {CommentComponent} from "components/commentComponent";
 import {Comments} from "components/comments";
 import {useSession} from "next-auth/react";
 import PostDialog from "../../components/postDialog";
+import UserHeader from "../../components/UserHeader";
 
 
 // function QuoteIconComponent(props: { src: any }) {
@@ -64,20 +65,178 @@ function RatingComponent(props: { text: string, rate: string }) {
         ;
 }
 
-function UserHeaderComponent(props: { name: string, date: string }) {
-    return <div className="flex w-full mb-3 content-center items-center">
-        <div className="h-14 my-auto w-14">
-            <Image
-                src={ProfilePicture2}
-                alt="Profile picture"
-                className="rounded-full"
-            />
+function Quote(props: { onClick: () => void }) {
+    return <div className="flex-wrap space-y-10 w-full">
+        <div className="space-y-10">
+            <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
+                <UserHeader name={"User1"}
+                            date={"15 февраля 2022"}/>
+                <textarea
+                    className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
+                                        border focus:border-gray-200 p-3 focus:outline-none
+                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
+                                        text-[0.9rem] leading-6"
+                    placeholder="Загрузить цитату"
+                    onClick={props.onClick}/>
+                {/*<div className="flex space-x-2 font-semibold">*/}
+                {/*    <LikeComponent/>*/}
+                {/*    <DislikeComponent/>*/}
+                {/*    <CommentComponent/>*/}
+                {/*</div>*/}
+            </div>
+            <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
+                <UserHeader name={"User1"}
+                            date={"15 февраля 2022"}/>
+                <div className="relative flex">
+                    <div className="h-4 w-4">
+                        <Image
+                            src={QuoteIco}
+                            alt="Quote symbol"
+                        />
+                    </div>
+                    <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
+                        consectetur
+                        adipisicing
+                        elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                        repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
+                        nesciunt
+                        pariatur, sed sunt tempora, ullam?
+                    </div>
+                    <div className="h-4 w-4 mt-auto">
+                        <Image
+                            src={QuoteIco}
+                            alt="Quote symbol"
+                            className="rotate-180"
+                        />
+                    </div>
+                </div>
+                <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
+                <div className="flex space-x-4 font-semibold">
+                    <LikeComponent/>
+                    <DislikeComponent/>
+                </div>
+            </div>
         </div>
-        <div className="ml-2 h-fit">
-            <div className="font-bold text-[0.9rem] leading-5">{props.name}</div>
-            <div className="text-[0.8rem] leading-5 my-auto opacity-60">{props.date}</div>
+    </div>;
+}
+
+function Review(props: { onClick: () => void }) {
+    return <div className="flex-wrap space-y-10 w-full">
+        <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
+            <UserHeader name={"User1"}
+                        date={"15 февраля 2022"}/>
+            <textarea
+                className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
+                                        border focus:border-gray-200 p-3 focus:outline-none
+                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
+                                        text-[0.9rem] leading-6"
+                placeholder="Оставить отзыв"
+                onClick={props.onClick}/>
+            {/*<div className="flex space-x-2 font-semibold">*/}
+            {/*    <LikeComponent/>*/}
+            {/*    <DislikeComponent/>*/}
+            {/*    <CommentComponent/>*/}
+            {/*</div>*/}
         </div>
 
+
+        <div className="rounded-2xl p-5 text-[1.7rem] w-full bg-white bg-opacity-90">
+            <UserHeader name={"User1"}
+                        date={"15 февраля 2022"}/>
+            <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
+            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet,
+                consectetur adipisicing elit.
+                Adipisci
+                aut autem
+                dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
+                officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
+            </div>
+            <div className="flex space-x-2 font-semibold mb-2">
+                <LikeComponent/>
+                <DislikeComponent/>
+                <CommentComponent/>
+            </div>
+            <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
+            <Comments/>
+        </div>
+    </div>;
+}
+
+function Material(props: { onClick: () => void }) {
+    return <div className="flex-wrap space-y-10 w-full">
+        <div className="space-y-10">
+            <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
+                <UserHeader name={"User1"}
+                            date={"15 февраля 2022"}/>
+                <textarea
+                    className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
+                                        border focus:border-gray-200 p-3 focus:outline-none
+                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
+                                        text-[0.9rem] leading-6"
+                    placeholder="Загрузить материал"
+                    onClick={props.onClick}/>
+                {/*<div className="flex space-x-2 font-semibold">*/}
+                {/*    <LikeComponent/>*/}
+                {/*    <DislikeComponent/>*/}
+                {/*    <CommentComponent/>*/}
+                {/*</div>*/}
+            </div>
+            <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
+                <UserHeader name={"User1"}
+                            date={"15 февраля 2022"}/>
+                <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
+                <div className="relative flex text-[1.0rem] leading-5">
+
+                    <div className="">Lorem ipsum dolor sit amet, consectetur
+                        adipisicing
+                        elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                        repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
+                        nesciunt
+                        pariatur, sed sunt tempora, ullam?
+                    </div>
+
+                </div>
+                <div
+                    className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
+                    <div
+                        className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
+                    </div>
+                    <div
+                        className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
+                        1
+                    </div>
+                    <div
+                        className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
+                    </div>
+                    <div
+                        className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
+                    </div>
+                    <div
+                        className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
+                    </div>
+                </div>
+                <div
+                    className="flex flex-wrap md:flex-nowrap font-semibold relative">
+                    <div
+                        className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
+                        <div className="font-medium">exam_file_1.pdf (50 MB)</div>
+                        <div className="h-4 flex w-4 -mt-0.5">
+                            <Image
+                                src={DownloadIco}
+                                alt="Comment"
+                            />
+                        </div>
+
+                    </div>
+                    <div className="flex space-x-4 font-semibold w-full md:w-fit">
+                        <LikeComponent/>
+                        <DislikeComponent/>
+                        <CommentComponent/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>;
 }
 
@@ -154,7 +313,7 @@ function Tutor() {
                             </div>
                         </div>
                         <div className="flex flex-wrap w-fit h-fit md:text-xl">
-                            <h1 className="font-semibold" >Дисциплины:</h1>
+                            <h1 className="font-semibold">Дисциплины:</h1>
                             <div className="my-2">
                                 Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
                                 Интегральные
@@ -236,176 +395,13 @@ function Tutor() {
                     </Box>
                     <div className="mt-6 mx-auto">
                         {value == 0 ?
-                            <div className="flex-wrap space-y-10 w-full">
-                                <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-                                    <UserHeaderComponent name={"User1"}
-                                                         date={"15 февраля 2022"}/>
-                                    <textarea
-                                        className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                                        placeholder="Оставить отзыв"
-                                    onClick={() => setOpen(true)}/>
-                                    {/*<div className="flex space-x-2 font-semibold">*/}
-                                    {/*    <LikeComponent/>*/}
-                                    {/*    <DislikeComponent/>*/}
-                                    {/*    <CommentComponent/>*/}
-                                    {/*</div>*/}
-                                </div>
-
-
-                                <div className="rounded-2xl p-5 text-[1.7rem] w-full bg-white bg-opacity-90">
-                                    <UserHeaderComponent name={"User1"}
-                                                         date={"15 февраля 2022"}/>
-                                    <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
-                                    <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet,
-                                        consectetur adipisicing elit.
-                                        Adipisci
-                                        aut autem
-                                        dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
-                                        officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
-                                    </div>
-                                    <div className="flex space-x-2 font-semibold mb-2">
-                                        <LikeComponent/>
-                                        <DislikeComponent/>
-                                        <CommentComponent/>
-                                    </div>
-                                    <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
-                                    <Comments/>
-                                </div>
-                            </div>
+                            <Review onClick={() => setOpen(true)}/>
                             : null}
                         {value == 1 ?
-                            <div className="flex-wrap space-y-10 w-full">
-                                <div className="space-y-10">
-                                    <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-                                        <UserHeaderComponent name={"User1"}
-                                                             date={"15 февраля 2022"}/>
-                                        <textarea
-                                            className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                                            placeholder="Загрузить цитату"
-                                            onClick={() => setOpen(true)}/>
-                                        {/*<div className="flex space-x-2 font-semibold">*/}
-                                        {/*    <LikeComponent/>*/}
-                                        {/*    <DislikeComponent/>*/}
-                                        {/*    <CommentComponent/>*/}
-                                        {/*</div>*/}
-                                    </div>
-                                    <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
-                                        <UserHeaderComponent name={"User1"}
-                                                             date={"15 февраля 2022"}/>
-                                        <div className="relative flex">
-                                            <div className="h-4 w-4">
-                                                <Image
-                                                    src={QuoteIco}
-                                                    alt="Quote symbol"
-                                                />
-                                            </div>
-                                            <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
-                                                consectetur
-                                                adipisicing
-                                                elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                                                repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                                                nesciunt
-                                                pariatur, sed sunt tempora, ullam?
-                                            </div>
-                                            <div className="h-4 w-4 mt-auto">
-                                                <Image
-                                                    src={QuoteIco}
-                                                    alt="Quote symbol"
-                                                    className="rotate-180"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
-                                        <div className="flex space-x-4 font-semibold">
-                                            <LikeComponent/>
-                                            <DislikeComponent/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <Quote onClick={() => setOpen(true)}/>
                             : null}
                         {value == 2 ?
-                            <div className="flex-wrap space-y-10 w-full">
-                                <div className="space-y-10">
-                                    <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-                                        <UserHeaderComponent name={"User1"}
-                                                             date={"15 февраля 2022"}/>
-                                        <textarea
-                                            className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                                            placeholder="Загрузить материал"
-                                            onClick={() => setOpen(true)}/>
-                                        {/*<div className="flex space-x-2 font-semibold">*/}
-                                        {/*    <LikeComponent/>*/}
-                                        {/*    <DislikeComponent/>*/}
-                                        {/*    <CommentComponent/>*/}
-                                        {/*</div>*/}
-                                    </div>
-                                    <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
-                                        <UserHeaderComponent name={"User1"}
-                                                             date={"15 февраля 2022"}/>
-                                        <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
-                                        <div className="relative flex text-[1.0rem] leading-5">
-
-                                            <div className="">Lorem ipsum dolor sit amet, consectetur
-                                                adipisicing
-                                                elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                                                repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                                                nesciunt
-                                                pariatur, sed sunt tempora, ullam?
-                                            </div>
-
-                                        </div>
-                                        <div
-                                            className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
-                                            <div
-                                                className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
-                                            </div>
-                                            <div
-                                                className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
-                                                1
-                                            </div>
-                                            <div
-                                                className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
-                                            </div>
-                                            <div
-                                                className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
-                                            </div>
-                                            <div
-                                                className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
-                                            </div>
-                                        </div>
-                                        <div
-                                            className="flex flex-wrap md:flex-nowrap md:space-x-4 font-semibold relative">
-                                            <div
-                                                className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
-                                                <div className="font-medium">exam_file_1.pdf (50 MB)</div>
-                                                <div className="h-4 flex w-4 -mt-0.5">
-                                                    <Image
-                                                        src={DownloadIco}
-                                                        alt="Comment"
-                                                    />
-                                                </div>
-
-                                            </div>
-                                            <div className="flex space-x-4 font-semibold w-full md:w-fit">
-                                                <LikeComponent/>
-                                                <DislikeComponent/>
-                                                <CommentComponent/>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <Material onClick={() => setOpen(true)}/>
                             : null}
                     </div>
                 </div>
