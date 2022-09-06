@@ -8,11 +8,11 @@ import CloseIcon from 'images/close_icon.svg';
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import {a11yProps} from "../helpers/reactUtils";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import FileUpload from "images/file_upload.svg";
 import Autocomplete from "@mui/material/Autocomplete";
+import TabsBox from "./tabsBox";
 
 const StyledTextField = styled(TextField)({
     "& label": {
@@ -195,53 +195,7 @@ export default function PostDialog(props: DialogProps) {
                     />
                 </IconButton>
                 <div className="md:mt-24 mt-2 px-6">
-                    <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
-                        <Tabs value={value} onChange={handleChange} variant="fullWidth"
-                              TabIndicatorProps={{style: {background: 'gray'},}}>
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }}
-                                 label={
-                                     <div className="flex h-8">
-                                         <div
-                                             className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Отзыв
-                                         </div>
-                                     </div>
-                                 } {...a11yProps(0)}
-                            />
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }}
-                                 label={
-                                     <div className="flex h-8">
-                                         <div
-                                             className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Материал
-                                         </div>
-                                     </div>
-                                 } {...a11yProps(1)}
-                            />
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }}
-                                 label={
-                                     <div className="flex h-8">
-                                         <div
-                                             className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Цитата
-                                         </div>
-                                     </div>
-                                 } {...a11yProps(2)}
-                            />
-                        </Tabs>
-                    </Box>
+                    <TabsBox value={value} onChange={handleChange} tabs={['Отзыв', 'Материал', 'Цитата']}/>
                     {value == 0 ? <Review postForm={postForm}/> : null}
                     {/*{value == 1 ? <Post/> : null}*/}
                     {/*{value == 2 ? <Post/> : null}*/}

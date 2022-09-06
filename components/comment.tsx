@@ -1,9 +1,9 @@
 import Image from "next/image";
 import ProfilePicture2 from "images/profile2.png";
 import React from "react";
-import {LikeComponent} from "./like";
-import {DislikeComponent} from "./dislike";
-import {CommentComponent} from "./commentComponent";
+import LikeBtn from "./likeBtn";
+import DislikeBtn from "./dislikeBtn";
+import ReplyBtn from "./replyBtn";
 
 function ProfilePic(props: {src: any}) {
     return <div className="h-[2.6rem] w-[2.6rem]">
@@ -49,13 +49,13 @@ export default function Comment({
             <ProfilePic src={src}/>
             <div className="ml-2 my-auto -mt-1">
                 <div className="font-bold text-[0.9rem]">{nick}</div>
-                <div className="md:text-lg text-sm my-auto opacity-60">{date}</div>
+                <div className="text-sm my-auto opacity-60">{date}</div>
             </div>
         </div>
         <div className="flex mt-1 ml-5">
             <div className="bg-black w-[2px] h-auto"/>
-            <div className="w-full flex-wrap ml-5 md:text-xl text-[0.95rem]">
-                <div className="mb-1">{body}</div>
+            <div className="w-full flex-wrap ml-5 text-[0.95rem]">
+                <div className="mb-1 ml-1">{body}</div>
                 <div className="md:text-[1.1rem] text-[1rem] font-bold mb-3">
                     {/*<div className="h-5 w-5 mr-1 my-auto">*/}
                     {/*    <Image*/}
@@ -65,9 +65,9 @@ export default function Comment({
                     {/*</div>*/}
                     {/*<div className="my-auto">Reply</div>*/}
                     <div className="flex space-x-2 font-semibold my-2">
-                        <LikeComponent/>
-                        <DislikeComponent/>
-                        <CommentComponent/>
+                        <LikeBtn/>
+                        <DislikeBtn/>
+                        <ReplyBtn/>
                     </div>
                 </div>
                 <div>{children}</div>
@@ -76,7 +76,7 @@ export default function Comment({
 
         </div>
         {repliesCount ?
-            <button className="ml-5 text-blue-500 md:text-[1.1rem] text-[0.9rem] font-semibold">
+            <button className="ml-5 text-blue-500 text-[0.9rem] font-semibold">
                 {repliesCount} more repl{repliesCount > 1 ? "ies" : "y"}
             </button>
             : null}

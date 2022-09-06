@@ -17,6 +17,8 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
+import CustomDialog from "./customDialog";
+import OutlinedButton from "./outlinedButton";
 
 
 // const BootstrapDialog = styled(Dialog)(({theme}) => ({
@@ -98,23 +100,12 @@ export default function RegisterDialog(props: DialogProps) {
         handleClose();
     }
     return (
-        <Dialog
-            // onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
-            open={opened}
-            classes={{
-                root: 'p-4',
-                paper: 'bg-white md:w-[60rem] lg:h-[41rem] md:h-[35rem] h-fit py-8 md:py-0 max-w-[100vw] md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-hidden'
-            }}
-            fullWidth
-        >
-
-
+        <CustomDialog onClose={undefined} open={opened}>
             <div className="grid grid-cols-12 px-2 md:px-0">
                 <div className="col-start-1 col-end-13 h-20 flex justify-center md:hidden">
                     <Image
                         src={RegisterCat}
-                        alt="Warning cat"
+                        alt="Register cat"
                     />
                 </div>
                 <Image
@@ -145,21 +136,9 @@ export default function RegisterDialog(props: DialogProps) {
                                             }}
                                             className="w-full py-0 my-0 focus:bg-black lg:text-2xl text-xl"
                                         >
-                                            <option value="Б1">Б1</option>
-                                            <option value="Б2">Б2</option>
-                                            <option value="Б3">Б3</option>
-                                            <option value="Б4">Б4</option>
-                                            <option value="С1">С1</option>
-                                            <option value="С2">С2</option>
-                                            <option value="С3">С3</option>
-                                            <option value="С4">С4</option>
-                                            <option value="С5">С5</option>
-                                            <option value="М1">М1</option>
-                                            <option value="М2">М2</option>
-                                            <option value="А1">А1</option>
-                                            <option value="А2">А2</option>
-                                            <option value="А3">А3</option>
-                                            <option value="А4">А4</option>
+                                            {["Б1", "Б2", "Б3", "Б4", "С1", "С2", "С3", "С4", "С5", "М1", "М2", "А1",
+                                                "А2", "А3", "А4"].map((item) =>
+                                                <option value={item} key={item}>{item}</option>)}
                                         </StyledNativeSelect>
                                     </div>
                                     {/*<StyledTextField label="Ник"*/}
@@ -169,11 +148,7 @@ export default function RegisterDialog(props: DialogProps) {
                             </div>
                             <div
                                 className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full">
-                                <Button onClick={register}
-                                        className="rounded-full text-black
-                                            font-[Montserrat] font-bold text-center w-full lg:text-3xl md:text-2xl text-xl normal-case">
-                                    Регистрация
-                                </Button>
+                                <OutlinedButton onClick={register} text={"Регистрация"}/>
                             </div>
                         </FormControl>
 
@@ -182,6 +157,6 @@ export default function RegisterDialog(props: DialogProps) {
             </div>
 
 
-        </Dialog>
+        </CustomDialog>
     );
 }

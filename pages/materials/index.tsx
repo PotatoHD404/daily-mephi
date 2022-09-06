@@ -11,17 +11,21 @@ import FiltersIco from 'images/filters.svg'
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import DownloadIco from "../../images/download.svg";
-import {LikeComponent} from "../../components/like";
-import {DislikeComponent} from "../../components/dislike";
-import {CommentComponent} from "../../components/commentComponent";
-import UserHeaderComponent from "../../components/UserHeader";
+import LikeBtn from "../../components/likeBtn";
+import DislikeBtn from "../../components/dislikeBtn";
+import CommentBtn from "../../components/commentBtn";
+import UserHeaderComponent from "../../components/userHeader";
+import Reactions from "../../components/reactions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "../../images/close_icon.svg";
+import Material from "../../components/material";
 
 function Filters() {
     return <div className="w-[15rem] hidden md:block ml-auto mt-4">
 
 
         <div
-            className="rounded-2xl pt-6 pb-4 px-3.5 text-[1.25rem] ml-auto w-[99.5%] bg-white bg-opacity-90 flex-wrap space-y-2 text-center
+            className="text-[1.25rem] ml-auto w-[99.5%] whiteBox flex-wrap space-y-2 text-center
                     text-[#5B5959]">
             <div className="w-full">ssas</div>
             <div className="w-full">ssas</div>
@@ -39,64 +43,6 @@ function Filters() {
             <div className="w-full">ssas</div>
             <div className="w-full">ssas</div>
             <div className="w-full">ssas</div>
-        </div>
-    </div>;
-}
-
-function Material() {
-    return <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%] mt-4">
-        <UserHeaderComponent name={"User1"}
-                             date={"15 февраля 2022"}/>
-        <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
-        <div className="relative flex text-[1.0rem] leading-5">
-
-            <div className="">Lorem ipsum dolor sit amet, consectetur
-                adipisicing
-                elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                nesciunt
-                pariatur, sed sunt tempora, ullam?
-            </div>
-
-        </div>
-        <div
-            className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
-            <div
-                className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
-            </div>
-            <div
-                className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
-                1
-            </div>
-            <div
-                className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
-            </div>
-            <div
-                className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
-            </div>
-            <div
-                className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
-            </div>
-        </div>
-        <div
-            className="flex flex-wrap md:flex-nowrap font-semibold relative">
-            <div
-                className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
-                <div className="font-medium">exam_file_1.pdf (50 MB)</div>
-                <div className="h-4 flex w-4 -mt-0.5">
-                    <Image
-                        src={DownloadIco}
-                        alt="Comment"
-                    />
-                </div>
-
-            </div>
-            <div className="flex space-x-4 font-semibold w-full md:w-fit">
-                <LikeComponent/>
-                <DislikeComponent/>
-                <CommentComponent/>
-            </div>
-
         </div>
     </div>;
 }

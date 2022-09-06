@@ -17,7 +17,7 @@ import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
 // import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
-import {MetricContainer} from "../components/yandexMetrika";
+import MetricContainer from "../components/yandexMetrika";
 
 
 declare module '@mui/material/styles' {

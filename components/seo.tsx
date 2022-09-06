@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import {MetricContainer} from "./yandexMetrika";
+import MetricContainer from "./yandexMetrika";
 
 
 function SEO({title, card = "/images/twitter-large.png"}: { title?: string, card?: string }) {

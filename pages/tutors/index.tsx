@@ -16,7 +16,7 @@ function Filters() {
 
 
         <div
-            className="rounded-2xl pt-6 pb-4 px-3.5 text-[1.25rem] ml-auto w-[99.5%] bg-white bg-opacity-90 flex-wrap space-y-2 text-center
+            className="text-[1.25rem] ml-auto w-[99.5%] whiteBox flex-wrap space-y-2 text-center
                     text-[#5B5959]">
             <div className="w-full">ssas</div>
             <div className="w-full">ssas</div>
@@ -41,7 +41,7 @@ function Filters() {
 function Tutor() {
     return <Link href="/tutors/1">
         <a>
-            <div className="rounded-2xl flex flex-wrap bg-white bg-opacity-90 p-6 overflow-x-hidden mt-4">
+            <div className="flex flex-wrap whiteBox overflow-x-hidden mt-4">
                 <div className="flex justify-start items-center w-full text-lg mb-3 relative">
                     <div className="absolute md:relative right-0 top-0 md:mt-0 -mt-2 md:mr-0 -mr-2">
                         <div className="rounded-full outline-black w-8 h-8 md:w-10 md:h-10

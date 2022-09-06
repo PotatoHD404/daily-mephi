@@ -1,7 +1,7 @@
 import {Component} from "react";
 import Script from "next/script";
 
-export class MetricContainer extends Component {
+export default class MetricContainer extends Component {
     render() {
         return <>
             <script

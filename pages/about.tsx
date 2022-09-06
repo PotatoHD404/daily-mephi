@@ -1,22 +1,17 @@
 import React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
-import {a11yProps} from 'helpers/reactUtils'
 import Image from "next/image";
-import LikeIco from "images/like.svg";
-import CommentIco from "images/comment.svg";
-import Comment from "components/comment";
 import ProfileIco from "images/profile3.png";
 import MiniCat from "images/minicat_transparent.svg";
 import GoldenCrown from "images/golden_crown.svg";
 import SilverCrown from "images/silver_crown.svg";
 import BronzeCrown from "images/bronze_crown.svg";
 import SEO from "components/seo";
-import {LikeComponent} from "components/like";
-import {DislikeComponent} from "components/dislike";
-import {CommentComponent} from "components/commentComponent";
-import {Comments} from "components/comments";
+import LikeBtn from "components/likeBtn";
+import DislikeBtn from "components/dislikeBtn";
+import CommentBtn from "components/commentBtn";
+import Comments from "components/comments";
+import TabsBox from "../components/tabsBox";
+import Reactions from "../components/reactions";
 
 interface CrownParams {
     place: number;
@@ -84,11 +79,14 @@ function TopUser(props: TopUserParams) {
 
 function TopUsers() {
     return <div className="w-[23.5] hidden md:block -mt-2">
-        <div className="md:text-[1.4rem] text-xl md:mt-[0.5rem] md:h-[3rem] flex items-center justify-center text-center pb-2">Топ Мифистов</div>
+        <div
+            className="md:text-[1.4rem] text-xl md:mt-[0.5rem] md:h-[3rem] flex items-center justify-center text-center pb-2">Топ
+            Мифистов
+        </div>
         <div className="w-full h-[1px] bg-black bg-opacity-10 mb-4"/>
 
         <div
-            className="rounded-2xl pt-6 pb-4 px-3.5 text-[1.25rem] ml-auto w-[99.5%] bg-white bg-opacity-90 flex-wrap space-y-5
+            className="text-[1.25rem] ml-auto w-[99.5%] whiteBox flex-wrap space-y-5
                     text-[#5B5959]">
 
             <table className="table-auto w-full">
@@ -112,7 +110,7 @@ function TopUsers() {
 
 function Post() {
     return <>
-        <div className="rounded-2xl p-5 px-4 md:text-[1.7rem] text-xl w-[99.5%] bg-white bg-opacity-90">
+        <div className="whiteBox md:text-[1.7rem] text-xl w-[99.5%]">
             <div className="flex w-full mb-4">
                 <div className="h-12 my-auto w-12">
                     <Image
@@ -132,11 +130,7 @@ function Post() {
                 dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                 officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
             </div>
-            <div className="flex space-x-4 font-semibold mb-2">
-                <LikeComponent/>
-                <DislikeComponent/>
-                <CommentComponent/>
-            </div>
+            <Reactions/>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>
         </div>
@@ -156,39 +150,7 @@ function About() {
 
             <div className="flex w-full justify-between">
                 <div className="md:w-[75%] w-[100%]">
-                    <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
-                        <Tabs value={value} onChange={handleChange} variant="fullWidth"
-                              TabIndicatorProps={{style: {background: 'white'},}}>
-                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
-                                label={
-                                <div className="flex h-8">
-                                    <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">О
-                                        нас
-                                    </div>
-                                </div>
-                            } {...a11yProps(0)}
-                            />
-                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
-                                label={
-                                <div className="flex h-8">
-                                    <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Новости
-                                    </div>
-                                </div>
-                            } {...a11yProps(1)}
-                            />
-                            <Tab sx={{ minWidth: "fit-content",  maxWidth: "fit-content", padding: '0.5rem', margin: 'auto' }}
-                                label={
-                                <div className="flex h-8">
-                                    <div
-                                        className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">Правила
-                                    </div>
-                                </div>
-                            } {...a11yProps(2)}
-                            />
-                        </Tabs>
-                    </Box>
+                    <TabsBox value={value} onChange={handleChange} tabs={["О нас", "Новости", "Правила"]}/>
                     {value == 0 ? <Post/> : null}
                     {value == 1 ? <Post/> : null}
                     {value == 2 ? <Post/> : null}

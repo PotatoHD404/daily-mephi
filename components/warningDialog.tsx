@@ -1,7 +1,4 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import {styled} from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Image from "next/future/image";
 import CloseIcon from 'images/close_icon.svg';
@@ -9,23 +6,15 @@ import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
 import {signIn} from "next-auth/react";
-import {useEffect, useState} from "react";
-import theme from "tailwindcss/defaultTheme";
+import CustomDialog from "./customDialog";
+import OutlinedButton from "./outlinedButton";
 
-
-// const BootstrapDialog = styled(Dialog)(({theme}) => ({
-//     '& .MuiDialogContent-root': {
-//         padding: theme.spacing(2),
-//     },
-//     '& .MuiDialogActions-root': {
-//         padding: theme.spacing(1),
-//     },
-// }));
 
 export interface DialogProps {
     opened: boolean;
     handleClose: () => void;
 }
+
 
 
 export default function WarningDialog(props: DialogProps) {
@@ -36,18 +25,7 @@ export default function WarningDialog(props: DialogProps) {
         handleClose();
     }
     return (
-        <Dialog
-            onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
-            open={opened}
-            classes={{
-                root: 'p-4',
-                paper: 'bg-white md:w-[60rem] lg:h-[41rem] md:h-[35rem] h-fit py-8 md:py-0 max-w-[100vw] md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-hidden'
-            }}
-            fullWidth
-        >
-
-
+        <CustomDialog onClose={handleClose} open={opened}>
             <div className="grid grid-cols-12 px-2 md:px-0">
                 <div className="col-start-1 col-end-13 h-20 flex justify-center md:hidden">
                     <Image
@@ -90,19 +68,13 @@ export default function WarningDialog(props: DialogProps) {
                             </div>
                             <div
                                 className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full">
-                                <Button onClick={auth}
-                                        className="rounded-full text-black
-                                            font-[Montserrat] font-bold text-center w-full lg:text-3xl md:text-2xl text-xl normal-case">
-                                    Продолжить
-                                </Button>
+                                <OutlinedButton onClick={auth} text={'Продолжить'}/>
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
-
-
-        </Dialog>
+        </CustomDialog>
     );
 }

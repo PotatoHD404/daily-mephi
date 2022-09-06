@@ -55,7 +55,7 @@ function Minicat() {
                 fill="black"/>
             <defs>
                 <filter id="filter0_d_909_11" x="44.4072" y="27.583" width="345.125" height="327.061"
-                        filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                     <feFlood floodOpacity="0" result="BackgroundImageFix"/>
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                                    result="hardAlpha"/>
@@ -121,7 +121,7 @@ function AuthSection(props: DefaultNavbarParams) {
 
 
         }
-    }, [status])
+    }, [status, session?.user])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
@@ -165,16 +165,6 @@ function AuthSection(props: DefaultNavbarParams) {
             </>
         )
     }
-        // else if (router.pathname === '/users/new') {
-        //     return (
-        //         <button className={style.authText}
-        //                 onClick={() => {
-        //                     signOut({redirect: false}).then(() => router.push("/"))
-        //                 }}>
-        //             <h3>Выход</h3>
-        //         </button>
-        //     )
-    // }
     else {
         return (
             <>
@@ -195,7 +185,7 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
         <div className={"flex justify-between h-12 pl-5 pr-5 " + (props.home ? "mt-2" : "")}>
             {/* @ts-ignore */}
             <button className="h-full" onClick={props.onClick()}>
-                <Image className="flex" src={burger}/>
+                <Image className="flex" src={burger} alt="burger"/>
             </button>
             <Link href="/">
                 <a className="flex h-full w-11">
@@ -265,15 +255,15 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
     >
         <List>
             <ListItemButton>
-                <Image src={NewsIcon} className="w-6 mr-2"/>
+                <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
                 <Link href="/about"><a>О нас</a></Link>
             </ListItemButton>
             <ListItemButton>
-                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3"/>
+                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
                 <Link href="/materials"><a>Материалы</a></Link>
             </ListItemButton>
             <ListItemButton>
-                <Image src={TutorsIcon} className="w-6 mr-2"/>
+                <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
                 <Link href="/tutors"><a>Преподаватели</a></Link>
             </ListItemButton>
         </List>

@@ -21,7 +21,6 @@ export default async function handler(
                 image: true,
                 rating: true,
                 role: true,
-                comment_count: true,
                 materials: {
                     select: {
                         _count: true,

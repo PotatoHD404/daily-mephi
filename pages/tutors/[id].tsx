@@ -1,56 +1,22 @@
 import React, {useState} from "react";
 import TutorImage from 'images/tutor.png'
 import Image from "next/image";
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
 import HoverRating from "components/rating";
-import ProfilePicture2 from 'images/profile2.png';
-import LikeIco from 'images/like.svg';
-import CommentIco from 'images/comment.svg'
-import Comment from "components/comment";
 
 import QuoteIco from "images/quote.svg";
 import DownloadIco from 'images/download.svg';
-import {a11yProps} from 'helpers/reactUtils'
 import SEO from "components/seo";
 import {useRouter} from "next/router";
-import styles from "styles/tutors.module.css";
-import {LikeComponent} from "components/like";
-import {DislikeComponent} from "components/dislike";
-import {CommentComponent} from "components/commentComponent";
-import {Comments} from "components/comments";
-import {useSession} from "next-auth/react";
+import Like from "components/likeBtn";
+import Dislike from "components/dislikeBtn";
+import Comment from "components/commentBtn";
+import Comments from "components/comments";
 import PostDialog from "../../components/postDialog";
-import UserHeader from "../../components/UserHeader";
-
-
-// function QuoteIconComponent(props: { src: any }) {
-//     return <div className="flex h-10 my-auto">
-//         <Image
-//             src={props.src}
-//             alt="Quotes ico"
-//         />
-//     </div>;
-// }
-//
-// function ReviewsIconComponent(props: { src: any }) {
-//     return <div className="flex h-10 my-auto">
-//         <Image
-//             src={props.src}
-//             alt="Reviews ico"
-//         />
-//     </div>;
-// }
-//
-// function MaterialsIconComponent(props: { src: any }) {
-//     return <div className="flex h-10 my-auto">
-//         <Image
-//             src={props.src}
-//             alt="Materials ico"
-//         />
-//     </div>;
-// }
+import UserHeader from "../../components/userHeader";
+import TabsBox from "../../components/tabsBox";
+import Reactions from "../../components/reactions";
+import Material from "../../components/material";
+import NewPost from "../../components/newPost";
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -68,22 +34,7 @@ function RatingComponent(props: { text: string, rate: string }) {
 function Quote(props: { onClick: () => void }) {
     return <div className="flex-wrap space-y-10 w-full">
         <div className="space-y-10">
-            <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-                <UserHeader name={"User1"}
-                            date={"15 февраля 2022"}/>
-                <textarea
-                    className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                    placeholder="Загрузить цитату"
-                    onClick={props.onClick}/>
-                {/*<div className="flex space-x-2 font-semibold">*/}
-                {/*    <LikeComponent/>*/}
-                {/*    <DislikeComponent/>*/}
-                {/*    <CommentComponent/>*/}
-                {/*</div>*/}
-            </div>
+            <NewPost placeholder={"Загрузить цитату"} onClick={props.onClick}/>
             <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
                 <UserHeader name={"User1"}
                             date={"15 февраля 2022"}/>
@@ -112,35 +63,21 @@ function Quote(props: { onClick: () => void }) {
                 </div>
                 <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
                 <div className="flex space-x-4 font-semibold">
-                    <LikeComponent/>
-                    <DislikeComponent/>
+                    <Like/>
+                    <Dislike/>
                 </div>
             </div>
         </div>
     </div>;
 }
 
+
 function Review(props: { onClick: () => void }) {
     return <div className="flex-wrap space-y-10 w-full">
-        <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-            <UserHeader name={"User1"}
-                        date={"15 февраля 2022"}/>
-            <textarea
-                className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                placeholder="Оставить отзыв"
-                onClick={props.onClick}/>
-            {/*<div className="flex space-x-2 font-semibold">*/}
-            {/*    <LikeComponent/>*/}
-            {/*    <DislikeComponent/>*/}
-            {/*    <CommentComponent/>*/}
-            {/*</div>*/}
-        </div>
+        <NewPost placeholder={"Оставить отзыв"} onClick={props.onClick}/>
 
 
-        <div className="rounded-2xl p-5 text-[1.7rem] w-full bg-white bg-opacity-90">
+        <div className="text-[1.7rem] w-full whiteBox">
             <UserHeader name={"User1"}
                         date={"15 февраля 2022"}/>
             <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
@@ -151,94 +88,13 @@ function Review(props: { onClick: () => void }) {
                 dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                 officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
             </div>
-            <div className="flex space-x-2 font-semibold mb-2">
-                <LikeComponent/>
-                <DislikeComponent/>
-                <CommentComponent/>
-            </div>
+            <Reactions/>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>
         </div>
     </div>;
 }
 
-function Material(props: { onClick: () => void }) {
-    return <div className="flex-wrap space-y-10 w-full">
-        <div className="space-y-10">
-            <div className="rounded-2xl p-5 text-lg w-full bg-white bg-opacity-[90%]">
-                <UserHeader name={"User1"}
-                            date={"15 февраля 2022"}/>
-                <textarea
-                    className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
-                                        border focus:border-gray-200 p-3 focus:outline-none
-                                        focus:bg-gray-100 focus:border-gray-500 transition-colors h-20 mb-3 resize-none
-                                        text-[0.9rem] leading-6"
-                    placeholder="Загрузить материал"
-                    onClick={props.onClick}/>
-                {/*<div className="flex space-x-2 font-semibold">*/}
-                {/*    <LikeComponent/>*/}
-                {/*    <DislikeComponent/>*/}
-                {/*    <CommentComponent/>*/}
-                {/*</div>*/}
-            </div>
-            <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
-                <UserHeader name={"User1"}
-                            date={"15 февраля 2022"}/>
-                <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
-                <div className="relative flex text-[1.0rem] leading-5">
-
-                    <div className="">Lorem ipsum dolor sit amet, consectetur
-                        adipisicing
-                        elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                        repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                        nesciunt
-                        pariatur, sed sunt tempora, ullam?
-                    </div>
-
-                </div>
-                <div
-                    className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
-                    <div
-                        className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
-                    </div>
-                    <div
-                        className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
-                        1
-                    </div>
-                    <div
-                        className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
-                    </div>
-                    <div
-                        className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
-                    </div>
-                    <div
-                        className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
-                    </div>
-                </div>
-                <div
-                    className="flex flex-wrap md:flex-nowrap font-semibold relative">
-                    <div
-                        className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
-                        <div className="font-medium">exam_file_1.pdf (50 MB)</div>
-                        <div className="h-4 flex w-4 -mt-0.5">
-                            <Image
-                                src={DownloadIco}
-                                alt="Comment"
-                            />
-                        </div>
-
-                    </div>
-                    <div className="flex space-x-4 font-semibold w-full md:w-fit">
-                        <LikeComponent/>
-                        <DislikeComponent/>
-                        <CommentComponent/>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>;
-}
 
 function Tutor() {
     const router = useRouter()
@@ -266,7 +122,7 @@ function Tutor() {
             <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
             <PostDialog opened={open} handleClose={() => setOpen(false)}/>
             <div className="flex-wrap w-full">
-                <div className="rounded-2xl flex flex-wrap bg-white bg-opacity-90 p-6 overflow-x-hidden">
+                <div className="flex flex-wrap whiteBox overflow-x-hidden">
 
                     {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
                     {/*    <div>Трифоненков</div>*/}
@@ -345,54 +201,9 @@ function Tutor() {
                     </div>
                 </div>
                 <div className="w-full mt-7">
-                    <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: '1rem'}}>
-                        <Tabs value={value} onChange={handleChange} variant="fullWidth"
-                              TabIndicatorProps={{style: {background: 'white'}}}>
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }}
-                                 label={
-                                     <div className="flex h-8">
-                                         {/*<ReviewsIconComponent src={reviewsIco}/>*/}
-                                         <div
-                                             className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Отзывы
-                                         </div>
-                                     </div>
-                                 } {...a11yProps(0)}
-                            />
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }} label={
-                                <div className="flex h-8">
-                                    {/*<QuoteIconComponent src={quotesIco}/>*/}
-                                    <div
-                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Цитаты
-                                    </div>
-                                </div>
-                            } {...a11yProps(1)}
-                            />
-                            <Tab sx={{
-                                minWidth: "fit-content",
-                                maxWidth: "fit-content",
-                                padding: '0.5rem',
-                                margin: 'auto'
-                            }} label={
-                                <div className="flex h-8">
-                                    {/*<MaterialsIconComponent src={materialsIco}/>*/}
-                                    <div
-                                        className="text-black md:text-[1.4rem] xs:text-xl xxs:text-[1.0rem] text-[0.8rem] font-[Montserrat] normal-case my-auto">Материалы
-                                    </div>
-                                </div>
-                            } {...a11yProps(2)}
-                            />
-                        </Tabs>
-                    </Box>
+                    <TabsBox value={value} onChange={handleChange}
+                             tabs={['Отзывы', 'Цитаты', 'Материалы']}/>
+
                     <div className="mt-6 mx-auto">
                         {value == 0 ?
                             <Review onClick={() => setOpen(true)}/>
@@ -400,8 +211,14 @@ function Tutor() {
                         {value == 1 ?
                             <Quote onClick={() => setOpen(true)}/>
                             : null}
-                        {value == 2 ?
-                            <Material onClick={() => setOpen(true)}/>
+                        {value == 2 ? <>
+                                <div className="mb-10">
+                                    <NewPost placeholder={"Загрузить материал"}
+                                             onClick={() => setOpen(true)}/>
+                                </div>
+
+                                <Material/>
+                            </>
                             : null}
                     </div>
                 </div>

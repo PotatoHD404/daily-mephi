@@ -104,6 +104,10 @@ body::-webkit-scrollbar-button {
     .underlining:focus:after {
         width: 100%;
     }
+
+    .whiteBox {
+        @apply bg-white bg-opacity-90 rounded-2xl p-5 px-4;
+    }
 }
 
 a {
