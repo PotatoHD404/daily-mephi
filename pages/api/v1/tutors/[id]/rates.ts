@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {UUID_REGEX} from "./materials";
-import prisma from "../../../../../lib/database/prisma";
+import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 
 async function getRates(req: NextApiRequest, res: NextApiResponse<object>) {

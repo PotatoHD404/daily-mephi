@@ -6,12 +6,9 @@ import GoldenCrown from "images/golden_crown.svg";
 import SilverCrown from "images/silver_crown.svg";
 import BronzeCrown from "images/bronze_crown.svg";
 import SEO from "components/seo";
-import LikeBtn from "components/likeBtn";
-import DislikeBtn from "components/dislikeBtn";
-import CommentBtn from "components/commentBtn";
 import Comments from "components/comments";
-import TabsBox from "../components/tabsBox";
-import Reactions from "../components/reactions";
+import TabsBox from "components/tabsBox";
+import Reactions from "components/reactions";
 
 interface CrownParams {
     place: number;

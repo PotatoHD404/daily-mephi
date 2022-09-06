@@ -1,7 +1,7 @@
 import SEO from "components/seo";
 import React from "react";
 import Image from "next/image";
-import Logo from "../images/cat_404.svg";
+import Logo from "images/cat_404.svg";
 
 export default function Custom404() {
 

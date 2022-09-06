@@ -1,5 +1,5 @@
 import Image from "next/image";
-import LikeIco from "../images/like.svg";
+import LikeIco from "images/like.svg";
 import React from "react";
 import Button from "@mui/material/Button";
 

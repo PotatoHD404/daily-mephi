@@ -1,18 +1,15 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import {styled} from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import Image from "next/future/image";
-import CloseIcon from 'images/close_icon.svg';
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import FileUpload from "images/file_upload.svg";
 import Autocomplete from "@mui/material/Autocomplete";
 import TabsBox from "./tabsBox";
+import CustomDialog from "./customDialog";
+import CloseButton from "./closeButton";
 
 const StyledTextField = styled(TextField)({
     "& label": {
@@ -170,30 +167,10 @@ export default function PostDialog(props: DialogProps) {
     }
 
     return (
-        <Dialog
-            onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
-            open={opened}
-            classes={{
-                root: 'p-4',
-                paper: 'bg-white md:w-[60rem] lg:h-[41rem] md:h-[35rem] h-fit py-8 md:py-0 max-w-[100vw] md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-hidden'
-            }}
-            fullWidth
-        >
-
+        <CustomDialog open={opened} onClose={handleClose}>
 
             <div className="px-2 md:px-0">
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem] top-3 absolute right-3"
-                >
-                    <Image
-                        src={CloseIcon}
-                        alt="Close icon"
-                        className="scale-90"
-                    />
-                </IconButton>
+                <CloseButton onClick={handleClose}/>
                 <div className="md:mt-24 mt-2 px-6">
                     <TabsBox value={value} onChange={handleChange} tabs={['Отзыв', 'Материал', 'Цитата']}/>
                     {value == 0 ? <Review postForm={postForm}/> : null}
@@ -202,8 +179,6 @@ export default function PostDialog(props: DialogProps) {
 
                 </div>
             </div>
-
-
-        </Dialog>
+        </CustomDialog>
     );
 }

@@ -1,34 +1,15 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
 import {styled} from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import IconButton from '@mui/material/IconButton';
 import Image from "next/future/image";
-import CloseIcon from 'images/close_icon.svg';
 import RegisterHalfCat from 'images/register_halfcat.svg'
 import RegisterCat from 'images/register_cat.svg'
-import Link from "next/link";
-import {signIn} from "next-auth/react";
-import {useEffect, useState} from "react";
-import theme from "tailwindcss/defaultTheme";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
-import Select, {SelectChangeEvent} from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import {SelectChangeEvent} from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
 import CustomDialog from "./customDialog";
 import OutlinedButton from "./outlinedButton";
-
-
-// const BootstrapDialog = styled(Dialog)(({theme}) => ({
-//     '& .MuiDialogContent-root': {
-//         padding: theme.spacing(2),
-//     },
-//     '& .MuiDialogActions-root': {
-//         padding: theme.spacing(1),
-//     },
-// }));
 
 export interface DialogProps {
     opened: boolean;

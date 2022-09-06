@@ -1,20 +1,18 @@
 import * as React from 'react';
-import IconButton from '@mui/material/IconButton';
 import Image from "next/future/image";
-import CloseIcon from 'images/close_icon.svg';
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
 import {signIn} from "next-auth/react";
 import CustomDialog from "./customDialog";
 import OutlinedButton from "./outlinedButton";
+import CloseButton from "./closeButton";
 
 
 export interface DialogProps {
     opened: boolean;
     handleClose: () => void;
 }
-
 
 
 export default function WarningDialog(props: DialogProps) {
@@ -40,17 +38,7 @@ export default function WarningDialog(props: DialogProps) {
                 />
 
                 <div className="col-start-1 md:col-start-6 col-end-13">
-                    <IconButton
-                        aria-label="close"
-                        onClick={handleClose}
-                        className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem] top-3 absolute right-3"
-                    >
-                        <Image
-                            src={CloseIcon}
-                            alt="Close icon"
-                            className="scale-90"
-                        />
-                    </IconButton>
+                    <CloseButton onClick={handleClose}/>
                     <div className="md:pl-5 md:mt-24 mt-2 md:w-5/6 text-center md:text-left">
                         <div className="lg:text-5xl md:text-4xl text-3xl font-bold mb-3 md:mb-8">Предупреждение
                         </div>

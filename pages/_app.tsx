@@ -1,23 +1,17 @@
 import 'styles/globals.css'
-import {getSession, SessionProvider} from "next-auth/react"
+import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import {JSXInternal} from "preact/src/jsx";
 import React, {ReactNode} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
 import Background from 'images/bg.svg'
 import Background1 from 'images/bg.png'
-import mobile_bg from 'images/mobile_bg.png'
-import ellipse_bg from 'images/mobile_bg.svg'
-import ellipse from 'images/ellipse.svg'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-// import IntrinsicAttributes = JSXInternal.IntrinsicAttributes;
-import MetricContainer from "../components/yandexMetrika";
 
 
 declare module '@mui/material/styles' {

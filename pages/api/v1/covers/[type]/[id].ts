@@ -2,7 +2,6 @@ import type {NextApiRequest, NextApiResponse} from "next";
 import getTutorSvg from "components/getTutorSvg";
 import sharp from 'sharp';
 import path from "path";
-import prisma from "lib/database/prisma";
 import {getTutor} from "../../tutors/[id]";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 

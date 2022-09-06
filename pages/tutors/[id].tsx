@@ -4,19 +4,17 @@ import Image from "next/image";
 import HoverRating from "components/rating";
 
 import QuoteIco from "images/quote.svg";
-import DownloadIco from 'images/download.svg';
 import SEO from "components/seo";
 import {useRouter} from "next/router";
 import Like from "components/likeBtn";
 import Dislike from "components/dislikeBtn";
-import Comment from "components/commentBtn";
 import Comments from "components/comments";
-import PostDialog from "../../components/postDialog";
-import UserHeader from "../../components/userHeader";
-import TabsBox from "../../components/tabsBox";
-import Reactions from "../../components/reactions";
-import Material from "../../components/material";
-import NewPost from "../../components/newPost";
+import PostDialog from "components/postDialog";
+import UserHeader from "components/userHeader";
+import TabsBox from "components/tabsBox";
+import Reactions from "components/reactions";
+import Material from "components/material";
+import NewPost from "components/newPost";
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (

@@ -1,6 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {getToken} from "next-auth/jwt";
 
 
 export default async function handler(

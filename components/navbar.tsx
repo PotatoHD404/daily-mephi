@@ -3,13 +3,9 @@ import Link from 'next/link';
 import React, {useEffect, useState} from 'react';
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/news.svg";
-// import NewsIcon from "@mui/icons-material/News";
-import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import SwappableDrawer from "@mui/material/SwipeableDrawer";
 import WarningDialog from 'components/warningDialog';
@@ -17,12 +13,12 @@ import {useRouter} from "next/router";
 import Image from "next/future/image";
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
-import {Session} from "next-auth";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
-import {inspect} from "util";
 import {ListItemButton} from "@mui/material";
 import RegisterDialog from "./registerDialog";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 
 
 interface DefaultNavbarParams {
@@ -164,8 +160,7 @@ function AuthSection(props: DefaultNavbarParams) {
                 </button>
             </>
         )
-    }
-    else {
+    } else {
         return (
             <>
                 <RegisterDialog
@@ -180,13 +175,26 @@ function AuthSection(props: DefaultNavbarParams) {
     }
 }
 
+function CustomButton(props: { children: React.ReactNode, onClick: () => void }) {
+    // @ts-ignore
+    return <Button className="rounded-full text-black font-[Montserrat] font-bold text-center
+                                              w-[1px] normal-case h-8"
+                   onClick={props.onClick()}>
+        {props.children}
+    </Button>;
+}
+
 function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
     return <div className="md:hidden w-full">
-        <div className={"flex justify-between h-12 pl-5 pr-5 " + (props.home ? "mt-2" : "")}>
+        <div className={"flex justify-between h-12 pl-5 pr-5 items-center " + (props.home ? "mt-2" : "")}>
             {/* @ts-ignore */}
-            <button className="h-full" onClick={props.onClick()}>
+            <IconButton
+                aria-label="close"
+                onClick={props.onClick()}
+                className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem]"
+            >
                 <Image className="flex" src={burger} alt="burger"/>
-            </button>
+            </IconButton>
             <Link href="/">
                 <a className="flex h-full w-11">
                     <Image src={MiniCat} alt="mini cat"

@@ -1,6 +1,4 @@
-import React, {Component, useEffect} from "react";
-import withSession from "components/withSession";
-import {Session} from "next-auth";
+import React, {useEffect} from "react";
 import SEO from "components/seo";
 import Image from 'next/image'
 import Logo from 'images/logo.svg'
@@ -11,10 +9,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import BuyMeACoffee from "components/buyMeCoffee";
 import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
-import {getSession, useSession} from "next-auth/react";
 import Button from "@mui/material/Button";
-import WarningDialog from "../components/warningDialog";
-import OutlinedButton from "../components/outlinedButton";
+import WarningDialog from "components/warningDialog";
 
 
 export const StyledInput = styled(Input)(() => ({

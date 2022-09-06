@@ -5,7 +5,7 @@ import LikeBtn from "./likeBtn";
 import DislikeBtn from "./dislikeBtn";
 import ReplyBtn from "./replyBtn";
 
-function ProfilePic(props: {src: any}) {
+function ProfilePic(props: { src: any }) {
     return <div className="h-[2.6rem] w-[2.6rem]">
         <Image
             src={props.src}

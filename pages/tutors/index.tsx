@@ -1,47 +1,22 @@
 import React from "react";
-import SEO from "../../components/seo";
+import SEO from "components/seo";
 import Image from "next/image";
 import StarIcon from 'images/star.svg'
 
-import TutorImage from "../../images/tutor.png";
+import TutorImage from "images/tutor.png";
 import ReviewsIco from 'images/reviews.svg'
 import QuotesIco from 'images/quotes.svg'
 import MaterialsIco from 'images/materials.svg'
-import FiltersIco from 'images/filters.svg'
 import Button from "@mui/material/Button";
 import Link from "next/link";
-
-function Filters() {
-    return <div className="w-[15rem] hidden md:block ml-auto mt-4">
-
-
-        <div
-            className="text-[1.25rem] ml-auto w-[99.5%] whiteBox flex-wrap space-y-2 text-center
-                    text-[#5B5959]">
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-            <div className="w-full">ssas</div>
-        </div>
-    </div>;
-}
+import {FilterButtons, Filters} from "components/filters";
 
 function Tutor() {
     return <Link href="/tutors/1">
-        <a>
-            <div className="flex flex-wrap whiteBox overflow-x-hidden mt-4">
+        <Button className="text-black font-[Montserrat] text-center
+                                              w-fit normal-case h-fit flex flex-wrap whiteBox active:bg-white
+                                              hover:bg-white overflow-x-hidden mt-4">
+            <div>
                 <div className="flex justify-start items-center w-full text-lg mb-3 relative">
                     <div className="absolute md:relative right-0 top-0 md:mt-0 -mt-2 md:mr-0 -mr-2">
                         <div className="rounded-full outline-black w-8 h-8 md:w-10 md:h-10
@@ -151,7 +126,7 @@ function Tutor() {
                 </div>
 
             </div>
-        </a>
+        </Button>
     </Link>
         ;
 }
@@ -184,19 +159,7 @@ function Tutors() {
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2">Преподаватели</h1>
-                <div className="md:hidden w-full mb-1 ml-2">
-                    <Button className="rounded-full text-black font-[Montserrat] font-bold text-center
-                                              w-fit normal-case h-8">
-                        <div className="flex w-5 mb-[1px] mr-2">
-                            <Image
-                                src={FiltersIco}
-                                alt="Filters ico"
-                                className="my-auto"
-                            />
-                        </div>
-                        <div>Фильтры</div>
-                    </Button>
-                </div>
+                <FilterButtons/>
                 <div className="w-full h-[1px] bg-black bg-opacity-10"/>
                 <div className="flex">
                     <div className="md:w-[75%] w-[100%]">
