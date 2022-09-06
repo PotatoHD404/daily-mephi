@@ -74,7 +74,7 @@ body::-webkit-scrollbar-button {
 /*    width: 100%;*/
 /*}*/
 
-@layer utilities {
+@layer {
     .underlining {
 
         line-height: 1;

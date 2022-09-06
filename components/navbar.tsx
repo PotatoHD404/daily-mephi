@@ -143,7 +143,7 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <div
-                    className={style.authText}>
+                    className={`${style.authText} underlining`}>
                     <h3>Загрузка...</h3>
                 </div>
             </>
@@ -155,7 +155,7 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <button onClick={props.handleClickOpenWarning}
-                        className={style.authText}>
+                        className={`${style.authText} underlining`}>
                     <h3>Войти</h3>
                 </button>
             </>
@@ -167,7 +167,7 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <button
-                    className={style.authText}>
+                    className={`${style.authText} underlining`}>
                     <h3>{session.user?.name || "Профиль"}</h3>
                 </button>
             </>
