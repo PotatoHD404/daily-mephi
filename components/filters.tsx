@@ -15,8 +15,15 @@ import CheckIcon from '@mui/icons-material/Check';
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIco from "images/search.svg";
-import {Slider} from "@mui/material";
+import {ListItemButton, Slider, Drawer} from "@mui/material";
 import StarIcon from "../images/star.svg";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import NewsIcon from "../images/news.svg";
+import Link from "next/link";
+import MaterialsIcon from "images/materials.svg";
+import TutorsIcon from "images/news.svg";
+import Divider from "@mui/material/Divider";
 
 
 const StyledCheckbox = styled(Checkbox)(() => ({
@@ -294,35 +301,76 @@ export function Filters() {
     </div>;
 }
 
+function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
+    return <Box
+        sx={{width: 300}}
+        role="presentation"
+        onClick={props.onClick}
+        onKeyDown={props.onClick}
+    >
+        <List>
+            <ListItemButton>
+                <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
+                <Link href="/about"><a>О нас</a></Link>
+            </ListItemButton>
+            <ListItemButton>
+                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
+                <Link href="/materials"><a>Материалы</a></Link>
+            </ListItemButton>
+            <ListItemButton>
+                <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
+                <Link href="/tutors"><a>Преподаватели</a></Link>
+            </ListItemButton>
+        </List>
+        <Divider/>
+    </Box>;
+}
 
-function CustomButton(props: { children: React.ReactNode }) {
-    return <Button className="rounded-full text-black font-[Montserrat] font-bold text-center
+function CustomButton(props: { children: React.ReactNode, onClick?: () => void}) {
+    return <Button onClick={props.onClick}
+        className="rounded-full text-black font-[Montserrat] font-bold text-center
                                               w-fit normal-case h-8">
         {props.children}
     </Button>;
 }
 
 export function FilterButtons() {
-    return <div className="md:hidden w-full mb-1 ml-2 flex justify-between">
-        <CustomButton>
-            <div className="flex w-5 mb-[1px] mr-2">
-                <Image
-                    src={FiltersIco}
-                    alt="Filters ico"
-                    className="my-auto"
-                />
+    // Opened filters
+    const [filtersOpened, setFiltersOpened] = React.useState<boolean>(false);
+
+    return (
+        <>
+            <Drawer open={filtersOpened}
+                             onClose={() => setFiltersOpened(false)}
+                             // onOpen={() => setFiltersOpened(true)}
+                             anchor="bottom"
+            className="md:hidden w-full h-[100vh]">
+                <div className="h-[100vh] relative">
+                    
+                </div>
+                {/*ItemsList({onClick: () => setFiltersOpened(false)})*/}
+            </Drawer>;
+            <div className="md:hidden w-full mb-1 ml-2 flex justify-between">
+                <CustomButton onClick={() => setFiltersOpened(true)}>
+                    <div className="flex w-5 mb-[1px] mr-2">
+                        <Image
+                            src={FiltersIco}
+                            alt="Filters ico"
+                            className="my-auto"
+                        />
+                    </div>
+                    <div>Фильтры</div>
+                </CustomButton>
+                <CustomButton>
+                    <div className="flex w-5 mb-[1px] mr-2">
+                        <Image
+                            src={SortIco}
+                            alt="Sort ico"
+                            className="my-auto"
+                        />
+                    </div>
+                    <div>Сортировка</div>
+                </CustomButton>
             </div>
-            <div>Фильтры</div>
-        </CustomButton>
-        <CustomButton>
-            <div className="flex w-5 mb-[1px] mr-2">
-                <Image
-                    src={SortIco}
-                    alt="Sort ico"
-                    className="my-auto"
-                />
-            </div>
-            <div>Сортировка</div>
-        </CustomButton>
-    </div>;
+        </>);
 }
