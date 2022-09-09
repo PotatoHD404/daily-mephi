@@ -7,7 +7,7 @@ export default function CloseButton(props: { onClick: () => void }) {
     return <IconButton
         aria-label="close"
         onClick={props.onClick}
-        className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem] top-3 absolute right-3"
+        className="w-[2.5rem] h-[2.5rem] top-3 absolute right-3"
     >
         <Image
             src={CloseIcon}

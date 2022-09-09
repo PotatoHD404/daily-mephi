@@ -143,8 +143,8 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <div
-                    className={`${style.authText} underlining`}>
-                    <h3>Загрузка...</h3>
+                    className={`${style.authText}`}>
+                    <h3 className="underlining">Загрузка...</h3>
                 </div>
             </>
         )
@@ -155,8 +155,8 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText} underlining`}>
-                    <h3>Войти</h3>
+                        className={`${style.authText} grenBox`}>
+                    <h3 className="underlining">Войти</h3>
                 </button>
             </>
         )
@@ -167,8 +167,8 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
                 <button
-                    className={`${style.authText} underlining`}>
-                    <h3>{session.user?.name || "Профиль"}</h3>
+                    className={`${style.authText}`}>
+                    <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
                 </button>
             </>
         )
@@ -196,13 +196,13 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
                 <Image className="flex" src={burger} alt="burger"/>
             </IconButton>
             <Link href="/">
-                <a className="flex h-full w-11">
+                <Button className="flex h-full w-11 rounded-full">
                     <Image src={MiniCat} alt="mini cat"
                            className="flex"
                         // layout="responsive"
                     />
 
-                </a>
+                </Button>
             </Link>
         </div>
     </div>;

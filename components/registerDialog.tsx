@@ -9,7 +9,8 @@ import {SelectChangeEvent} from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
 import CustomDialog from "./customDialog";
-import OutlinedButton from "./outlinedButton";
+import RippledButton from "./rippledButton";
+import CustomSelect from "./customSelect";
 
 export interface DialogProps {
     opened: boolean;
@@ -128,8 +129,9 @@ export default function RegisterDialog(props: DialogProps) {
 
                             </div>
                             <div
-                                className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full">
-                                <OutlinedButton onClick={register} text={"Регистрация"}/>
+                                className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full
+                                 lg:text-3xl md:text-2xl text-xl font-bold text-center">
+                                <RippledButton onClick={register} text={"Регистрация"}/>
                             </div>
                         </FormControl>
 

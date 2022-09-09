@@ -6,7 +6,7 @@ import React from "react";
 import IconButton from "@mui/material/IconButton";
 
 export default function Material() {
-    return <div className="whiteBox text-xl w-full mt-4">
+    return <div className="whiteBox text-xl w-full mt-4 pb-2">
         <UserHeader name={"User1"}
                     date={"15 февраля 2022"}/>
         <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>

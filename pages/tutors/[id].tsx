@@ -15,6 +15,8 @@ import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import Material from "components/material";
 import NewPost from "components/newPost";
+import ButtonBase from '@mui/material/ButtonBase';
+import RippledButton from "../../components/rippledButton";
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -196,6 +198,12 @@ function Tutor() {
                         <RatingComponent text="Преподавание" rate="(4.6)"/>
                         <RatingComponent text="Пунктуальность" rate="(4.6)"/>
                         <RatingComponent text="Прием экзаменов" rate="(4.6)"/>
+                        <div
+                            className="rounded-full w-auto border-2 border-black
+                             font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
+                            <RippledButton onClick={() => {
+                            }} text={'Отправить'}/>
+                        </div>
                     </div>
                 </div>
                 <div className="w-full mt-7">

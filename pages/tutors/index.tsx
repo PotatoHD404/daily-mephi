@@ -14,8 +14,9 @@ import {FilterButtons, Filters} from "components/filters";
 function Tutor() {
     return <Link href="/tutors/1">
         <Button className="text-black font-[Montserrat] text-center
-                                              w-fit normal-case h-fit flex flex-wrap whiteBox active:bg-white
-                                              hover:bg-white overflow-x-hidden mt-4">
+                                              w-fit normal-case h-fit flex flex-wrap active:bg-white
+                                              hover:bg-white overflow-x-hidden mt-4
+                                              bg-white bg-opacity-90 rounded-2xl p-5 px-4">
             <div>
                 <div className="flex justify-start items-center w-full text-lg mb-3 relative">
                     <div className="absolute md:relative right-0 top-0 md:mt-0 -mt-2 md:mr-0 -mr-2">
@@ -69,18 +70,24 @@ function Tutor() {
 
                 <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem]">
 
-                    <div className="h-fit mb-2">
-                        <span className="font-semibold h-fit">Дисциплины: </span>
-                        Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
-                        Интегральные
-                        уравнения, Дифференциальные уравнения
+                    <div className="h-fit mb-2 text-left flex flex-wrap">
+                        <span className="font-semibold h-fit mr-2">Дисциплины: </span>
+                        {["Теория функций копмплексных переменных",
+                            "Математический анализ",
+                            "Линейная алгебра",
+                            "Интегральные уравнения",
+                            "Дифференциальные уравнения"
+                        ].map((discipline, index) => {
+                            return <span key={index} className=" mr-2">
+                                {discipline}
+                                {index !== 4 && ", "}
+                            </span>
+                        })}
                     </div>
 
-                    <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[11.5rem]">
-                        <div className="my-auto flex w-full justify-between mb-1 md:max-w-max max-w-[9rem]">
-                            <div className="font-semibold">Кафедра:</div>
+                    <div className="flex flex-wrap w-full max-w-[8.0rem] md:max-w-[9.0rem] justify-between">
+                            <div className="font-semibold">Кафедра: </div>
                             <div>30</div>
-                        </div>
                     </div>
                 </div>
                 <div className="flex flex-wrap md:hidden mt-2 text-sm">

@@ -10,6 +10,14 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TabsBox from "./tabsBox";
 import CustomDialog from "./customDialog";
 import CloseButton from "./closeButton";
+import TutorImg from "images/tutor.png";
+import TutorImage from "../images/tutor.png";
+import Box from "@mui/material/Box";
+import {AccountCircle} from "@mui/icons-material";
+import {InputAdornment} from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import CustomSelect from "./customSelect";
+
 
 const StyledTextField = styled(TextField)({
     "& label": {
@@ -17,6 +25,7 @@ const StyledTextField = styled(TextField)({
         fontFamily: "Montserrat",
         marginTop: "-0.4rem",
         transition: 'all 0.2s ease',
+        // fontSize: "1.0rem",
         // fontSize: "1.1rem",
         // lineHeight: "1.5rem",
         '@media (min-width:1024px)': {
@@ -26,29 +35,97 @@ const StyledTextField = styled(TextField)({
     },
     "&:hover label": {
         fontFamily: "Montserrat",
+        fontSize: "1.0rem",
     },
     "& label.Mui-focused": {
         marginTop: "0",
         fontFamily: "Montserrat",
-        color: "black"
+        color: "black",
+        fontSize: "1.0rem",
     },
     "& .MuiInput-underline:after": {
         borderBottomColor: "black"
     },
     "& .MuiOutlinedInput-root": {
+        fontFamily: "Montserrat",
+        fontSize: "1.2rem",
         "& fieldset": {
-            fontFamily: "Montserrat",
             borderColor: "black",
-            borderRadius: "0.7rem"
+            borderRadius: "0.7rem",
+            fontSize: "1.0rem",
         },
         "&:hover fieldset": {
-            fontFamily: "Montserrat",
             borderColor: "black",
-            borderWidth: 2
+            borderWidth: 2,
+            fontSize: "1.0rem",
         },
         "&.Mui-focused fieldset": {
-            fontFamily: "Montserrat",
-            borderColor: "black"
+            borderColor: "black",
+            fontSize: "1.0rem",
+        }
+    }
+});
+
+const StyledTextField1 = styled(TextField)({
+    "& label": {
+        color: "gray",
+        fontFamily: "Montserrat",
+        marginTop: "0.9rem",
+        marginLeft: "1.9rem",
+
+        transition: 'all 0.2s ease',
+        // fontSize: "1.0rem",
+        fontSize: "1.4rem",
+        // lineHeight: "1.5rem",
+        '@media (min-width:1024px)': {
+            // fontSize: "1.25rem"
+        }
+
+    },
+    "&:hover label": {
+        fontFamily: "Montserrat",
+        fontSize: "1.4rem",
+    },
+    "& label.Mui-focused": {
+        marginTop: "-0.2rem",
+        marginLeft: "0",
+        fontFamily: "Montserrat",
+        color: "black",
+        fontSize: "1.0rem",
+    },
+    "& .MuiInput-underline:after": {
+        borderBottomColor: "black"
+    },
+    "& .MuiOutlinedInput-root": {
+        fontFamily: "Montserrat",
+        fontSize: "1.2rem",
+        "& fieldset": {
+            borderColor: "black",
+            borderRadius: "0.7rem",
+            color: "black",
+            fontSize: "1.4rem",
+        },
+        '&.Mui-focused  legend': {
+            // show
+            textIndent: "0",
+            display: "block"
+        },
+        '& legend': {
+            // show
+            textIndent: "-9999px",
+        },
+        '& legend:hover': {
+            // show
+            display: "none"
+        },
+        "&:hover fieldset": {
+            borderColor: "black",
+            borderWidth: 2,
+            fontSize: "1.4rem",
+        },
+        "&.Mui-focused fieldset": {
+            borderColor: "black",
+            fontSize: "1.0rem",
         }
     }
 });
@@ -58,70 +135,101 @@ export interface DialogProps {
     handleClose: () => void;
 }
 
-function CustomSelect(props: { options: any, label: string, value?: any, onChange?: any }) {
+function CustomAutocomplete(props: { options: any, label: string, value?: any, onChange?: any, className?: string }) {
+    const [options, setOptions] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{width: 300}}
+            sx={{width: 350}}
             options={props.options}
             autoHighlight
+            className={props.className}
             getOptionLabel={(option: any) => option.label}
+            // filterOptions={(x) => x}
+            onOpen={() => {
+                setOpen(true);
+            }}
+            onClose={() => {
+                setOpen(false);
+            }}
             renderOption={(props, option) => (
-                <li className="shrink-0">
-                    {/*<img*/}
-                    {/*    loading="lazy"*/}
-                    {/*    width="20"*/}
-                    {/*    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}*/}
-                    {/*    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}*/}
-                    {/*    alt=""*/}
-                    {/*/>*/}
-                    {option.label}
+                <li className="flex" {...props}>
+                    <div className="flex w-8">
+                        <Image
+                            src={TutorImage}
+                            alt="Tutor image"
+                            className="rounded-full my-auto"
+                        />
+                    </div>
+                    <div className="ml-2 my-auto font-[Montserrat] text-[1rem]">{option.label}</div>
                 </li>
             )}
             renderInput={(params) => (
-                <StyledTextField
+                <StyledTextField1
                     {...params}
                     label={props.label}
-                    inputProps={{
-                        ...params.inputProps,
+                    InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                            <InputAdornment position="start" className="-mt-1 -mr-0.5">
+                                <div className="ml-2 flex w-7">
+                                    <Image
+                                        src={TutorImage}
+                                        alt="Tutor image"
+                                        className="rounded-full my-auto"
+                                    />
+                                </div>
+                            </InputAdornment>
+                        ),
                         autoComplete: 'new-password',
-                        className: "font-[Montserrat] text-xl greenBox p-0 h-[23px]",
+                        className: "p-0 h-[40px]"
                     }}
+                    // inputProps={{
+                    //     ...params.inputProps,
+                    //     className: "font-[Montserrat] text-xl p-0 h-[23px]",
+                    //     autoComplete: 'new-password',
+                    // }}
+
+
                     variant="outlined"
                     // InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}
                 />
             )}
+            noOptionsText="Ничего не найдено"
         />
     );
 }
 
-function Review(props: { postForm: any }) {
+function Material(props: { postForm: any }) {
     const [file, setFile] = React.useState('');
     return (
-        <div className="md:w-4/5 mx-auto">
+        <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
                 <StyledTextField label="Название"
-                                 variant="outlined" className="w-full mb-8"
+                                 variant="outlined" className="w-full mb-5"
                                  InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
-                <CustomSelect options={[{label: 'Трифоненков Владимир Петрович'}]} label={'Выберите преподавателя'}/>
-
                 <div
-                    className="mt-4 mb-2 font-bold flex flex-wrap w-full text-sm leading-4">
-                    <div
-                        className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Предмет
-                    </div>
-                    <div
-                        className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Категория
-                    </div>
-                    <div
-                        className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Факультет
-                    </div>
-                    <div
-                        className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
-                    </div>
-                    <div
-                        className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Год
-                    </div>
+                    className="mb-5 font-bold flex flex-wrap w-full text-sm leading-4">
+
+                    {[
+                        {color: "#DDD9DF", label: "Предмет", options: ["Английский язык", "Математика", "Русский язык"]},
+                        {color: "#F9C5D3", label: "Категория", options: ["Лекции", "Семинары", "Экзамены"]},
+                        {color: "#FEB3B4", label: "Факультет", options: ["Факультет 1", "Факультет 2"]},
+                        {color: "#F4BDE6", label: "Семестр", options: ["1", "2", "3", "4", "5", "6", "7", "8"]},
+                        {color: "#C7A8F3", label: "Год", options: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"]},
+                    ].map((item, index) => (
+                        <CustomSelect
+                            key={index}
+                            // className={`rounded bg-[${item.color}] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap`}
+                            color={item.color}
+                            options={item.options}
+                            label={item.label}
+                            index={index}
+                        />
+
+                    ))}
+
                 </div>
                 <StyledTextField label="Описание"
                                  variant="outlined" className="w-full"
@@ -155,6 +263,59 @@ function Review(props: { postForm: any }) {
     );
 }
 
+
+function Review(props: { postForm: any }) {
+    return (
+        <div className="md:w-4/5 mx-auto mt-7">
+            <FormControl className="w-full flex">
+                <StyledTextField label="Название"
+                                 variant="outlined" className="w-full mb-5"
+                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
+                <StyledTextField label="Описание"
+                                 variant="outlined" className="w-full mb-1"
+                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '19.75rem'}}}
+                                 multiline
+                                 rows={11}/>
+                <div className="flex items-center justify-end mt-6">
+                    <div
+                        className="rounded-full border-2 border-black w-44 h-8">
+                        <Button onClick={props.postForm}
+                                className="rounded-full text-black
+                                            font-[Montserrat] font-bold text-center
+                                             w-full normal-case h-8">
+                            Отправить
+                        </Button>
+                    </div>
+                </div>
+            </FormControl>
+        </div>
+    );
+}
+
+function Quote(props: { postForm: any }) {
+    return (
+        <div className="md:w-4/5 mx-auto mt-7">
+            <FormControl className="w-full flex">
+                <StyledTextField label="Цитата"
+                                 variant="outlined" className="w-full mb-1"
+                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '23.54rem'}}}
+                                 multiline
+                                 rows={12}/>
+                <div className="flex items-center justify-end mt-6">
+                    <div
+                        className="rounded-full border-2 border-black w-44 h-8">
+                        <Button onClick={props.postForm}
+                                className="rounded-full text-black
+                                            font-[Montserrat] font-bold text-center
+                                             w-full normal-case h-8">
+                            Отправить
+                        </Button>
+                    </div>
+                </div>
+            </FormControl>
+        </div>
+    );
+}
 export default function PostDialog(props: DialogProps) {
     const {handleClose, opened} = props;
     const [value, setValue] = React.useState(0);
@@ -167,18 +328,32 @@ export default function PostDialog(props: DialogProps) {
     }
 
     return (
-        <CustomDialog open={opened} onClose={handleClose}>
+        <Dialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={opened}
+            classes={{
+                paper: "bg-white md:w-[60rem] md:h-[40rem] h-fit py-8 md:py-0 max-w-[100vw]" +
+                    " md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-hidden px-4 md:px-0",
+            }}
+            fullWidth
+
+        >
 
             <div className="px-2 md:px-0">
                 <CloseButton onClick={handleClose}/>
-                <div className="md:mt-24 mt-2 px-6">
-                    <TabsBox value={value} onChange={handleChange} tabs={['Отзыв', 'Материал', 'Цитата']}/>
+                <CustomAutocomplete options={[{label: 'Трифоненков В. П.'}]} label={'Выберите преподавателя'}
+                                    className="absolute top-10 md:left-[6rem]"/>
+                <div className="md:mt-24 mt-12">
+                    <TabsBox color={"black"} value={value} onChange={handleChange}
+                             tabs={['Отзыв', 'Материал', 'Цитата']}
+                             size="xl"/>
                     {value == 0 ? <Review postForm={postForm}/> : null}
-                    {/*{value == 1 ? <Post/> : null}*/}
-                    {/*{value == 2 ? <Post/> : null}*/}
+                    {value == 1 ? <Material postForm={postForm}/> : null}
+                    {value == 2 ? <Quote postForm={postForm}/> : null}
 
                 </div>
             </div>
-        </CustomDialog>
+        </Dialog>
     );
 }

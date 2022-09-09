@@ -12,18 +12,21 @@ function a11yProps(index: number) {
 
 export default function TabsBox(props: {
     value: number, onChange: (event: React.SyntheticEvent, newValue: number) => void,
-    tabs: string[]
+    tabs: string[],
+    color?: string,
+    size?: string
 }) {
     return <Box sx={{borderBottom: 1, borderColor: "divider", marginBottom: "1rem"}}>
         <Tabs value={props.value} onChange={props.onChange} variant="fullWidth"
-              TabIndicatorProps={{style: {background: "white"},}}>
+              TabIndicatorProps={{style: {background: props.color || "white"},}}>
             {props.tabs.map((value, index) =>
                 <Tab sx={{minWidth: "fit-content", maxWidth: "fit-content", padding: "0.5rem", margin: "auto"}}
                      key={index}
                      label={
                          <div className="flex h-8">
                              <div
-                                 className="text-black md:text-[1.4rem] text-xl font-[Montserrat] normal-case my-auto">
+                                 className={`text-black md:text-${props.size || "2xl"}
+                                  text-xl font-[Montserrat] normal-case my-auto`}>
                                  {value}
                              </div>
                          </div>

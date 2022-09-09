@@ -5,7 +5,7 @@ import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
 import {signIn} from "next-auth/react";
 import CustomDialog from "./customDialog";
-import OutlinedButton from "./outlinedButton";
+import RippledButton from "./rippledButton";
 import CloseButton from "./closeButton";
 
 
@@ -55,8 +55,9 @@ export default function WarningDialog(props: DialogProps) {
                                 </div>
                             </div>
                             <div
-                                className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full">
-                                <OutlinedButton onClick={auth} text={'Продолжить'}/>
+                                className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full
+                                lg:text-3xl md:text-2xl text-xl font-bold text-center">
+                                <RippledButton onClick={auth} text={'Продолжить'}/>
                             </div>
                         </div>
 

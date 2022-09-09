@@ -59,7 +59,7 @@ export function FilterButtons() {
                     className="my-auto"
                 />
             </div>
-            <div>Популярные</div>
+            <div>Сортировка</div>
         </CustomButton>
     </div>;
 }
