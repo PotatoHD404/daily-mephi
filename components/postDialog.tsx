@@ -151,6 +151,7 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
     const [open, setOpen] = React.useState(false);
     // value of the autocomplete
     const [value, setValue] = React.useState<string | null>(null);
+
     function onChange(value: any) {
         // props.onChange(value);
         setValue(value);
@@ -234,13 +235,28 @@ function Material(props: { postForm: any }) {
                                  InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
                 <div
                     className="mb-5 font-bold flex flex-wrap w-full text-sm leading-4">
-
+                    <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
+             bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
                     {[
-                        {color: "#DDD9DF", label: "Предмет", options: ["Английский язык", "Математика", "Русский язык"], required: true},
-                        {color: "#F9C5D3", label: "Категория", options: ["Лекции", "Семинары", "Экзамены"], required: true},
+                        {
+                            color: "#DDD9DF",
+                            label: "Предмет",
+                            options: ["Английский язык", "Математика", "Русский язык"],
+                            required: true
+                        },
+                        {
+                            color: "#F9C5D3",
+                            label: "Категория",
+                            options: ["Лекции", "Семинары", "Экзамены"],
+                            required: true
+                        },
                         {color: "#FEB3B4", label: "Факультет", options: ["Факультет 1", "Факультет 2"]},
                         {color: "#F4BDE6", label: "Семестр", options: ["1", "2", "3", "4", "5", "6", "7", "8"]},
-                        {color: "#C7A8F3", label: "Год", options: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"]},
+                        {
+                            color: "#C7A8F3",
+                            label: "Год",
+                            options: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"]
+                        },
                     ].map((item, index) => (
                         <CustomSelect
                             key={index}
@@ -340,6 +356,7 @@ function Quote(props: { postForm: any }) {
         </div>
     );
 }
+
 export default function PostDialog(props: DialogProps) {
     const {handleClose, opened} = props;
     const [value, setValue] = React.useState(0);
