@@ -1,4 +1,4 @@
-import Materials from "../../../pages/materials";
+import Materials from "pages/materials";
 
 
 export default {
