@@ -18,7 +18,7 @@ function Tutors() {
     const router = useRouter();
     useEffect(() => {
         setInput(router.query.q as string || '');
-    }, []);
+    }, [router.query.q]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             const href = `/search?query=${input}`;
@@ -53,7 +53,6 @@ function Tutors() {
                 </div>
             </div>
         </>);
-
 }
 
 export default Tutors;

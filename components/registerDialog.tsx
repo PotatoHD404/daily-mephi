@@ -131,7 +131,7 @@ export default function RegisterDialog(props: DialogProps) {
                             <div
                                 className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full
                                  lg:text-3xl md:text-2xl text-xl font-bold text-center">
-                                <RippledButton onClick={register} children={"Регистрация"}/>
+                                <RippledButton onClick={register} >Регистрация</RippledButton>
                             </div>
                         </FormControl>
 

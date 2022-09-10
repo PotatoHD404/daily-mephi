@@ -197,7 +197,9 @@ function Tutor() {
                             className="rounded-full w-auto border-2 border-black
                              font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
                             <RippledButton onClick={() => {
-                            }} children={'Отправить'}/>
+                            }}>
+                                Отправить
+                            </RippledButton>
                         </div>
                     </div>
                 </div>

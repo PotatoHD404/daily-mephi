@@ -93,6 +93,13 @@ const StyledTextField1 = styled(TextField)({
         color: "black",
         fontSize: "1.0rem",
     },
+    "& label.MuiFormLabel-filled": {
+        marginTop: "-0.2rem",
+        marginLeft: "0",
+        fontFamily: "Montserrat",
+        color: "black",
+        fontSize: "1.0rem",
+    },
     "& .MuiInput-underline:after": {
         borderBottomColor: "black"
     },
@@ -105,7 +112,7 @@ const StyledTextField1 = styled(TextField)({
             color: "black",
             fontSize: "1.4rem",
         },
-        '&.Mui-focused  legend': {
+        '&.Mui-focused legend': {
             // show
             textIndent: "0",
             display: "block"
@@ -126,7 +133,11 @@ const StyledTextField1 = styled(TextField)({
         "&.Mui-focused fieldset": {
             borderColor: "black",
             fontSize: "1.0rem",
-        }
+        },
+    },
+    "& .MuiFilledInput fieldset": {
+        borderColor: "black",
+        fontSize: "1.0rem",
     }
 });
 
@@ -135,9 +146,18 @@ export interface DialogProps {
     handleClose: () => void;
 }
 
-function CustomAutocomplete(props: { options: any, label: string, value?: any, onChange?: any, className?: string }) {
+function CustomAutocomplete(props: { options: any, label: string, className?: string }) {
     const [options, setOptions] = React.useState([]);
     const [open, setOpen] = React.useState(false);
+    // value of the autocomplete
+    const [value, setValue] = React.useState<string | null>(null);
+    function onChange(value: any) {
+        // props.onChange(value);
+        setValue(value);
+        console.log(value);
+        // props.value = value;
+    }
+
     return (
         <Autocomplete
             id="country-select-demo"
@@ -168,6 +188,9 @@ function CustomAutocomplete(props: { options: any, label: string, value?: any, o
             renderInput={(params) => (
                 <StyledTextField1
                     {...params}
+                    value={value}
+                    // @ts-ignore
+                    onSelect={(e) => onChange(e.target.value)}
                     label={props.label}
                     InputProps={{
                         ...params.InputProps,
@@ -183,7 +206,7 @@ function CustomAutocomplete(props: { options: any, label: string, value?: any, o
                             </InputAdornment>
                         ),
                         autoComplete: 'new-password',
-                        className: "p-0 h-[40px]"
+                        className: `p-0 h-[40px] ${value ? "MuiFilledInput" : ""}`
                     }}
                     // inputProps={{
                     //     ...params.inputProps,
