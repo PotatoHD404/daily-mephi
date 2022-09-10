@@ -21,3 +21,7 @@
     padding-top: 40vh;
     text-shadow: 1px 1px 1px #3c5c5e;
 }
+
+.bgText2 {
+    @apply text-black;
+}

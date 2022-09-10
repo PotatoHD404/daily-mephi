@@ -1,4 +1,4 @@
-import WarningDialog from "../../../components/warning";
+import WarningDialog from "../../../components/warningDialog";
 
 
 export default {

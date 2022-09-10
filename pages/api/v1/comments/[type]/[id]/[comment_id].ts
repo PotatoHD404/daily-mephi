@@ -20,7 +20,6 @@ export default async function handler(
     // get column name from type
 
 
-
     // get comments from column type by prisma
     const comment = prisma.comment.findUnique({
         where: {

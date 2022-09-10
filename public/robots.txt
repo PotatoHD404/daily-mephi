@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://daily-mephi.ru
+Host: https://cf63-188-32-238-99.eu.ngrok.io
 
 # Sitemaps
-Sitemap: https://daily-mephi.ru/sitemap.xml
+Sitemap: https://cf63-188-32-238-99.eu.ngrok.io/sitemap.xml
