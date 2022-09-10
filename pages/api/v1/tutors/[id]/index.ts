@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "./materials";
 
 
 export async function getTutor(id: string) {
@@ -84,7 +85,7 @@ export default async function handler(
         return;
     }
     const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }

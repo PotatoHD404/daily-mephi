@@ -1,14 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import jwt, {JwtPayload} from 'jsonwebtoken';
-
-// import app from "../../lib/firebase/initApp";
-import {decrypt, encrypt} from "helpers/crypto";
-import {getSession} from "next-auth/react";
-import {Runtime} from "inspector";
 import prisma from "lib/database/prisma";
 import notion from "lib/database/notion";
-import {checkStatus, doRequest} from "../../../../helpers/utils";
 import {getToken} from "next-auth/jwt";
 
 export function timeout(ms: number | undefined) {

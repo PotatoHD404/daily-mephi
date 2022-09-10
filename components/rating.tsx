@@ -21,30 +21,42 @@ export default function HoverRating() {
     const [hover, setHover] = React.useState(-1);
 
     return (
-        <Box
-            sx={{
-                width: 400,
-                display: 'flex',
-                alignItems: 'center',
-                marginLeft: 'auto'
-            }}
-        >
-            <Rating
-                name="hover-feedback"
-                value={value}
-                precision={0.5}
-                size="large"
-                onChange={(event, newValue) => {
-                    setValue(newValue);
-                }}
-                onChangeActive={(event, newHover) => {
-                    setHover(newHover);
-                }}
-                emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
-            />
-            {value !== null && (
-                <Box sx={{ml: 2}}>{labels[hover !== -1 ? hover : value]}</Box>
-            )}
-        </Box>
+        <div className="flex flex-wrap md:w-[22rem] justify-end md:justify-start">
+            <div className="md:hidden">
+                <Rating
+                    name="hover-feedback"
+                    value={value}
+                    precision={0.5}
+                    size="medium"
+                    onChange={(event, newValue) => {
+                        setValue(newValue);
+                    }}
+                    onChangeActive={(event, newHover) => {
+                        setHover(newHover);
+                    }}
+                    emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
+                    className="md:hidden"
+                />
+            </div>
+            <div className="hidden md:block">
+                <Rating
+                    name="hover-feedback"
+                    value={value}
+                    precision={0.5}
+                    size="large"
+                    onChange={(event, newValue) => {
+                        setValue(newValue);
+                    }}
+                    onChangeActive={(event, newHover) => {
+                        setHover(newHover);
+                    }}
+                    emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"
+                    />}
+                />
+            </div>
+            <div className="w-fit hidden md:block ml-8">
+                {value !== null ? labels[hover !== -1 ? hover : value] : null}
+            </div>
+        </div>
     );
 }

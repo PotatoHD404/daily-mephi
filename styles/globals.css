@@ -40,38 +40,54 @@ body::-webkit-scrollbar-button {
     display: none;
 }
 
-.greenBox {
-    background-color: rgba(0, 255, 0, 0.2);
-}
+@layer components  {
+    .required:after {
+        /*margin-top: 10px;*/
+        /*padding-top: 10px;*/
+        /*display: block;*/
+        /*height: 20px;*/
+        content:" *" !important;
+        color: red !important;
+    }
 
-.underlining {
+    .greenBox {
+        background-color: rgba(0, 255, 0, 0.2) !important;
+    }
 
-    line-height: 1;
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-}
+    .underlining {
 
-.underlining:after {
-    background-color: black;
-    display: block;
-    content: "";
-    height: 0.1rem;
-    width: 0;
-    left: 50%;
-    position: absolute;
-    -webkit-transition: width 0.3s ease-in-out;
-    -moz-transition: width 0.3s ease-in-out;
-    transition: width 0.3s ease-in-out;
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    transform: translateX(-50%);
-}
+        line-height: 1 !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        position: relative !important;
+        display: inline-block !important;
+    }
 
-.underlining:hover:after,
-.underlining:focus:after {
-    width: 100%;
+    .underlining:after {
+        background-color: black !important;
+        display: block !important;
+        content: "" !important;
+        height: 0.1rem !important;
+        width: 0 !important;
+        left: 50% !important;
+        position: absolute !important;
+        -webkit-transition: width 0.3s ease-in-out !important;
+        -moz-transition: width 0.3s ease-in-out !important;
+        transition: width 0.3s ease-in-out !important;
+        -webkit-transform: translateX(-50%) !important;
+        -moz-transform: translateX(-50%) !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .underlining:hover:after,
+    .underlining:focus:after {
+        width: 100%!important;
+    }
+
+    .whiteBox {
+        /* important */
+        @apply bg-white bg-opacity-90 rounded-2xl p-5 px-4 !important;
+    }
 }
 
 a {

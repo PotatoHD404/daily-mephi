@@ -93,27 +93,9 @@ export default async function handler(
                     name: true,
                 }
             },
-            likes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            dislikes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            comments: {
-                select: {
-                    _count: true,
-                },
-            },
+            likes: true,
+            dislikes: true,
+            comment_count: true,
         },
     });
 

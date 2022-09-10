@@ -1,13 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {getSession} from "next-auth/react";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "./materials";
 
 
 async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -24,22 +24,8 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: true,
                 }
             },
-            likes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            dislikes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
+            likes: true,
+            dislikes: true
         },
         take: 10,
         orderBy: {createdAt: 'desc'}
@@ -51,7 +37,7 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
 
 async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }

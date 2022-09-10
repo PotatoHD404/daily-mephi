@@ -2,7 +2,6 @@ import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
 import {PrismaClient} from "@prisma/client"
 import {NextAuthOptions, SessionStrategy} from "next-auth";
-import {getHost} from "../../helpers/utils";
 
 const prisma = new PrismaClient()
 // const host = getHost() + "/api/auth/callback/home";
