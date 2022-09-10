@@ -21,11 +21,6 @@ export default async function handler(
                 image: true,
                 rating: true,
                 role: true,
-                comments: {
-                    select: {
-                        _count: true,
-                    }
-                },
                 materials: {
                     select: {
                         _count: true,

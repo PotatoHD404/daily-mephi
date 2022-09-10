@@ -1,6 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {getToken} from "next-auth/jwt";
 
 
 export default async function handler(
@@ -20,11 +19,7 @@ export default async function handler(
             header: true,
             body: true,
             createdAt: true,
-            comments: {
-                select: {
-                    _count: true,
-                },
-            },
+            comment_count: true
         }
     });
 

@@ -44,27 +44,9 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: true,
                 }
             },
-            likes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            dislikes: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    role: true,
-                }
-            },
-            comments: {
-                select: {
-                    _count: true,
-                }
-            }
+            likes: true,
+            dislikes: true,
+            comment_count: true,
         },
         take: 10
         // take: req.query.take ? parseInt(req.query.take) : undefined,
