@@ -23,6 +23,8 @@ export default function Material() {
         </div>
         <div
             className="mt-2.5 mb-2 font-bold flex flex-wrap w-full text-[0.9rem] leading-4">
+            <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
+             bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
             {
                 [
                     {label: "Факультет", color: "#DDD9DF"}
