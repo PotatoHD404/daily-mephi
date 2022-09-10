@@ -213,14 +213,15 @@ function Material(props: { postForm: any }) {
                     className="mb-5 font-bold flex flex-wrap w-full text-sm leading-4">
 
                     {[
-                        {color: "#DDD9DF", label: "Предмет", options: ["Английский язык", "Математика", "Русский язык"]},
-                        {color: "#F9C5D3", label: "Категория", options: ["Лекции", "Семинары", "Экзамены"]},
+                        {color: "#DDD9DF", label: "Предмет", options: ["Английский язык", "Математика", "Русский язык"], required: true},
+                        {color: "#F9C5D3", label: "Категория", options: ["Лекции", "Семинары", "Экзамены"], required: true},
                         {color: "#FEB3B4", label: "Факультет", options: ["Факультет 1", "Факультет 2"]},
                         {color: "#F4BDE6", label: "Семестр", options: ["1", "2", "3", "4", "5", "6", "7", "8"]},
                         {color: "#C7A8F3", label: "Год", options: ["2021", "2020", "2019", "2018", "2017", "2016", "2015"]},
                     ].map((item, index) => (
                         <CustomSelect
                             key={index}
+                            required={item.required}
                             // className={`rounded bg-[${item.color}] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap`}
                             color={item.color}
                             options={item.options}

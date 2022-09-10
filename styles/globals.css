@@ -41,6 +41,15 @@ body::-webkit-scrollbar-button {
 }
 
 @layer components  {
+    .required:after {
+        /*margin-top: 10px;*/
+        /*padding-top: 10px;*/
+        /*display: block;*/
+        /*height: 20px;*/
+        content:" *";
+        color: red;
+    }
+
     .greenBox {
         background-color: rgba(0, 255, 0, 0.2);
     }

@@ -11,7 +11,7 @@ const StyledNativeSelect = styled(NativeSelect)({
     }
 });
 
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
+const BootstrapInput = styled(InputBase)(({theme}) => ({
 
     'label + &': {
         marginTop: theme.spacing(3),
@@ -37,22 +37,26 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function CustomSelect(props: { options: any, label: string, defaultValue?: any, color?: string, index?: number }) {
+export default function CustomSelect(props: { options: any, label: string, defaultValue?: any, color?: string, index?: number,
+    required?: boolean }) {
     return (
         <div className="relative mr-4 w-[8rem]">
             <InputLabel htmlFor={`uncontrolled-native-${props.index}`}
-                          variant="standard" className="text-black text-[1.2rem] font-[Montserrat] font-bold">
+                        variant="standard" className={`text-black text-[1.2rem] font-[Montserrat] font-bold
+                ${props.required ? "required" : ""}`}>
                 {props.label}
             </InputLabel>
             <StyledNativeSelect
                 defaultValue={props.defaultValue}
-                id={ `uncontrolled-native-${props.index}`}
+                id={`uncontrolled-native-${props.index}`}
                 variant={"outlined"}
-                input={<BootstrapInput sx={{'& .MuiInputBase-input': {
-                    backgroundColor: props.color,
+                input={<BootstrapInput sx={{
+                    '& .MuiInputBase-input': {
+                        backgroundColor: props.color,
                         paddingTop: '0.3rem',
                         paddingBottom: '0.5rem',
-                    }}}
+                    }
+                }}
 
                 />}
                 className={`w-full font-semibold`}
@@ -60,7 +64,6 @@ export default function CustomSelect(props: { options: any, label: string, defau
                 {props.options.map((item: any) =>
                     <option className={`bg-[${props.color}] font-semibold`} value={item} key={item}>{item}</option>)}
             </StyledNativeSelect>
-
 
 
             {/*<Select*/}

@@ -9,13 +9,23 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControlLabel, {FormControlLabelProps} from "@mui/material/FormControlLabel";
 import {styled} from "@mui/material/styles";
 import CheckIcon from '@mui/icons-material/Check';
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIco from "images/search.svg";
-import {ListItemButton, Slider, Drawer} from "@mui/material";
+import {
+    ListItemButton,
+    Slider,
+    Drawer,
+    Menu,
+    MenuItem,
+    FormLabel,
+    RadioGroup,
+    Radio,
+    useRadioGroup
+} from "@mui/material";
 import StarIcon from "../images/star.svg";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -24,6 +34,8 @@ import Link from "next/link";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/news.svg";
 import Divider from "@mui/material/Divider";
+import CloseButton from "./closeButton";
+import FormControl from "@mui/material/FormControl";
 
 
 const StyledCheckbox = styled(Checkbox)(() => ({
@@ -48,7 +60,7 @@ function CustomAccordion(props: { children: React.ReactNode, name: string, defau
         >
             <div className="text-[1rem] font-bold">{props.name}</div>
         </AccordionSummary>
-        <AccordionDetails className="py-0">
+        <AccordionDetails className="p-0">
             {props.children}
         </AccordionDetails>
     </Accordion>;
@@ -132,37 +144,44 @@ function SearchFilter(props: { name: string, options: string[], defaultExpanded?
     // opened state
     const [opened, setOpened] = React.useState(false);
     return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
-        <FormGroup className="overflow-y-auto max-h-[20rem]">
-            <StyledTextField label="Поиск"
-                             variant="outlined" className="w-full mb-2"
-                             InputProps={{
-                                 endAdornment: (
-                                     <InputAdornment position="end">
-                                         <div className="flex w-4">
-                                             <Image
-                                                 src={SearchIco}
-                                                 alt="Search ico"
-                                                 className="my-auto"
-                                             />
-                                         </div>
-                                     </InputAdornment>
-                                 ),
-                                 classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}
-                             }}
-            />
-            {props.options.map((option, index) => (
-                    <FormControlLabel control={<CustomCheckbox/>}
-                                      key={index}
-                                      label={<div className="font-[Montserrat]">{option}</div>}/>
+        <FormGroup className="md:max-h-[20rem]">
+            <div className="px-3">
+                <StyledTextField label="Поиск"
+                                 variant="outlined" className="w-full mt-2 mb-2"
+                                 InputProps={{
+                                     endAdornment: (
+                                         <InputAdornment position="end">
+                                             <div className="flex w-4">
+                                                 <Image
+                                                     src={SearchIco}
+                                                     alt="Search ico"
+                                                     className="my-auto"
+                                                 />
+                                             </div>
+                                         </InputAdornment>
+                                     ),
+                                     classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}
+                                 }}
+                />
+            </div>
+
+            <div
+                className="overflow-y-auto overflow-x-visible flex flex-wrap px-4"> {props.options.map((option, index) => (
+                    <FormControlLabel
+                        className="w-full"
+                        control={<CustomCheckbox/>}
+                        key={index}
+                        label={<div className="font-[Montserrat]">{option}</div>}/>
                 )
-            )}
-            <div className="flex text-[0.8rem] justify-between underline mt-3">
-                <div className="flex" onClick={() => setOpened(!opened)}>
-                    <div className="my-auto">{opened ? "Скрыть" : "Показать всё"}</div>
+            )}</div>
+
+            <div className="flex text-[0.8rem] justify-between underline mt-3 px-4">
+                <div className="flex cursor-pointer" onClick={() => setOpened(!opened)}>
+                    <div className="my-auto select-none">{opened ? "Скрыть" : "Показать всё"}</div>
                     <ExpandMoreIcon
                         className={`w-4 my-auto transition-all ease-in-out duration-200 ${opened ? "rotate-180" : ""}`}/>
                 </div>
-                <div className="my-auto">Сбросить</div>
+                <div className="my-auto cursor-pointer select-none">Сбросить</div>
             </div>
 
         </FormGroup>
@@ -257,7 +276,7 @@ function SliderFilter(props: { name: string, min: number, max: number }) {
     ];
 
     return <CustomAccordion name={props.name}>
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap px-4">
             <div className="flex space-x-1 -ml-1">
                 <Mark value={value[0]}/>
                 <div>-</div>
@@ -289,8 +308,52 @@ function SliderFilter(props: { name: string, min: number, max: number }) {
     </CustomAccordion>
 }
 
+interface StyledFormControlLabelProps extends FormControlLabelProps {
+    checked: boolean;
+}
+
+function MyFormControlLabel(props: FormControlLabelProps) {
+    const radioGroup = useRadioGroup();
+
+    let checked = false;
+
+    if (radioGroup) {
+        checked = radioGroup.value === props.value;
+    }
+
+    return <FormControlLabel checked={checked} {...props} />;
+}
+
+
 export function Filters() {
     return <div className="w-[15rem] hidden md:block ml-auto mt-4">
+        <div
+            className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black mb-4">
+            <div className="font-bold mb-4 -mt-2">Сортировка</div>
+            <div className="px-4">
+                <RadioGroup
+                    defaultValue="female"
+                    name="radio-buttons-group"
+                >
+                    {["Популярное", "Новое", "По отзывам"].map(
+                        (value, index) => (
+                            <MyFormControlLabel value={value}
+                                                key={index}
+                                                control={
+                                                    <Radio sx={{
+                                                        color: "black",
+                                                        "&.Mui-checked": {
+                                                            color: "black",
+                                                        },
+                                                    }}
+                                                    />}
+                                                label={<div className="font-[Montserrat]">{value}</div>}
+                            />
+                        )
+                    )}
+                </RadioGroup>
+            </div>
+        </div>
         <div
             className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black">
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
@@ -326,30 +389,49 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
     </Box>;
 }
 
-function CustomButton(props: { children: React.ReactNode, onClick?: () => void}) {
+function CustomButton(props: { children: React.ReactNode, onClick?: any }) {
     return <Button onClick={props.onClick}
-        className="rounded-full text-black font-[Montserrat] font-bold text-center
+                   className="rounded-full text-black font-[Montserrat] font-bold text-center
                                               w-fit normal-case h-8">
         {props.children}
     </Button>;
 }
 
+function CustomDrawer(props: { open: boolean, onClose: () => void }) {
+    return <Drawer open={props.open}
+                   onClose={props.onClose}
+        // onOpen={() => setFiltersOpened(true)}
+                   anchor="bottom"
+                   className="md:hidden w-full h-[100vh]">
+        <div className="h-[100vh] relative">
+            <CloseButton onClick={props.onClose}/>
+            <div className="mt-12">
+                <SearchFilter defaultExpanded name="Факультеты" options={["ИИКС", "ФБИУКС"]}/>
+                <SearchFilter defaultExpanded name="Предметы" options={["предмет", "предмет 2"]}/>
+                <SliderFilter name="Оценка" min={0} max={5}/>
+            </div>
+
+        </div>
+        {/*ItemsList({onClick: () => setFiltersOpened(false)})*/}
+    </Drawer>;
+}
+
 export function FilterButtons() {
     // Opened filters
     const [filtersOpened, setFiltersOpened] = React.useState<boolean>(false);
-
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    // filter state
+    const [filterState, setFilterState] = React.useState("Популярное");
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
         <>
-            <Drawer open={filtersOpened}
-                             onClose={() => setFiltersOpened(false)}
-                             // onOpen={() => setFiltersOpened(true)}
-                             anchor="bottom"
-            className="md:hidden w-full h-[100vh]">
-                <div className="h-[100vh] relative">
-                    
-                </div>
-                {/*ItemsList({onClick: () => setFiltersOpened(false)})*/}
-            </Drawer>;
+            <CustomDrawer open={filtersOpened} onClose={() => setFiltersOpened(false)}/>;
             <div className="md:hidden w-full mb-1 ml-2 flex justify-between">
                 <CustomButton onClick={() => setFiltersOpened(true)}>
                     <div className="flex w-5 mb-[1px] mr-2">
@@ -361,7 +443,8 @@ export function FilterButtons() {
                     </div>
                     <div>Фильтры</div>
                 </CustomButton>
-                <CustomButton>
+                <CustomButton
+                    onClick={handleClick}>
                     <div className="flex w-5 mb-[1px] mr-2">
                         <Image
                             src={SortIco}
@@ -369,8 +452,27 @@ export function FilterButtons() {
                             className="my-auto"
                         />
                     </div>
-                    <div>Сортировка</div>
+                    <div>{filterState}</div>
                 </CustomButton>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                >
+                    {
+                        ["Популярное", "Новое", "По отзывам"].map((name, index) => {
+                            return <MenuItem key={index} onClick={() => {
+                                handleClose();
+                                setFilterState(name);
+                            }}>{name}</MenuItem>
+                        })
+                    }
+                </Menu>
             </div>
-        </>);
+        </>
+    );
 }
