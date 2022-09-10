@@ -18,7 +18,7 @@
     "@mui/icons-material": "^5.10.2",
     "@mui/material": "^5.8.7",
     "@next-auth/prisma-adapter": "^1.0.3",
-    "@notionhq/client": "^2.1.1",
+    "@notionhq/client": "^2.2.0",
     "@prisma/client": "^4.2.1",
     "@sls-next/next-aws-lambda": "^3.5.0",
     "@storyofams/next-api-decorators": "^1.8.2",
