@@ -12,7 +12,7 @@ function User() {
 
     return (
         <>
-            <SEO title={'Пользователь PotatoHD'}/>
+            <SEO title={'Профиль'}/>
             <div className="flex-wrap w-full space-y-8">
                 <Profile/>
                 {/*<ProfileSettings/>*/}

@@ -22,23 +22,21 @@ export default function Material() {
 
         </div>
         <div
-            className="mt-4 mb-2 font-bold flex flex-wrap w-full text-[0.7rem] leading-4">
-            <div
-                className="rounded bg-[#DDD9DF] mr-2 mb-1 ml py-0.5 px-4 w-fit h-fit whitespace-nowrap">Факультет
-            </div>
-            <div
-                className="rounded bg-[#F9C5D3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Семестр
-                1
-            </div>
-            <div
-                className="rounded bg-[#FEB3B4] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">МатАнализ
-            </div>
-            <div
-                className="rounded bg-[#F4BDE6] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Препод
-            </div>
-            <div
-                className="rounded bg-[#C7A8F3] mr-2 mb-1 py-0.5 px-4 w-fit whitespace-nowrap">Экзамен
-            </div>
+            className="mt-2.5 mb-2 font-bold flex flex-wrap w-full text-[0.9rem] leading-4">
+            {
+                [
+                    {label: "Факультет", color: "#DDD9DF"}
+                    , {label: "Семестр", color: "#F9C5D3"}
+                    , {label: "МатАнализ", color: "#FEB3B4"}
+                    , {label: "Препод", color: "#F4BDE6"}
+                    , {label: "Экзамен", color: "#C7A8F3"}
+                ].map((tag, index) => (
+                    <div className={`rounded bg-[${tag.color}] mr-2 mb-1 py-1 px-4 w-fit whitespace-nowrap`}
+                         key={index}>
+                        {tag.label}
+                    </div>
+                ))
+            }
         </div>
         <div
             className="flex flex-wrap md:flex-nowrap font-semibold relative">

@@ -27,7 +27,7 @@ function Materials() {
             <SEO title='Материалы'/>
 
             <div className="flex flex-wrap w-full justify-center">
-                <h1 className="text-2xl mb-2">Материалы</h1>
+                <h1 className="text-2xl mb-2 font-semibold">Материалы</h1>
                 <FilterButtons/>
                 <div className="w-full h-[1px] bg-black bg-opacity-10"/>
                 <div className="flex">

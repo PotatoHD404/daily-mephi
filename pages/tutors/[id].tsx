@@ -17,6 +17,7 @@ import Material from "components/material";
 import NewPost from "components/newPost";
 import ButtonBase from '@mui/material/ButtonBase';
 import RippledButton from "../../components/rippledButton";
+import RatingPlace from "../../components/ratingPlace";
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -143,11 +144,8 @@ function Tutor() {
                             Трифоненков Владимир Петрович
                         </div>
                     </div>
-
-                    <div className="rounded-full outline-black w-8 h-8 md:w-12 md:h-12
-                                    border-[0.12rem] border-gray-800 font-semibold text-center pt-[0.1rem]
-                                     md:pt-[0.35rem] leading-0 absolute text-2xl hidden md:block -ml-2 -mt-2">
-                        47
+                    <div className="hidden md:block -ml-2 -mt-2 absolute">
+                        <RatingPlace place={47}/>
                     </div>
                     <div className="flex flex-nowrap items-center">
                         <div className="flex items-center w-fit hidden mr-4 md:block">
@@ -160,10 +158,7 @@ function Tutor() {
                                     />
                                 </div>
                                 <div className="flex space-x-2 items-center justify-center md:hidden">
-                                    <div className="rounded-full outline-black w-8 h-8 md:w-10 md:h-10
-                                    border-[0.12rem] border-gray-800 font-semibold text-center pt-[0.1rem] md:pt-[0.3rem] leading-0">
-                                        47
-                                    </div>
+                                    <RatingPlace place={47}/>
                                     <div className="font-semibold">место</div>
                                 </div>
                             </div>
@@ -202,7 +197,7 @@ function Tutor() {
                             className="rounded-full w-auto border-2 border-black
                              font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
                             <RippledButton onClick={() => {
-                            }} text={'Отправить'}/>
+                            }} children={'Отправить'}/>
                         </div>
                     </div>
                 </div>

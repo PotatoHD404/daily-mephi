@@ -11,27 +11,9 @@ import {Input} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import WarningDialog from "components/warningDialog";
+import {useRouter} from "next/router";
+import SearchBar from "../components/searchBar";
 
-
-export const StyledInput = styled(Input)(() => ({
-    width: '100%',
-    fontSize: '1.65rem',
-    fontFamily: 'Montserrat',
-    marginLeft: '0.5rem'
-}));
-
-function SearchBar() {
-    return <div className="hidden bg-transparent md:flex border-2
-                                             border-black align-middle
-                                             rounded-full flex-row h-14 w-[80%]">
-        <SearchIcon style={{color: "black"}} className="scale-125 my-auto ml-5 mr-1"/>
-        <StyledInput
-            placeholder="Поиск"
-            inputProps={{"aria-label": "Поиск"}}
-            disableUnderline
-        />
-    </div>;
-}
 
 export function LogoText() {
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
@@ -59,6 +41,7 @@ function Home() {
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
+    const [input, setInput] = React.useState('');
 
     // let session = useSession();
     useEffect(() => {
@@ -66,7 +49,15 @@ function Home() {
         input?.focus();
         input?.select();
     }, []);
-
+    const router = useRouter();
+    async function handleEnterPress(e: any, input: string) {
+        if (e.key === 'Enter') {
+            // Redirect to search page with query (next.js)
+            const href = `/search?q=${input}`;
+            await router.push(href)
+        }
+        // console.log(e)
+    }
 
     return (
         <>
@@ -88,8 +79,11 @@ function Home() {
                             классный студенческий портал. Здесь вы можете оценить качества преподавателя или
                             оставить материалы для других студентов.
                         </h1>
-                        <div className="w-full">
-                            <SearchBar/>
+                        <div className="h-14 hidden md:block w-[80%] mr-auto">
+                            <SearchBar
+                                input={input}
+                                setInput={setInput}
+                                handleEnterPress={handleEnterPress}/>
                         </div>
                     </div>
                     <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
