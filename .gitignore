@@ -85,3 +85,7 @@ pages/api/v1/dev1/
 /terraform/main-lambda/
 
 cloud-functions/notion-api/node_modules/
+
+public/sitemap-0.xml
+
+public/sitemap.xml

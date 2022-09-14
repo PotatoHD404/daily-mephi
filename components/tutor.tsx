@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Button from "@mui/material/Button";
 import Image from "next/image";
 import TutorImage from "../images/tutor.png";
 import StarIcon from "../images/star.svg";
@@ -8,6 +7,7 @@ import QuotesIco from "../images/quotes.svg";
 import MaterialsIco from "../images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
+import { Button } from '@mui/material';
 
 export default function Tutor() {
     return <Link href="/tutors/1">

@@ -1,19 +1,11 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import Image from "next/image";
 import FiltersIco from "images/filters.svg";
 import SortIco from "images/sort.svg";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FormGroup from "@mui/material/FormGroup";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel, {FormControlLabelProps} from "@mui/material/FormControlLabel";
-import {styled} from "@mui/material/styles";
+import { FormControlLabelProps } from "@mui/material/FormControlLabel";
+import styled from "@mui/material/styles/styled";
 import CheckIcon from '@mui/icons-material/Check';
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import SearchIco from "images/search.svg";
 import {
     Slider,
@@ -22,7 +14,16 @@ import {
     MenuItem,
     RadioGroup,
     Radio,
-    useRadioGroup
+    useRadioGroup,
+    Button,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    FormGroup,
+    Checkbox,
+    FormControlLabel,
+    TextField,
+    InputAdornment,
 } from "@mui/material";
 import StarIcon from "../images/star.svg";
 import CloseButton from "./closeButton";

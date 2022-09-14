@@ -6,12 +6,12 @@ import React, {ReactNode} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
-import Background from 'images/bg.svg'
-import Background1 from 'images/bg.png'
+import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
+import {useMediaQuery} from "helpers/reactUtils";
 
 
 declare module '@mui/material/styles' {
@@ -47,67 +47,49 @@ const theme = createTheme({
 });
 
 
-// export const themeOptions: ThemeOptions = {
-//     palette: {
-//         type: 'light',
-//         primary: {
-//             main: 'rgba(63,81,181,0)',
-//         },
-//         secondary: {
-//             main: '#ffffff',
-//         },
-//         background: {
-//             default: '#000000',
-//         },
-//         text: {
-//             primary: 'rgba(22,21,21,0.87)',
-//         },
-//     },
-// };
 
 function BackgroundComp({home}: { home: boolean }) {
+    const isMobile = useMediaQuery(768);
     return (
         <div>
-            <div className={styles.bgWrap}>
-                <div className="hidden md:flex"><Image1
-                    src={Background}
-                    alt="background gradient"
-                    quality={100}
-                    objectFit="cover"
-                    layout="fill"
-                /></div>
-            </div>
-            <div className={`-z-10 absolute overflow-clip w-full h-full ${home ? "md:" : ""}hidden`}>
-                <div className="justify-center items-center flex-wrap w-[300vw]">
-                    <div className="overflow-hidden h-[64vh] w-full xs:h-[85vh]">
-                        <Image
-                            src={Background1}
-                            alt="background gradient"
-                            quality={100}
-                            className="w-[200vw] h-[100vh] opacity-80"
-                        />
-                    </div>
-
-                    {/*<Image*/}
-                    {/*    src={ellipse}*/}
-                    {/*    alt="background gradient"*/}
-                    {/*    quality={100}*/}
-                    {/*    className="-mt-[32.5vh] scale-125 -ml-[25vw]"*/}
-                    {/*/>*/}
-                    {/*<div className="bg-white w-full h-20 -mt-2 absolute"></div>*/}
-
-                </div>
-            </div>
-            <div className={styles.bgWrap}>
-                <div className={`${home ? "" : "md:"}hidden`}><Image1
-                    src={Background1}
-                    alt="background gradient"
-                    quality={100}
-                    objectFit="cover"
-                    layout="fill"
-                /></div>
-            </div>
-
+            {/*{*/}
+            {/*    !isMobile ?*/}
+            {/*        <div className={styles.bgWrap}>*/}
+            {/*            <div><Image1*/}
+            {/*                src={Background}*/}
+            {/*                alt="background gradient"*/}
+            {/*                quality={100}*/}
+            {/*                objectFit="cover"*/}
+            {/*                layout="fill"*/}
+            {/*            /></div>*/}
+            {/*        </div> : null*/}
+            {/*}*/}
+            {
+                home && isMobile ?
+                    <div className={"-z-10 absolute overflow-clip w-full h-[100vh]"}>
+                        <div className="justify-center items-center flex-wrap w-[300vw]">
+                            <div className="w-full">
+                                <Image
+                                    src={Background1}
+                                    alt="background gradient"
+                                    quality={100}
+                                    className="w-[200vw] h-[100vh] opacity-80"
+                                />
+                            </div>
+                        </div>
+                    </div> : null
+            }
+            {
+                !home || !isMobile ? <div className={styles.bgWrap}>
+                    <div><Image1
+                        src={Background1}
+                        alt="background gradient"
+                        quality={100}
+                        objectFit="cover"
+                        layout="fill"
+                    /></div>
+                </div> : null
+            }
         </div>);
 }
 

@@ -1,8 +1,6 @@
-import * as React from "react";
-import {styled} from "@mui/material/styles";
-import NativeSelect from "@mui/material/NativeSelect";
-import {InputBase, MenuItem, Select} from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
+// import * as React from "react";
+import styled from "@mui/material/styles/styled";
+import { NativeSelect, InputBase, InputLabel } from '@mui/material';
 
 
 const StyledNativeSelect = styled(NativeSelect)({

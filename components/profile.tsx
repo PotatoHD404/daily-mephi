@@ -2,11 +2,13 @@ import React from "react";
 import TopUsers from "./topUsers";
 import Image from "next/future/image";
 import ProfileImage from "images/profile1.png";
-import Divider from "@mui/material/Divider";
 import RippledButton from "./rippledButton";
 import QuestionIco from "images/question.svg";
-import {Tooltip} from "@mui/material";
 import RatingPlace from "./ratingPlace";
+
+
+
+import { Divider, Tooltip } from '@mui/material';
 
 
 

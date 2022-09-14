@@ -1,7 +1,7 @@
-import IconButton from "@mui/material/IconButton";
 import Image from "next/future/image";
 import CloseIcon from "../images/close_icon.svg";
 import * as React from "react";
+import { IconButton } from '@mui/material';
 
 export default function CloseButton(props: { onClick: () => void }) {
     return <IconButton

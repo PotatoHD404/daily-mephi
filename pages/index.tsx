@@ -6,14 +6,14 @@ import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
 
 import SearchIcon from '@mui/icons-material/Search';
-import BuyMeACoffee from "components/buyMeCoffee";
-import {Input} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import WarningDialog from "components/warningDialog";
+import { Input, styled, Button } from "@mui/material";
 import {useRouter} from "next/router";
 import SearchBar from "../components/searchBar";
+import {useMediaQuery} from "../helpers/reactUtils";
+import dynamic from "next/dynamic";
 
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
 
 export function LogoText() {
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
@@ -31,6 +31,9 @@ export function LogoText() {
 }
 
 function Home() {
+
+    const isMobile = useMediaQuery(768);
+
     const [state, setState] = React.useState({
         warning: false
     });
@@ -50,6 +53,7 @@ function Home() {
         input?.select();
     }, []);
     const router = useRouter();
+
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)
@@ -64,9 +68,7 @@ function Home() {
             <SEO/>
 
             <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
-                <div className="md:hidden">
-                    <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
-                </div>
+                <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
 
                 <div
                     className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5">
@@ -79,27 +81,33 @@ function Home() {
                             классный студенческий портал. Здесь вы можете оценить качества преподавателя или
                             оставить материалы для других студентов.
                         </h1>
-                        <div className="h-14 hidden md:block w-[80%] mr-auto">
+                        {!isMobile ? <div className="h-14 w-[80%] mr-auto">
                             <SearchBar
                                 input={input}
                                 setInput={setInput}
                                 handleEnterPress={handleEnterPress}/>
-                        </div>
+                        </div> : null}
+
                     </div>
-                    <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
-                         w-[80%] normal-case md:hidden"
-                            variant="contained" onClick={handleClickOpenWarning}>Войти на Daily MEPhi</Button>
+                    {isMobile ? <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
+                         w-[80%] normal-case"
+                                        variant="contained" onClick={handleClickOpenWarning}>Войти на Daily
+                        MEPhi</Button> : null}
+
                     <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
-                    <div
-                        className="hidden md:flex justify-center md:w-[50%]  mt-[4.5%] max-w-xl md:max-w-max justify-center">
-                        <Image src={Logo} alt="Big logo"/>
-                    </div>
-                    <div className="h-fit overflow-clip w-full flex justify-center">
+                    {!isMobile ?
                         <div
-                            className="flex justify-center md:hidden mt-[47%] scale-[275%] max-w-[40rem] justify-center">
-                            <Image src={MobileLogo} alt="Big logo"/>
-                        </div>
-                    </div>
+                            className="flex justify-center md:w-[50%] mt-[4.5%] max-w-xl md:max-w-max justify-center">
+                            <Image src={Logo} alt="Big logo"/>
+                        </div> :
+                        <div className="h-[140vw] overflow-clip w-full flex justify-center -z-10 -mb-[40vw]">
+                            <div
+                                className="flex justify-center mt-[110%] scale-[275%] max-w-[40rem] justify-center h-fit">
+                                <Image src={MobileLogo} alt="Big logo"/>
+                            </div>
+                        </div>}
+
+
                 </div>
             </div>
             <BuyMeACoffee/>

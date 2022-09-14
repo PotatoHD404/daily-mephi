@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import CoffeeCup from 'images/coffee.svg'
 import Image from "next/image";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import ButtonBase from "@mui/material/ButtonBase";
+import { ButtonBase } from '@mui/material';
 
 function getElementByXpath(path: string) {
     return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;

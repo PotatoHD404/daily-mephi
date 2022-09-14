@@ -7,10 +7,10 @@ import TutorImage from "images/tutor.png";
 import ReviewsIco from 'images/reviews.svg'
 import QuotesIco from 'images/quotes.svg'
 import MaterialsIco from 'images/materials.svg'
-import Button from "@mui/material/Button";
 import Link from "next/link";
 import {FilterButtons, Filters} from "components/filters";
 import Tutor from "components/tutor";
+import { Button } from '@mui/material';
 
 
 

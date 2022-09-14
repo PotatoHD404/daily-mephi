@@ -1,16 +1,19 @@
 import * as React from 'react';
-import {styled} from '@mui/material/styles';
 import Image from "next/future/image";
 import RegisterHalfCat from 'images/register_halfcat.svg'
 import RegisterCat from 'images/register_cat.svg'
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import {SelectChangeEvent} from "@mui/material/Select";
-import FormControl from "@mui/material/FormControl";
-import NativeSelect from "@mui/material/NativeSelect";
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 import CustomSelect from "./customSelect";
+
+import {
+    styled,
+    TextField,
+    InputLabel,
+    SelectChangeEvent,
+    FormControl,
+    NativeSelect,
+} from '@mui/material';
 
 export interface DialogProps {
     opened: boolean;

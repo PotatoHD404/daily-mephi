@@ -1,7 +1,7 @@
 import Image from "next/image";
 import CommentIco from "../images/comment.svg";
 import React from "react";
-import Button from "@mui/material/Button";
+import { Button } from '@mui/material';
 
 export default function CommentBtn() {
     return (
