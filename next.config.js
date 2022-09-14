@@ -1,4 +1,7 @@
+// const path = require("path");
+
 const runtimeCaching = require('next-pwa/cache');
+const withPreact = require('next-plugin-preact')
 const withPWA = require('next-pwa')({
     dest: 'public',
     // disable: process.env.NODE_ENV === 'development',
@@ -44,5 +47,5 @@ const nextConfig = withPWA({
 });
 //https://www.npmjs.com/package/next-pwa
 
-module.exports = nextConfig;
+module.exports = withPreact(nextConfig);
 // module.exports = nextConfig
