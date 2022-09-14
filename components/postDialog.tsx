@@ -1,21 +1,23 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import {styled} from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import Image from "next/future/image";
-import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
 import FileUpload from "images/file_upload.svg";
-import Autocomplete from "@mui/material/Autocomplete";
 import TabsBox from "./tabsBox";
 import CustomDialog from "./customDialog";
 import CloseButton from "./closeButton";
 import TutorImg from "images/tutor.png";
 import TutorImage from "../images/tutor.png";
-import Box from "@mui/material/Box";
 import {AccountCircle} from "@mui/icons-material";
-import {InputAdornment} from "@mui/material";
-import Dialog from "@mui/material/Dialog";
+import {
+    InputAdornment,
+    Button,
+    styled,
+    IconButton,
+    TextField,
+    FormControl,
+    Autocomplete,
+    Box,
+    Dialog,
+} from "@mui/material";
 import CustomSelect from "./customSelect";
 
 

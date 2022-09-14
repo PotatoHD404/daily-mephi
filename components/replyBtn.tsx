@@ -1,7 +1,7 @@
 import Image from "next/image";
 import ReplyIco from "images/reply.svg";
 import React from "react";
-import Button from "@mui/material/Button";
+import { Button } from '@mui/material';
 
 export default function ReplyBtn() {
     return (

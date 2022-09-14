@@ -1,12 +1,9 @@
 /*  ./components/Navbar.jsx     */
 import Link from 'next/link';
 import React, {useEffect, useState} from 'react';
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/news.svg";
-import Divider from "@mui/material/Divider";
 const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
 const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
@@ -17,11 +14,11 @@ import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
-import ListItemButton from "@mui/material/ListItemButton";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import {useMediaQuery} from "../helpers/utils";
+import {useMediaQuery} from "../helpers/reactUtils";
 import dynamic from "next/dynamic";
+
+
+import { Box, List, Divider, ListItemButton, Button, IconButton } from '@mui/material';
 
 
 interface DefaultNavbarParams {

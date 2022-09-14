@@ -15,7 +15,6 @@ import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import Material from "components/material";
 import NewPost from "components/newPost";
-import ButtonBase from '@mui/material/ButtonBase';
 import RippledButton from "../../components/rippledButton";
 import RatingPlace from "../../components/ratingPlace";
 

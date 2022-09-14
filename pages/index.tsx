@@ -6,12 +6,10 @@ import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
 
 import SearchIcon from '@mui/icons-material/Search';
-import {Input} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import Button from "@mui/material/Button";
+import { Input, styled, Button } from "@mui/material";
 import {useRouter} from "next/router";
 import SearchBar from "../components/searchBar";
-import {useMediaQuery} from "../helpers/utils";
+import {useMediaQuery} from "../helpers/reactUtils";
 import dynamic from "next/dynamic";
 
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});

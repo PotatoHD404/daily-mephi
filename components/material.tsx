@@ -3,7 +3,7 @@ import Image from "next/image";
 import DownloadIco from "images/download.svg";
 import Reactions from "./reactions";
 import React from "react";
-import IconButton from "@mui/material/IconButton";
+import { IconButton } from '@mui/material';
 
 export default function Material() {
     return <div className="whiteBox text-xl w-full mt-4 pb-2">

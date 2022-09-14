@@ -1,9 +1,9 @@
 import Image from "next/image";
 import LikeIco from "images/like.svg";
 import React from "react";
-import Button from "@mui/material/Button";
 import {addPrefixes} from "../helpers/utils";
 import PressedLikeIco from "../images/pressed_like.svg";
+import { Button } from '@mui/material';
 
 export default function DislikeBtn() {
     const prefixes = ['hover:', 'focus:', 'active:', ""];

@@ -6,13 +6,12 @@ import React, {ReactNode} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
-import Background from 'images/bg.svg'
 import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {useMediaQuery} from "helpers/utils";
+import {useMediaQuery} from "helpers/reactUtils";
 
 
 declare module '@mui/material/styles' {

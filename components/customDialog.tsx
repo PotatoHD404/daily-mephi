@@ -1,5 +1,5 @@
-import Dialog from "@mui/material/Dialog";
 import * as React from "react";
+import { Dialog } from '@mui/material';
 
 export default function CustomDialog(props: { onClose?: () => void, open: boolean, children: any }) {
     return <Dialog
