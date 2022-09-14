@@ -1,5 +1,5 @@
-import {styled} from "@mui/material/styles";
-import {Input} from "@mui/material";
+import styled from "@mui/material/styles/styled";
+import Input from "@mui/material/Input";
 import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
 

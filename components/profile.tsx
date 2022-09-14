@@ -5,7 +5,7 @@ import ProfileImage from "images/profile1.png";
 import Divider from "@mui/material/Divider";
 import RippledButton from "./rippledButton";
 import QuestionIco from "images/question.svg";
-import {Tooltip} from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import RatingPlace from "./ratingPlace";
 
 

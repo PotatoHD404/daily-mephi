@@ -10,7 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel, {FormControlLabelProps} from "@mui/material/FormControlLabel";
-import {styled} from "@mui/material/styles";
+import styled from "@mui/material/styles/styled";
 import CheckIcon from '@mui/icons-material/Check';
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
