@@ -1,5 +1,3 @@
-// const path = require("path");
-
 const runtimeCaching = require('next-pwa/cache');
 const withPreact = require('next-plugin-preact')
 const withPWA = require('next-pwa')({
@@ -18,6 +16,15 @@ const nextConfig = withPWA({
     reactStrictMode: true,
     webpack: (config) => {
         config.experiments = {layers: true, topLevelAwait: true};
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            // 'react/jsx-runtime.js': 'preact/compat/jsx-runtime',
+            // react: 'preact-compat'
+            // 'react-dom/test-utils': 'preact/test-utils',
+            // 'react-dom': 'preact/compat',
+            // 'react/jsx-runtime'    : 'preact/jsx-runtime',
+            // 'react/jsx-dev-runtime': 'preact/jsx-dev-runtime'
+        }
         return config;
     },
     experimental: {

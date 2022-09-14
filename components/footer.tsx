@@ -25,7 +25,7 @@ function Footer() {
                             </div>
 
                             <div className="text-center md:text-2xl text-xl h-max-auto">
-                                © {new Date().getFullYear()} Daily MEPhi
+                                {`© ${new Date().getFullYear()} Daily MEPhi`}
                             </div>
                             <div
                                 className="justify-end gap-3 text-2xl hidden lg:flex">
@@ -39,9 +39,7 @@ function Footer() {
                                     </div>
                                 </Link>
                                 <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
-
                                     <div className="cursor-pointer flex">github.com</div>
-
                                 </Link>
 
                             </div>

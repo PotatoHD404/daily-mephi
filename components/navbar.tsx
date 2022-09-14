@@ -67,6 +67,7 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 
 function AuthSection(props: DefaultNavbarParams) {
     // const router = useRouter()
+    const isMobile = useMediaQuery(768);
     const {data: session, status} = useSession()
     const [open, setOpen] = useState(false)
 
@@ -101,21 +102,19 @@ function AuthSection(props: DefaultNavbarParams) {
 
     if (status === "loading") {
         return (
-            <>
+            !isMobile ?
                 <div
-                    className={`${style.authText} md:hidden`}>
+                    className={`${style.authText}`}>
                     <h3 className="underlining">Загрузка...</h3>
-                </div>
-            </>
+                </div> : null
         )
     } else if (status === "unauthenticated" || !session) {
         return (
-            <>
+            !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText} md:hidden`}>
+                        className={`${style.authText}`}>
                     <h3 className="underlining">Войти</h3>
-                </button>
-            </>
+                </button> : null
         )
     } else {
         return (
@@ -123,10 +122,11 @@ function AuthSection(props: DefaultNavbarParams) {
                 <RegisterDialog
                     handleClose={() => setOpen(false)}
                     opened={open}/>
-                <button
-                    className={`${style.authText} md:hidden`}>
+
+                {!isMobile ? <button
+                    className={`${style.authText}`}>
                     <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
-                </button>
+                </button> : null}
             </>
         )
     }
