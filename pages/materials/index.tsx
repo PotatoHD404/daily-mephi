@@ -40,7 +40,7 @@ function Materials() {
                         <Material/>
                     </div>
                     {!isMobile ? <Filters/> :null}
-                    
+
                 </div>
             </div>
         </>);

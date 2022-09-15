@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from "react";
 import Image from "next/future/image";
 import FileUpload from "images/file_upload.svg";
 import TabsBox from "./tabsBox";
@@ -14,6 +14,7 @@ import {
     Dialog,
 } from "@mui/material";
 import CustomSelect from "./customSelect";
+import {toChildArray} from "preact";
 
 export interface DialogProps {
     opened: boolean;
@@ -232,14 +233,14 @@ function Material(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
-                <TextField label="Название"
-                           variant="outlined" className="w-full mb-5"
-                           InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
+                <StyledTextField label="Название"
+                                 height='40px'/>
+                {/* @ts-ignore */}
                 <div
-                    className="mb-5 font-bold flex flex-wrap w-full text-sm leading-4">
+                    className="mb-[1.37rem] font-bold flex flex-wrap w-full text-sm leading-4 mt-[4px]">
                     <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
              bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
-                    {[
+                    {toChildArray([
                         {
                             color: "#DDD9DF",
                             label: "Предмет",
@@ -270,7 +271,7 @@ function Material(props: { postForm: any }) {
                             index={index}
                         />
 
-                    ))}
+                    )))}
 
                 </div>
                 <StyledTextField label="Описание" height='15rem' multiline rows={8}/>
@@ -329,8 +330,8 @@ function Quote(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
-                <StyledTextField label="Цитата" height='123.54rem' className="mb-1" multiline
-                                 rows={12}/>
+                <StyledTextField label="Цитата" height='23.5rem' className="mb-1" multiline
+                                 rows={13}/>
                 <div className="flex items-center justify-end mt-6">
                     <div
                         className="rounded-full border-2 border-black w-44 h-8">

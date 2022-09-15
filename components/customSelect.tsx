@@ -1,14 +1,15 @@
 // import * as React from "react";
 import {NativeSelect, InputBase, InputLabel} from '@mui/material';
+import {toChildArray} from "preact";
 
 export default function CustomSelect(props: {
     options: any, label: string, defaultValue?: any, color?: string, index?: number,
     required?: boolean
 }) {
     return (
-        <div className="relative mr-4 w-[8rem]">
+        <div className="relative mr-4 w-[8.6rem] mt-8">
             <InputLabel htmlFor={`uncontrolled-native-${props.index}`}
-                        variant="standard" className={`text-black text-[1.2rem] font-[Montserrat] font-bold
+                        variant="standard" className={`-mt-5 text-black text-[1.2rem] font-[Montserrat] font-bold
                 ${props.required ? "required" : ""}`}>
                 {props.label}
             </InputLabel>
@@ -24,9 +25,9 @@ export default function CustomSelect(props: {
                         marginTop: '3px',
                     },
                     '& .MuiInputBase-input': {
-                        height: '1.1rem',
+                        height: '1.3rem',
 
-                        borderRadius: 4,
+                        borderRadius: 2,
                         position: 'relative',
                         border: '1px solid #ced4da',
                         fontSize: 16,
@@ -37,7 +38,7 @@ export default function CustomSelect(props: {
                         paddingBottom: '0.5rem',
                         fontFamily: 'Montserrat',
                         '&:focus': {
-                            // borderRadius: 4,
+                            borderRadius: 2,
                             // borderColor: '#80bdff',
                             // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
                         },
@@ -46,8 +47,9 @@ export default function CustomSelect(props: {
                 />}
                 className="w-full font-semibold"
             >
-                {props.options.map((item: any) =>
-                    <option className={`bg-[${props.color}] font-semibold`} value={item} key={item}>{item}</option>)}
+                {/* @ts-ignore */}
+                {toChildArray(props.options.map((item: any, index: number) =>
+                    <option className={`bg-[${props.color}] font-semibold`} value={item} key={index}>{item}</option>))}
             </NativeSelect>
 
 

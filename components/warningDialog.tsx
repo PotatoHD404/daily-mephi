@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from "react";
 import Image from "next/future/image";
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'

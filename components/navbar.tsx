@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/news.svg";
+
 const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
 const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
@@ -18,14 +19,13 @@ import useMediaQuery from "helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
 
-import { Box, List, Divider, ListItemButton, Button, IconButton } from '@mui/material';
+import {Box, List, Divider, ListItemButton, Button, IconButton} from '@mui/material';
 
 
 interface DefaultNavbarParams {
     handleClickOpenWarning: () => void;
     toggleDrawer: () => void;
 }
-
 
 
 function DefaultNavbar(props: DefaultNavbarParams) {
@@ -162,7 +162,9 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
                 </Button>
             </Link>
         </div>
-        <AuthSection handleClickOpenWarning={() => {}} toggleDrawer={() => {}}/>
+        <AuthSection handleClickOpenWarning={() => {
+        }} toggleDrawer={() => {
+        }}/>
     </div>;
 }
 
@@ -216,6 +218,7 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 
 
 function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
+    const router = useRouter();
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -223,17 +226,17 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
         onKeyDown={props.onClick}
     >
         <List>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/about")}>
                 <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
-                <Link href="/about"><a>О нас</a></Link>
+                <div>О нас</div>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/materials")}>
                 <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
-                <Link href="/materials"><a>Материалы</a></Link>
+                <div>Материалы</div>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/tutors")}>
                 <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
-                <Link href="/tutors"><a>Преподаватели</a></Link>
+                <div>Преподаватели</div>
             </ListItemButton>
         </List>
         <Divider/>
