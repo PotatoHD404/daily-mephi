@@ -9,9 +9,11 @@ import React from "react";
 import RatingPlace from "./ratingPlace";
 import { Button } from '@mui/material';
 import useMediaQuery from "helpers/react/useMediaQuery";
+import {toChildArray} from "preact";
 
 export default function Tutor() {
     const isMobile = useMediaQuery(768);
+
     return <Link href="/tutors/1">
         <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white
@@ -48,7 +50,7 @@ export default function Tutor() {
 
                         </div>
                     </div>
-                    {!isMobile ? 
+                    {!isMobile ?
                     <div className="flex items-center justify-between align-middle mx-5">
                         <div className="mr-2">5.0</div>
                         <div className="flex w-5 mb-[1px]">
@@ -60,27 +62,26 @@ export default function Tutor() {
                         </div>
                     </div> : null}
                     <div className="flex-wrap lg:flex hidden">
-                        <div className="mr-4">Отзывов: {5}</div>
-                        <div className="mr-4">Материалов: {5}</div>
-                        <div className="mr-4">Цитат: {5}</div>
+                        <div className="mr-4">{`Отзывов: ${5}`}</div>
+                        <div className="mr-4">{`Материалов: ${5}`}</div>
+                        <div className="mr-4">{`Цитат: ${5}`}</div>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem]">
-
+                    {/* @ts-ignore */}
                     <div className="h-fit mb-2 text-left flex flex-wrap">
                         <span className="font-bold h-fit mr-2 text-[1.1rem]">Дисциплины: </span>
-                        {["Теория функций копмплексных переменных",
+                        {toChildArray(["Теория функций копмплексных переменных",
                             "Математический анализ",
                             "Линейная алгебра",
                             "Интегральные уравнения",
                             "Дифференциальные уравнения"
                         ].map((discipline, index) => {
                             return <span key={index} className="text-[1.0rem] mr-2">
-                                {discipline}
-                                {index !== 4 && ", "}
+                                {`discipline ${index !== 4 && ", "}`}
                             </span>
-                        })}
+                        }))}
                     </div>
 
                     <div className="flex w-full max-w-[7.0rem] md:max-w-[8.0rem] justify-between">
@@ -88,7 +89,7 @@ export default function Tutor() {
                         <div className="text-[1.0rem] -mb-[2px] mt-[2px]">30</div>
                     </div>
                 </div>
-                { isMobile ? 
+                { isMobile ?
                 <div className="flex flex-wrap mt-2 text-sm">
                     <div className="mr-4 mt-1">
                         <div className="flex items-center justify-between align-middle">

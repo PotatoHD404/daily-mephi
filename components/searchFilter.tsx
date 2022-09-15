@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
+import {toChildArray} from "preact";
 
 
 function CustomCheckbox() {
@@ -46,7 +47,7 @@ export default function SearchFilter(props: { name: string, options: string[], d
     return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
         <FormGroup className="md:max-h-[20rem]">
             <div className="px-3">
-                <TextField label="Поиск"
+                <TextField label={<div>Поиск</div>}
                            variant="outlined" className="w-full mt-2 mb-2"
                            InputProps={{
                                endAdornment: (
@@ -111,16 +112,16 @@ export default function SearchFilter(props: { name: string, options: string[], d
                            }}
                 />
             </div>
-
+            {/* @ts-ignore */}
             <div
-                className="overflow-y-auto overflow-x-visible flex flex-wrap px-4"> {props.options.map((option, index) => (
+                className="overflow-y-auto overflow-x-visible flex flex-wrap px-4"> {toChildArray(props.options.map((option, index) => (
                     <FormControlLabel
                         className="w-full"
                         control={<CustomCheckbox/>}
                         key={index}
                         label={<div className="font-[Montserrat]">{option}</div>}/>
                 )
-            )}</div>
+            ))}</div>
 
             <div className="flex text-[0.8rem] justify-between underline mt-3 px-4">
                 <div className="flex cursor-pointer" onClick={() => setOpened(!opened)}>

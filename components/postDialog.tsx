@@ -2,146 +2,18 @@ import * as React from 'react';
 import Image from "next/future/image";
 import FileUpload from "images/file_upload.svg";
 import TabsBox from "./tabsBox";
-import CustomDialog from "./customDialog";
 import CloseButton from "./closeButton";
-import TutorImg from "images/tutor.png";
 import TutorImage from "../images/tutor.png";
-import {AccountCircle} from "@mui/icons-material";
 import {
     InputAdornment,
     Button,
-    styled,
     IconButton,
     TextField,
     FormControl,
     Autocomplete,
-    Box,
     Dialog,
 } from "@mui/material";
 import CustomSelect from "./customSelect";
-
-
-const StyledTextField = styled(TextField)({
-    "& label": {
-        color: "gray",
-        fontFamily: "Montserrat",
-        marginTop: "-0.4rem",
-        transition: 'all 0.2s ease',
-        // fontSize: "1.0rem",
-        // fontSize: "1.1rem",
-        // lineHeight: "1.5rem",
-        '@media (min-width:1024px)': {
-            // fontSize: "1.25rem"
-        }
-
-    },
-    "&:hover label": {
-        fontFamily: "Montserrat",
-        fontSize: "1.0rem",
-    },
-    "& label.Mui-focused": {
-        marginTop: "0",
-        fontFamily: "Montserrat",
-        color: "black",
-        fontSize: "1.0rem",
-    },
-    "& .MuiInput-underline:after": {
-        borderBottomColor: "black"
-    },
-    "& .MuiOutlinedInput-root": {
-        fontFamily: "Montserrat",
-        fontSize: "1.2rem",
-        "& fieldset": {
-            borderColor: "black",
-            borderRadius: "0.7rem",
-            fontSize: "1.0rem",
-        },
-        "&:hover fieldset": {
-            borderColor: "black",
-            borderWidth: 2,
-            fontSize: "1.0rem",
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: "black",
-            fontSize: "1.0rem",
-        }
-    }
-});
-
-const StyledTextField1 = styled(TextField)({
-    "& label": {
-        color: "gray",
-        fontFamily: "Montserrat",
-        marginTop: "0.9rem",
-        marginLeft: "1.9rem",
-
-        transition: 'all 0.2s ease',
-        // fontSize: "1.0rem",
-        fontSize: "1.4rem",
-        // lineHeight: "1.5rem",
-        '@media (min-width:1024px)': {
-            // fontSize: "1.25rem"
-        }
-
-    },
-    "&:hover label": {
-        fontFamily: "Montserrat",
-        fontSize: "1.4rem",
-    },
-    "& label.Mui-focused": {
-        marginTop: "-0.2rem",
-        marginLeft: "0",
-        fontFamily: "Montserrat",
-        color: "black",
-        fontSize: "1.0rem",
-    },
-    "& label.MuiFormLabel-filled": {
-        marginTop: "-0.2rem",
-        marginLeft: "0",
-        fontFamily: "Montserrat",
-        color: "black",
-        fontSize: "1.0rem",
-    },
-    "& .MuiInput-underline:after": {
-        borderBottomColor: "black"
-    },
-    "& .MuiOutlinedInput-root": {
-        fontFamily: "Montserrat",
-        fontSize: "1.2rem",
-        "& fieldset": {
-            borderColor: "black",
-            borderRadius: "0.7rem",
-            color: "black",
-            fontSize: "1.4rem",
-        },
-        '&.Mui-focused legend': {
-            // show
-            textIndent: "0",
-            display: "block"
-        },
-        '& legend': {
-            // show
-            textIndent: "-9999px",
-        },
-        '& legend:hover': {
-            // show
-            display: "none"
-        },
-        "&:hover fieldset": {
-            borderColor: "black",
-            borderWidth: 2,
-            fontSize: "1.4rem",
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: "black",
-            fontSize: "1.0rem",
-        },
-    },
-    "& .MuiFilledInput fieldset": {
-        borderColor: "black",
-        fontSize: "1.0rem",
-    }
-});
 
 export interface DialogProps {
     opened: boolean;
@@ -189,7 +61,81 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
                 </li>
             )}
             renderInput={(params) => (
-                <StyledTextField1
+                <TextField
+                    sx={{
+                        "& label": {
+                            color: "gray",
+                            fontFamily: "Montserrat",
+                            marginTop: "0.9rem",
+                            marginLeft: "1.9rem",
+
+                            transition: 'all 0.2s ease',
+                            // fontSize: "1.0rem",
+                            fontSize: "1.4rem",
+                            // lineHeight: "1.5rem",
+                            '@media (min-width:1024px)': {
+                                // fontSize: "1.25rem"
+                            }
+
+                        },
+                        "&:hover label": {
+                            fontFamily: "Montserrat",
+                            fontSize: "1.4rem",
+                        },
+                        "& label.Mui-focused": {
+                            marginTop: "-0.2rem",
+                            marginLeft: "0",
+                            fontFamily: "Montserrat",
+                            color: "black",
+                            fontSize: "1.0rem",
+                        },
+                        "& label.MuiFormLabel-filled": {
+                            marginTop: "-0.2rem",
+                            marginLeft: "0",
+                            fontFamily: "Montserrat",
+                            color: "black",
+                            fontSize: "1.0rem",
+                        },
+                        "& .MuiInput-underline:after": {
+                            borderBottomColor: "black"
+                        },
+                        "& .MuiOutlinedInput-root": {
+                            fontFamily: "Montserrat",
+                            fontSize: "1.2rem",
+                            "& fieldset": {
+                                borderColor: "black",
+                                borderRadius: "0.7rem",
+                                color: "black",
+                                fontSize: "1.4rem",
+                            },
+                            '&.Mui-focused legend': {
+                                // show
+                                textIndent: "0",
+                                display: "block"
+                            },
+                            '& legend': {
+                                // show
+                                textIndent: "-9999px",
+                            },
+                            '& legend:hover': {
+                                // show
+                                display: "none"
+                            },
+                            "&:hover fieldset": {
+                                borderColor: "black",
+                                borderWidth: 2,
+                                fontSize: "1.4rem",
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: "black",
+                                fontSize: "1.0rem",
+                            },
+                        },
+                        "& .MuiFilledInput fieldset": {
+                            borderColor: "black",
+                            fontSize: "1.0rem",
+                        }
+                    }}
                     {...params}
                     value={value}
                     // @ts-ignore
@@ -227,14 +173,68 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
     );
 }
 
+function StyledTextField(props: { height: string, rows?: number, label: string, multiline?: boolean, className?: string }) {
+    return <TextField label={props.label}
+                      variant="outlined" className={`w-full ${props.className}`}
+                      sx={{
+                          "& label": {
+                              color: "gray",
+                              fontFamily: "Montserrat",
+                              marginTop: "-0.4rem",
+                              transition: "all 0.2s ease",
+                              // fontSize: "1.0rem",
+                              // fontSize: "1.1rem",
+                              // lineHeight: "1.5rem",
+                              "@media (min-width:1024px)": {
+                                  // fontSize: "1.25rem"
+                              }
+
+                          },
+                          "&:hover label": {
+                              fontFamily: "Montserrat",
+                              fontSize: "1.0rem",
+                          },
+                          "& label.Mui-focused": {
+                              marginTop: "0",
+                              fontFamily: "Montserrat",
+                              color: "black",
+                              fontSize: "1.0rem",
+                          },
+                          "& .MuiInput-underline:after": {
+                              borderBottomColor: "black"
+                          },
+                          "& .MuiOutlinedInput-root": {
+                              fontFamily: "Montserrat",
+                              fontSize: "1.2rem",
+                              "& fieldset": {
+                                  borderColor: "black",
+                                  borderRadius: "0.7rem",
+                                  fontSize: "1.0rem",
+                              },
+                              "&:hover fieldset": {
+                                  borderColor: "black",
+                                  borderWidth: 2,
+                                  fontSize: "1.0rem",
+                              },
+                              "&.Mui-focused fieldset": {
+                                  borderColor: "black",
+                                  fontSize: "1.0rem",
+                              }
+                          }
+                      }}
+                      InputProps={{classes: {input: "font-[Montserrat] text-xl"}, sx: {height: props.height}}}
+                      multiline={props.multiline}
+                      rows={props.rows}/>;
+}
+
 function Material(props: { postForm: any }) {
     const [file, setFile] = React.useState('');
     return (
         <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
-                <StyledTextField label="Название"
-                                 variant="outlined" className="w-full mb-5"
-                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
+                <TextField label="Название"
+                           variant="outlined" className="w-full mb-5"
+                           InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
                 <div
                     className="mb-5 font-bold flex flex-wrap w-full text-sm leading-4">
                     <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
@@ -273,11 +273,7 @@ function Material(props: { postForm: any }) {
                     ))}
 
                 </div>
-                <StyledTextField label="Описание"
-                                 variant="outlined" className="w-full"
-                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '15rem'}}}
-                                 multiline
-                                 rows={8}/>
+                <StyledTextField label="Описание" height='15rem' multiline rows={8}/>
                 <div className="flex items-center justify-between mt-6">
                     <div className="flex text-center items-center">
                         <IconButton aria-label="upload picture" component="label"
@@ -310,13 +306,8 @@ function Review(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
-                <StyledTextField label="Название"
-                                 variant="outlined" className="w-full mb-5"
-                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}}}/>
-                <StyledTextField label="Описание"
-                                 variant="outlined" className="w-full mb-1"
-                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '19.75rem'}}}
-                                 multiline
+                <StyledTextField label="Название" height='40px' className="mb-5"/>
+                <StyledTextField label="Описание" height='19.75rem' className="mb-1" multiline
                                  rows={11}/>
                 <div className="flex items-center justify-end mt-6">
                     <div
@@ -338,10 +329,7 @@ function Quote(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
             <FormControl className="w-full flex">
-                <StyledTextField label="Цитата"
-                                 variant="outlined" className="w-full mb-1"
-                                 InputProps={{classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '23.54rem'}}}
-                                 multiline
+                <StyledTextField label="Цитата" height='123.54rem' className="mb-1" multiline
                                  rows={12}/>
                 <div className="flex items-center justify-end mt-6">
                     <div

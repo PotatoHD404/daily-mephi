@@ -37,7 +37,7 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 
 
                 <Link href="/">
-                    <a className="flex h-14 my-auto w-14">
+                    <a className="flex h-14 my-auto w-14 mb-2 -mt-2">
                         <Minicat/>
                     </a>
                 </Link>

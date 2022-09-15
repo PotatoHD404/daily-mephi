@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import StarIcon from "../images/star.svg";
 import CustomAccordion from './customAccordion'
+import {toChildArray} from "preact";
 
 
 //                                     />
@@ -16,7 +17,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
 
     function Mark(props: { value: string | number, mt?: boolean }) {
         return <div className={`${props.mt ? "-mt-2" : ""} flex`}>
-            <div className="my-auto text-[0.95rem]">{props.value}</div>
+            <div className="my-auto text-[0.95rem]">{props.value.toString()}</div>
             <div className="flex w-3.5 ml-0.5 my-auto">
                 <Image
                     src={StarIcon}
@@ -38,6 +39,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
         },
     ];
 
+
     return <CustomAccordion name={props.name}>
         <div className="flex flex-wrap px-4">
             <div className="flex space-x-1 -ml-1">
@@ -46,7 +48,8 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
                 <Mark value={value[1]}/>
             </div>
             <Slider
-                value={value}
+                // @ts-ignore
+                value={toChildArray(value.map((v, index) => <div key={index}>{v.toString()}</div>))}
                 // onChange={(event, newValue) => {
                 //     console.log(newValue);
                 // }}

@@ -1,76 +1,22 @@
-import * as React from 'react';
 import Image from "next/future/image";
 import RegisterHalfCat from 'images/register_halfcat.svg'
 import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
-import CustomSelect from "./customSelect";
 
 import {
-    styled,
     TextField,
-    InputLabel,
     SelectChangeEvent,
     FormControl,
     NativeSelect,
 } from '@mui/material';
+import React from "react";
 
 export interface DialogProps {
     opened: boolean;
     handleClose: () => void;
 }
 
-const StyledTextField = styled(TextField)({
-    "& label": {
-        color: "gray",
-        fontFamily: "Montserrat",
-        fontSize: "1.25rem",
-        '@media (min-width:1024px)': {
-            fontSize: "1.5rem",
-        }
-
-    },
-    "&:hover label": {},
-    "& label.Mui-focused": {
-        color: "black"
-    },
-    "& .MuiInput-underline:after": {
-        borderBottomColor: "black"
-    },
-    "& .MuiOutlinedInput-root": {
-        "& fieldset": {
-            borderColor: "black"
-        },
-        "&:hover fieldset": {
-            borderColor: "black",
-            borderWidth: 2
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: "black"
-        }
-    }
-});
-
-const StyledInputLabel = styled(InputLabel)({
-    "&.Mui-focused": {
-        color: "black"
-    },
-    "&.MuiInputLabel-root": {
-        color: "gray",
-    },
-    "&.MuiInputLabel-root.Mui-focused": {
-        color: "black"
-    },
-    "&.MuiInputLabel-root.MuiInputLabel-shrink": {
-        color: "black"
-    }
-});
-
-const StyledNativeSelect = styled(NativeSelect)({
-    "&.MuiInputBase-root:after": {
-        borderBottomColor: "black",
-    }
-});
 
 export default function RegisterDialog(props: DialogProps) {
     const {handleClose, opened} = props;
@@ -108,12 +54,47 @@ export default function RegisterDialog(props: DialogProps) {
                             <div className="col-span-12 gap-6 md:gap-4 grid md:mb-16 mb-8 text-center md:w-fit px-8">
                                 <div>Введите ник, который будет отображаться на портале</div>
                                 <div className="flex flex-wrap space-y-4 md:mx-2">
-                                    <StyledTextField label="Ник"
-                                                     variant="standard" className="w-full"/>
+                                    <TextField label="Ник"
+                                               sx={{
+                                                   "& label": {
+                                                       color: "gray",
+                                                       fontFamily: "Montserrat",
+                                                       fontSize: "1.25rem",
+                                                       '@media (min-width:1024px)': {
+                                                           fontSize: "1.5rem",
+                                                       }
+
+                                                   },
+                                                   "&:hover label": {},
+                                                   "& label.Mui-focused": {
+                                                       color: "black"
+                                                   },
+                                                   "& .MuiInput-underline:after": {
+                                                       borderBottomColor: "black"
+                                                   },
+                                                   "& .MuiOutlinedInput-root": {
+                                                       "& fieldset": {
+                                                           borderColor: "black"
+                                                       },
+                                                       "&:hover fieldset": {
+                                                           borderColor: "black",
+                                                           borderWidth: 2
+                                                       },
+                                                       "&.Mui-focused fieldset": {
+                                                           borderColor: "black"
+                                                       }
+                                                   }
+                                               }}
+                                               variant="standard" className="w-full"/>
                                     <div className="w-full border-black flex flex-wrap h-fit space-y-0">
                                         <label htmlFor="uncontrolled-native" className="ml-[1px] relative -mb-1 py-0 text-black lg:text-lg text-sm
                                          ">Курс</label>
-                                        <StyledNativeSelect
+                                        <NativeSelect
+                                            sx={{
+                                                "&.MuiInputBase-root:after": {
+                                                    borderBottomColor: "black",
+                                                }
+                                            }}
                                             defaultValue="Б1"
                                             inputProps={{
                                                 name: 'age',
@@ -124,7 +105,7 @@ export default function RegisterDialog(props: DialogProps) {
                                             {["Б1", "Б2", "Б3", "Б4", "С1", "С2", "С3", "С4", "С5", "М1", "М2", "А1",
                                                 "А2", "А3", "А4"].map((item) =>
                                                 <option value={item} key={item}>{item}</option>)}
-                                        </StyledNativeSelect>
+                                        </NativeSelect>
                                     </div>
                                     {/*<StyledTextField label="Ник"*/}
                                     {/*                 variant="standard" className="w-full"/>*/}
@@ -134,7 +115,9 @@ export default function RegisterDialog(props: DialogProps) {
                             <div
                                 className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full
                                  lg:text-3xl md:text-2xl text-xl font-bold text-center">
-                                <RippledButton onClick={register} >Регистрация</RippledButton>
+                                <RippledButton onClick={register}>
+                                    <div>Регистрация</div>
+                                </RippledButton>
                             </div>
                         </FormControl>
 
