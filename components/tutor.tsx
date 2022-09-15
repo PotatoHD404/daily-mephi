@@ -8,8 +8,10 @@ import MaterialsIco from "../images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
 import { Button } from '@mui/material';
+import useMediaQuery from "helpers/react/useMediaQuery";
 
 export default function Tutor() {
+    const isMobile = useMediaQuery(768);
     return <Link href="/tutors/1">
         <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white
@@ -32,8 +34,8 @@ export default function Tutor() {
                             <div className="text-center h-fit">
                                 Трифоненков В. П.
                             </div>
-                            <div
-                                className="md:hidden items-center justify-between align-middle md:mx-5 flex w-fit">
+                            {isMobile ?                             <div
+                                className="items-center justify-between align-middle md:mx-5 flex w-fit">
                                 <div className="mr-2">5.0</div>
                                 <div className="flex w-4 mb-[1px]">
                                     <Image
@@ -42,10 +44,12 @@ export default function Tutor() {
                                         className="my-auto"
                                     />
                                 </div>
-                            </div>
+                            </div> : null}
+
                         </div>
                     </div>
-                    <div className="md:flex items-center justify-between align-middle mx-5 hidden">
+                    {!isMobile ? 
+                    <div className="flex items-center justify-between align-middle mx-5">
                         <div className="mr-2">5.0</div>
                         <div className="flex w-5 mb-[1px]">
                             <Image
@@ -54,7 +58,7 @@ export default function Tutor() {
                                 className="my-auto"
                             />
                         </div>
-                    </div>
+                    </div> : null}
                     <div className="flex-wrap lg:flex hidden">
                         <div className="mr-4">Отзывов: {5}</div>
                         <div className="mr-4">Материалов: {5}</div>
@@ -84,7 +88,8 @@ export default function Tutor() {
                         <div className="text-[1.0rem] -mb-[2px] mt-[2px]">30</div>
                     </div>
                 </div>
-                <div className="flex flex-wrap md:hidden mt-2 text-sm">
+                { isMobile ? 
+                <div className="flex flex-wrap mt-2 text-sm">
                     <div className="mr-4 mt-1">
                         <div className="flex items-center justify-between align-middle">
                             <div className="flex w-5 mb-[1px]">
@@ -124,7 +129,7 @@ export default function Tutor() {
                             <div className="ml-3 xs:block hidden">Материала</div>
                         </div>
                     </div>
-                </div>
+                </div> : null}
 
             </div>
         </Button>

@@ -1,18 +1,10 @@
 import React from "react";
 import SEO from "components/seo";
-import Image from "next/image";
-import StarIcon from 'images/star.svg'
-
-import TutorImage from "images/tutor.png";
-import ReviewsIco from 'images/reviews.svg'
-import QuotesIco from 'images/quotes.svg'
-import MaterialsIco from 'images/materials.svg'
-import Link from "next/link";
-import {FilterButtons, Filters} from "components/filters";
+import useMediaQuery from "helpers/react/useMediaQuery";
+import dynamic from "next/dynamic";
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 import Tutor from "components/tutor";
-import { Button } from '@mui/material';
-
-
 
 const marks = [
     {
@@ -32,7 +24,7 @@ const marks = [
 // </Button>
 function Tutors() {
     const [value, setValue] = React.useState(0);
-
+    const isMobile = useMediaQuery(768);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -42,14 +34,16 @@ function Tutors() {
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2 font-semibold">Преподаватели</h1>
-                <FilterButtons/>
+                {isMobile ? <FilterButtons/> : null}
                 <div className="w-full h-[1px] bg-black bg-opacity-10"/>
                 <div className="flex">
                     <div className="md:w-[75%] w-[100%]">
                         <Tutor/>
                         <Tutor/>
                     </div>
-                    <Filters/>
+                    {
+                    !isMobile ? <Filters/> : null
+                    }
                 </div>
             </div>
         </>);

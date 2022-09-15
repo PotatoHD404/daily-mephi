@@ -5,7 +5,7 @@ import ProfileImage from "images/profile1.png";
 import RippledButton from "./rippledButton";
 import QuestionIco from "images/question.svg";
 import RatingPlace from "./ratingPlace";
-
+import useMediaQuery from "helpers/react/useMediaQuery";
 
 
 import { Divider, Tooltip } from '@mui/material';
@@ -13,6 +13,7 @@ import { Divider, Tooltip } from '@mui/material';
 
 
 function User() {
+    const isMobile = useMediaQuery(768);
     return (
         <div className="w-full normal-case h-fit whiteBox p-5 px-4">
             <div className="md:block absolute -mr-1 -mt-1">
@@ -41,25 +42,26 @@ function User() {
                     <div className="w-full font-semibold">
                         Студент / 3 курс
                     </div>
-                    <div className="w-full md:block hidden">
+                    {!isMobile ? <>
+                    <div className="w-full block">
                         Загружено материалов: 34
                     </div>
-                    <div className="w-full md:block hidden">
+                    <div className="w-full">
                         Написано отзывов: 12
                     </div>
-                    <div className="w-full md:block hidden">
+                    <div className="w-full">
                         Загружено цитат: 10
-                    </div>
-
-                    <div className="w-full md:hidden">
+                    </div> </> : <>
+                    <div className="w-full">
                         Материалов: 34
                     </div>
-                    <div className="w-full md:hidden">
+                    <div className="w-full">
                         Отзывов: 12
                     </div>
-                    <div className="w-full md:hidden">
+                    <div className="w-full">
                         Цитат: 10
-                    </div>
+                    </div></> }
+
                     <div className="xs:w-full flex xs:mx-0 mx-auto w-fit">
                         <div className="h-fit my-auto">Рейтинг: 250</div>
                         <Tooltip enterTouchDelay={0}

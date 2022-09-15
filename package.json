@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postbuild": "next-sitemap && npm run test",
+    "postbuild": "next-sitemap",
     "postinstall": "prisma generate || true",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",

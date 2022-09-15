@@ -2,7 +2,7 @@ import Image from "next/image";
 import LikeIco from "images/like.svg";
 import PressedLikeIco from "images/pressed_like.svg";
 import React from "react";
-import {addPrefixes} from "../helpers/utils";
+import addPrefixes from "helpers/react/addPrefixes";
 import { Button } from '@mui/material';
 
 

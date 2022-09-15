@@ -11,7 +11,7 @@ import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {useMediaQuery} from "helpers/reactUtils";
+import useMediaQuery from "helpers/react/useMediaQuery";
 
 
 declare module '@mui/material/styles' {

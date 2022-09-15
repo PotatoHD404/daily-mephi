@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 
-export const useMediaQuery = (width: any) => {
+export default function useMediaQuery(width: any) {
     const [targetReached, setTargetReached] = useState(false);
 
     const updateTarget = useCallback((e: { matches: any; }) => {

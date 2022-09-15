@@ -1,13 +1,17 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
-import {FilterButtons, Filters} from "components/filters";
+import useMediaQuery from "helpers/react/useMediaQuery";
+import dynamic from "next/dynamic";
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 import SearchBar from "../components/searchBar";
 import {useRouter} from "next/router";
 import Material from "../components/material";
 import Tutor from "../components/tutor";
 
 
-function Tutors() {
+function Search() {
+    const isMobile = useMediaQuery(768);
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -33,7 +37,7 @@ function Tutors() {
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2 font-semibold">Поиск</h1>
-                <FilterButtons/>
+                {isMobile ? <FilterButtons/> : null}
                 <div className="w-full h-[1px] bg-black bg-opacity-10"/>
                 <div className="h-11 w-full md:w-[47%] mt-4 mr-auto">
                     <SearchBar
@@ -47,15 +51,16 @@ function Tutors() {
                         <Tutor/>
                         <Material/>
                     </div>
+                    {!isMobile ? 
                     <div className="ml-auto">
                         <Filters/>
-                    </div>
+                    </div> : null}
                 </div>
             </div>
         </>);
 }
 
-export default Tutors;
+export default Search;
 
 
 

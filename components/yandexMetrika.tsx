@@ -1,4 +1,5 @@
 import {Component} from "react";
+import Image from "next/image";
 // import Script from "next/script";
 
 export default class MetricContainer extends Component {
@@ -22,7 +23,7 @@ export default class MetricContainer extends Component {
         `
                 }}/>
             <noscript>
-                <div><img src="https://mc.yandex.ru/watch/89495681" style={{position: "absolute", left: "-9999px"}}
+                <div><Image src="https://mc.yandex.ru/watch/89495681" style={{position: "absolute", left: "-9999px"}}
                           alt=""/>
                 </div>
             </noscript>

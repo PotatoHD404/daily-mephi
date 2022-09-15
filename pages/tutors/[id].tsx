@@ -9,14 +9,16 @@ import {useRouter} from "next/router";
 import Like from "components/likeBtn";
 import Dislike from "components/dislikeBtn";
 import Comments from "components/comments";
-import PostDialog from "components/postDialog";
 import UserHeader from "components/userHeader";
 import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import Material from "components/material";
 import NewPost from "components/newPost";
-import RippledButton from "../../components/rippledButton";
-import RatingPlace from "../../components/ratingPlace";
+import RippledButton from "components/rippledButton";
+import RatingPlace from "components/ratingPlace";
+import dynamic from "next/dynamic";
+
+const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -230,6 +232,3 @@ function Tutor() {
 }
 
 export default Tutor;
-
-
-
