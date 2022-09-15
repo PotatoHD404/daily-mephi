@@ -93,8 +93,6 @@ function BackgroundComp({home}: { home: boolean }) {
         </div>);
 }
 
-const css = {width: '100px', backgroundRepeat: "no-repeat"}
-
 function MyApp(
     {
         Component,

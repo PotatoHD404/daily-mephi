@@ -1,57 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import styled from "@mui/material/styles/styled";
 import {
     Slider
 } from "@mui/material";
 import StarIcon from "../images/star.svg";
 import CustomAccordion from './customAccordion'
 
-
-const StyledSlider = styled(Slider)(() => ({
-    color: '#000',
-    height: 2,
-
-    '& .MuiSlider-thumb': {
-        width: 8,
-        height: 8,
-        transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
-        '&:before': {
-            boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
-        },
-        '&:hover, &.Mui-focusVisible': {
-            boxShadow: `0px 0px 0px 8px rgb(0 0 0 / 16%)`,
-        },
-        '&.Mui-active': {
-            width: 20,
-            height: 20,
-        },
-    },
-    '& .MuiSlider-rail': {
-        opacity: 0.28,
-    },
-    '& .MuiSlider-markLabel': {fontFamily: 'Montserrat'},
-    '& .MuiSlider-valueLabel': {
-        lineHeight: 1.2,
-        fontSize: 12,
-        background: 'unset',
-        padding: 0,
-        width: 32,
-        height: 32,
-        borderRadius: '50% 50% 50% 0',
-        backgroundColor: '#000',
-        transformOrigin: 'bottom left',
-        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
-        '&:before': {display: 'none'},
-        '&.MuiSlider-valueLabelOpen': {
-            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
-        },
-        '& > *': {
-            transform: 'rotate(45deg)',
-        },
-        fontFamily: 'Montserrat'
-    }
-}));
 
 //                                     />
 export default function SliderFilter(props: { name: string, min: number, max: number }) {
@@ -91,7 +45,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
                 <div>-</div>
                 <Mark value={value[1]}/>
             </div>
-            <StyledSlider
+            <Slider
                 value={value}
                 // onChange={(event, newValue) => {
                 //     console.log(newValue);
@@ -106,6 +60,50 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
                 max={props.max}
                 className="mx-2 -mt-2"
                 marks={marks}
+                sx={{
+                    color: '#000',
+                    height: 2,
+
+                    '& .MuiSlider-thumb': {
+                        width: 8,
+                        height: 8,
+                        transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
+                        '&:before': {
+                            boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
+                        },
+                        '&:hover, &.Mui-focusVisible': {
+                            boxShadow: `0px 0px 0px 8px rgb(0 0 0 / 16%)`,
+                        },
+                        '&.Mui-active': {
+                            width: 20,
+                            height: 20,
+                        },
+                    },
+                    '& .MuiSlider-rail': {
+                        opacity: 0.28,
+                    },
+                    '& .MuiSlider-markLabel': {fontFamily: 'Montserrat'},
+                    '& .MuiSlider-valueLabel': {
+                        lineHeight: 1.2,
+                        fontSize: 12,
+                        background: 'unset',
+                        padding: 0,
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50% 50% 50% 0',
+                        backgroundColor: '#000',
+                        transformOrigin: 'bottom left',
+                        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+                        '&:before': {display: 'none'},
+                        '&.MuiSlider-valueLabelOpen': {
+                            transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
+                        },
+                        '& > *': {
+                            transform: 'rotate(45deg)',
+                        },
+                        fontFamily: 'Montserrat'
+                    }
+                }}
             />
         </div>
     </CustomAccordion>

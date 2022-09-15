@@ -1,9 +1,5 @@
 import React from "react";
-import Image from "next/image";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FormControlLabelProps } from "@mui/material/FormControlLabel";
-import styled from "@mui/material/styles/styled";
-import CheckIcon from '@mui/icons-material/Check';
 import SearchFilter from "./searchFilter";
 import {
     RadioGroup,

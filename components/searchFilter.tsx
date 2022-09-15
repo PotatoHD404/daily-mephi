@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import styled from "@mui/material/styles/styled";
 import SearchIco from "images/search.svg";
 import {
     FormGroup,
@@ -12,7 +11,6 @@ import {
 } from "@mui/material";
 import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
-
 
 
 function CustomCheckbox() {
@@ -41,54 +39,6 @@ function CustomCheckbox() {
     />;
 }
 
-const StyledTextField = styled(TextField)({
-    "& label": {
-        color: "gray",
-        fontFamily: "Montserrat",
-        marginTop: "-0.7rem",
-        transition: 'all 0.2s ease',
-        // fontSize: "1.0rem",
-        // fontSize: "1.1rem",
-        // lineHeight: "1.5rem",
-        '@media (min-width:1024px)': {
-            // fontSize: "1.25rem"
-        }
-
-    },
-    "&:hover label": {
-        fontFamily: "Montserrat",
-        fontSize: "1.0rem",
-    },
-    "& label.Mui-focused": {
-        marginTop: "0",
-        fontFamily: "Montserrat",
-        color: "black",
-        fontSize: "1.0rem",
-    },
-    "& .MuiInput-underline:after": {
-        borderBottomColor: "black"
-    },
-    "& .MuiOutlinedInput-root": {
-        fontFamily: "Montserrat",
-        fontSize: "1.2rem",
-        height: "2.0rem",
-        "& fieldset": {
-            borderColor: "black",
-            borderRadius: "0.6rem",
-            fontSize: "1.0rem",
-        },
-        "&:hover fieldset": {
-            borderColor: "black",
-            borderWidth: 2,
-            fontSize: "1.0rem",
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: "black",
-            fontSize: "1.0rem",
-        }
-    }
-});
-
 
 export default function SearchFilter(props: { name: string, options: string[], defaultExpanded?: boolean }) {
     // opened state
@@ -96,22 +46,69 @@ export default function SearchFilter(props: { name: string, options: string[], d
     return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
         <FormGroup className="md:max-h-[20rem]">
             <div className="px-3">
-                <StyledTextField label="Поиск"
-                                 variant="outlined" className="w-full mt-2 mb-2"
-                                 InputProps={{
-                                     endAdornment: (
-                                         <InputAdornment position="end">
-                                             <div className="flex w-4">
-                                                 <Image
-                                                     src={SearchIco}
-                                                     alt="Search ico"
-                                                     className="my-auto"
-                                                 />
-                                             </div>
-                                         </InputAdornment>
-                                     ),
-                                     classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}
-                                 }}
+                <TextField label="Поиск"
+                           variant="outlined" className="w-full mt-2 mb-2"
+                           InputProps={{
+                               endAdornment: (
+                                   <InputAdornment position="end">
+                                       <div className="flex w-4">
+                                           <Image
+                                               src={SearchIco}
+                                               alt="Search ico"
+                                               className="my-auto"
+                                           />
+                                       </div>
+                                   </InputAdornment>
+                               ),
+                               classes: {input: 'font-[Montserrat] text-xl'}, sx: {height: '40px'}
+                           }}
+                           sx={{
+                               "& label": {
+                                   color: "gray",
+                                   fontFamily: "Montserrat",
+                                   marginTop: "-0.7rem",
+                                   transition: 'all 0.2s ease',
+                                   // fontSize: "1.0rem",
+                                   // fontSize: "1.1rem",
+                                   // lineHeight: "1.5rem",
+                                   '@media (min-width:1024px)': {
+                                       // fontSize: "1.25rem"
+                                   }
+
+                               },
+                               "&:hover label": {
+                                   fontFamily: "Montserrat",
+                                   fontSize: "1.0rem",
+                               },
+                               "& label.Mui-focused": {
+                                   marginTop: "0",
+                                   fontFamily: "Montserrat",
+                                   color: "black",
+                                   fontSize: "1.0rem",
+                               },
+                               "& .MuiInput-underline:after": {
+                                   borderBottomColor: "black"
+                               },
+                               "& .MuiOutlinedInput-root": {
+                                   fontFamily: "Montserrat",
+                                   fontSize: "1.2rem",
+                                   height: "2.0rem",
+                                   "& fieldset": {
+                                       borderColor: "black",
+                                       borderRadius: "0.6rem",
+                                       fontSize: "1.0rem",
+                                   },
+                                   "&:hover fieldset": {
+                                       borderColor: "black",
+                                       borderWidth: 2,
+                                       fontSize: "1.0rem",
+                                   },
+                                   "&.Mui-focused fieldset": {
+                                       borderColor: "black",
+                                       fontSize: "1.0rem",
+                                   }
+                               }
+                           }}
                 />
             </div>
 
