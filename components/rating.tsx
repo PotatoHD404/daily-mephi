@@ -37,7 +37,6 @@ export default function HoverRating() {
                         setHover(newHover);
                     }}
                     emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
-                    className="md:hidden"
                 />
             </div>
             :
@@ -59,7 +58,7 @@ export default function HoverRating() {
                     />
                 </div>
                 <div className="w-fit ml-8">
-                    {hover != null || value != null ? labels[hover || value as number] : null}
+                    {hover != null && hover != -1 ? labels[hover] : value != null ? labels[value] : null}
                 </div>
             </>
             }

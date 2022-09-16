@@ -74,6 +74,7 @@ function BackgroundComp({home}: { home: boolean }) {
                                     alt="background gradient"
                                     quality={100}
                                     className="w-[200vw] h-[100vh] opacity-80"
+                                    priority
                                 />
                             </div>
                         </div>
@@ -87,6 +88,7 @@ function BackgroundComp({home}: { home: boolean }) {
                         quality={100}
                         objectFit="cover"
                         layout="fill"
+                        priority
                     /></div>
                 </div> : null
             }

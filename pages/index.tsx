@@ -82,29 +82,33 @@ function Home() {
                             классный студенческий портал. Здесь вы можете оценить качества преподавателя или
                             оставить материалы для других студентов.
                         </h1>
-                        {!isMobile ? <div className="h-14 w-[80%] mr-auto mt-5">
-                            <SearchBar
-                                input={input}
-                                setInput={setInput}
-                                handleEnterPress={handleEnterPress}/>
-                        </div> : null}
+                        {!isMobile ?
+                            <div className="h-14 w-[80%] mr-auto mt-5">
+                                <SearchBar
+                                    input={input}
+                                    setInput={setInput}
+                                    handleEnterPress={handleEnterPress}/>
+                            </div>
+                            : null}
 
                     </div>
-                    {isMobile ? <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
+                    {isMobile ?
+                        <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
                          w-[80%] normal-case"
-                                        variant="contained" onClick={handleClickOpenWarning}>Войти на Daily
-                        MEPhi</Button> : null}
+                                variant="contained" onClick={handleClickOpenWarning}>Войти на Daily MEPhi
+                        </Button>
+                        : null}
 
                     <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
                     {!isMobile ?
                         <div
                             className="flex justify-center md:w-[50%] my-auto max-w-xl md:max-w-max justify-center">
-                            <Image src={Logo} alt="Big logo"/>
+                            <Image src={Logo} priority alt="Big logo"/>
                         </div> :
                         <div className="h-[140vw] overflow-clip w-full flex justify-center -z-10 -mb-[40vw]">
                             <div
                                 className="flex justify-center mt-[110%] scale-[275%] max-w-[40rem] justify-center h-fit">
-                                <Image src={MobileLogo} alt="Big logo"/>
+                                <Image src={MobileLogo} priority alt="Big logo"/>
                             </div>
                         </div>}
 
