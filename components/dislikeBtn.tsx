@@ -1,13 +1,13 @@
 import Image from "next/image";
 import LikeIco from "images/like.svg";
-import React from "react";
-import {addPrefixes} from "../helpers/utils";
-import PressedLikeIco from "../images/pressed_like.svg";
+import {useState} from "react";
+import addPrefixes from "helpers/react/addPrefixes";
+import PressedLikeIco from "images/pressed_like.svg";
 import { Button } from '@mui/material';
 
 export default function DislikeBtn() {
     const prefixes = ['hover:', 'focus:', 'active:', ""];
-    const [liked, setLiked] = React.useState(false);
+    const [liked, setLiked] = useState(false);
 
     return <Button variant="contained"
                    className={`flex px-3 rounded-3xl h-[1.8rem]

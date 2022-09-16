@@ -4,28 +4,28 @@ import React, {useEffect, useState} from 'react';
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/news.svg";
-const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
-const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
-const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
+
+const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
+const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
+const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: true});
 import {useRouter} from "next/router";
 import Image from "next/future/image";
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
-import {useMediaQuery} from "../helpers/reactUtils";
+import useMediaQuery from "helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
 
-import { Box, List, Divider, ListItemButton, Button, IconButton } from '@mui/material';
+import {Box, List, Divider, ListItemButton, Button, IconButton} from '@mui/material';
 
 
 interface DefaultNavbarParams {
     handleClickOpenWarning: () => void;
     toggleDrawer: () => void;
 }
-
 
 
 function DefaultNavbar(props: DefaultNavbarParams) {
@@ -37,7 +37,7 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 
 
                 <Link href="/">
-                    <a className="flex h-14 my-auto w-14">
+                    <a className="flex h-14 my-auto w-14 mb-2 -mt-2">
                         <Minicat/>
                     </a>
                 </Link>
@@ -162,7 +162,9 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
                 </Button>
             </Link>
         </div>
-        <AuthSection handleClickOpenWarning={() => {}} toggleDrawer={() => {}}/>
+        <AuthSection handleClickOpenWarning={() => {
+        }} toggleDrawer={() => {
+        }}/>
     </div>;
 }
 
@@ -172,7 +174,7 @@ function HomeNavbar(props: DefaultNavbarParams) {
         <nav>
             {!isMobile ?
                 <div
-                    className="mb-0 hidden md:grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-20
+                    className="mb-0 grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-14
                mr-10">
                     <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
@@ -216,6 +218,7 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 
 
 function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
+    const router = useRouter();
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -223,17 +226,17 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
         onKeyDown={props.onClick}
     >
         <List>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/about")}>
                 <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
-                <Link href="/about"><a>О нас</a></Link>
+                <div>О нас</div>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/materials")}>
                 <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
-                <Link href="/materials"><a>Материалы</a></Link>
+                <div>Материалы</div>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={async () => await router.push("/tutors")}>
                 <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
-                <Link href="/tutors"><a>Преподаватели</a></Link>
+                <div>Преподаватели</div>
             </ListItemButton>
         </List>
         <Divider/>

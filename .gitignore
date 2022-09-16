@@ -89,3 +89,5 @@ cloud-functions/notion-api/node_modules/
 public/sitemap-0.xml
 
 public/sitemap.xml
+
+public/service-worker.js.map

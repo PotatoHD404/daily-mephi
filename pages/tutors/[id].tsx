@@ -9,14 +9,16 @@ import {useRouter} from "next/router";
 import Like from "components/likeBtn";
 import Dislike from "components/dislikeBtn";
 import Comments from "components/comments";
-import PostDialog from "components/postDialog";
 import UserHeader from "components/userHeader";
 import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import Material from "components/material";
 import NewPost from "components/newPost";
-import RippledButton from "../../components/rippledButton";
-import RatingPlace from "../../components/ratingPlace";
+import RippledButton from "components/rippledButton";
+import RatingPlace from "components/ratingPlace";
+import dynamic from "next/dynamic";
+
+const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -100,8 +102,10 @@ function Tutor() {
     const router = useRouter()
     const {id} = router.query
     const [value, setValue] = React.useState(0);
+    const [postValue, setPostValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+        setPostValue(newValue);
     };
     const [open, setOpen] = useState(false)
     // constructor(props: any) {
@@ -120,7 +124,8 @@ function Tutor() {
         <>
             {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
             <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
-            <PostDialog opened={open} handleClose={() => setOpen(false)}/>
+            <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
+                        setValue={setPostValue}/>
             <div className="flex-wrap w-full">
                 <div className="flex flex-wrap whiteBox overflow-x-hidden">
 
@@ -197,7 +202,7 @@ function Tutor() {
                              font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
                             <RippledButton onClick={() => {
                             }}>
-                                Отправить
+                                <div>Отправить</div>
                             </RippledButton>
                         </div>
                     </div>
@@ -230,6 +235,3 @@ function Tutor() {
 }
 
 export default Tutor;
-
-
-

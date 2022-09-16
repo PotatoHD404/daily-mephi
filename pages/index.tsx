@@ -4,27 +4,28 @@ import Image from 'next/image'
 import Logo from 'images/logo.svg'
 import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
-
-import SearchIcon from '@mui/icons-material/Search';
-import { Input, styled, Button } from "@mui/material";
+import {Button} from "@mui/material";
 import {useRouter} from "next/router";
-import SearchBar from "../components/searchBar";
-import {useMediaQuery} from "../helpers/reactUtils";
+import useMediaQuery from "../helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
-const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
+const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
 
 export function LogoText() {
+    const isMobile = useMediaQuery(768);
+
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
      w-full justify-center md:justify-start">
-        <div className="hidden md:flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">
-            <Image src={MiniCat} alt="mini cat"
-                   className="flex scale-95 active:scale-110 transition ease-in-out duration-300"
-                // layout="responsive"
-            />
+        {!isMobile ?
+            < div className="flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">
+                <Image src={MiniCat} alt="mini cat"
+                       className="flex scale-95 active:scale-110 transition ease-in-out duration-300"
+                    // layout="responsive"
+                />
 
-        </div>
+            </div> : null}
 
         <div className="md:-ml-[4vw] md:z-10 md:mt-1.5 md:pointer-events-none">Daily MEPhi</div>
     </div>;
@@ -71,17 +72,17 @@ function Home() {
                 <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
 
                 <div
-                    className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5">
+                    className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
                     <div
-                        className="items-center justify-start flex flex-wrap md:w-[42.8%] md:h-[50%]  mt-[6.5%] justify-center">
-
+                        className="items-center justify-start flex flex-wrap md:w-[42.8%]  my-auto justify-center">
                         <LogoText/>
+
 
                         <h1 className="pl-5 pr-5 2xl:text-4xl lg:text-3xl md:pl-0 text-[1.4] sm:text-2xl md:flex md:mt-8 mt-3 row-start-3 row-end-4 pb-3 text-center md:text-left">Самый
                             классный студенческий портал. Здесь вы можете оценить качества преподавателя или
                             оставить материалы для других студентов.
                         </h1>
-                        {!isMobile ? <div className="h-14 w-[80%] mr-auto">
+                        {!isMobile ? <div className="h-14 w-[80%] mr-auto mt-5">
                             <SearchBar
                                 input={input}
                                 setInput={setInput}
@@ -97,7 +98,7 @@ function Home() {
                     <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
                     {!isMobile ?
                         <div
-                            className="flex justify-center md:w-[50%] mt-[4.5%] max-w-xl md:max-w-max justify-center">
+                            className="flex justify-center md:w-[50%] my-auto max-w-xl md:max-w-max justify-center">
                             <Image src={Logo} alt="Big logo"/>
                         </div> :
                         <div className="h-[140vw] overflow-clip w-full flex justify-center -z-10 -mb-[40vw]">

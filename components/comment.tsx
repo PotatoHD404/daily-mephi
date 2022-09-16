@@ -16,14 +16,7 @@ function ProfilePic(props: { src: any }) {
 }
 
 type Children =
-    React.ReactElement<any, string | React.JSXElementConstructor<any>>
-    | string
-    | number
-    | Iterable<React.ReactNode>
-    | React.ReactPortal
-    | boolean
-    | null
-    | undefined;
+    React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 
 interface CommentParams {
     nick?: string;
@@ -77,7 +70,7 @@ export default function Comment({
         </div>
         {repliesCount ?
             <button className="ml-5 text-blue-500 text-[0.9rem] font-semibold">
-                {repliesCount} more repl{repliesCount > 1 ? "ies" : "y"}
+                {`${repliesCount} more repl${repliesCount > 1 ? "ies" : "y"}`}
             </button>
             : null}
     </div>;

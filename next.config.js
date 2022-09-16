@@ -44,6 +44,9 @@ const nextConfig = withPWA({
     //         }
     //     ],
     // },
+    images: {
+        domains: ['mc.yandex.ru']
+    },
     typescript: {
         // !! WARN !!
         // Dangerously allow production builds to successfully complete even if

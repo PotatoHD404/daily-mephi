@@ -52,7 +52,7 @@ function Crown(props: CrownParams) {
 
 function TopUser(props: TopUserParams) {
     return <tr>
-        <td className="text-center">{props.place}</td>
+        <td className="text-center">{props.place.toString()}</td>
         <td>
             <div className="flex pl-4 h-[4.5rem]">
                 <div className="h-14 my-auto w-14 flex">
