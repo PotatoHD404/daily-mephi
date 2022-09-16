@@ -54,18 +54,6 @@ function BackgroundComp({home}: { home: boolean }) {
     const isMobile = useMediaQuery(768);
     return (
         <div>
-            {/*{*/}
-            {/*    !isMobile ?*/}
-            {/*        <div className={styles.bgWrap}>*/}
-            {/*            <div><Image1*/}
-            {/*                src={Background}*/}
-            {/*                alt="background gradient"*/}
-            {/*                quality={100}*/}
-            {/*                objectFit="cover"*/}
-            {/*                layout="fill"*/}
-            {/*            /></div>*/}
-            {/*        </div> : null*/}
-            {/*}*/}
             {
                 home && isMobile ?
                     <div className={"-z-10 absolute overflow-clip w-full h-[100vh]"}>
