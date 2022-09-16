@@ -1,4 +1,4 @@
-import HoverRating from "../../../components/rating";
+import HoverRating from "components/rating";
 
 
 export default {

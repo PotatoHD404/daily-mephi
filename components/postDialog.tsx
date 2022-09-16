@@ -388,7 +388,7 @@ export default function PostDialog(props: DialogProps) {
             open={opened}
             classes={{
                 paper: "bg-white md:w-[60rem] md:h-[40rem] h-fit pt-8 pb-4 xs:py-8 md:py-0 max-w-[100vw]" +
-                    " md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-scroll px-2 xs:px-4 md:px-0",
+                    " md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-scroll md:overflow-hidden px-2 xs:px-4 md:px-0",
             }}
             fullWidth
 
@@ -397,7 +397,7 @@ export default function PostDialog(props: DialogProps) {
             <div className="px-2 md:px-0">
                 <CloseButton onClick={handleClose}/>
                 <CustomAutocomplete options={[{label: 'Трифоненков В. П.'}]} label={'Выберите преподавателя'}
-                                    className="xs:mt-0 mt-7 xs:absolute xs:top-10 md:left-[6rem] md:w-[350px] w-full md:mr-0 xs:pr-[100px]"/>
+                                    className="xs:mt-0 mt-7 xs:absolute xs:top-10 md:left-[6rem] md:w-[450px] w-full md:mr-0 xs:pr-[100px]"/>
                 <div className="md:mt-24 xs:mt-12">
                     <TabsBox color={"black"} value={props.value} onChange={handleChange}
                              tabs={['Отзыв', 'Цитата', 'Материал']}
