@@ -35,14 +35,12 @@ export default function Comment({
                                     repliesCount = 1,
                                     children
                                 }: CommentParams) {
-
-
     return <div className="text-xl mt-2 leading-5">
         <div className="flex">
             <ProfilePic src={src}/>
             <div className="ml-2 my-auto -mt-1">
                 <div className="font-bold text-[0.9rem]">{nick}</div>
-                <div className="text-sm my-auto opacity-60">{date}</div>
+                <div className="text-sm my-auto opacity-60 text-[0.8rem]">{date}</div>
             </div>
         </div>
         <div className="flex mt-1 ml-5">

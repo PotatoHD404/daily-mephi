@@ -15,9 +15,10 @@ export default function Tutor() {
     const isMobile = useMediaQuery(768);
 
     return <Link href="/tutors/1">
-        <Button className="text-black font-[Montserrat] text-center
+        <a>
+            <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white
-                                              hover:bg-white overflow-x-hidden mt-4
+                                              overflow-x-hidden mt-4
                                               whiteBox p-5 px-4">
                 <div className="flex justify-start items-center w-full text-lg mb-3 relative">
                     <div className="absolute md:relative right-0 top-0 md:mt-0 -mt-2 md:mr-0 -mr-2">
@@ -130,7 +131,8 @@ export default function Tutor() {
                             </div>
                         </div>
                     </div> : null}
-        </Button>
+            </Button></a>
+
     </Link>
         ;
 }

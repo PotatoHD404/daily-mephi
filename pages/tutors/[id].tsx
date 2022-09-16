@@ -37,7 +37,7 @@ function Quote(props: { onClick: () => void }) {
     return <div className="flex-wrap space-y-10 w-full">
         <div className="space-y-10">
             <NewPost placeholder={"Загрузить цитату"} onClick={props.onClick}/>
-            <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
+            <div className="text-xl w-full whiteBox">
                 <UserHeader name={"User1"}
                             date={"15 февраля 2022"}/>
                 <div className="relative flex">

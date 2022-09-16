@@ -3,8 +3,11 @@ import Link from 'next/link';
 import React, {useEffect, useState} from 'react';
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
-import TutorsIcon from "images/news.svg";
+import TutorsIcon from "images/tutors.svg";
+import UsersIcon from "images/users.svg";
 
+const List = dynamic(() => import("@mui/material/List"), {ssr: true});
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: true});
 const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
 const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
@@ -19,7 +22,8 @@ import useMediaQuery from "helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
 
-import {Box, List, Divider, ListItemButton, Button, IconButton} from '@mui/material';
+import {Box, Divider, Button, IconButton} from '@mui/material';
+import {toChildArray} from "preact";
 
 
 interface DefaultNavbarParams {
@@ -217,8 +221,10 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 }
 
 
-function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
+function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void,
+    handleClickOpenWarning: () => void }) {
     const router = useRouter();
+    const home: boolean = router.pathname === '/';
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -226,20 +232,31 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
         onKeyDown={props.onClick}
     >
         <List>
-            <ListItemButton onClick={async () => await router.push("/about")}>
-                <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
-                <div>О нас</div>
-            </ListItemButton>
-            <ListItemButton onClick={async () => await router.push("/materials")}>
-                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
-                <div>Материалы</div>
-            </ListItemButton>
-            <ListItemButton onClick={async () => await router.push("/tutors")}>
-                <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
-                <div>Преподаватели</div>
-            </ListItemButton>
+            {/*  @ts-ignore  */}
+            {toChildArray([
+                {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
+                {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
+                {icon: TutorsIcon, text: "Преподаватели", link: "/tutors", alt: "tutors"},
+            ].map((item, index) => (
+                <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
+                    <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                    <div>{item.text}</div>
+                </ListItemButton>)))
+            }
         </List>
         <Divider/>
+        {!home ?
+            <List>
+                {/*  @ts-ignore  */}
+                {toChildArray([
+                    {icon: UsersIcon, text: "Профиль", alt: "users"},
+                ].map((item, index) => (
+                    <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
+                        <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                        <div>{item.text}</div>
+                    </ListItemButton>)))
+                }
+            </List> : null}
     </Box>;
 }
 
@@ -278,7 +295,7 @@ function Navbar() {
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
-
+            <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer
                     anchor='left'
@@ -288,9 +305,8 @@ function Navbar() {
                     disableBackdropTransition={false}
                     // disableDiscovery={true}
                 >
-                    <ItemsList onClick={toggleDrawer()}/>
-                </SwappableDrawer> : <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
-            }
+                    <ItemsList onClick={toggleDrawer()} {...{handleClickOpenWarning}}/>
+                </SwappableDrawer> : null}
 
         </header>
     );
