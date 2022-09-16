@@ -18,8 +18,8 @@ const labels: { [index: string]: string } = {
 };
 
 export default function HoverRating() {
-    const [value, setValue] = React.useState<number | null>(-1);
-    const [hover, setHover] = React.useState(-1);
+    const [value, setValue] = React.useState<number | null>(null);
+    const [hover, setHover] = React.useState<number | null>(null);
     const isMobile = useMediaQuery(768);
     return (
         <div className="flex flex-wrap md:w-[22rem] justify-end md:justify-start">
@@ -59,7 +59,7 @@ export default function HoverRating() {
                     />
                 </div>
                 <div className="w-fit ml-8">
-                    {value !== null ? labels[hover !== -1 ? hover : value] : null}
+                    {hover != null || value != null ? labels[hover || value as number] : null}
                 </div>
             </>
             }
