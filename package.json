@@ -47,7 +47,7 @@
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.30.7",
     "string-similarity": "^4.0.4",
-    "tailwindcss": "^3.1.6",
+    "tailwindcss": "^3.1.8",
     "tough-cookie": "^4.0.0",
     "uuid": "^8.3.2"
   },
