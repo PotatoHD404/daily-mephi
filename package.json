@@ -19,7 +19,7 @@
     "@mui/material": "^5.8.7",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@notionhq/client": "^2.2.0",
-    "@prisma/client": "^4.2.1",
+    "@prisma/client": "^4.3.1",
     "@sls-next/next-aws-lambda": "^3.5.0",
     "@storyofams/next-api-decorators": "^1.8.2",
     "@types/string-similarity": "^4.0.0",
