@@ -7,7 +7,7 @@ import StarIcon from "../images/star.svg";
 import CustomAccordion from './customAccordion'
 import {toChildArray} from "preact";
 
-
+const dev = process.env.NODE_ENV == "development";
 //                                     />
 export default function SliderFilter(props: { name: string, min: number, max: number }) {
     const [value, setValue] = React.useState<number[]>([0, 5]);
@@ -49,7 +49,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
             </div>
             <Slider
                 // @ts-ignore
-                value={toChildArray(value.map((v, index) => <div key={index}>{v.toString()}</div>))}
+                value={dev ? toChildArray(value.map((v, index) => <div key={index}>{v.toString()}</div>)) : value}
                 // onChange={(event, newValue) => {
                 //     console.log(newValue);
                 // }}

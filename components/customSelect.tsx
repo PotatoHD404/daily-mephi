@@ -7,9 +7,9 @@ export default function CustomSelect(props: {
     required?: boolean
 }) {
     return (
-        <div className="relative mr-4 w-[8.6rem] mt-8">
+        <div className="relative xs:mr-4 w-full xs:w-[8.6rem] mt-8">
             <InputLabel htmlFor={`uncontrolled-native-${props.index}`}
-                        variant="standard" className={`-mt-5 text-black text-[1.2rem] font-[Montserrat] font-bold
+                        variant="standard" className={`-mt-5 text-black text-[0.9rem] font-[Montserrat] font-bold
                 ${props.required ? "required" : ""}`}>
                 {props.label}
             </InputLabel>

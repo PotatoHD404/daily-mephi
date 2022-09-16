@@ -6,19 +6,6 @@ import dynamic from "next/dynamic";
 const Filters = dynamic(() => import("components/filters"), {ssr: true});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
-
-const marks = [
-    {
-        value: 0.5,
-        label: (<div>0.5</div>),
-    },
-    {
-        value: 5,
-        label: (<div>5</div>),
-    },
-];
-
-
 function Materials() {
     const isMobile = useMediaQuery(768);
     const [value, setValue] = React.useState(0);

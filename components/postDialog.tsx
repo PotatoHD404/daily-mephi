@@ -9,17 +9,13 @@ import {
     Button,
     IconButton,
     TextField,
-    FormControl,
+    FormGroup,
     Autocomplete,
     Dialog,
 } from "@mui/material";
 import CustomSelect from "./customSelect";
 import {toChildArray} from "preact";
 
-export interface DialogProps {
-    opened: boolean;
-    handleClose: () => void;
-}
 
 function CustomAutocomplete(props: { options: any, label: string, className?: string }) {
     const [options, setOptions] = React.useState([]);
@@ -37,10 +33,10 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{width: 350}}
             options={props.options}
             autoHighlight
             className={props.className}
+            open={open}
             getOptionLabel={(option: any) => option.label}
             // filterOptions={(x) => x}
             onOpen={() => {
@@ -64,10 +60,17 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
             renderInput={(params) => (
                 <TextField
                     sx={{
+                        // disable end adornment
+                        "& .MuiAutocomplete-popupIndicator": {
+                            display: "none",
+                        },
+                        "& .MuiAutocomplete-clearIndicator": {
+                            marginBottom: "0.5rem",
+                        },
                         "& label": {
                             color: "gray",
                             fontFamily: "Montserrat",
-                            marginTop: "0.9rem",
+                            marginTop: "0.95rem",
                             marginLeft: "1.9rem",
 
                             transition: 'all 0.2s ease',
@@ -84,14 +87,14 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
                             fontSize: "1.4rem",
                         },
                         "& label.Mui-focused": {
-                            marginTop: "-0.2rem",
+                            marginTop: "-0.4rem",
                             marginLeft: "0",
                             fontFamily: "Montserrat",
                             color: "black",
                             fontSize: "1.0rem",
                         },
                         "& label.MuiFormLabel-filled": {
-                            marginTop: "-0.2rem",
+                            marginTop: "-0.4rem",
                             marginLeft: "0",
                             fontFamily: "Montserrat",
                             color: "black",
@@ -114,6 +117,11 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
                                 textIndent: "0",
                                 display: "block"
                             },
+                            // '&.MuiFormLabel-filled legend': {
+                            //     // show
+                            //     textIndent: "0",
+                            //     display: "block"
+                            // },
                             '& legend': {
                                 // show
                                 textIndent: "-9999px",
@@ -131,6 +139,11 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
                                 borderColor: "black",
                                 fontSize: "1.0rem",
                             },
+                            // "&.MuiFormLabel-filled fieldset": {
+                            //     // display: "block",
+                            //     borderColor: "black",
+                            //     fontSize: "1.0rem",
+                            // },
                         },
                         "& .MuiFilledInput fieldset": {
                             borderColor: "black",
@@ -141,11 +154,12 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
                     value={value}
                     // @ts-ignore
                     onSelect={(e) => onChange(e.target.value)}
+                    onClick={() => setOpen(true)}
                     label={props.label}
                     InputProps={{
                         ...params.InputProps,
                         startAdornment: (
-                            <InputAdornment position="start" className="-mt-1 -mr-0.5">
+                            <InputAdornment position="start" className="-mt-0.5 -mr-0.5">
                                 <div className="ml-2 flex w-7">
                                     <Image
                                         src={TutorImage}
@@ -232,7 +246,7 @@ function Material(props: { postForm: any }) {
     const [file, setFile] = React.useState('');
     return (
         <div className="md:w-4/5 mx-auto mt-7">
-            <FormControl className="w-full flex">
+            <FormGroup className="w-full flex">
                 <StyledTextField label="Название"
                                  height='40px'/>
                 {/* @ts-ignore */}
@@ -297,7 +311,7 @@ function Material(props: { postForm: any }) {
                         </Button>
                     </div>
                 </div>
-            </FormControl>
+            </FormGroup>
         </div>
     );
 }
@@ -306,7 +320,7 @@ function Material(props: { postForm: any }) {
 function Review(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
-            <FormControl className="w-full flex">
+            <FormGroup className="w-full flex">
                 <StyledTextField label="Название" height='40px' className="mb-5"/>
                 <StyledTextField label="Описание" height='19.75rem' className="mb-1" multiline
                                  rows={11}/>
@@ -321,7 +335,7 @@ function Review(props: { postForm: any }) {
                         </Button>
                     </div>
                 </div>
-            </FormControl>
+            </FormGroup>
         </div>
     );
 }
@@ -329,7 +343,7 @@ function Review(props: { postForm: any }) {
 function Quote(props: { postForm: any }) {
     return (
         <div className="md:w-4/5 mx-auto mt-7">
-            <FormControl className="w-full flex">
+            <FormGroup className="w-full flex">
                 <StyledTextField label="Цитата" height='23.5rem' className="mb-1" multiline
                                  rows={13}/>
                 <div className="flex items-center justify-end mt-6">
@@ -343,17 +357,25 @@ function Quote(props: { postForm: any }) {
                         </Button>
                     </div>
                 </div>
-            </FormControl>
+            </FormGroup>
         </div>
     );
 }
 
+export interface DialogProps {
+    opened: boolean;
+    handleClose: () => void;
+    defaultValue?: number;
+    value: number;
+    setValue: (value: number) => void;
+}
+
 export default function PostDialog(props: DialogProps) {
     const {handleClose, opened} = props;
-    const [value, setValue] = React.useState(0);
+    // const [value, setValue] = React.useState(props.defaultValue || 1);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+        props.setValue(newValue);
     };
     const postForm = async () => {
 
@@ -365,8 +387,8 @@ export default function PostDialog(props: DialogProps) {
             aria-labelledby="customized-dialog-title"
             open={opened}
             classes={{
-                paper: "bg-white md:w-[60rem] md:h-[40rem] h-fit py-8 md:py-0 max-w-[100vw]" +
-                    " md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-hidden px-4 md:px-0",
+                paper: "bg-white md:w-[60rem] md:h-[40rem] h-fit pt-8 pb-4 xs:py-8 md:py-0 max-w-[100vw]" +
+                    " md:max-w-[60rem] m-0 rounded-2xl w-[95vw] overflow-scroll px-2 xs:px-4 md:px-0",
             }}
             fullWidth
 
@@ -375,14 +397,15 @@ export default function PostDialog(props: DialogProps) {
             <div className="px-2 md:px-0">
                 <CloseButton onClick={handleClose}/>
                 <CustomAutocomplete options={[{label: 'Трифоненков В. П.'}]} label={'Выберите преподавателя'}
-                                    className="absolute top-10 md:left-[6rem]"/>
-                <div className="md:mt-24 mt-12">
-                    <TabsBox color={"black"} value={value} onChange={handleChange}
-                             tabs={['Отзыв', 'Материал', 'Цитата']}
+                                    className="xs:mt-0 mt-7 xs:absolute xs:top-10 md:left-[6rem] md:w-[350px] w-full md:mr-0 xs:pr-[100px]"/>
+                <div className="md:mt-24 xs:mt-12">
+                    <TabsBox color={"black"} value={props.value} onChange={handleChange}
+                             tabs={['Отзыв', 'Цитата', 'Материал']}
                              size="xl"/>
-                    {value == 0 ? <Review postForm={postForm}/> : null}
-                    {value == 1 ? <Material postForm={postForm}/> : null}
-                    {value == 2 ? <Quote postForm={postForm}/> : null}
+                    {props.value == 0 ? <Review postForm={postForm}/> : null}
+                    {props.value == 1 ? <Quote postForm={postForm}/> : null}
+                    {props.value == 2 ? <Material postForm={postForm}/> : null}
+
 
                 </div>
             </div>

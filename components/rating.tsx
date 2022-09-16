@@ -31,11 +31,9 @@ export default function HoverRating() {
                     precision={0.5}
                     size="medium"
                     onChange={(event, newValue) => {
-                        console.log("newValue", newValue);
                         setValue(newValue);
                     }}
                     onChangeActive={(event, newHover) => {
-                        // console.log("newHover", newHover);
                         setHover(newHover);
                     }}
                     emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
@@ -50,16 +48,10 @@ export default function HoverRating() {
                         value={value}
                         precision={0.5}
                         size="large"
-                        onClick={(event) => {
-                            // console.log("newValue");
-                            }
-                        }
                         onChange={(event, newValue) => {
-                            console.log("newValue", newValue);
                             setValue(newValue);
                         }}
                         onChangeActive={(event, newHover) => {
-                            // console.log("newHover", newHover);
                             setHover(newHover);
                         }}
                         emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"
