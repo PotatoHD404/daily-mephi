@@ -12,6 +12,9 @@ import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
 import useMediaQuery from "helpers/react/useMediaQuery";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 
 declare module '@mui/material/styles' {
@@ -45,7 +48,6 @@ const theme = createTheme({
         // },
     }
 });
-
 
 
 function BackgroundComp({home}: { home: boolean }) {
@@ -113,30 +115,33 @@ function MyApp(
     const home: boolean = router.pathname === '/';
     const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
-    return <SessionProvider session={session}>
-        <ThemeProvider theme={theme}>
+    return(
+    <QueryClientProvider client={queryClient}>
+        <SessionProvider session={session}>
+            <ThemeProvider theme={theme}>
 
-            <BackgroundComp {...{home}}/>
+                <BackgroundComp {...{home}}/>
 
-            <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
-                + (home ? "" : "max-w-[85rem] mx-auto")}>
+                <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
+                    + (home ? "" : "max-w-[85rem] mx-auto")}>
 
 
-                <Navbar/>
-                {home1 ?
-                    <div className={"md:px-8 mx-auto"}>
-                        <Component {...pageProps} />
-                    </div>
-                    :
-                    <div
-                        className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
+                    <Navbar/>
+                    {home1 ?
+                        <div className={"md:px-8 mx-auto"}>
+                            <Component {...pageProps} />
+                        </div>
+                        :
+                        <div
+                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
                          bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
-                        <Component {...pageProps} />
-                    </div>}
-                <Footer/>
-            </div>
-        </ThemeProvider>
-    </SessionProvider>
+                            <Component {...pageProps} />
+                        </div>}
+                    <Footer/>
+                </div>
+            </ThemeProvider>
+        </SessionProvider>
+    </QueryClientProvider>)
 
 }
 

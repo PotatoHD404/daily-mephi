@@ -79,7 +79,7 @@ function AuthSection(props: DefaultNavbarParams) {
     useEffect(() => {
         // console.log("Auth section rerendered")
         if (session?.user && session.user.name === null) {
-            // setOpen(true);
+            setOpen(true);
 
             // router.push('/users/new')
 

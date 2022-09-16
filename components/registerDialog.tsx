@@ -8,9 +8,10 @@ import {
     TextField,
     SelectChangeEvent,
     FormControl,
-    NativeSelect,
+    NativeSelect, CircularProgress,
 } from '@mui/material';
-import React from "react";
+import {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
 
 export interface DialogProps {
     opened: boolean;
@@ -21,13 +22,28 @@ export interface DialogProps {
 export default function RegisterDialog(props: DialogProps) {
     const {handleClose, opened} = props;
 
-    const [age, setAge] = React.useState('');
+    // const {isLoading, error, data} = useQuery(['repoData'], () =>
+    //     fetch('/api/v1/edit', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             "name": "PotatoHD"
+    //         })
+    //     }).then(res =>
+    //         res.json()
+    //     )
+    // )
+    const isLoading = false;
+
+    const [age, setAge] = useState('');
 
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value);
     };
     const register = async () => {
-        // await signIn('home');
+
         handleClose();
     }
     return (
@@ -55,6 +71,7 @@ export default function RegisterDialog(props: DialogProps) {
                                 <div>Введите ник, который будет отображаться на портале</div>
                                 <div className="flex flex-wrap space-y-4 md:mx-2">
                                     <TextField label="Ник"
+                                               autoComplete="off"
                                                sx={{
                                                    "& label": {
                                                        color: "gray",
@@ -82,6 +99,15 @@ export default function RegisterDialog(props: DialogProps) {
                                                        },
                                                        "&.Mui-focused fieldset": {
                                                            borderColor: "black"
+                                                       }
+                                                   },
+                                                   "& .MuiInputBase-root": {
+                                                       height: "2.5rem",
+                                                       fontFamily: "Montserrat",
+                                                       fontSize: "1.25rem",
+                                                       '@media (min-width:1024px)': {
+                                                           fontSize: "1.5rem",
+                                                           // paddingBottom: "0.5rem"
                                                        }
                                                    }
                                                }}
@@ -112,15 +138,23 @@ export default function RegisterDialog(props: DialogProps) {
                                 </div>
 
                             </div>
-                            <div
-                                className="md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 border-black md:w-full
-                                 lg:text-3xl md:text-2xl text-xl font-bold text-center">
-                                <RippledButton onClick={register}>
-                                    <div>Регистрация</div>
+                            <div className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full
+                             rounded-full border-2 md:w-full lg:text-3xl md:text-2xl text-xl font-bold
+                              text-center ${isLoading ? "border-gray-400" : "border-black"}`}>
+                                <RippledButton onClick={register} disabled={isLoading}>
+                                    {!isLoading ?
+                                        <div>Регистрация</div> :
+                                        <div className="flex space-x-4">
+                                            <div className="my-auto">Загрузка...</div>
+                                            <CircularProgress color="inherit"
+                                                              thickness={3}
+                                                              size={30}
+                                                              className="my-auto"/>
+
+                                        </div>}
                                 </RippledButton>
                             </div>
                         </FormControl>
-
                     </div>
                 </div>
             </div>

@@ -30,7 +30,6 @@ const nextConfig = withPWA({
     experimental: {
         esmExternals: false,
         images: {
-            unoptimized: true,
             allowFutureImage: true
         }
     },
@@ -45,6 +44,7 @@ const nextConfig = withPWA({
     //     ],
     // },
     images: {
+        unoptimized: true,
         domains: ['mc.yandex.ru']
     },
     typescript: {
