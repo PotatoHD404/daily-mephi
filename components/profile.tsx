@@ -115,8 +115,8 @@ export default function Profile() {
         const router = useRouter();
         router.push('/500');
     }
-    if(!isFetching)
-        console.log(data);
+    // if(!isFetching)
+        // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">

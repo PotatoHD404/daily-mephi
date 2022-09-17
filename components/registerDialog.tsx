@@ -10,11 +10,12 @@ import {
     FormControl,
     NativeSelect, CircularProgress,
 } from '@mui/material';
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {signIn, useSession} from "next-auth/react";
 import {signin} from "next-auth/core/routes";
 import fetch from "node-fetch";
+import axios from "axios";
 
 export interface DialogProps {
     opened: boolean;
@@ -30,28 +31,40 @@ export default function RegisterDialog(props: DialogProps) {
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value);
     };
-
+    const [name, setName] = useState<string | null>(null);
+    // nickname error
+    const [nicknameError, setNicknameError] = useState<boolean>(false);
+    const [option, setOption] = useState<string>("Не указано");
     async function handleRegister() {
-        return await fetch('/api/v1/users/edit', {
+        const res = await fetch('/api/v1/users/edit', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Cookie': document.cookie
             },
+
             body: JSON.stringify({
                 name,
                 course: option != "Не указано" ? option : undefined,
             })
         });
+        if (res?.status == 200) {
+                const res1 = await axios('/api/auth/session/renew_jwt', {
+                    withCredentials: true
+                })
+                    if(res1.status == 200) {
+                        document.cookie += `;${res1.data.cookieString}`
+                        location.reload();
+                    }
+                }
+        return "ok";
+
     }
 
     const {data, refetch: fetchRegister, isFetching, isError} = useQuery(['register'], handleRegister, {
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });
-    const [name, setName] = useState<string | null>(null);
-    // nickname error
-    const [nicknameError, setNicknameError] = useState<boolean>(false);
-    const [option, setOption] = useState<string>("Не указано");
 
     const register = async () => {
         // Nickname regex with russian letters
@@ -61,33 +74,32 @@ export default function RegisterDialog(props: DialogProps) {
         } else {
             setNicknameError(true);
         }
-        console.log(isError, nicknameError)
-        if (!isError && !nicknameError && data?.status == 200) {
-
-            const res = await fetch('/api/auth/session/renew_jwt', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                // @ts-ignore
-                credentials: 'same-origin',
-                //
-            })
-            res.headers.get('set-cookie')
+ 
+            
+            // console.log(res.redirected)
+            // console.log(res.headers.values())
             // Refresh session
-            // const session = await fetch('/api/auth/session', {
-            //     method: 'GET',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            // });
+            // const 
             // // Set cookie to the session
             // document.cookie = `next-auth.session-token=${session}; path=/;`;
-
-            handleClose();
-        }
+        
     }
+    // useEffect(() => {
+    //     if (!isError && !nicknameError && data?.status == 200 && document?.cookie) {
+    //         axios('/api/auth/session/renew_jwt', { withCredentials: true 
+    //         }).then(async (res) => {
+    //             console.log(res.headers["Set-Cookie"])
+    //         })
+    //         // console.log(res.headers.values())
+    //         // Refresh session
+    //         // const 
+    //         // // Set cookie to the session
+    //         // document.cookie = `next-auth.session-token=${session}; path=/;`;
+
+    //         // handleClose();
+    //     }
+    // }, [isFetching, isError, document?.cookie, data?.status])
+    
 
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
         setNicknameError(false);

@@ -43,9 +43,9 @@ function Home() {
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
-    const session = useSession();
+    // const session = useSession();
     const [input, setInput] = React.useState('');
-    console.log(session);
+    // console.log(session);
     // let session = useSession();
     useEffect(() => {
         const input = document.querySelector("input");

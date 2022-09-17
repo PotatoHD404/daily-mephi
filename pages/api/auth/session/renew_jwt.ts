@@ -10,6 +10,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    // console.log("we are here");
     if (req.method !== "GET") {
         res.status(405).json({status: "method not allowed"});
         return;
@@ -79,10 +80,12 @@ export default async function handler(
     // const resCookies: Cookie[] = []
     // resCookies.push(...sessionStore.value)
     // console.log(sessionCookie);
+    const cookieString = `${sessionCookie.name}=${sessionCookie.value}; Path=/; Expires=${
+        sessionCookie.options.expires.toUTCString()
+}; Http${sessionCookie.options.secure ? "s" : ""}Only; SameSite=Lax;`;
     res.setHeader("Set-Cookie",
-        `${sessionCookie.name}=${sessionCookie.value}; Path=/; Expires=${
-            sessionCookie.options.expires.toUTCString()
-    }; Http${sessionCookie.options.secure ? "s" : ""}Only; SameSite=Lax;`);
+    cookieString);
     // console.log(token)
-    res.status(200).json({status: "ok"});
+    // console.log(res.getHeader("Set-Cookie"))
+    res.status(200).json({status: "ok", cookieString});
 }
