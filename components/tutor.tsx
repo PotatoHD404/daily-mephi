@@ -8,12 +8,11 @@ import MaterialsIco from "../images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
 import {Button} from '@mui/material';
-import useMediaQuery from "helpers/react/useMediaQuery";
 import {toChildArray} from "preact";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 export default function Tutor() {
-    const isMobile = useMediaQuery(768);
-
+const isMobile = useIsMobile();
     return <Link href="/tutors/1">
         <a>
             <Button className="text-black font-[Montserrat] text-center

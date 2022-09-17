@@ -15,7 +15,6 @@ function User() {
             <SEO title={'Пользователь PotatoHD'}/>
             <div className="flex-wrap w-full space-y-8">
                 <Profile/>
-                {/*<ProfileSettings/>*/}
             </div>
         </>
     );

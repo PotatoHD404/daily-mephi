@@ -1,15 +1,15 @@
 import React from "react";
 import SEO from "components/seo";
 import Material from "components/material";
-import useMediaQuery from "helpers/react/useMediaQuery";
+
 import dynamic from "next/dynamic";
-const Filters = dynamic(() => import("components/filters"), {ssr: true});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
+import useIsMobile from "../../helpers/react/isMobileContext";
+const Filters = dynamic(() => import("components/filters"), {ssr: false});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 
 function Materials() {
-    const isMobile = useMediaQuery(768);
     const [value, setValue] = React.useState(0);
-
+    const isMobile = useIsMobile();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };

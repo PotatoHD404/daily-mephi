@@ -29,9 +29,7 @@ const nextConfig = withPWA({
     },
     experimental: {
         esmExternals: false,
-        images: {
-            allowFutureImage: true
-        }
+
     },
     // module: {
     //     rules: [

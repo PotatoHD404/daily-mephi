@@ -1,24 +1,34 @@
 import {useCallback, useEffect, useState} from "react";
 
-export default function useMediaQuery(width: any) {
-    const [targetReached, setTargetReached] = useState(false);
-
-    const updateTarget = useCallback((e: { matches: any; }) => {
-        // console.log(e.matches)
-        setTargetReached(e.matches);
-    }, []);
+export default function useMediaQuery(width: number) {
+    // Initialize state with undefined width/height so server and client renders match
+    // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+    const [windowSize, setWindowSize] = useState<{ width: number | undefined, height: number | undefined }>({
+        width: undefined,
+        height: undefined,
+    });
 
     useEffect(() => {
-        const media = window.matchMedia(`(max-width: ${width}px)`);
-        media.addEventListener("change", updateTarget)
+        // only execute all the code below in client side
+        if (typeof window !== 'undefined') {
+            // Handler to call on window resize
+            function handleResize() {
+                // Set window width/height to state
+                setWindowSize({
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                });
+            }
 
-        // Check on mount (callback is not called until a change occurs)
-        if (media.matches) {
-            setTargetReached(true);
+            // Add event listener
+            window.addEventListener("resize", handleResize);
+            // console.log(windowSize);
+            // Call handler right away so state gets updated with initial window size
+            handleResize();
+
+            // Remove event listener on cleanup
+            return () => window.removeEventListener("resize", handleResize);
         }
-        //
-        // return () => media.removeEventListener("change", updateTarget);
-    }, []);
-
-    return targetReached;
-};
+    }, []); // Empty array ensures that effect is only run on mount
+    return windowSize.width ? windowSize.width <= width : null;
+}

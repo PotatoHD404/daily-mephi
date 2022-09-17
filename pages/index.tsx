@@ -6,16 +6,16 @@ import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
 import {Button} from "@mui/material";
 import {useRouter} from "next/router";
-import useMediaQuery from "../helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
+import useIsMobile from "../helpers/react/isMobileContext";
+import {useSession} from "next-auth/react";
 
-const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
-const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const SearchBar = dynamic(() => import("components/searchBar"), {ssr: false});
 
 export function LogoText() {
-    const isMobile = useMediaQuery(768);
-
+    const isMobile = useIsMobile();
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
      w-full justify-center md:justify-start">
         {!isMobile ?
@@ -33,25 +33,25 @@ export function LogoText() {
 
 function Home() {
 
-    const isMobile = useMediaQuery(768);
-
     const [state, setState] = React.useState({
         warning: false
     });
-
+    const isMobile = useIsMobile();
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
+    const session = useSession();
     const [input, setInput] = React.useState('');
-
+    console.log(session);
     // let session = useSession();
     useEffect(() => {
         const input = document.querySelector("input");
         input?.focus();
         input?.select();
+
     }, []);
     const router = useRouter();
 
@@ -75,7 +75,7 @@ function Home() {
                     className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
                     <div
                         className="items-center justify-start flex flex-wrap md:w-[42.8%]  my-auto justify-center">
-                        <LogoText/>
+                        <LogoText />
 
 
                         <h1 className="pl-5 pr-5 2xl:text-4xl lg:text-3xl md:pl-0 text-[1.4] sm:text-2xl md:flex md:mt-8 mt-3 row-start-3 row-end-4 pb-3 text-center md:text-left">Самый

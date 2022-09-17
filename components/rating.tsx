@@ -2,7 +2,7 @@ import StarIcon from '@mui/icons-material/Star';
 
 import {Rating} from '@mui/material';
 import React from "react";
-import useMediaQuery from "../helpers/react/useMediaQuery";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 const labels: { [index: string]: string } = {
     0.5: 'Невыносимо',
@@ -18,49 +18,49 @@ const labels: { [index: string]: string } = {
 };
 
 export default function HoverRating() {
+    const isMobile = useIsMobile();
     const [value, setValue] = React.useState<number | null>(null);
     const [hover, setHover] = React.useState<number | null>(null);
-    const isMobile = useMediaQuery(768);
     return (
         <div className="flex flex-wrap md:w-[22rem] justify-end md:justify-start">
             {isMobile ?
-            <div>
-                <Rating
-                    name="hover-feedback"
-                    value={value}
-                    precision={0.5}
-                    size="medium"
-                    onChange={(event, newValue) => {
-                        setValue(newValue);
-                    }}
-                    onChangeActive={(event, newHover) => {
-                        setHover(newHover);
-                    }}
-                    emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
-                />
-            </div>
-            :
-            <>
                 <div>
                     <Rating
                         name="hover-feedback"
                         value={value}
                         precision={0.5}
-                        size="large"
+                        size="medium"
                         onChange={(event, newValue) => {
                             setValue(newValue);
                         }}
                         onChangeActive={(event, newHover) => {
                             setHover(newHover);
                         }}
-                        emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"
-                        />}
+                        emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"/>}
                     />
                 </div>
-                <div className="w-fit ml-8">
-                    {hover != null && hover != -1 ? labels[hover] : value != null ? labels[value] : null}
-                </div>
-            </>
+                :
+                <>
+                    <div>
+                        <Rating
+                            name="hover-feedback"
+                            value={value}
+                            precision={0.5}
+                            size="large"
+                            onChange={(event, newValue) => {
+                                setValue(newValue);
+                            }}
+                            onChangeActive={(event, newHover) => {
+                                setHover(newHover);
+                            }}
+                            emptyIcon={<StarIcon style={{opacity: 0.55}} fontSize="inherit"
+                            />}
+                        />
+                    </div>
+                    <div className="w-fit ml-8">
+                        {hover != null && hover != -1 ? labels[hover] : value != null ? labels[value] : null}
+                    </div>
+                </>
             }
 
         </div>

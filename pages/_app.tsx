@@ -11,8 +11,10 @@ import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-import useMediaQuery from "helpers/react/useMediaQuery";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import useMediaQuery from "../helpers/react/useMediaQuery";
+import {IsMobileProvider} from "../helpers/react/isMobileContext";
 
 const queryClient = new QueryClient()
 
@@ -50,12 +52,12 @@ const theme = createTheme({
 });
 
 
-function BackgroundComp({home}: { home: boolean }) {
-    const isMobile = useMediaQuery(768);
+function BackgroundComp(props: { home: boolean, isMobile: boolean }) {
+
     return (
         <div>
             {
-                home && isMobile ?
+                props.home && props.isMobile ?
                     <div className={"-z-10 absolute overflow-clip w-full h-[100vh]"}>
                         <div className="justify-center items-center flex-wrap w-[300vw]">
                             <div className="w-full">
@@ -71,7 +73,7 @@ function BackgroundComp({home}: { home: boolean }) {
                     </div> : null
             }
             {
-                !home || !isMobile ? <div className={styles.bgWrap}>
+                !props.home || !props.isMobile ? <div className={styles.bgWrap}>
                     <div><Image1
                         src={Background1}
                         alt="background gradient"
@@ -99,38 +101,42 @@ function MyApp(
     }) {
 
     const router = useRouter();
-
+    const isMobile = useMediaQuery(768);
     const home: boolean = router.pathname === '/';
     const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
+    return (
+        (isMobile === null) ? null :
+            <IsMobileProvider value={isMobile}>
+                <QueryClientProvider client={queryClient}>
+                    <SessionProvider session={session}>
+                        <ThemeProvider theme={theme}>
 
-    return(
-    <QueryClientProvider client={queryClient}>
-        <SessionProvider session={session}>
-            <ThemeProvider theme={theme}>
+                            <BackgroundComp {...{home, isMobile}}/>
 
-                <BackgroundComp {...{home}}/>
-
-                <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
-                    + (home ? "" : "max-w-[85rem] mx-auto")}>
+                            <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
+                                + (home ? "" : "max-w-[85rem] mx-auto")}>
 
 
-                    <Navbar/>
-                    {home1 ?
-                        <div className={"md:px-8 mx-auto"}>
-                            <Component {...pageProps} />
-                        </div>
-                        :
-                        <div
-                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
+                                <Navbar/>
+                                {home1 ?
+                                    <div className={"md:px-8 mx-auto"}>
+                                        <Component {...{...pageProps, isMobile}}/>
+                                    </div>
+                                    :
+                                    <div
+                                        className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
                          bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
-                            <Component {...pageProps} />
-                        </div>}
-                    <Footer/>
-                </div>
-            </ThemeProvider>
-        </SessionProvider>
-    </QueryClientProvider>)
+                                        <Component {...{...pageProps, isMobile}} />
+                                    </div>}
+                                <Footer/>
+                            </div>
+                        </ThemeProvider>
+                    </SessionProvider>
+                </QueryClientProvider>
+            </IsMobileProvider>
+    )
 
 }
+
 
 export default MyApp

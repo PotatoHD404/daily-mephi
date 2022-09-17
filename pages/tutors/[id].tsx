@@ -18,7 +18,7 @@ import RippledButton from "components/rippledButton";
 import RatingPlace from "components/ratingPlace";
 import dynamic from "next/dynamic";
 
-const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
+const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -28,7 +28,7 @@ function RatingComponent(props: { text: string, rate: string }) {
                 <div className="w-fit h-fit hidden xs:block">{props.rate}</div>
                 <div className="w-fit h-fit">:</div>
             </div>
-            <div className="w-fit"><HoverRating/></div>
+            <div className="w-fit"><HoverRating /></div>
         </div>)
         ;
 }
@@ -99,8 +99,8 @@ function Review(props: { onClick: () => void }) {
 
 
 function Tutor() {
-    const router = useRouter()
-    const {id} = router.query
+    const router = useRouter();
+    const {id} = router.query;
     const [value, setValue] = React.useState(0);
     const [postValue, setPostValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {

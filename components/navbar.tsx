@@ -6,24 +6,24 @@ import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/tutors.svg";
 import UsersIcon from "images/users.svg";
 
-const List = dynamic(() => import("@mui/material/List"), {ssr: true});
-const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: true});
-const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
-const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
-const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: true});
+const List = dynamic(() => import("@mui/material/List"), {ssr: false});
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
+const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
+const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
 import {useRouter} from "next/router";
 import Image from "next/future/image";
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
-import useMediaQuery from "helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
 
 import {Box, Divider, Button, IconButton} from '@mui/material';
 import {toChildArray} from "preact";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 
 interface DefaultNavbarParams {
@@ -33,7 +33,7 @@ interface DefaultNavbarParams {
 
 
 function DefaultNavbar(props: DefaultNavbarParams) {
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     return <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
                      justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
         {!isMobile ?
@@ -63,7 +63,9 @@ function DefaultNavbar(props: DefaultNavbarParams) {
                 </div>
             </div>
             :
-            <div className="col-start-1 col-end-13"><MobileNavbar onClick={props.toggleDrawer}/></div>
+            <div className="col-start-1 col-end-13">
+                <MobileNavbar onClick={props.toggleDrawer}/>
+            </div>
         }
 
     </nav>;
@@ -71,7 +73,7 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 
 function AuthSection(props: DefaultNavbarParams) {
     // const router = useRouter()
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     const {data: session, status} = useSession()
     const [open, setOpen] = useState(false)
 
@@ -127,10 +129,13 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
 
-                {!isMobile ? <button
-                    className={`${style.authText}`}>
-                    <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
-                </button> : null}
+                {!isMobile ?
+                    <Link href="/users/me">
+                        <a
+                            className={`${style.authText}`}>
+                            <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
+                        </a>
+                    </Link> : null}
             </>
         )
     }
@@ -173,7 +178,7 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
 }
 
 function HomeNavbar(props: DefaultNavbarParams) {
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     return (
         <nav>
             {!isMobile ?
@@ -221,8 +226,10 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 }
 
 
-function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void,
-    handleClickOpenWarning: () => void }) {
+function ItemsList(props: {
+    onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void,
+    handleClickOpenWarning: () => void
+}) {
     const router = useRouter();
     const home: boolean = router.pathname === '/';
     return <Box
@@ -267,6 +274,7 @@ function Navbar() {
         warning: false
     });
     const router = useRouter();
+    const isMobile = useIsMobile();
 
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
@@ -276,7 +284,6 @@ function Navbar() {
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
-    const isMobile = useMediaQuery(768);
     const toggleDrawer =
         () =>
             (event: React.KeyboardEvent | React.MouseEvent) => {
