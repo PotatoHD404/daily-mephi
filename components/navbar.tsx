@@ -79,15 +79,10 @@ function AuthSection(props: DefaultNavbarParams) {
 
 
     useEffect(() => {
-        // console.log("Auth section rerendered")
-        if (session?.user && session.user.name === null) {
+        if (status == "authenticated" && session?.user?.name === null) {
             setOpen(true);
-
-            // router.push('/users/new')
-
-
         }
-    }, [status, session?.user])
+    }, [status, session])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
@@ -268,20 +263,38 @@ function ItemsList(props: {
 }
 
 
-function Navbar() {
+function Navbar(props: {needsAuth: boolean}) {
     const [state, setState] = React.useState({
         opened: false,
         warning: false
     });
     const router = useRouter();
     const isMobile = useIsMobile();
-
+    const {data: session, status} = useSession();
+    const authenticated = status == "authenticated";
+    const loading = status == "loading";
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
-    const handleCloseWarning = () => {
+
+    useEffect(() => {
+        console.log(props.needsAuth, authenticated)
+        if (props.needsAuth && !authenticated && !loading) {
+            handleClickOpenWarning();
+        }
+        else
+        {
+            setState({...state, warning: false});
+        }
+    }, [props.needsAuth, router.pathname, authenticated, loading]);
+
+    const handleCloseWarning = async () => {
+        if(props.needsAuth)
+        {
+            await router.push("/");
+        }
         setState({...state, warning: false});
     };
     const toggleDrawer =

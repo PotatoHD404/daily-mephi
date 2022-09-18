@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TopUsers from "./topUsers";
 import Image from "next/future/image";
 import ProfileImage from "images/profile1.webp";
@@ -13,6 +13,8 @@ import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
 import useIsMobile from "../helpers/react/isMobileContext";
+import auth from "pages/api/auth/[...nextauth]";
+import { stat } from "fs";
 
 
 function User(props: { name?: string, userCourse?: string, rating?: number, reviews?: number, materials?: number, quotes?: number, avatar?: string, place?: number, role?: string }) {
@@ -99,6 +101,7 @@ function User(props: { name?: string, userCourse?: string, rating?: number, revi
 }
 
 export default function Profile() {
+    const {status} = useSession();
     async function getUser() {
         return await (await fetch('/api/v1/users/me', {
             method: 'GET',
@@ -106,13 +109,22 @@ export default function Profile() {
         }))?.json();
     }
 
-    const {data, isFetching, isError, error} = useQuery(['me'], getUser, {
+    const {data, isFetching, refetch, isError, error} = useQuery(['me'], getUser, {
+        cacheTime: 0,
         refetchOnWindowFocus: false,
-        enabled: true // disable this query from automatically running
+        enabled: false // disable this query from automatically running
     });
+    const router = useRouter();
+    const authenticated = status === "authenticated";
+    const loading = status === "loading";
+    const isLoading = isFetching && loading || isFetching && authenticated;
+    useEffect(() => {
+        if(authenticated)
+            refetch();
+    }, [router.pathname, authenticated])
     if (isError) {
         // console.log(`Ошибка ${error}`)
-        const router = useRouter();
+        
         router.push('/500');
     }
     // if(!isFetching)
@@ -120,7 +132,7 @@ export default function Profile() {
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            {isFetching ? <Skeleton variant="rectangular" width="100%" height="100%"/> :
+            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%"/> :
                 /* @ts-ignore */
                 <User {...data}/>
             }

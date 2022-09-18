@@ -1,8 +1,8 @@
 import 'styles/globals.css'
-import {SessionProvider} from "next-auth/react"
+import {SessionProvider, useSession} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import React, {ReactNode} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
@@ -102,8 +102,14 @@ function MyApp(
 
     const router = useRouter();
     const isMobile = useMediaQuery(768);
+    const [needsAuth, changeNeedsAuth] = useState<boolean>(false);
     const home: boolean = router.pathname === '/';
     const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
+    pageProps = {...pageProps, isMobile, changeNeedsAuth};
+    // useEffect(() => {   
+    //     changeNeedsAuth(false);
+    //     // window.onpopstate = () => changeNeedsAuth(true);
+    //     }, [router.pathname]);
     return (
         (isMobile === null) ? null :
             <IsMobileProvider value={isMobile}>
@@ -117,16 +123,16 @@ function MyApp(
                                 + (home ? "" : "max-w-[85rem] mx-auto")}>
 
 
-                                <Navbar/>
+                                <Navbar needsAuth={needsAuth}/>
                                 {home1 ?
                                     <div className={"md:px-8 mx-auto"}>
-                                        <Component {...{...pageProps, isMobile}}/>
+                                        <Component {...pageProps}/>
                                     </div>
                                     :
                                     <div
                                         className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
                          bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
-                                        <Component {...{...pageProps, isMobile}} />
+                                        <Component {...pageProps} />
                                     </div>}
                                 <Footer/>
                             </div>

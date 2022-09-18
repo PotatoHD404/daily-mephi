@@ -31,7 +31,7 @@ export function LogoText() {
     </div>;
 }
 
-function Home() {
+function Home({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
 
     const [state, setState] = React.useState({
         warning: false
@@ -54,7 +54,10 @@ function Home() {
 
     }, []);
     const router = useRouter();
-
+    useEffect(() => {   
+        changeNeedsAuth(false);
+        // window.onpopstate = () => changeNeedsAuth(true);
+        }, [router.pathname]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)

@@ -13,9 +13,9 @@ import {
 import {ChangeEvent, useEffect, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {signIn, useSession} from "next-auth/react";
-import {signin} from "next-auth/core/routes";
-import fetch from "node-fetch";
-import axios from "axios";
+// import {signin} from "next-auth/core/routes";
+// import fetch from "node-fetch";
+// import axios from "axios";
 
 export interface DialogProps {
     opened: boolean;
@@ -40,23 +40,22 @@ export default function RegisterDialog(props: DialogProps) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Cookie': document.cookie
             },
-
+            credentials: 'same-origin',
             body: JSON.stringify({
                 name,
                 course: option != "Не указано" ? option : undefined,
             })
         });
         if (res?.status == 200) {
-                const res1 = await axios('/api/auth/session/renew_jwt', {
-                    withCredentials: true
-                })
-                    if(res1.status == 200) {
-                        document.cookie += `;${res1.data.cookieString}`
-                        location.reload();
-                    }
-                }
+            const res1 = await fetch('/api/auth/session/renew_jwt', {
+                method: 'GET',
+                credentials: 'same-origin',
+            });
+            if(res1.status == 200) {
+                location.reload();
+            }
+        }
         return "ok";
 
     }
