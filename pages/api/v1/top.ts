@@ -7,9 +7,13 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    const  {place, take} = req.query;
-    const calculatedPlace = +(place || 0);
-    const calculatedTake = +(take || 4);
+    let calculatedPlace: number = 0;
+    let calculatedTake: number = 4;
+    if(req.query) {
+        const {place, take} = req.query;
+        calculatedPlace = +(place || 0);
+        calculatedTake = +(take || 4);
+    }
     const userCount = await (await prisma.user.aggregate({_count: true}))._count;
     let skip: number;
     if (calculatedPlace == 0) {
