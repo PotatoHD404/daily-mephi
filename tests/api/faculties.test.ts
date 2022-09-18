@@ -44,14 +44,14 @@ describe('[GET] /api/v1/top', () => {
             "rating": 0,
         }]
         prisma.user.findMany = jest.fn().mockResolvedValue(users);
-
         const result = await supertest(server)
             .get('/api/v1/top')
             .expect(200)
             .expect('Content-Type', /json/);
-
         expect(result.body).toBeDefined();
         expect(result.body).toEqual(users)
+
+
     });
 
     // it('creates a new user', async () => {
