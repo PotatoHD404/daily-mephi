@@ -1,13 +1,13 @@
 import ProfileIco from "../images/profile3.png";
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import Image from "next/image";
 import GoldenCrown from "../images/golden_crown.svg";
 import SilverCrown from "../images/silver_crown.svg";
 import BronzeCrown from "../images/bronze_crown.svg";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { Skeleton } from "@mui/material";
+import {useQuery} from "@tanstack/react-query";
+import {useRouter} from "next/router";
+import {Skeleton} from "@mui/material";
 import {toChildArray} from "preact";
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -20,6 +20,7 @@ export interface TopUserParams {
     nickname: string;
     id?: string;
     isLoading?: boolean;
+    wrapper: any;
 }
 
 export interface CrownParams {
@@ -58,41 +59,46 @@ function Crown(props: CrownParams) {
             return null;
     }
 }
-function TopUserContent(props: TopUserParams)
-{
-    return (<tr>
-    <td className="text-center">{props.isLoading ? <Skeleton variant="rounded" width={40} height={20} className="mx-auto"/> : props.place.toString()}</td>
-    <td>
 
-        <div className="flex pl-4 h-[4.5rem]">
-            {
-            props.isLoading ? <Skeleton className="h-14 my-auto w-14 flex" variant="circular" /> :
-            <div className="h-14 my-auto w-14 flex">
-                <Image
-                    src={props.src}
-                    alt="Profile pic"
-                    className="rounded-full"
-                />
-                <Crown place={props.place}/>
-            </div>
-            }
-            {
-                props.isLoading ? <Skeleton className="my-auto ml-2" variant="rounded" width={60} height={20}/>  :
-            <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
-            }
-        </div>
-    </td>
-    <td className="text-center">{props.isLoading ?
-     <Skeleton className="mx-auto" variant="rounded" width={60} height={20}/> :
-      formatter.format(props.rating)}</td>
-</tr>)
+function TopUserContent(props: TopUserParams) {
+    return (<tr>
+        <td className="text-center"><Link href={`/users/${props.id || ""}`}>{props.place.toString()}</Link></td>
+        <td>
+            <Link href={`/users/${props.id || ""}`}>
+                <a className="flex pl-4 h-[4.5rem]">
+                    <div className="h-14 my-auto w-14 flex">
+                        <Image
+                            src={props.src}
+                            alt="Profile pic"
+                            className="rounded-full"
+                        />
+                        <Crown place={props.place}/>
+                    </div>
+                    <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
+                </a>
+            </Link>
+        </td>
+        <td className="text-center">{formatter.format(props.rating)}</td>
+    </tr>)
 }
+
+function TopUserContentLoading(props: TopUserParams) {
+    return (<tr>
+        <td className="text-center"><Skeleton variant="rounded" width={40} height={20} className="mx-auto"/></td>
+        <td>
+            <div className="flex pl-4 h-[4.5rem]">
+                <Skeleton className="h-14 my-auto w-14 flex" variant="circular"/>
+                <Skeleton className="my-auto ml-2" variant="rounded" width={60} height={20}/>
+            </div>
+        </td>
+        <td className="text-center"><Skeleton className="mx-auto" variant="rounded" width={60} height={20}/></td>
+    </tr>)
+}
+
 function TopUser(props: TopUserParams) {
     return props.isLoading ?
-    <TopUserContent {...props}/>
-    : <Link href={`/users/${props.id || ""}`}>
-        <TopUserContent {...props}/>
-    </Link>;
+        <TopUserContentLoading {...props}/>
+        : <TopUserContent {...props}/>;
 }
 
 export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean, take?: number }) {
@@ -103,15 +109,17 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     // @ts-ignore
     // Object.keys(queryParams).forEach(key => queryParams[key] === undefined ? delete queryParams[key] : {});
     const params: Record<string, string> = {place: place.toString()};
-    if(props.take) {
+    if (props.take) {
         params["take"] = props.take.toString();
     }
+
     async function getUser() {
         return await (await fetch(`/api/v1/top?${new URLSearchParams(params)}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
     }
+
     const {data, isFetching, refetch, isError, error} = useQuery([`top`], getUser, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -120,7 +128,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     const isLoading = isFetching || props.isLoading;
     const router = useRouter();
     useEffect(() => {
-        if(!props.isLoading)
+        if (!props.isLoading)
             refetch();
     }, [router.pathname, props.isLoading, refetch])
     return <div className="w-[23.5] hidden md:block -mt-2">
@@ -142,15 +150,15 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                 <tr>
                     <th className="font-medium">{
                         isLoading ? <Skeleton className="mx-auto" variant="rounded" width={40} height={20}/> :
-                         "#"}
+                            "#"}
                     </th>
                     <th className={`text-left ${isLoading ? "" : "pl-4"} font-medium`}>{
-                    isLoading ? <Skeleton className="mx-auto" variant="rounded" width={100} height={20}/> :
-                     "Имя"}
+                        isLoading ? <Skeleton className="mx-auto" variant="rounded" width={100} height={20}/> :
+                            "Имя"}
                     </th>
                     <th className="font-medium">{
-                    isLoading ? <Skeleton className="mx-auto" variant="rounded" width={68} height={20}/> :
-                     "Рейтинг"}</th>
+                        isLoading ? <Skeleton className="mx-auto" variant="rounded" width={68} height={20}/> :
+                            "Рейтинг"}</th>
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -163,11 +171,11 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                             <TopUser src={ProfileIco} place={0} rating={0} nickname="" isLoading={isLoading}/>
                         </> :
                         // <></>
-                    data?.map((user: any, index: number) => {
-                        return <TopUser src={user.image || ProfileIco} key={index} nickname={user.name}
-                                        place={index + place + 1} isLoading={isLoading} id={user.id}
-                                        rating={user.rating}/>
-                    })
+                        data?.map((user: any, index: number) => {
+                            return <TopUser src={user.image || ProfileIco} key={index} nickname={user.name}
+                                            place={index + place + 1} isLoading={isLoading} id={user.id}
+                                            rating={user.rating}/>
+                        })
                     // <TopUser src={ProfileIco} place={1} rating={3100} nickname={"Burunduk"} id={"uuid"}
                     //          isLoading={isLoading}/>
                     // <TopUser src={ProfileIco} place={2} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
