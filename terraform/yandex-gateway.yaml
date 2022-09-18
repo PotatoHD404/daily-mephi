@@ -48,6 +48,15 @@ paths:
         presigned_redirect: true
         service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
+  /search:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${bucket_name}
+        object: static/search.html
+        presigned_redirect: true
+        service_account_id: ${service_account_id}
+      summary: Serve static file from Yandex Cloud Object Storage
   /materials:
     get:
       x-yc-apigateway-integration:
@@ -74,24 +83,6 @@ paths:
           schema:
             type: string
           style: simple
-  /profile:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/profile.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-      summary: Serve static file from Yandex Cloud Object Storage
-  /profile/create:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/profile/create.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-      summary: Serve static file from Yandex Cloud Object Storage
   /tutors:
     get:
       x-yc-apigateway-integration:
