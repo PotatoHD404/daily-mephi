@@ -23,6 +23,7 @@ export interface DialogProps {
 }
 
 
+
 export default function RegisterDialog(props: DialogProps) {
     const {handleClose, opened} = props;
 
@@ -73,32 +74,17 @@ export default function RegisterDialog(props: DialogProps) {
         } else {
             setNicknameError(true);
         }
- 
-            
-            // console.log(res.redirected)
-            // console.log(res.headers.values())
-            // Refresh session
-            // const 
-            // // Set cookie to the session
-            // document.cookie = `next-auth.session-token=${session}; path=/;`;
-        
-    }
-    // useEffect(() => {
-    //     if (!isError && !nicknameError && data?.status == 200 && document?.cookie) {
-    //         axios('/api/auth/session/renew_jwt', { withCredentials: true 
-    //         }).then(async (res) => {
-    //             console.log(res.headers["Set-Cookie"])
-    //         })
-    //         // console.log(res.headers.values())
-    //         // Refresh session
-    //         // const 
-    //         // // Set cookie to the session
-    //         // document.cookie = `next-auth.session-token=${session}; path=/;`;
 
-    //         // handleClose();
-    //     }
-    // }, [isFetching, isError, document?.cookie, data?.status])
-    
+
+        // console.log(res.redirected)
+        // console.log(res.headers.values())
+        // Refresh session
+        // const
+        // // Set cookie to the session
+        // document.cookie = `next-auth.session-token=${session}; path=/;`;
+
+    }
+
 
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
         setNicknameError(false);

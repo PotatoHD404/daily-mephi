@@ -26,15 +26,15 @@ function Profile() {
     });
     const router = useRouter();
     const authenticated = status === "authenticated";
-    // const loading = status === "loading";
-    const isLoading = !authenticated || isFetching && authenticated;
+    const loading = status === "loading";
+    const isLoading = loading || isFetching || !data;
     useEffect(() => {
         if(authenticated)
             refetch();
-    }, [router.pathname, authenticated])
+    }, [router.pathname, authenticated, refetch])
     if (isError) {
         // console.log(`Ошибка ${error}`)
-        
+
         router.push('/500');
     }
     // if(!isFetching)
@@ -45,17 +45,17 @@ function Profile() {
                 <User {...data} isLoading={isLoading} me/>
         </div>
         <div className="ml-auto hidden lg:block">
-            <TopUsers/>
+            <TopUsers isLoading={isLoading} place={data?.place}/>
         </div>
     </div>;
 }
 
 
 function Me({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
-    useEffect(() => {   
+    useEffect(() => {
         changeNeedsAuth(true);
         // window.onpopstate = () => changeNeedsAuth(true);
-        }, []);
+        }, [changeNeedsAuth]);
     return (
         <>
             <SEO title={'Профиль'}/>

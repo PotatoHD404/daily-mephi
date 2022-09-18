@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { Skeleton } from "@mui/material";
+import {toChildArray} from "preact";
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
 
@@ -60,9 +61,9 @@ function Crown(props: CrownParams) {
 function TopUserContent(props: TopUserParams)
 {
     return (<tr>
-    <td className="text-center">{props.isLoading ? <Skeleton variant="rounded" width={20} height={20} className="mx-auto"/> : props.place.toString()}</td>
+    <td className="text-center">{props.isLoading ? <Skeleton variant="rounded" width={40} height={20} className="mx-auto"/> : props.place.toString()}</td>
     <td>
-        
+
         <div className="flex pl-4 h-[4.5rem]">
             {
             props.isLoading ? <Skeleton className="h-14 my-auto w-14 flex" variant="circular" /> :
@@ -87,21 +88,21 @@ function TopUserContent(props: TopUserParams)
 </tr>)
 }
 function TopUser(props: TopUserParams) {
-    return props.isLoading ? 
+    return props.isLoading ?
     <TopUserContent {...props}/>
     : <Link href={`/users/${props.id || ""}`}>
         <TopUserContent {...props}/>
     </Link>;
 }
 
-export default function TopUsers(props: { withLabel?: boolean, place?: number, loading?: boolean }) {
+export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean }) {
     const place = props.place || 0;
     // const isUUID = props.id && typeof props.id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(props.id)
     // const {status} = useSession();
     // const queryParams = {skip: props.skip, take: props.take};
     // @ts-ignore
     // Object.keys(queryParams).forEach(key => queryParams[key] === undefined ? delete queryParams[key] : {});
-    
+
     async function getUser() {
         return await (await fetch(`/api/v1/top?${new URLSearchParams({place: place.toString()})}`, {
             method: 'GET',
@@ -113,12 +114,12 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, l
         refetchOnWindowFocus: false,
         enabled: false  // disable this query from automatically running
     });
-    const isLoading = isFetching || props.loading;
+    const isLoading = isFetching || props.isLoading;
     const router = useRouter();
     useEffect(() => {
-        if(!props.loading)
+        if(!props.isLoading)
             refetch();
-    }, [router.pathname, props.loading])
+    }, [router.pathname, props.isLoading, refetch])
     return <div className="w-[23.5] hidden md:block -mt-2">
         {
             props.withLabel ? (<>
@@ -150,10 +151,26 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, l
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                <TopUser src={ProfileIco} place={1} rating={3100} nickname={"Burunduk"} id={"uuid"} isLoading={isLoading}/>
-                <TopUser src={ProfileIco} place={2} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
-                <TopUser src={ProfileIco} place={3} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
-                <TopUser src={ProfileIco} place={4} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
+                {
+                    isLoading ?
+                        <>
+                            <TopUser src={ProfileIco} place={0} rating={0} nickname="" isLoading={isLoading}/>
+                            <TopUser src={ProfileIco} place={0} rating={0} nickname="" isLoading={isLoading}/>
+                            <TopUser src={ProfileIco} place={0} rating={0} nickname="" isLoading={isLoading}/>
+                            <TopUser src={ProfileIco} place={0} rating={0} nickname="" isLoading={isLoading}/>
+                        </> :
+                        // <></>
+                    data?.map((user: any, index: number) => {
+                        return <TopUser src={user.image || ProfileIco} key={index} nickname={user.name}
+                                        place={index + place + 1} isLoading={isLoading} id={user.id}
+                                        rating={user.rating}/>
+                    })
+                    // <TopUser src={ProfileIco} place={1} rating={3100} nickname={"Burunduk"} id={"uuid"}
+                    //          isLoading={isLoading}/>
+                    // <TopUser src={ProfileIco} place={2} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
+                    // <TopUser src={ProfileIco} place={3} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
+                    // <TopUser src={ProfileIco} place={4} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
+                }
                 </tbody>
             </table>
         </div>

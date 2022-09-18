@@ -1,6 +1,6 @@
 /*  ./components/Navbar.jsx     */
 import Link from 'next/link';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/tutors.svg";
@@ -278,17 +278,18 @@ function Navbar(props: {needsAuth: boolean}) {
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
+    const callback = useCallback(handleClickOpenWarning, [state]);
 
     useEffect(() => {
         console.log(props.needsAuth, authenticated)
         if (props.needsAuth && !authenticated && !loading) {
-            handleClickOpenWarning();
+            callback();
         }
         else
         {
-            setState({...state, warning: false});
+            setState(s => ({...s, warning: false}));
         }
-    }, [props.needsAuth, router.pathname, authenticated, loading]);
+    }, [props.needsAuth, router.pathname, authenticated, loading, callback]);
 
     const handleCloseWarning = async () => {
         if(props.needsAuth)

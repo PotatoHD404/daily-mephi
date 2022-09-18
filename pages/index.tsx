@@ -54,10 +54,10 @@ function Home({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
 
     }, []);
     const router = useRouter();
-    useEffect(() => {   
+    useEffect(() => {
         changeNeedsAuth(false);
         // window.onpopstate = () => changeNeedsAuth(true);
-        }, [router.pathname]);
+        }, [changeNeedsAuth]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)

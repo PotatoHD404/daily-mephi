@@ -28,7 +28,7 @@ function Profile(props: {id: string | string[] | undefined}) {
     useEffect(() => {
         if(isUUID)
             refetch();
-    }, [router.pathname, isUUID])
+    }, [router.pathname, isUUID, refetch])
     useEffect(() => {
         if(!isUUID)
         {
@@ -39,7 +39,7 @@ function Profile(props: {id: string | string[] | undefined}) {
             console.log(error)
             // router.push('/500');
         }
-    }, [isError, error, isUUID])
+    }, [isError, error, isUUID, router])
 
     // if(!isFetching)
         // console.log(data);
@@ -49,7 +49,7 @@ function Profile(props: {id: string | string[] | undefined}) {
                 <User {...data} isLoading={isLoading}/>
         </div>
         <div className="ml-auto hidden lg:block">
-            <TopUsers/>
+            <TopUsers isLoading={isLoading}/>
         </div>
     </div>;
 }
