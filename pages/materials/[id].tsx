@@ -8,7 +8,6 @@ function User() {
         <>
             <SEO title={'Материал'}/>
             <div className="flex-wrap w-full">
-
             </div>
         </>
     );

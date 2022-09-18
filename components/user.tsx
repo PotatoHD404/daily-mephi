@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import TopUsers from "./topUsers";
+import React from "react";
 import Image from "next/future/image";
 import ProfileImage from "images/profile1.webp";
 import RippledButton from "./rippledButton";
@@ -9,15 +8,9 @@ import RatingPlace from "./ratingPlace";
 
 
 import {Divider, Skeleton, Tooltip} from '@mui/material';
-import {useSession} from "next-auth/react";
-import {useQuery} from "@tanstack/react-query";
-import {useRouter} from "next/router";
 import useIsMobile from "../helpers/react/isMobileContext";
-import auth from "pages/api/auth/[...nextauth]";
-import { stat } from "fs";
 
-
-function User(props: { name?: string, userCourse?: string, rating?: number, reviews?: number, materials?: number, quotes?: number, avatar?: string, place?: number, role?: string }) {
+export default function User(props: { name?: string, userCourse?: string, rating?: number, reviews?: number, materials?: number, quotes?: number, avatar?: string, place?: number, role?: string, me?: boolean }) {
     props.userCourse = props.userCourse?.replace("B", "Б").replace("C", "С").replace("M", "М").replace("A", "А") || "Курс не указан";
     // Tooltip opens on hover
     const isMobile = useIsMobile();
@@ -98,47 +91,4 @@ function User(props: { name?: string, userCourse?: string, rating?: number, revi
                 </div>
             </div>
         </div>);
-}
-
-export default function Profile() {
-    const {status} = useSession();
-    async function getUser() {
-        return await (await fetch('/api/v1/users/me', {
-            method: 'GET',
-            credentials: 'same-origin'
-        }))?.json();
-    }
-
-    const {data, isFetching, refetch, isError, error} = useQuery(['me'], getUser, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
-    const router = useRouter();
-    const authenticated = status === "authenticated";
-    const loading = status === "loading";
-    const isLoading = isFetching && loading || isFetching && authenticated;
-    useEffect(() => {
-        if(authenticated)
-            refetch();
-    }, [router.pathname, authenticated])
-    if (isError) {
-        // console.log(`Ошибка ${error}`)
-        
-        router.push('/500');
-    }
-    // if(!isFetching)
-        // console.log(data);
-
-    return <div className="flex">
-        <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%"/> :
-                /* @ts-ignore */
-                <User {...data}/>
-            }
-        </div>
-        <div className="ml-auto hidden lg:block">
-            <TopUsers/>
-        </div>
-    </div>;
 }

@@ -7,4 +7,4 @@ export default {
     component: Home
 }
 
-export const HomePage = () => <Home />
+export const HomePage = () => <Home changeNeedsAuth={() => {}} />
