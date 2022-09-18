@@ -26,8 +26,8 @@ function Profile() {
     });
     const router = useRouter();
     const authenticated = status === "authenticated";
-    const loading = status === "loading";
-    const isLoading = isFetching && loading || isFetching && authenticated;
+    // const loading = status === "loading";
+    const isLoading = !authenticated || isFetching && authenticated;
     useEffect(() => {
         if(authenticated)
             refetch();
@@ -42,10 +42,7 @@ function Profile() {
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%"/> :
-                /* @ts-ignore */
-                <User {...data} me/>
-            }
+                <User {...data} isLoading={isLoading} me/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers/>

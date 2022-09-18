@@ -46,10 +46,7 @@ function Profile(props: {id: string | string[] | undefined}) {
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%"/> :
-                /* @ts-ignore */
-                <User {...data}/>
-            }
+                <User {...data} isLoading={isLoading}/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers/>
