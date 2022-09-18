@@ -276,9 +276,9 @@ function Navbar(props: {needsAuth: boolean}) {
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     const handleClickOpenWarning = () => {
-        setState({...state, warning: true});
+        setState(s => ({...s, warning: true}));
     };
-    const callback = useCallback(handleClickOpenWarning, [state]);
+    const callback = useCallback(handleClickOpenWarning, []);
 
     useEffect(() => {
         console.log(props.needsAuth, authenticated)
@@ -315,7 +315,7 @@ function Navbar(props: {needsAuth: boolean}) {
 
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
+            <Nav {...{home, handleClickOpenWarning: callback, toggleDrawer}}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer
@@ -326,7 +326,7 @@ function Navbar(props: {needsAuth: boolean}) {
                     disableBackdropTransition={false}
                     // disableDiscovery={true}
                 >
-                    <ItemsList onClick={toggleDrawer()} {...{handleClickOpenWarning}}/>
+                    <ItemsList onClick={toggleDrawer()} {...{handleClickOpenWarning: callback}}/>
                 </SwappableDrawer> : null}
 
         </header>
