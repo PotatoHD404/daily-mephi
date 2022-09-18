@@ -1,25 +1,29 @@
 /*  ./components/Navbar.jsx     */
 import Link from 'next/link';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
-import TutorsIcon from "images/news.svg";
+import TutorsIcon from "images/tutors.svg";
+import UsersIcon from "images/users.svg";
 
-const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
-const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
-const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: true});
+const List = dynamic(() => import("@mui/material/List"), {ssr: false});
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
+const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
+const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
 import {useRouter} from "next/router";
 import Image from "next/future/image";
 import burger from 'images/burger.svg'
 import {getSession, signOut, useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
-import useMediaQuery from "helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
 
 
-import {Box, List, Divider, ListItemButton, Button, IconButton} from '@mui/material';
+import {Box, Divider, Button, IconButton} from '@mui/material';
+import {toChildArray} from "preact";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 
 interface DefaultNavbarParams {
@@ -29,7 +33,7 @@ interface DefaultNavbarParams {
 
 
 function DefaultNavbar(props: DefaultNavbarParams) {
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     return <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
                      justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
         {!isMobile ?
@@ -59,7 +63,9 @@ function DefaultNavbar(props: DefaultNavbarParams) {
                 </div>
             </div>
             :
-            <div className="col-start-1 col-end-13"><MobileNavbar onClick={props.toggleDrawer}/></div>
+            <div className="col-start-1 col-end-13">
+                <MobileNavbar onClick={props.toggleDrawer}/>
+            </div>
         }
 
     </nav>;
@@ -67,21 +73,16 @@ function DefaultNavbar(props: DefaultNavbarParams) {
 
 function AuthSection(props: DefaultNavbarParams) {
     // const router = useRouter()
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     const {data: session, status} = useSession()
     const [open, setOpen] = useState(false)
 
 
     useEffect(() => {
-        // console.log("Auth section rerendered")
-        if (session?.user && session.user.name === null) {
-            // setOpen(true);
-
-            // router.push('/users/new')
-
-
+        if (status == "authenticated" && session?.user?.name === null) {
+            setOpen(true);
         }
-    }, [status, session?.user])
+    }, [status, session])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
@@ -123,10 +124,13 @@ function AuthSection(props: DefaultNavbarParams) {
                     handleClose={() => setOpen(false)}
                     opened={open}/>
 
-                {!isMobile ? <button
-                    className={`${style.authText}`}>
-                    <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
-                </button> : null}
+                {!isMobile ?
+                    <Link href="/users/me">
+                        <a
+                            className={`${style.authText}`}>
+                            <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
+                        </a>
+                    </Link> : null}
             </>
         )
     }
@@ -169,7 +173,7 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
 }
 
 function HomeNavbar(props: DefaultNavbarParams) {
-    const isMobile = useMediaQuery(768);
+    const isMobile = useIsMobile();
     return (
         <nav>
             {!isMobile ?
@@ -217,8 +221,12 @@ function Nav({home, handleClickOpenWarning, toggleDrawer}: NavParams) {
 }
 
 
-function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void }) {
+function ItemsList(props: {
+    onClick: (event: (React.KeyboardEvent | React.MouseEvent)) => void,
+    handleClickOpenWarning: () => void
+}) {
     const router = useRouter();
+    const home: boolean = router.pathname === '/';
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -226,40 +234,70 @@ function ItemsList(props: { onClick: (event: (React.KeyboardEvent | React.MouseE
         onKeyDown={props.onClick}
     >
         <List>
-            <ListItemButton onClick={async () => await router.push("/about")}>
-                <Image src={NewsIcon} className="w-6 mr-2" alt="news"/>
-                <div>О нас</div>
-            </ListItemButton>
-            <ListItemButton onClick={async () => await router.push("/materials")}>
-                <Image src={MaterialsIcon} className="w-4 ml-1 mr-3" alt="materials"/>
-                <div>Материалы</div>
-            </ListItemButton>
-            <ListItemButton onClick={async () => await router.push("/tutors")}>
-                <Image src={TutorsIcon} className="w-6 mr-2" alt="tutors"/>
-                <div>Преподаватели</div>
-            </ListItemButton>
+            {/*  @ts-ignore  */}
+            {toChildArray([
+                {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
+                {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
+                {icon: TutorsIcon, text: "Преподаватели", link: "/tutors", alt: "tutors"},
+            ].map((item, index) => (
+                <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
+                    <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                    <div>{item.text}</div>
+                </ListItemButton>)))
+            }
         </List>
         <Divider/>
+        {!home ?
+            <List>
+                {/*  @ts-ignore  */}
+                {toChildArray([
+                    {icon: UsersIcon, text: "Профиль", alt: "users"},
+                ].map((item, index) => (
+                    <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
+                        <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                        <div>{item.text}</div>
+                    </ListItemButton>)))
+                }
+            </List> : null}
     </Box>;
 }
 
 
-function Navbar() {
+function Navbar(props: {needsAuth: boolean}) {
     const [state, setState] = React.useState({
         opened: false,
         warning: false
     });
     const router = useRouter();
-
+    const isMobile = useIsMobile();
+    const {data: session, status} = useSession();
+    const authenticated = status == "authenticated";
+    const loading = status == "loading";
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
-    const handleCloseWarning = () => {
+    const callback = useCallback(handleClickOpenWarning, [state]);
+
+    useEffect(() => {
+        console.log(props.needsAuth, authenticated)
+        if (props.needsAuth && !authenticated && !loading) {
+            callback();
+        }
+        else
+        {
+            setState(s => ({...s, warning: false}));
+        }
+    }, [props.needsAuth, router.pathname, authenticated, loading, callback]);
+
+    const handleCloseWarning = async () => {
+        if(props.needsAuth)
+        {
+            await router.push("/");
+        }
         setState({...state, warning: false});
     };
-    const isMobile = useMediaQuery(768);
     const toggleDrawer =
         () =>
             (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -278,7 +316,7 @@ function Navbar() {
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{home, handleClickOpenWarning, toggleDrawer}}/>
-
+            <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer
                     anchor='left'
@@ -288,9 +326,8 @@ function Navbar() {
                     disableBackdropTransition={false}
                     // disableDiscovery={true}
                 >
-                    <ItemsList onClick={toggleDrawer()}/>
-                </SwappableDrawer> : <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
-            }
+                    <ItemsList onClick={toggleDrawer()} {...{handleClickOpenWarning}}/>
+                </SwappableDrawer> : null}
 
         </header>
     );

@@ -18,7 +18,7 @@ import RippledButton from "components/rippledButton";
 import RatingPlace from "components/ratingPlace";
 import dynamic from "next/dynamic";
 
-const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
+const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
 function RatingComponent(props: { text: string, rate: string }) {
     return (
@@ -28,7 +28,7 @@ function RatingComponent(props: { text: string, rate: string }) {
                 <div className="w-fit h-fit hidden xs:block">{props.rate}</div>
                 <div className="w-fit h-fit">:</div>
             </div>
-            <div className="w-fit"><HoverRating/></div>
+            <div className="w-fit"><HoverRating /></div>
         </div>)
         ;
 }
@@ -37,7 +37,7 @@ function Quote(props: { onClick: () => void }) {
     return <div className="flex-wrap space-y-10 w-full">
         <div className="space-y-10">
             <NewPost placeholder={"Загрузить цитату"} onClick={props.onClick}/>
-            <div className="rounded-2xl p-5 text-xl w-full bg-white bg-opacity-[90%]">
+            <div className="text-xl w-full whiteBox">
                 <UserHeader name={"User1"}
                             date={"15 февраля 2022"}/>
                 <div className="relative flex">
@@ -99,8 +99,8 @@ function Review(props: { onClick: () => void }) {
 
 
 function Tutor() {
-    const router = useRouter()
-    const {id} = router.query
+    const router = useRouter();
+    const {id} = router.query;
     const [value, setValue] = React.useState(0);
     const [postValue, setPostValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {

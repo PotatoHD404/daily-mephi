@@ -91,3 +91,5 @@ public/sitemap-0.xml
 public/sitemap.xml
 
 public/service-worker.js.map
+
+*.map

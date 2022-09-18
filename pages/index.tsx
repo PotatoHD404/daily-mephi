@@ -6,16 +6,16 @@ import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
 import {Button} from "@mui/material";
 import {useRouter} from "next/router";
-import useMediaQuery from "../helpers/react/useMediaQuery";
 import dynamic from "next/dynamic";
+import useIsMobile from "../helpers/react/isMobileContext";
+import {useSession} from "next-auth/react";
 
-const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
-const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const SearchBar = dynamic(() => import("components/searchBar"), {ssr: false});
 
 export function LogoText() {
-    const isMobile = useMediaQuery(768);
-
+    const isMobile = useIsMobile();
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
      w-full justify-center md:justify-start">
         {!isMobile ?
@@ -31,30 +31,33 @@ export function LogoText() {
     </div>;
 }
 
-function Home() {
-
-    const isMobile = useMediaQuery(768);
+function Home({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
 
     const [state, setState] = React.useState({
         warning: false
     });
-
+    const isMobile = useIsMobile();
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
+    // const session = useSession();
     const [input, setInput] = React.useState('');
-
+    // console.log(session);
     // let session = useSession();
     useEffect(() => {
         const input = document.querySelector("input");
         input?.focus();
         input?.select();
+
     }, []);
     const router = useRouter();
-
+    useEffect(() => {
+        changeNeedsAuth(false);
+        // window.onpopstate = () => changeNeedsAuth(true);
+        }, [changeNeedsAuth]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)
@@ -75,36 +78,40 @@ function Home() {
                     className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
                     <div
                         className="items-center justify-start flex flex-wrap md:w-[42.8%]  my-auto justify-center">
-                        <LogoText/>
+                        <LogoText />
 
 
                         <h1 className="pl-5 pr-5 2xl:text-4xl lg:text-3xl md:pl-0 text-[1.4] sm:text-2xl md:flex md:mt-8 mt-3 row-start-3 row-end-4 pb-3 text-center md:text-left">Самый
                             классный студенческий портал. Здесь вы можете оценить качества преподавателя или
                             оставить материалы для других студентов.
                         </h1>
-                        {!isMobile ? <div className="h-14 w-[80%] mr-auto mt-5">
-                            <SearchBar
-                                input={input}
-                                setInput={setInput}
-                                handleEnterPress={handleEnterPress}/>
-                        </div> : null}
+                        {!isMobile ?
+                            <div className="h-14 w-[80%] mr-auto mt-5">
+                                <SearchBar
+                                    input={input}
+                                    setInput={setInput}
+                                    handleEnterPress={handleEnterPress}/>
+                            </div>
+                            : null}
 
                     </div>
-                    {isMobile ? <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
+                    {isMobile ?
+                        <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
                          w-[80%] normal-case"
-                                        variant="contained" onClick={handleClickOpenWarning}>Войти на Daily
-                        MEPhi</Button> : null}
+                                variant="contained" onClick={handleClickOpenWarning}>Войти на Daily MEPhi
+                        </Button>
+                        : null}
 
                     <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
                     {!isMobile ?
                         <div
                             className="flex justify-center md:w-[50%] my-auto max-w-xl md:max-w-max justify-center">
-                            <Image src={Logo} alt="Big logo"/>
+                            <Image src={Logo} priority alt="Big logo"/>
                         </div> :
                         <div className="h-[140vw] overflow-clip w-full flex justify-center -z-10 -mb-[40vw]">
                             <div
                                 className="flex justify-center mt-[110%] scale-[275%] max-w-[40rem] justify-center h-fit">
-                                <Image src={MobileLogo} alt="Big logo"/>
+                                <Image src={MobileLogo} priority alt="Big logo"/>
                             </div>
                         </div>}
 

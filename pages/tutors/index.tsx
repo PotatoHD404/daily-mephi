@@ -1,10 +1,11 @@
 import React from "react";
 import SEO from "components/seo";
-import useMediaQuery from "helpers/react/useMediaQuery";
+
 import dynamic from "next/dynamic";
-const Filters = dynamic(() => import("components/filters"), {ssr: true});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
+const Filters = dynamic(() => import("components/filters"), {ssr: false});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 import Tutor from "components/tutor";
+import useIsMobile from "../../helpers/react/isMobileContext";
 
 const marks = [
     {
@@ -23,8 +24,8 @@ const marks = [
 //     Отправить
 // </Button>
 function Tutors() {
+    const isMobile = useIsMobile();
     const [value, setValue] = React.useState(0);
-    const isMobile = useMediaQuery(768);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };

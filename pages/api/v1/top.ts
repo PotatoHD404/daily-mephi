@@ -7,6 +7,18 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    const  {place, take} = req.query;
+    const calculatedPlace = +(place || 0);
+    const calculatedTake = +(take || 4);
+    const userCount = await (await prisma.user.aggregate({_count: true}))._count;
+    let skip: number;
+    if (calculatedPlace == 0) {
+        skip = 0;
+    } else if (calculatedPlace <= userCount - 1 && calculatedPlace >= userCount - 2) {
+        skip = userCount - calculatedTake;
+    } else {
+        skip = calculatedPlace - (calculatedTake - 2);
+    }
     const users = await prisma.user.findMany({
             select: {
                 name: true,
@@ -17,7 +29,8 @@ export default async function handler(
             orderBy: {
                 rating: 'desc',
             },
-            take: 20,
+            take: calculatedTake,
+            skip
         }
     )
 

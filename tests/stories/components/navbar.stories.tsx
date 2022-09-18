@@ -6,4 +6,4 @@ export default {
     component: Navbar
 }
 
-export const NavbarComponent = () => <Navbar />
+export const NavbarComponent = () => <Navbar needsAuth={false}/>

@@ -24,7 +24,7 @@ function MyFormControlLabel(props: FormControlLabelProps) {
 
 
 export default function Filters() {
-    return <div className="w-[15rem] ml-auto mt-4">
+    return <div className="w-[15rem] ml-auto mt-4 pl-1">
         <div
             className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black mb-4">
             <div className="font-bold mb-4 -mt-2">Сортировка</div>
