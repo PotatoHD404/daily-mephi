@@ -58,7 +58,7 @@ function About() {
                     {value == 1 ? <Post/> : null}
                     {value == 2 ? <Post/> : null}
                 </div>
-                <TopUsers withLabel/>
+                <TopUsers place={0} take={8} withLabel/>
             </div>
         </>);
 

@@ -23,7 +23,7 @@ function Profile(props: {id: string | string[] | undefined}) {
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });
-    const isLoading = isFetching || !isUUID;
+    const isLoading = isFetching || !isUUID || !data;
     const router = useRouter();
     useEffect(() => {
         if(isUUID)
@@ -49,7 +49,7 @@ function Profile(props: {id: string | string[] | undefined}) {
                 <User {...data} isLoading={isLoading}/>
         </div>
         <div className="ml-auto hidden lg:block">
-            <TopUsers isLoading={isLoading}/>
+            <TopUsers place={data?.place} isLoading={isLoading}/>
         </div>
     </div>;
 }

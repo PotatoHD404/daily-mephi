@@ -95,16 +95,19 @@ function TopUser(props: TopUserParams) {
     </Link>;
 }
 
-export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean }) {
+export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean, take?: number }) {
     const place = props.place || 0;
     // const isUUID = props.id && typeof props.id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(props.id)
     // const {status} = useSession();
     // const queryParams = {skip: props.skip, take: props.take};
     // @ts-ignore
     // Object.keys(queryParams).forEach(key => queryParams[key] === undefined ? delete queryParams[key] : {});
-
+    const params: Record<string, string> = {place: place.toString()};
+    if(props.take) {
+        params["take"] = props.take.toString();
+    }
     async function getUser() {
-        return await (await fetch(`/api/v1/top?${new URLSearchParams({place: place.toString()})}`, {
+        return await (await fetch(`/api/v1/top?${new URLSearchParams(params)}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
