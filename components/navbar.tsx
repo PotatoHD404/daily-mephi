@@ -75,11 +75,13 @@ function AuthSection(props: DefaultNavbarParams) {
     // const router = useRouter()
     const isMobile = useIsMobile();
     const {data: session, status} = useSession()
+    const authenticated = status === 'authenticated';
+    const loading = status === 'loading';
     const [open, setOpen] = useState(false)
 
 
     useEffect(() => {
-        if (status == "authenticated" && session?.user?.name === null) {
+        if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
     }, [status, session])
