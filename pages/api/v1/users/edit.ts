@@ -42,7 +42,9 @@ export default async function handler(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    // const allUsers = {status: "ok"}
+    console.log(name, image, course);
+    console.log(courses[course as keyof typeof courses] as any);
+    console.log(session.sub)
     try {
         await prisma.user.update({
                 where: {
@@ -56,6 +58,7 @@ export default async function handler(
             }
         )
     } catch (e) {
+        console.log(e)
         res.status(500).json({status: "internal server error"});
         return;
     }

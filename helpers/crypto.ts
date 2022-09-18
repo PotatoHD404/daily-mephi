@@ -60,6 +60,8 @@ export async function hash(pass: string, secret: string | undefined = undefined)
         || process.env.HASH_TIME_COST === undefined
         || process.env.HASH_PARALLELISM === undefined)
         throw new Error('There is no some environment variables');
+
+
     let hash_type: 0 | 1 | 2 | undefined;
     if (process.env.HASH_TYPE === '0')
         hash_type = argon2.argon2d;
@@ -78,6 +80,4 @@ export async function hash(pass: string, secret: string | undefined = undefined)
         raw: true
     })).toString('base64');
 }
-
-
 // Now transmit { ciphertext, nonce, tag }.

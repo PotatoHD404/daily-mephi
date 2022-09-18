@@ -82,7 +82,7 @@ export default async function handler(
     // console.log(sessionCookie);
     const cookieString = `${sessionCookie.name}=${sessionCookie.value}; Path=/; Expires=${
         sessionCookie.options.expires.toUTCString()
-}; Http${sessionCookie.options.secure ? "s" : ""}Only; SameSite=Lax;`;
+}; HttpOnly; ${sessionCookie.options.secure ? "Secure; " : ""}SameSite=Lax;`;
     res.setHeader("Set-Cookie",
     cookieString);
     // console.log(token)
