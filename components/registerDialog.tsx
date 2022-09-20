@@ -212,8 +212,7 @@ export default function RegisterDialog(props: DialogProps) {
                     </div>
                 </div>
             </div>
-
-
+            
         </CustomDialog>
     );
 }

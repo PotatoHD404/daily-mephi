@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import path from "path";
 import {getTutor} from "../../tutors/[id]";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
-
+import puppeteer from 'puppeteer';
 // export const config = {
 //     runtime: 'experimental-edge',
 // }
@@ -53,11 +53,23 @@ export default async function handler(
             res.status(404).json({status: "not found"});
             return;
     }
+    
+    const { title, description, img } = await req.query;
 
+    const browser = await puppeteer.launch();
+  
+    const page = await browser.newPage();
+  
+    await page.setViewport({ width: 1200, height: 630 });
+  
+    await page.setContent(svg);
+  
+    const image = await page.screenshot({ type: 'png' });
+  
 
-    const roundedCorners = Buffer.from(svg);
+    // const roundedCorners = Buffer.from(image);
 
-    const roundedCornerResizer = sharp(roundedCorners).png();
+    // const roundedCornerResizer = sharp(roundedCorners).png();
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/png");
@@ -65,5 +77,5 @@ export default async function handler(
     //     "Cache-Control",
     //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
     // );
-    return res.end(await roundedCornerResizer.toBuffer());
+    return res.end(image);
 }

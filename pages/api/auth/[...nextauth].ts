@@ -7,6 +7,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 //     throw new Error('There is no some environment variables');
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+    
     // Check whether the request is auth callback
     // @ts-ignore
     if (req.query.nextauth.includes("callback")) {

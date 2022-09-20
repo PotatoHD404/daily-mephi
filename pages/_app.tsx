@@ -2,7 +2,7 @@ import 'styles/globals.css'
 import {SessionProvider, useSession} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import React, {ReactNode, useEffect, useState} from "react";
+import React, {ReactNode, useState, useCallback} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
@@ -15,6 +15,8 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../helpers/react/useMediaQuery";
 import {IsMobileProvider} from "../helpers/react/isMobileContext";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+
 
 const queryClient = new QueryClient()
 
@@ -106,23 +108,25 @@ function MyApp(
     const home: boolean = router.pathname === '/';
     const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
-    // useEffect(() => {   
-    //     changeNeedsAuth(false);
-    //     // window.onpopstate = () => changeNeedsAuth(true);
-    //     }, [router.pathname]);
+
     return (
-        (isMobile === null) ? null :
+        <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""} 
+        scriptProps={{
+            async: false,
+            defer: false,
+            appendTo: "head",
+            nonce: undefined,
+          }}
+          language="ru">
+        { (isMobile === null) ? null :
             <IsMobileProvider value={isMobile}>
                 <QueryClientProvider client={queryClient}>
                     <SessionProvider session={session}>
                         <ThemeProvider theme={theme}>
-
                             <BackgroundComp {...{home, isMobile}}/>
 
                             <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
                                 + (home ? "" : "max-w-[85rem] mx-auto")}>
-
-
                                 <Navbar needsAuth={needsAuth}/>
                                 {home1 ?
                                     <div className={"md:px-8 mx-auto"}>
@@ -131,7 +135,7 @@ function MyApp(
                                     :
                                     <div
                                         className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
-                         bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
+                                            bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
                                         <Component {...pageProps} />
                                     </div>}
                                 <Footer/>
@@ -140,6 +144,8 @@ function MyApp(
                     </SessionProvider>
                 </QueryClientProvider>
             </IsMobileProvider>
+        }
+        </GoogleReCaptchaProvider>
     )
 
 }
