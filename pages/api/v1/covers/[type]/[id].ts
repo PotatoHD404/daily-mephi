@@ -22,12 +22,12 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    const {type, id} = req.query;
-    if (!type || typeof type !== "string" || !id || typeof id !== "string" || !id.match(UUID_REGEX)) {
+    let {type, id} = req.query;
+    if (!type || typeof type !== "string" || !id || typeof id !== "string" || !id.replace(".png", "").match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }
-
+    id = id.replace(".png", "");
     let svg: string;
     switch (type) {
         case "tutors":
@@ -62,22 +62,15 @@ export default async function handler(
     const buffer = Buffer.from(svg);
 
     const image = sharp(buffer).png();
-    // console.log(image)
+
+    // 31536000
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/png");
-    // res.setHeader(
-    //     "Cache-Control",
-    //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
-    // );
+    res.setHeader(
+        "Cache-Control",
+        "public, immutable, no-transform, s-maxage=86400, max-age=86400"
+    );
     let resultBuffer = await image.toBuffer();
-    // if (process.env.LOCAL != "true")
-    // {
-    //     resultBuffer = Buffer.from(resultBuffer.toString('base64'), 'utf-8');
-    // }
-    // const lambdaBufferTest = Buffer.from(Buffer.from(resultBuffer.toString('base64'), 'utf-8').toString('utf-8'), 'base64');
-    // console.log(resultBuffer);
-    // console.log(lambdaBuffer);
-    // console.log(Buffer.compare(lambdaBuffer, resultBuffer));
     return res.end(resultBuffer);
 }
