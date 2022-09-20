@@ -58,7 +58,7 @@ export default async function handler(
     const buffer = Buffer.from(svg);
 
     const image = sharp(buffer).png();
-    console.log(image)
+    // console.log(image)
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/png");
@@ -66,5 +66,7 @@ export default async function handler(
     //     "Cache-Control",
     //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
     // );
-    return res.end(await image.toBuffer());
+    const resultBuffer = await image.toBuffer();
+    console.log(resultBuffer);
+    return res.end(resultBuffer);
 }
