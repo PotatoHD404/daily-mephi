@@ -1,13 +1,18 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import getTutorSvg from "components/getTutorSvg";
 import sharp from 'sharp';
-import path from "path";
+import fs from 'fs'
+import path from 'path'
+import { base64Image } from "helpers/consts";
+
+const imageBuffer = Buffer.from(base64Image, 'base64');
 import {getTutor} from "../../tutors/[id]";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 
 // export const config = {
 //     runtime: 'experimental-edge',
 // }
+
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
@@ -61,12 +66,13 @@ export default async function handler(
     // console.log(image)
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
-    res.setHeader("Content-Type", "image/png");
+    // res.setHeader("Content-Type", "image/png");
     // res.setHeader(
     //     "Cache-Control",
     //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
     // );
     const resultBuffer = await image.toBuffer();
     console.log(resultBuffer);
-    return res.end(resultBuffer);
+    console.log(imageBuffer);
+    return res.end(imageBuffer);
 }
