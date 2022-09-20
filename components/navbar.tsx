@@ -84,7 +84,7 @@ function AuthSection(props: DefaultNavbarParams) {
         if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
-    }, [status, session])
+    }, [status, session, authenticated, loading])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
