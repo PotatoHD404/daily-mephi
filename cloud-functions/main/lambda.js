@@ -73,9 +73,14 @@ async function handler(event, context) {
                 return (0, ___next_launcher_cjs_1.default)(request, response)
             }
         };
-        slsHandler = (0, serverless_http_1.default)(app);
+        slsHandler = (0, serverless_http_1.default)(app, 
+        {
+            binary: ['image/*']
+        });
     }
-    return await slsHandler(event, context);
+    const slsResult = await slsHandler(event, context);
+    // console.log(slsResult);
+    return slsResult;
 }
 
 exports.handler = handler;

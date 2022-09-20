@@ -1,13 +1,17 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import getTutorSvg from "components/getTutorSvg";
 import sharp from 'sharp';
-import path from "path";
+import path from 'path'
+import { base64Image } from "helpers/consts";
+
+const imageBuffer = Buffer.from(base64Image, 'base64');
 import {getTutor} from "../../tutors/[id]";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 
 // export const config = {
 //     runtime: 'experimental-edge',
 // }
+
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
@@ -58,7 +62,7 @@ export default async function handler(
     const buffer = Buffer.from(svg);
 
     const image = sharp(buffer).png();
-    console.log(image)
+    // console.log(image)
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/png");
@@ -66,5 +70,14 @@ export default async function handler(
     //     "Cache-Control",
     //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
     // );
-    return res.end(await image.toBuffer());
+    let resultBuffer = await image.toBuffer();
+    // if (process.env.LOCAL != "true")
+    // {
+    //     resultBuffer = Buffer.from(resultBuffer.toString('base64'), 'utf-8');
+    // }
+    // const lambdaBufferTest = Buffer.from(Buffer.from(resultBuffer.toString('base64'), 'utf-8').toString('utf-8'), 'base64');
+    // console.log(resultBuffer);
+    // console.log(lambdaBuffer);
+    // console.log(Buffer.compare(lambdaBuffer, resultBuffer));
+    return res.end(resultBuffer);
 }
