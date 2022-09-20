@@ -166,6 +166,11 @@ variable "DOMAIN_ID" {
   sensitive = true
 }
 
+variable "GOOGLE_API_KEY" {
+  type     = string
+  nullable = false
+  sensitive = true
+}
 
 locals {
   mime_types = jsondecode(file("${path.module}/mimes.json"))
@@ -358,6 +363,7 @@ RECAPTCHA_PUBLIC="${var.RECAPTCHA_PUBLIC}"
 
 DATABASE_KEY="${var.DATABASE_KEY}"
 
+GOOGLE_API_KEY="${var.GOOGLE_API_KEY}"
 EOF
   filename = "${path.module}/../.env"
 }
@@ -451,13 +457,14 @@ resource "yandex_function" "backend" {
   user_hash         = data.external.zip_main.result.sha256
   runtime           = "nodejs16"
   entrypoint        = "lambda.handler"
-  memory            = "256"
+  memory            = "1024"
   execution_timeout = "10"
   package {
     sha_256     = data.external.zip_main.result.sha256
     bucket_name = "daily-service"
     object_name = "main-lambda.zip"
   }
+  environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
 }
 
 resource "yandex_function_iam_binding" "backend" {
