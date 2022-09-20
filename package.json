@@ -15,7 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
-    "@mui/icons-material": "^5.10.2",
+    "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.5",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@notionhq/client": "^2.2.0",
@@ -43,6 +43,7 @@
     "preact-render-to-string": "^5.2.4",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
+    "react-google-recaptcha-v3": "^1.10.0",
     "react-query": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.30.7",
