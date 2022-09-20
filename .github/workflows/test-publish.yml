@@ -4,15 +4,15 @@ env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
 jobs:
-  jest:
-    name: 'Jest tests'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install modules
-        run: yarn
-      - name: Run tests
-        run: yarn test
+  # jest:
+  #   name: 'Jest tests'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install modules
+  #       run: yarn
+  #     - name: Run tests
+  #       run: yarn test
 #  chromatic:
 #    name: 'Chromatic Deployment'
 #    # Operating System
@@ -32,7 +32,7 @@ jobs:
     name: 'Deploy on cloud'
     if: ${{ github.ref == 'refs/heads/main' }}
 #    needs: [ jest, chromatic ]
-    needs: [ jest ]
+    # needs: [ jest ]
     runs-on: ubuntu-latest
 
     steps:

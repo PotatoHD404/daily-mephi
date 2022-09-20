@@ -1,7 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 import getTutorSvg from "components/getTutorSvg";
 import sharp from 'sharp';
-import fs from 'fs'
 import path from 'path'
 import { base64Image } from "helpers/consts";
 
@@ -66,13 +65,19 @@ export default async function handler(
     // console.log(image)
     // let doc = new DOMParser().parseFromString(svg, "text/xml");
     res.statusCode = 200;
-    // res.setHeader("Content-Type", "image/png");
+    res.setHeader("Content-Type", "image/png");
     // res.setHeader(
     //     "Cache-Control",
     //     "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
     // );
-    const resultBuffer = await image.toBuffer();
-    console.log(resultBuffer);
-    console.log(imageBuffer);
-    return res.end(imageBuffer);
+    let resultBuffer = await image.toBuffer();
+    // if (process.env.LOCAL != "true")
+    // {
+    //     resultBuffer = Buffer.from(resultBuffer.toString('base64'), 'utf-8');
+    // }
+    // const lambdaBufferTest = Buffer.from(Buffer.from(resultBuffer.toString('base64'), 'utf-8').toString('utf-8'), 'base64');
+    // console.log(resultBuffer);
+    // console.log(lambdaBuffer);
+    // console.log(Buffer.compare(lambdaBuffer, resultBuffer));
+    return res.end(resultBuffer);
 }

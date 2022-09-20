@@ -374,7 +374,6 @@ resource "null_resource" "build" {
 cd ${path.root}/../
 vercel pull --yes --environment=preview --token=${var.VERCEL_TOKEN}
 vercel build --token=${var.VERCEL_TOKEN}
-vercel deploy --prebuilt --token=${var.VERCEL_TOKEN}
 rm -rf ./terraform/static ./terraform/main-lambda
 cp -R ./cloud-functions/main ./terraform/main-lambda
 mv ./.vercel/output/static ./terraform/static
