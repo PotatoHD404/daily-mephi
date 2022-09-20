@@ -43,6 +43,7 @@
     "preact-render-to-string": "^5.2.4",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
+    "react-google-recaptcha-v3": "^1.10.0",
     "react-query": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.30.7",

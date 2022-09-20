@@ -3,6 +3,10 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 
+const GOOGLE_API_KEY=process.env.GOOGLE_API_KEY;
+
+const DISCOVERY_URL =
+    'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
 
 const courses = {
     "Б1": "B1",
@@ -32,6 +36,7 @@ export default async function handler(
     }
     const {name, image, course} = req.body;
     const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+
     // @ts-ignore
     if (!name && !image && !course || name && !nicknameRegex.test(name) || course && !courses[course]) {
         res.status(400).json({status: "bad request"});
@@ -42,9 +47,7 @@ export default async function handler(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    console.log(name, image, course);
-    console.log(courses[course as keyof typeof courses] as any);
-    console.log(session.sub)
+    
     try {
         await prisma.user.update({
                 where: {
@@ -53,6 +56,7 @@ export default async function handler(
                 data: {
                     name,
                     // image,
+                    // @ts-ignore
                     userCourse: courses[course as keyof typeof courses] as any
                 }
             }
