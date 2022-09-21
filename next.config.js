@@ -50,6 +50,8 @@ if (process.env.NODE_ENV === 'production') {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withPWA({
+    // target: 'serverless',
+    swcMinify: true,
     reactStrictMode: true,
     webpack: (config) => {
         config.experiments = {layers: true, topLevelAwait: true};

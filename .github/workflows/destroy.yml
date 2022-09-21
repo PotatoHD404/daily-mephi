@@ -89,7 +89,9 @@ jobs:
           TF_VAR_DATABASE_KEY : ${{secrets.TF_VAR_DATABASE_KEY}}
 
           TF_VAR_VERCEL_TOKEN : ${{secrets.TF_VAR_VERCEL_TOKEN}}
+          TF_VAR_GOOGLE_API_KEY : ${{secrets.TF_VAR_GOOGLE_API_KEY}}
           TF_VAR_certificate_id : ${{secrets.TF_VAR_CERTIFICATE_ID}}
+          TF_VAR_FONTCONFIG_PATH : "/function/code/api/auth/session/renew_jwt.func/fonts/"
 
 
 
