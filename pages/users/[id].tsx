@@ -60,7 +60,7 @@ function UserProfile() {
     const {id} =  router.query;
     return (
         <>
-            <SEO title={'Пользователь PotatoHD'}/>
+            <SEO title={'Пользователь PotatoHD'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/>
             <div className="flex-wrap w-full space-y-8">
                 <Profile id={id}/>
             </div>

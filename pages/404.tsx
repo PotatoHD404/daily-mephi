@@ -7,7 +7,7 @@ export default function Custom404() {
 
     return (
         <>
-            <SEO title={'Страница не найдена'}/>
+            <SEO title={'Страница не найдена'} thumbnail={`https://daily-mephi.ru/images/thumbnails/404.png`}/>
             <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
 
                 <div

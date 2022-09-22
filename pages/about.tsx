@@ -49,7 +49,7 @@ function About() {
     };
     return (
         <>
-            <SEO title='О нас'/>
+            <SEO title='О нас' thumbnail={`https://daily-mephi.ru/images/thumbnails/about.png`}/>
 
             <div className="flex w-full justify-between">
                 <div className="md:w-[75%] w-[100%]">

@@ -33,7 +33,7 @@ function Search() {
 
     return (
         <>
-            <SEO title='Поиск'/>
+            <SEO title='Поиск' thumbnail={`https://daily-mephi.ru/images/thumbnails/search.png`}/>
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2 font-semibold">Поиск</h1>

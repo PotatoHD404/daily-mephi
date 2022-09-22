@@ -139,7 +139,8 @@ export default async function handler(
     //     }).then((html) => Buffer.from(html));
     // }
     else {
-        res.status(400).json({status: "bad request"});
+        // return 404 thumbnail
+
         return;
     }
     const image = sharp(rendered).png();

@@ -31,7 +31,7 @@ function Tutors() {
     };
     return (
         <>
-            <SEO title='Преподаватели'/>
+            <SEO title='Преподаватели' thumbnail={`https://daily-mephi.ru/images/thumbnails/tutors.png`}/>
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2 font-semibold">Преподаватели</h1>

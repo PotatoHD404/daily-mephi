@@ -7,7 +7,7 @@ export default function Custom500() {
 
     return (
         <>
-            <SEO title={'Ошибка на стороне сервера'}/>
+            <SEO title={'Ошибка на стороне сервера'} thumbnail={`https://daily-mephi.ru/images/thumbnails/500.png`}/>
             <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
 
                 <div

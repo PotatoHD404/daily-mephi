@@ -2,11 +2,11 @@ import React from "react";
 import SEO from "components/seo";
 
 
-function User() {
-
+function Material() {
+    const id = "123";
     return (
         <>
-            <SEO title={'Материал'}/>
+            <SEO title={'Материал'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${id}.png`}/>
             <div className="flex-wrap w-full">
             </div>
         </>
@@ -14,4 +14,4 @@ function User() {
 
 }
 
-export default User;
+export default Material;

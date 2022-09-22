@@ -15,7 +15,7 @@ function Materials() {
     };
     return (
         <>
-            <SEO title='Материалы'/>
+            <SEO title='Материалы' thumbnail={`https://daily-mephi.ru/images/thumbnails/materials.png`}/>
 
             <div className="flex flex-wrap w-full justify-center">
                 <h1 className="text-2xl mb-2 font-semibold">Материалы</h1>

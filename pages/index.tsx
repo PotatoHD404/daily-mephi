@@ -69,7 +69,7 @@ function Home({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
 
     return (
         <>
-            <SEO/>
+            <SEO thumbnail={`https://daily-mephi.ru/images/thumbnails/index.png`}/>
 
             <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
                 <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
