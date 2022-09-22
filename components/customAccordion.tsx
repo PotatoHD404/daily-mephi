@@ -1,10 +1,7 @@
 import React from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary,} from "@mui/material";
+
 export default function CustomAccordion(props: { children: React.ReactNode, name: string, defaultExpanded?: boolean }) {
     return <Accordion className="w-full"
                       defaultExpanded={props.defaultExpanded}

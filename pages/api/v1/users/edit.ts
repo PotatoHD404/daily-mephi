@@ -3,7 +3,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 
-const GOOGLE_API_KEY=process.env.GOOGLE_API_KEY;
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 const DISCOVERY_URL =
     'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
@@ -47,7 +47,7 @@ export default async function handler(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    
+
     try {
         await prisma.user.update({
                 where: {

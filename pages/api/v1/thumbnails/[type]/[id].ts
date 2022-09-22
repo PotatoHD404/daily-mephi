@@ -4,7 +4,6 @@ import path from 'path'
 
 import {getTutor} from "../../tutors/[id]";
 import ejs from "ejs";
-import {promises as fs} from "fs";
 import sharp from "sharp";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 // import ejs template from file
@@ -38,20 +37,21 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    const {id, type} = req.query;
-    if (!id || typeof id !== "string" || !id.match(UUID_REGEX) || !type || typeof type !== "string") {
+    let {id, type} = req.query;
+    if (!id || typeof id !== "string" || !id.replace(".png", "").match(UUID_REGEX) || !type || typeof type !== "string") {
         res.status(400).json({status: "bad request"});
         return;
     }
+    id = id.replace(".png", "");
     let rendered: Buffer;
-    if(type == "tutors") {
+    if (type == "tutors") {
         const tutor = await getTutor(id);
-        if(!tutor) {
+        if (!tutor) {
             res.status(404).json({status: "not found"});
             return;
         }
         let avatarString: string = "";
-        if(tutor.images.length > 0) {
+        if (tutor.images.length > 0) {
             // const avatarUrl = "https://logos-world.net/wp-content/uploads/2021/08/Among-Us-Logo.png";
             // fetch image from url and convert it to buffer
             avatarString = await fetch(tutor.images[0])
@@ -81,65 +81,66 @@ export default async function handler(
                 "'Montserrat-Medium.ttf'",
         }).then((html) => Buffer.from(html));
     }
-    // else if(type == "material") {
-    //     const material = await getMaterial(id);
-    //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.ejs'), {
-    //         material_name: "",
-    //         tutor_name: "",
-    //         mephist_rating: "",
-    //         daily_rating: "",
-    //         reviews: "",
-    //         reviews_count: "",
-    //         materials: "",
-    //         materials_count: "",
-    //         rating: "",
-    //         rating_value: "Текст",
-    //         image: "",
-    //         font_path: process.env.LOCAL == "true" ?
-    //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
-    //             "'Montserrat-Medium.ttf'",
-    //     }).then((html) => Buffer.from(html));
-    // }
-    // else if(type == "review") {
-    //     const review = await getReview(id);
-    //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'review.ejs'), {
-    //         material_name: "",
-    //         tutor_name: "",
-    //         mephist_rating: "",
-    //         daily_rating: "",
-    //         reviews: "",
-    //         reviews_count: "",
-    //         materials: "",
-    //         materials_count: "",
-    //         rating: "",
-    //         rating_value: "Текст",
-    //         image: "",
-    //         font_path: process.env.LOCAL == "true" ?
-    //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
-    //             "'Montserrat-Medium.ttf'",
-    //     }).then((html) => Buffer.from(html));
-    // }
-    // else if (type == "quote") {
-    //     const quote = await getQuote(id);
-    //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
-    //         material_name: "",
-    //         tutor_name: "",
-    //         mephist_rating: "",
-    //         daily_rating: "",
-    //         reviews: "",
-    //         reviews_count: "",
-    //         materials: "",
-    //         materials_count: "",
-    //         rating: "",
-    //         rating_value: "Текст",
-    //         image: "",
-    //         font_path: process.env.LOCAL == "true" ?
-    //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
-    //             "'Montserrat-Medium.ttf'",
-    //     }).then((html) => Buffer.from(html));
+        // else if(type == "material") {
+        //     const material = await getMaterial(id);
+        //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.ejs'), {
+        //         material_name: "",
+        //         tutor_name: "",
+        //         mephist_rating: "",
+        //         daily_rating: "",
+        //         reviews: "",
+        //         reviews_count: "",
+        //         materials: "",
+        //         materials_count: "",
+        //         rating: "",
+        //         rating_value: "Текст",
+        //         image: "",
+        //         font_path: process.env.LOCAL == "true" ?
+        //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
+        //             "'Montserrat-Medium.ttf'",
+        //     }).then((html) => Buffer.from(html));
+        // }
+        // else if(type == "review") {
+        //     const review = await getReview(id);
+        //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'review.ejs'), {
+        //         material_name: "",
+        //         tutor_name: "",
+        //         mephist_rating: "",
+        //         daily_rating: "",
+        //         reviews: "",
+        //         reviews_count: "",
+        //         materials: "",
+        //         materials_count: "",
+        //         rating: "",
+        //         rating_value: "Текст",
+        //         image: "",
+        //         font_path: process.env.LOCAL == "true" ?
+        //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
+        //             "'Montserrat-Medium.ttf'",
+        //     }).then((html) => Buffer.from(html));
+        // }
+        // else if (type == "quote") {
+        //     const quote = await getQuote(id);
+        //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
+        //         material_name: "",
+        //         tutor_name: "",
+        //         mephist_rating: "",
+        //         daily_rating: "",
+        //         reviews: "",
+        //         reviews_count: "",
+        //         materials: "",
+        //         materials_count: "",
+        //         rating: "",
+        //         rating_value: "Текст",
+        //         image: "",
+        //         font_path: process.env.LOCAL == "true" ?
+        //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
+        //             "'Montserrat-Medium.ttf'",
+        //     }).then((html) => Buffer.from(html));
     // }
     else {
-        res.status(400).json({status: "bad request"});
+        // return 404 thumbnail
+
         return;
     }
     const image = sharp(rendered).png();

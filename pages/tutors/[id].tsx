@@ -17,6 +17,7 @@ import NewPost from "components/newPost";
 import RippledButton from "components/rippledButton";
 import RatingPlace from "components/ratingPlace";
 import dynamic from "next/dynamic";
+import useIsMobile from "helpers/react/isMobileContext";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
@@ -28,7 +29,7 @@ function RatingComponent(props: { text: string, rate: string }) {
                 <div className="w-fit h-fit hidden xs:block">{props.rate}</div>
                 <div className="w-fit h-fit">:</div>
             </div>
-            <div className="w-fit"><HoverRating /></div>
+            <div className="w-fit"><HoverRating/></div>
         </div>)
         ;
 }
@@ -109,6 +110,7 @@ function Tutor() {
         setPostValue(newValue);
     };
     const [open, setOpen] = useState(false)
+    const isMobile = useIsMobile();
     // constructor(props: any) {
     //     super(props);
     //     this.state = {id: ''};
@@ -124,113 +126,117 @@ function Tutor() {
     return (
         <>
             {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
-            <SEO title={'Трифоненков В.П.'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${id}`}/>
-            <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
-                        setValue={setPostValue}/>
-            <div className="flex-wrap w-full">
-                <div className="flex flex-wrap whiteBox overflow-x-hidden">
+            <SEO title={'Трифоненков В.П.'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${id}.png`}/>
+            {isMobile == null ? null :
+                <>
+                    <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
+                                setValue={setPostValue}/>
+                    <div className="flex-wrap w-full">
+                        <div className="flex flex-wrap whiteBox overflow-x-hidden">
 
-                    {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
-                    {/*    <div>Трифоненков</div>*/}
-                    {/*    <div>Владимир</div>*/}
-                    {/*    <div>Петрович</div>*/}
-                    {/*</div>*/}
-                    <div className="flex items-center w-full mb-2">
-                        <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
-                            <Image
-                                src={TutorImage}
-                                alt="Tutor image"
-                                className="rounded-full z-0"
-                            />
-
-                        </div>
-                        <div className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
-                         mx-auto md:mb-5 text-center h-fit ">
-                            Трифоненков Владимир Петрович
-                        </div>
-                    </div>
-                    <div className="hidden md:block -ml-2 -mt-2 absolute">
-                        <RatingPlace place={47}/>
-                    </div>
-                    <div className="flex flex-nowrap items-center">
-                        <div className="flex items-center w-fit hidden mr-4 md:block">
-                            <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
-                                <div className="flex mb-3 w-32 md:w-60">
+                            {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
+                            {/*    <div>Трифоненков</div>*/}
+                            {/*    <div>Владимир</div>*/}
+                            {/*    <div>Петрович</div>*/}
+                            {/*</div>*/}
+                            <div className="flex items-center w-full mb-2">
+                                <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
                                     <Image
                                         src={TutorImage}
                                         alt="Tutor image"
                                         className="rounded-full z-0"
                                     />
-                                </div>
-                                <div className="flex space-x-2 items-center justify-center md:hidden">
-                                    <RatingPlace place={47}/>
-                                    <div className="font-semibold">место</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap w-fit h-fit md:text-xl">
-                            <h1 className="font-semibold">Дисциплины:</h1>
-                            <div className="my-2">
-                                Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
-                                Интегральные
-                                уравнения, Дифференциальные уравнения
-                            </div>
 
-                            <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[11.5rem]">
-                                <div className="my-auto flex w-full justify-between mb-1">
-                                    <div className="font-semibold">Кафедра:</div>
-                                    <div>30</div>
                                 </div>
-                                <div className="my-auto flex w-full justify-between">
-                                    <div className="font-semibold">Daily Mephi:</div>
-                                    <div>4.5</div>
-                                </div>
-                                <div className="my-auto flex w-full justify-between">
-                                    <div className="font-semibold">mephist.ru:</div>
-                                    <div>2.1</div>
+                                <div className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
+                         mx-auto md:mb-5 text-center h-fit ">
+                                    Трифоненков Владимир Петрович
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="w-full h-[1px] bg-black my-3"/>
-                    <div className="w-full space-y-1 font-semibold md:max-w-[37.7rem]">
-                        <RatingComponent text="Характер" rate="(4.6)"/>
-                        <RatingComponent text="Преподавание" rate="(4.6)"/>
-                        <RatingComponent text="Пунктуальность" rate="(4.6)"/>
-                        <RatingComponent text="Прием экзаменов" rate="(4.6)"/>
-                        <div
-                            className="rounded-full w-auto border-2 border-black
+                            <div className="hidden md:block -ml-2 -mt-2 absolute">
+                                <RatingPlace place={47}/>
+                            </div>
+                            <div className="flex flex-nowrap items-center">
+                                <div className="flex items-center w-fit hidden mr-4 md:block">
+                                    <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
+                                        <div className="flex mb-3 w-32 md:w-60">
+                                            <Image
+                                                src={TutorImage}
+                                                alt="Tutor image"
+                                                className="rounded-full z-0"
+                                            />
+                                        </div>
+                                        <div className="flex space-x-2 items-center justify-center md:hidden">
+                                            <RatingPlace place={47}/>
+                                            <div className="font-semibold">место</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-wrap w-fit h-fit md:text-xl">
+                                    <h1 className="font-semibold">Дисциплины:</h1>
+                                    <div className="my-2">
+                                        Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
+                                        Интегральные
+                                        уравнения, Дифференциальные уравнения
+                                    </div>
+
+                                    <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[11.5rem]">
+                                        <div className="my-auto flex w-full justify-between mb-1">
+                                            <div className="font-semibold">Кафедра:</div>
+                                            <div>30</div>
+                                        </div>
+                                        <div className="my-auto flex w-full justify-between">
+                                            <div className="font-semibold">Daily Mephi:</div>
+                                            <div>4.5</div>
+                                        </div>
+                                        <div className="my-auto flex w-full justify-between">
+                                            <div className="font-semibold">mephist.ru:</div>
+                                            <div>2.1</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="w-full h-[1px] bg-black my-3"/>
+                            <div className="w-full space-y-1 font-semibold md:max-w-[37.7rem]">
+                                <RatingComponent text="Характер" rate="(4.6)"/>
+                                <RatingComponent text="Преподавание" rate="(4.6)"/>
+                                <RatingComponent text="Пунктуальность" rate="(4.6)"/>
+                                <RatingComponent text="Прием экзаменов" rate="(4.6)"/>
+                                <div
+                                    className="rounded-full w-auto border-2 border-black
                              font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
-                            <RippledButton onClick={() => {
-                            }}>
-                                <div>Отправить</div>
-                            </RippledButton>
+                                    <RippledButton onClick={() => {
+                                    }}>
+                                        <div>Отправить</div>
+                                    </RippledButton>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full mt-7">
+                            <TabsBox value={value} onChange={handleChange}
+                                     tabs={['Отзывы', 'Цитаты', 'Материалы']}/>
+
+                            <div className="mt-6 mx-auto">
+                                {value == 0 ?
+                                    <Review onClick={() => setOpen(true)}/>
+                                    : null}
+                                {value == 1 ?
+                                    <Quote onClick={() => setOpen(true)}/>
+                                    : null}
+                                {value == 2 ? <>
+                                        <div className="mb-10">
+                                            <NewPost placeholder={"Загрузить материал"}
+                                                     onClick={() => setOpen(true)}/>
+                                        </div>
+
+                                        <Material/>
+                                    </>
+                                    : null}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="w-full mt-7">
-                    <TabsBox value={value} onChange={handleChange}
-                             tabs={['Отзывы', 'Цитаты', 'Материалы']}/>
-
-                    <div className="mt-6 mx-auto">
-                        {value == 0 ?
-                            <Review onClick={() => setOpen(true)}/>
-                            : null}
-                        {value == 1 ?
-                            <Quote onClick={() => setOpen(true)}/>
-                            : null}
-                        {value == 2 ? <>
-                                <div className="mb-10">
-                                    <NewPost placeholder={"Загрузить материал"}
-                                             onClick={() => setOpen(true)}/>
-                                </div>
-
-                                <Material/>
-                            </>
-                            : null}
-                    </div>
-                </div>
-            </div>
+                </>
+            }
         </>);
 
 }

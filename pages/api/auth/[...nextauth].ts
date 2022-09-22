@@ -1,4 +1,4 @@
-import NextAuth, {SessionStrategy} from "next-auth"
+import NextAuth from "next-auth"
 import {nextAuthOptions} from "lib/auth/nextAuthOptions";
 import {NextApiRequest, NextApiResponse} from "next";
 
@@ -7,7 +7,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 //     throw new Error('There is no some environment variables');
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-    
+
     // Check whether the request is auth callback
     // @ts-ignore
     if (req.query.nextauth.includes("callback")) {

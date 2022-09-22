@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Image from "next/future/image";
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
@@ -7,8 +7,7 @@ import {signIn} from "next-auth/react";
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 import CloseButton from "./closeButton";
-import { CircularProgress } from "@mui/material";
-import { useState } from "react";
+import {CircularProgress} from "@mui/material";
 
 export interface DialogProps {
     opened: boolean;
@@ -25,7 +24,8 @@ export default function WarningDialog(props: DialogProps) {
         await signIn('home');
     }
     return (
-        <CustomDialog onClose={!isLoading ? handleClose : () => {}} open={opened}>
+        <CustomDialog onClose={!isLoading ? handleClose : () => {
+        }} open={opened}>
             <div className="grid grid-cols-12 px-2 md:px-0">
                 <div className="col-start-1 col-end-13 h-20 flex justify-center md:hidden">
                     <Image
@@ -59,8 +59,8 @@ export default function WarningDialog(props: DialogProps) {
                             <div
                                 className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full rounded-full border-2 md:w-full
                                 lg:text-3xl md:text-2xl text-xl font-bold text-center ${isLoading ? "border-gray-400" : "border-black"}`}>
-                                <RippledButton onClick={auth}>                                   
-                                {!isLoading ?
+                                <RippledButton onClick={auth}>
+                                    {!isLoading ?
                                         <div>Продолжить</div> :
                                         <div className="flex space-x-4">
                                             <div className="my-auto">Загрузка...</div>

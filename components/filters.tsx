@@ -1,13 +1,7 @@
 import React from "react";
-import { FormControlLabelProps } from "@mui/material/FormControlLabel";
+import {FormControlLabelProps} from "@mui/material/FormControlLabel";
 import SearchFilter from "./searchFilter";
-import {
-    RadioGroup,
-    Radio,
-    useRadioGroup,
-    Checkbox,
-    FormControlLabel,
-} from "@mui/material";
+import {FormControlLabel, Radio, RadioGroup, useRadioGroup,} from "@mui/material";
 import SliderFilter from "./sliderFilter";
 
 function MyFormControlLabel(props: FormControlLabelProps) {

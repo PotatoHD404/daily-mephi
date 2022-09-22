@@ -1,17 +1,21 @@
 import React from "react";
 import SEO from "components/seo";
+import useIsMobile from "../../helpers/react/isMobileContext";
 
 
-function User() {
-
+function Material() {
+    const id = "123";
+    const isMobile = useIsMobile();
     return (
         <>
-            <SEO title={'Материал'}/>
-            <div className="flex-wrap w-full">
-            </div>
+            <SEO title={'Материал'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${id}.png`}/>
+            {isMobile == null ? null :
+                <div className="flex-wrap w-full">
+                </div>
+            }
         </>
     );
 
 }
 
-export default User;
+export default Material;

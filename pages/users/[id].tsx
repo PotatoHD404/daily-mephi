@@ -1,15 +1,15 @@
 import SEO from "components/seo";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import {useRouter} from "next/router";
+import React, {useEffect} from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
-import {Divider, Skeleton, Tooltip} from '@mui/material';
 import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
-import { type } from "os";
+import useIsMobile from "../../helpers/react/isMobileContext";
 
-function Profile(props: {id: string | string[] | undefined}) {
+function Profile(props: { id: string | string[] | undefined }) {
     const {status} = useSession();
+
     async function getUser() {
         return await (await fetch(`/api/v1/users/${props.id}`, {
             method: 'GET',
@@ -26,12 +26,11 @@ function Profile(props: {id: string | string[] | undefined}) {
     const isLoading = isFetching || !isUUID || !data;
     const router = useRouter();
     useEffect(() => {
-        if(isUUID)
+        if (isUUID)
             refetch();
     }, [router.pathname, isUUID, refetch])
     useEffect(() => {
-        if(!isUUID)
-        {
+        if (!isUUID) {
             router.push("/404");
         }
         if (isError && error) {
@@ -42,11 +41,11 @@ function Profile(props: {id: string | string[] | undefined}) {
     }, [isError, error, isUUID, router])
 
     // if(!isFetching)
-        // console.log(data);
+    // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-                <User {...data} isLoading={isLoading}/>
+            <User {...data} isLoading={isLoading}/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers place={data?.place} isLoading={isLoading}/>
@@ -57,13 +56,17 @@ function Profile(props: {id: string | string[] | undefined}) {
 
 function UserProfile() {
     const router = useRouter();
-    const {id} =  router.query;
+    const {id} = router.query;
+    const isMobile = useIsMobile();
     return (
         <>
-            <SEO title={'Пользователь PotatoHD'}/>
-            <div className="flex-wrap w-full space-y-8">
-                <Profile id={id}/>
-            </div>
+            <SEO title={'Пользователь PotatoHD'}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/>
+            {isMobile == null ? null :
+                <div className="flex-wrap w-full space-y-8">
+                    <Profile id={id}/>
+                </div>
+            }
         </>
     );
 

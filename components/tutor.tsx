@@ -12,7 +12,7 @@ import {toChildArray} from "preact";
 import useIsMobile from "../helpers/react/isMobileContext";
 
 export default function Tutor() {
-const isMobile = useIsMobile();
+    const isMobile = useIsMobile();
     return <Link href="/tutors/1">
         <a>
             <Button className="text-black font-[Montserrat] text-center

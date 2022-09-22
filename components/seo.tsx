@@ -3,7 +3,7 @@ import Head from "next/head";
 import MetricContainer from "./yandexMetrika";
 
 
-function SEO({title, thumbnail = "/images/twitter-large.png"}: { title?: string, thumbnail?: string }) {
+function SEO({title, thumbnail = "/images/thumbnails/default.png"}: { title?: string, thumbnail?: string }) {
     let title1: string;
     let title2: string;
     if (title) {
@@ -52,7 +52,7 @@ function SEO({title, thumbnail = "/images/twitter-large.png"}: { title?: string,
             <meta name="twitter:image:src" content={thumbnail}/>
             <meta property="og:image" content={thumbnail}/>
             <meta property="og:image:width" content='1200'/>
-            <meta property="og:image:height" content='630'/>
+            <meta property="og:image:height" content='600'/>
             <meta property="og:site_name" content="daily-mephi.ru"/>
             <MetricContainer/>
         </Head>

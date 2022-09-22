@@ -2,7 +2,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 
 import prisma from "lib/database/prisma";
-import {Comment} from "@prisma/client";
 import {getToken} from "next-auth/jwt";
 import {UUID_REGEX} from "../../../tutors/[id]/materials";
 
@@ -134,18 +133,17 @@ async function getComments(
                                                 WHERE "Comment"."parentId" IS NULL
                                                   AND "Comment"."${type}Id" = ${id}
                                                 UNION ALL
-                                                SELECT
-                                                    c.id,
-                                                    c.text,
-                                                    c."createdAt",
-                                                    c."parentId",
-                                                    c."userId",
-                                                    c."likes",
-                                                    c."dislikes",
-                                                    cte.path || c.id
+                                                SELECT c.id,
+                                                       c.text,
+                                                       c."createdAt",
+                                                       c."parentId",
+                                                       c."userId",
+                                                       c."likes",
+                                                       c."dislikes",
+                                                       cte.path || c.id
                                                 FROM "Comment" c
-                                                    INNER JOIN cte
-                                                ON c."parentId" = cte.id)
+                                                         INNER JOIN cte
+                                                                    ON c."parentId" = cte.id)
                          SELECT cte.id,
                                 cte.text,
                                 cte."createdAt",
@@ -170,7 +168,8 @@ async function getComments(
                  LEFT JOIN results AS results2
                            ON
                                results2."parentId" = results.id
-        GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId", results.likes, results.dislikes,
+        GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId", results.likes,
+                 results.dislikes,
                  results."childrenCount";
     `
 

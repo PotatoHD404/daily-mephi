@@ -4,15 +4,7 @@ import FileUpload from "images/file_upload.svg";
 import TabsBox from "./tabsBox";
 import CloseButton from "./closeButton";
 import TutorImage from "../images/tutor.png";
-import {
-    InputAdornment,
-    Button,
-    IconButton,
-    TextField,
-    FormGroup,
-    Autocomplete,
-    Dialog,
-} from "@mui/material";
+import {Autocomplete, Button, Dialog, FormGroup, IconButton, InputAdornment, TextField,} from "@mui/material";
 import CustomSelect from "./customSelect";
 import {toChildArray} from "preact";
 

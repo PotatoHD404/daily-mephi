@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dialog } from '@mui/material';
+import {Dialog} from '@mui/material';
 import {toChildArray} from "preact";
 
 export default function CustomDialog(props: { onClose?: () => void, open: boolean, children: any }) {

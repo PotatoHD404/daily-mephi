@@ -2,10 +2,11 @@ import React from "react";
 import SEO from "components/seo";
 
 import dynamic from "next/dynamic";
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 import Tutor from "components/tutor";
 import useIsMobile from "../../helpers/react/isMobileContext";
+
+const Filters = dynamic(() => import("components/filters"), {ssr: false});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 
 const marks = [
     {
@@ -31,22 +32,23 @@ function Tutors() {
     };
     return (
         <>
-            <SEO title='Преподаватели'/>
-
-            <div className="flex flex-wrap w-full justify-center">
-                <h1 className="text-2xl mb-2 font-semibold">Преподаватели</h1>
-                {isMobile ? <FilterButtons/> : null}
-                <div className="w-full h-[1px] bg-black bg-opacity-10"/>
-                <div className="flex">
-                    <div className="md:w-[75%] w-[100%]">
-                        <Tutor/>
-                        <Tutor/>
+            <SEO title='Преподаватели' thumbnail={`https://daily-mephi.ru/images/thumbnails/tutors.png`}/>
+            {isMobile == null ? null :
+                <div className="flex flex-wrap w-full justify-center">
+                    <h1 className="text-2xl mb-2 font-semibold">Преподаватели</h1>
+                    {isMobile ? <FilterButtons/> : null}
+                    <div className="w-full h-[1px] bg-black bg-opacity-10"/>
+                    <div className="flex">
+                        <div className="md:w-[75%] w-[100%]">
+                            <Tutor/>
+                            <Tutor/>
+                        </div>
+                        {
+                            !isMobile ? <Filters/> : null
+                        }
                     </div>
-                    {
-                    !isMobile ? <Filters/> : null
-                    }
                 </div>
-            </div>
+            }
         </>);
 
 }
