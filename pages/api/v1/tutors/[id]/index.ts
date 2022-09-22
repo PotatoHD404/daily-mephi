@@ -12,10 +12,11 @@ export async function getTutor(id: string) {
         fatherName: string | null,
         updatedAt: Date,
         nickName: string | null,
-        legacyRating: number,
+        legacyRating: number | null,
         rating: number,
         reviewsCount: number,
         materialsCount: number,
+        quotesCount: number,
         url: string | null,
         images: string[],
     }[] = await prisma.$queryRaw`
@@ -33,9 +34,11 @@ IFNULL(AVG("Rate".personality), 0) AS personality,
 IFNULL(AVG("Rate".punctuality), 0) AS punctuality,
 COUNT("Review".id) as "reviewsCount",
 COUNT("Material".id) as "materialsCount",
+COUNT("Quote".id) as "quotesCount",
 IF(COUNT("File".id) > 0, ARRAY_AGG("File".url), '{}') as images,
 IF(COUNT("Discipline".name) > 0, ARRAY_AGG("Discipline".name), '{}') as disciplines,
-IF(COUNT("Faculty".name) > 0, ARRAY_AGG("Faculty".name), '{}') as faculties
+IF(COUNT("Faculty".name) > 0, ARRAY_AGG("Faculty".name), '{}') as faculties,
+"Tutor"."rating" as rating
 FROM "Tutor"
 LEFT JOIN "LegacyRating"
 ON
@@ -64,13 +67,19 @@ ON
 LEFT JOIN "Discipline"
 ON
 "_DisciplineToTutor"."A" = "Discipline".id
+LEFT JOIN "Quote"
+ON
+"Quote"."tutorId" = "Tutor".id
 WHERE "Tutor".id = ${id}
 GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality", "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
 `
     result = result.map(item => {
-        item.legacyRating = Number(item.legacyRating.toFixed(2))
+        // @ts-ignore
+        item.legacyRating = Number(item.legacyRating.toFixed(2)) || null
+        item.rating = Number(item.rating.toFixed(2))
         item.reviewsCount = Number(item.reviewsCount)
         item.materialsCount = Number(item.materialsCount)
+        item.quotesCount = Number(item.quotesCount)
         return item
     });
     return result[0];
