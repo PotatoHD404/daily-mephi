@@ -5,7 +5,6 @@ import HoverRating from "components/rating";
 
 import QuoteIco from "images/quote.svg";
 import SEO from "components/seo";
-import {useRouter} from "next/router";
 import Like from "components/likeBtn";
 import Dislike from "components/dislikeBtn";
 import Comments from "components/comments";
@@ -18,6 +17,10 @@ import RippledButton from "components/rippledButton";
 import RatingPlace from "components/ratingPlace";
 import dynamic from "next/dynamic";
 import useIsMobile from "helpers/react/isMobileContext";
+import {TutorType} from "lib/database/types";
+import {getTutors} from "../api/v1/tutors/[id]";
+import {getCache, setCache} from "../../helpers/utils";
+import {useSession} from "next-auth/react";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
@@ -99,10 +102,10 @@ function Review(props: { onClick: () => void }) {
 }
 
 
-function Tutor() {
-    const router = useRouter();
-    const {id} = router.query;
-
+function Tutor({tutor}: { tutor: TutorType }) {
+    // const router = useRouter();
+    // const {id} = router.query;
+    const session = useSession();
     const [value, setValue] = React.useState(0);
     const [postValue, setPostValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -126,7 +129,8 @@ function Tutor() {
     return (
         <>
             {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
-            <SEO title={'Трифоненков В.П.'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${id}.png`}/>
+            <SEO title={'Трифоненков В.П.'}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${tutor.id}.png`}/>
             {isMobile == null ? null :
                 <>
                     <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
@@ -150,7 +154,7 @@ function Tutor() {
                                 </div>
                                 <div className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
                          mx-auto md:mb-5 text-center h-fit ">
-                                    Трифоненков Владимир Петрович
+                                    {`${tutor.lastName} ${tutor.firstName} ${tutor.fatherName}`}
                                 </div>
                             </div>
                             <div className="hidden md:block -ml-2 -mt-2 absolute">
@@ -173,25 +177,24 @@ function Tutor() {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap w-fit h-fit md:text-xl">
-                                    <h1 className="font-semibold">Дисциплины:</h1>
-                                    <div className="my-2">
-                                        Теория функций копмплексных переменных, Математический анализ, Линейная алгебра,
-                                        Интегральные
-                                        уравнения, Дифференциальные уравнения
-                                    </div>
-
-                                    <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[11.5rem]">
+                                    {tutor.disciplines.length > 0 ? <>
+                                        <h1 className="font-semibold">Дисциплины:</h1>
+                                        <div className="my-2">
+                                            {tutor.disciplines.join(', ')}
+                                        </div>
+                                    </> : ""}
+                                    <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
                                         <div className="my-auto flex w-full justify-between mb-1">
                                             <div className="font-semibold">Кафедра:</div>
                                             <div>30</div>
                                         </div>
                                         <div className="my-auto flex w-full justify-between">
                                             <div className="font-semibold">Daily Mephi:</div>
-                                            <div>4.5</div>
+                                            <div>{tutor.rating}</div>
                                         </div>
                                         <div className="my-auto flex w-full justify-between">
                                             <div className="font-semibold">mephist.ru:</div>
-                                            <div>2.1</div>
+                                            <div>{tutor.legacyRating}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -238,7 +241,34 @@ function Tutor() {
                 </>
             }
         </>);
-
 }
+
+export async function getStaticPaths() {
+    const tutors = await getTutors();
+    await setCache(tutors, "tutors");
+    return {
+        paths: tutors.map((tutor: TutorType) =>
+            ({params: {id: tutor.id}})
+        ),
+        fallback: false, // can also be true or 'blocking'
+    }
+}
+
+export async function getStaticProps(context: any) {
+    const {id} = context.params;
+    const tutor: TutorType = await getCache(id, "tutors");
+    if (!tutor) {
+        return {
+            notFound: true,
+        }
+    }
+    console.log(tutor);
+    // console.log(tutor)
+    return {
+        // Passed to the page component as props
+        props: {tutor},
+    }
+}
+
 
 export default Tutor;

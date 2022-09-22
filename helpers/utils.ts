@@ -1,6 +1,9 @@
 import {ClientRequest} from "http";
 import https from "https";
 import {Cookie} from "tough-cookie"
+import {promises as fs} from 'fs'
+import path from 'path'
+import * as fs2 from "fs";
 
 interface Cookies {
     [Key: string]: Cookie;
@@ -84,6 +87,22 @@ export function checkStatus(options: https.RequestOptions, data?: any): Promise<
     });
 }
 
+export async function getCache(id: string, name: string): Promise<any | null | undefined> {
+    const data = await fs.readFile(path.join(process.cwd(), `/tmp/${name}.json`));
+    const products: any = JSON.parse(data as unknown as string)
+
+    return products.find((el: { id: string; }) => el.id === id)
+}
+
+export async function setCache(products: any[], name: string) {
+    if (!fs2.existsSync(path.join(process.cwd(),'/tmp/'))){
+        fs2.mkdirSync(path.join(process.cwd(),'/tmp/'));
+    }
+    return await fs.writeFile(
+        path.join(process.cwd(), `/tmp/${name}.json`),
+        JSON.stringify(products)
+    )
+}
 
 export function getHost() {
     // If we detect a Vercel environment, we can trust the host

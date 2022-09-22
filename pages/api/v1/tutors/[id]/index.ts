@@ -2,24 +2,29 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {UUID_REGEX} from "./materials";
+import {TutorType} from "lib/database/types";
 
 
+export function processTutor(item: TutorType) {
+    // @ts-ignore
+    item.legacyRating = Number(item.legacyRating.toFixed(2)) || null
+    item.rating = Number(item.rating.toFixed(2))
+    item.reviewsCount = Number(item.reviewsCount)
+    item.materialsCount = Number(item.materialsCount)
+    item.quotesCount = Number(item.quotesCount)
+    item.reviewsCount = Number(item.reviewsCount)
+    item.quality = Number(item.quality.toFixed(2))
+    item.exams = Number(item.exams.toFixed(2))
+    item.personality = Number(item.personality.toFixed(2))
+    item.punctuality = Number(item.punctuality.toFixed(2))
+    return item
+
+}
 export async function getTutor(id: string) {
-    let result: {
-        id: string,
-        firstName: string | null,
-        lastName: string | null,
-        fatherName: string | null,
-        updatedAt: Date,
-        nickName: string | null,
-        legacyRating: number | null,
-        rating: number,
-        reviewsCount: number,
-        materialsCount: number,
-        quotesCount: number,
-        url: string | null,
-        images: string[],
-    }[] = await prisma.$queryRaw`
+    return (await getTutors(id))[0];
+}
+export async function getTutors(id?: string): Promise<TutorType[]> {
+    let result: TutorType[] = await prisma.$queryRaw`
         SELECT "Tutor".id                                                           as id,
                "firstName",
                "lastName",
@@ -72,20 +77,11 @@ export async function getTutor(id: string) {
                  LEFT JOIN "Quote"
                            ON
                                "Quote"."tutorId" = "Tutor".id
-        WHERE "Tutor".id = ${id}
         GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality",
                  "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
-    `
-    result = result.map(item => {
-        // @ts-ignore
-        item.legacyRating = Number(item.legacyRating.toFixed(2)) || null
-        item.rating = Number(item.rating.toFixed(2))
-        item.reviewsCount = Number(item.reviewsCount)
-        item.materialsCount = Number(item.materialsCount)
-        item.quotesCount = Number(item.quotesCount)
-        return item
-    });
-    return result[0];
+    `;
+    result = result.map(processTutor);
+    return result;
 }
 
 export default async function handler(

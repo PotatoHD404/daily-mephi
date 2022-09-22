@@ -1,10 +1,10 @@
 import React from "react";
 import SEO from "components/seo";
 import useIsMobile from "../../helpers/react/isMobileContext";
+import {NextApiRequest, NextApiResponse} from "next";
 
 
-function Material() {
-    const id = "123";
+function Material({id}: { id: string | string[] | undefined }) {
     const isMobile = useIsMobile();
     return (
         <>
@@ -18,4 +18,20 @@ function Material() {
 
 }
 
+export async function getServerSideProps({req, res}: { req: NextApiRequest, res: NextApiResponse }): Promise<any> {
+    const {id} = req.query;
+    // get material from database
+
+    // res.setHeader(
+    //     'Cache-Control',
+    //     'public, s-maxage=10, stale-while-revalidate=59'
+    // )
+
+    return {
+        props: {id}
+    }
+}
+
+
 export default Material;
+

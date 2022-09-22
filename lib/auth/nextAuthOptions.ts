@@ -22,15 +22,16 @@ export const nextAuthOptions: NextAuthOptions = {
     providers: [
         HomeMEPhiOauth(),
     ],
-    // callbacks: {
-    //     jwt: async ({ user, token }) => {
-    //         // if (user) {
-    //         //     token.id = user.id;
-    //         // }
-    //         console.log("newToken", token);
-    //         return token;
-    //     },
-    // },
+    callbacks: {
+        jwt: async ({ user, token }) => {
+            if (user) {
+                token.id = user.id;
+                token.picture = user.image;
+            }
+            // console.log("newToken", token);
+            return token;
+        },
+    },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',

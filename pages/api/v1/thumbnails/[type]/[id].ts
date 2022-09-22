@@ -6,6 +6,7 @@ import {getTutor} from "../../tutors/[id]";
 import ejs from "ejs";
 import sharp from "sharp";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
+import prisma from "lib/database/prisma";
 // import ejs template from file
 
 
@@ -13,7 +14,9 @@ import {UUID_REGEX} from "../../tutors/[id]/materials";
 //     runtime: 'experimental-edge',
 // }
 
-
+const fontPath = process.env.LOCAL == "true" ?
+    "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
+    "'Montserrat-Medium.ttf'";
 path.resolve(process.cwd(), 'fonts', 'fonts.conf')
 path.resolve(process.cwd(), 'fonts', 'Montserrat-Medium.ttf')
 
@@ -33,15 +36,25 @@ function getNoun(number: number, one: string, two: string, five: string) {
     return five;
 }
 
+function returnNotFound(res: NextApiResponse) {
+    const image = sharp(path.resolve(process.cwd(), 'images', '404.png'));
+    image.cork();
+    image.pipe(res);
+    image.uncork();
+    res.status(404)
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+
     let {id, type} = req.query;
     if (!id || typeof id !== "string" || !id.replace(".png", "").match(UUID_REGEX) || !type || typeof type !== "string") {
         res.status(400).json({status: "bad request"});
         return;
     }
+    res.setHeader('Content-Type', 'image/png');
     id = id.replace(".png", "");
     let rendered: Buffer;
     if (type == "tutors") {
@@ -80,26 +93,51 @@ export default async function handler(
                 "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
                 "'Montserrat-Medium.ttf'",
         }).then((html) => Buffer.from(html));
+    } else if (type == "materials") {
+        // const material = await getMaterial(id);
+        rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.ejs'), {
+            material_name: "",
+            tutor_name: "",
+            mephist_rating: "",
+            daily_rating: "",
+            reviews: "",
+            reviews_count: "",
+            materials: "",
+            materials_count: "",
+            rating: "",
+            rating_value: "Текст",
+            image: "",
+            font_path: fontPath,
+        }).then((html) => Buffer.from(html));
+    } else if (type == "quotes") {
+        const quote = await prisma.quote.findUnique({
+            where: {
+                id: id
+            },
+            select: {
+                body: true,
+                tutor: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        fatherName: true,
+                    }
+                }
+            }
+        });
+        if (!quote) {
+            returnNotFound(res);
+            return;
+        }
+        rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
+            body: quote.body,
+            tutor_name: quote.tutor.lastName + " " + (quote.tutor.firstName ? quote.tutor.firstName[0] + "." : "") +
+                (quote.tutor.fatherName ? quote.tutor.fatherName[0] + "." : ""),
+            font_path: fontPath
+        }).then((html) => Buffer.from(html));
+    } else if (type == "users") {
+
     }
-        // else if(type == "material") {
-        //     const material = await getMaterial(id);
-        //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.ejs'), {
-        //         material_name: "",
-        //         tutor_name: "",
-        //         mephist_rating: "",
-        //         daily_rating: "",
-        //         reviews: "",
-        //         reviews_count: "",
-        //         materials: "",
-        //         materials_count: "",
-        //         rating: "",
-        //         rating_value: "Текст",
-        //         image: "",
-        //         font_path: process.env.LOCAL == "true" ?
-        //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
-        //             "'Montserrat-Medium.ttf'",
-        //     }).then((html) => Buffer.from(html));
-        // }
         // else if(type == "review") {
         //     const review = await getReview(id);
         //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'review.ejs'), {
@@ -118,33 +156,14 @@ export default async function handler(
         //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
         //             "'Montserrat-Medium.ttf'",
         //     }).then((html) => Buffer.from(html));
-        // }
-        // else if (type == "quote") {
-        //     const quote = await getQuote(id);
-        //     rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
-        //         material_name: "",
-        //         tutor_name: "",
-        //         mephist_rating: "",
-        //         daily_rating: "",
-        //         reviews: "",
-        //         reviews_count: "",
-        //         materials: "",
-        //         materials_count: "",
-        //         rating: "",
-        //         rating_value: "Текст",
-        //         image: "",
-        //         font_path: process.env.LOCAL == "true" ?
-        //             "'cloud-functions/main/fonts/Montserrat-Medium.ttf'" :
-        //             "'Montserrat-Medium.ttf'",
-        //     }).then((html) => Buffer.from(html));
     // }
     else {
-        // return 404 thumbnail
-
+        returnNotFound(res);
         return;
     }
+
     const image = sharp(rendered).png();
-    res.setHeader('Content-Type', 'image/png');
+
     image.cork();
     image.pipe(res);
     image.uncork();
