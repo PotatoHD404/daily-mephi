@@ -9,7 +9,7 @@ export default async function handler(
 ) {
     let calculatedPlace: number = 0;
     let calculatedTake: number = 4;
-    if(req.query) {
+    if (req.query) {
         const {place, take} = req.query;
         calculatedPlace = +(place || 0);
         calculatedTake = +(take || 4);

@@ -1,15 +1,9 @@
-
 import React from "react";
 import Image from "next/image";
 import FiltersIco from "images/filters.svg";
 import SortIco from "images/sort.svg";
 import CloseButton from "./closeButton";
-import {
-    Drawer,
-    Menu,
-    MenuItem,
-    Button,
-} from "@mui/material";
+import {Button, Drawer, Menu, MenuItem,} from "@mui/material";
 import SearchFilter from "./searchFilter";
 import SliderFilter from "./sliderFilter"
 
@@ -37,7 +31,6 @@ function CustomDrawer(props: { open: boolean, onClose: () => void }) {
         </div>
     </Drawer>;
 }
-
 
 
 export default function FilterButtons() {

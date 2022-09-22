@@ -1,15 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import ProfileIco from "images/profile3.png";
 import MiniCat from "images/minicat_transparent.svg";
-import GoldenCrown from "images/golden_crown.svg";
-import SilverCrown from "images/silver_crown.svg";
-import BronzeCrown from "images/bronze_crown.svg";
 import SEO from "components/seo";
 import Comments from "components/comments";
 import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import TopUsers from "../components/topUsers";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 export function Post() {
     return <>
@@ -43,23 +40,24 @@ export function Post() {
 
 function About() {
     const [value, setValue] = React.useState(0);
-
+    const isMobile = useIsMobile();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
     return (
         <>
             <SEO title='О нас' thumbnail={`https://daily-mephi.ru/images/thumbnails/about.png`}/>
-
-            <div className="flex w-full justify-between">
-                <div className="md:w-[75%] w-[100%]">
-                    <TabsBox value={value} onChange={handleChange} tabs={["О нас", "Новости", "Правила"]}/>
-                    {value == 0 ? <Post/> : null}
-                    {value == 1 ? <Post/> : null}
-                    {value == 2 ? <Post/> : null}
+            {isMobile == null ? null :
+                <div className="flex w-full justify-between">
+                    <div className="md:w-[75%] w-[100%]">
+                        <TabsBox value={value} onChange={handleChange} tabs={["О нас", "Новости", "Правила"]}/>
+                        {value == 0 ? <Post/> : null}
+                        {value == 1 ? <Post/> : null}
+                        {value == 2 ? <Post/> : null}
+                    </div>
+                    <TopUsers place={0} take={8} withLabel/>
                 </div>
-                <TopUsers place={0} take={8} withLabel/>
-            </div>
+            }
         </>);
 
 }

@@ -4,15 +4,9 @@ import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 
-import {
-    TextField,
-    SelectChangeEvent,
-    FormControl,
-    NativeSelect, CircularProgress,
-} from '@mui/material';
-import {ChangeEvent, useEffect, useState} from "react";
+import {CircularProgress, FormControl, NativeSelect, SelectChangeEvent, TextField,} from '@mui/material';
+import {ChangeEvent, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {signIn, useSession} from "next-auth/react";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -21,7 +15,6 @@ export interface DialogProps {
     opened: boolean;
     handleClose: () => void;
 }
-
 
 
 export default function RegisterDialog(props: DialogProps) {
@@ -36,6 +29,7 @@ export default function RegisterDialog(props: DialogProps) {
     // nickname error
     const [nicknameError, setNicknameError] = useState<boolean>(false);
     const [option, setOption] = useState<string>("Не указано");
+
     async function handleRegister() {
         const res = await fetch('/api/v1/users/edit', {
             method: 'PUT',
@@ -53,7 +47,7 @@ export default function RegisterDialog(props: DialogProps) {
                 method: 'GET',
                 credentials: 'same-origin',
             });
-            if(res1.status == 200) {
+            if (res1.status == 200) {
                 location.reload();
             }
         }
@@ -212,7 +206,7 @@ export default function RegisterDialog(props: DialogProps) {
                     </div>
                 </div>
             </div>
-            
+
         </CustomDialog>
     );
 }

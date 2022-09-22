@@ -1,5 +1,5 @@
 // import * as React from "react";
-import {NativeSelect, InputBase, InputLabel} from '@mui/material';
+import {InputBase, InputLabel, NativeSelect} from '@mui/material';
 import {toChildArray} from "preact";
 
 export default function CustomSelect(props: {

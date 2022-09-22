@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import CoffeeCup from 'images/coffee.svg'
 import Image from "next/image";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { ButtonBase } from '@mui/material';
+import {ButtonBase} from '@mui/material';
 
 function getElementByXpath(path: string) {
     return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -23,7 +23,8 @@ const BuyMeACoffeeWidget = () => {
                 className={"flex align-middle justify-center  bg-[#FF5F5F] text-white rounded-full fixed " +
                     "md:right-[2.5rem] md:bottom-[2.5rem] right-[1.5rem] bottom-[1.5rem] duration-200 transition-all ease-in-out z-30 " +
                     "active:bg-[#FF5F5F] hover:bg-[#FF5F5F] " +
-                    (state.widget ? "w-11 h-11 mr-2 mb-2 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16")} onClick={toggleWidget}
+                    (state.widget ? "w-11 h-11 mr-2 mb-2 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16")}
+                onClick={toggleWidget}
                 style={{boxShadow: '0 4px 8px rgba(0,0,0,.4)'}}>
                 {state.widget ? <KeyboardArrowDownIcon className="m-auto w-[70%] h-[70%] rotate-180"/> :
                     <div className="flex w-[66%] h-[66%] m-auto">

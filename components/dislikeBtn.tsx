@@ -3,7 +3,7 @@ import LikeIco from "images/like.svg";
 import {useState} from "react";
 import addPrefixes from "helpers/react/addPrefixes";
 import PressedLikeIco from "images/pressed_like.svg";
-import { Button } from '@mui/material';
+import {Button} from '@mui/material';
 
 export default function DislikeBtn() {
     const prefixes = ['hover:', 'focus:', 'active:', ""];

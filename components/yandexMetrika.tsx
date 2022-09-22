@@ -24,7 +24,7 @@ export default class MetricContainer extends Component {
                 }}/>
             <noscript>
                 <div><Image src="https://mc.yandex.ru/watch/89495681" style={{position: "absolute", left: "-9999px"}}
-                          alt="" width={1} height={1}/>
+                            alt="" width={1} height={1}/>
                 </div>
             </noscript>
         </>

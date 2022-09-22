@@ -1,17 +1,18 @@
 import SEO from "components/seo";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import {useRouter} from "next/router";
+import React, {useEffect} from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
-import {Divider, Skeleton, Tooltip} from '@mui/material';
 import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
-// import ProfileSettings from "components/profileSettings";
+import useIsMobile from "helpers/react/isMobileContext";
 
+// import ProfileSettings from "components/profileSettings";
 
 
 function Profile() {
     const {status} = useSession();
+
     async function getUser() {
         return await (await fetch('/api/v1/users/me', {
             method: 'GET',
@@ -29,7 +30,7 @@ function Profile() {
     const loading = status === "loading";
     const isLoading = loading || isFetching || !data;
     useEffect(() => {
-        if(authenticated)
+        if (authenticated)
             refetch();
     }, [router.pathname, authenticated, refetch])
     if (isError) {
@@ -38,11 +39,11 @@ function Profile() {
         router.push('/500');
     }
     // if(!isFetching)
-        // console.log(data);
+    // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-                <User {...data} isLoading={isLoading} me/>
+            <User {...data} isLoading={isLoading} me/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers isLoading={isLoading} place={data?.place}/>
@@ -51,18 +52,21 @@ function Profile() {
 }
 
 
-function Me({changeNeedsAuth}: {changeNeedsAuth: (a: boolean) => void}) {
+function Me({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
+    const isMobile = useIsMobile();
     useEffect(() => {
         changeNeedsAuth(true);
         // window.onpopstate = () => changeNeedsAuth(true);
-        }, [changeNeedsAuth]);
+    }, [changeNeedsAuth]);
     return (
         <>
             <SEO title={'Профиль'}/>
-            <div className="flex-wrap w-full space-y-8">
-                <Profile/>
-                {/*<ProfileSettings/>*/}
-            </div>
+            {isMobile == null ? null :
+                <div className="flex-wrap w-full space-y-8">
+                    <Profile/>
+                    {/*<ProfileSettings/>*/}
+                </div>
+            }
         </>
     );
 

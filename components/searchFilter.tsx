@@ -2,13 +2,7 @@ import React from "react";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIco from "images/search.svg";
-import {
-    FormGroup,
-    FormControlLabel,
-    TextField,
-    InputAdornment,
-    Checkbox
-} from "@mui/material";
+import {Checkbox, FormControlLabel, FormGroup, InputAdornment, TextField} from "@mui/material";
 import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
 import {toChildArray} from "preact";

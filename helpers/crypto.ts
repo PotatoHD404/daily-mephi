@@ -80,4 +80,5 @@ export async function hash(pass: string, secret: string | undefined = undefined)
         raw: true
     })).toString('base64');
 }
+
 // Now transmit { ciphertext, nonce, tag }.

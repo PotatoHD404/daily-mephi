@@ -1,9 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {getToken, encode, decode} from "next-auth/jwt";
-import jwt from "next-auth/jwt";
-import {Cookie, SessionStore} from "next-auth/core/lib/cookie";
+import jwt, {encode, getToken} from "next-auth/jwt";
+import {SessionStore} from "next-auth/core/lib/cookie";
 import {setCookie} from "next-auth/next/utils";
 
 export default async function handler(
@@ -82,9 +81,9 @@ export default async function handler(
     // console.log(sessionCookie);
     const cookieString = `${sessionCookie.name}=${sessionCookie.value}; Path=/; Expires=${
         sessionCookie.options.expires.toUTCString()
-}; HttpOnly; ${sessionCookie.options.secure ? "Secure; " : ""}SameSite=Lax;`;
+    }; HttpOnly; ${sessionCookie.options.secure ? "Secure; " : ""}SameSite=Lax;`;
     res.setHeader("Set-Cookie",
-    cookieString);
+        cookieString);
     // console.log(token)
     // console.log(res.getHeader("Set-Cookie"))
     res.status(200).json({status: "ok", cookieString});

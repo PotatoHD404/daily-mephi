@@ -68,8 +68,7 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         });
 
         res.status(200).json({status: 'ok', id: review.id});
-    }
-    catch (e) {
+    } catch (e) {
         res.status(500).json({status: 'error'});
     }
 

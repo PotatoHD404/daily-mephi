@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Tabs, Tab } from '@mui/material';
+import {Box, Tab, Tabs} from '@mui/material';
 
 function a11yProps(index: number) {
     return {

@@ -1,13 +1,14 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
 import dynamic from "next/dynamic";
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 import SearchBar from "../components/searchBar";
 import {useRouter} from "next/router";
 import Material from "../components/material";
 import Tutor from "../components/tutor";
 import useIsMobile from "../helpers/react/isMobileContext";
+
+const Filters = dynamic(() => import("components/filters"), {ssr: false});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 
 
 function Search() {
@@ -23,6 +24,7 @@ function Search() {
     useEffect(() => {
         setInput(router.query.q as string || '');
     }, [router.query.q]);
+
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             const href = `/search?query=${input}`;
@@ -34,29 +36,30 @@ function Search() {
     return (
         <>
             <SEO title='Поиск' thumbnail={`https://daily-mephi.ru/images/thumbnails/search.png`}/>
-
-            <div className="flex flex-wrap w-full justify-center">
-                <h1 className="text-2xl mb-2 font-semibold">Поиск</h1>
-                {isMobile ? <FilterButtons/> : null}
-                <div className="w-full h-[1px] bg-black bg-opacity-10"/>
-                <div className="h-11 w-full md:w-[47%] mt-4 mr-auto">
-                    <SearchBar
-                        input={input}
-                        setInput={setInput}
-                        handleEnterPress={handleEnterPress}
-                    />
-                </div>
-                <div className="flex">
-                    <div className="md:w-[75%] w-[100%]">
-                        <Tutor/>
-                        <Material/>
+            {isMobile == null ? null :
+                <div className="flex flex-wrap w-full justify-center">
+                    <h1 className="text-2xl mb-2 font-semibold">Поиск</h1>
+                    {isMobile ? <FilterButtons/> : null}
+                    <div className="w-full h-[1px] bg-black bg-opacity-10"/>
+                    <div className="h-11 w-full md:w-[47%] mt-4 mr-auto">
+                        <SearchBar
+                            input={input}
+                            setInput={setInput}
+                            handleEnterPress={handleEnterPress}
+                        />
                     </div>
-                    {!isMobile ?
-                    <div className="ml-auto">
-                        <Filters/>
-                    </div> : null}
+                    <div className="flex">
+                        <div className="md:w-[75%] w-[100%]">
+                            <Tutor/>
+                            <Material/>
+                        </div>
+                        {!isMobile ?
+                            <div className="ml-auto">
+                                <Filters/>
+                            </div> : null}
+                    </div>
                 </div>
-            </div>
+            }
         </>);
 }
 

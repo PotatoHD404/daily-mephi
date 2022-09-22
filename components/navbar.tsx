@@ -5,6 +5,18 @@ import NewsIcon from "images/news.svg";
 import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/tutors.svg";
 import UsersIcon from "images/users.svg";
+import {useRouter} from "next/router";
+import Image from "next/future/image";
+import burger from 'images/burger.svg'
+import {useSession} from "next-auth/react";
+import MiniCat from "images/minicat.svg";
+import style from "styles/navbar.module.css";
+import dynamic from "next/dynamic";
+
+
+import {Box, Button, Divider, IconButton} from '@mui/material';
+import {toChildArray} from "preact";
+import useIsMobile from "../helpers/react/isMobileContext";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
@@ -12,18 +24,6 @@ const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
 const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
 const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
-import {useRouter} from "next/router";
-import Image from "next/future/image";
-import burger from 'images/burger.svg'
-import {getSession, signOut, useSession} from "next-auth/react";
-import MiniCat from "images/minicat.svg";
-import style from "styles/navbar.module.css";
-import dynamic from "next/dynamic";
-
-
-import {Box, Divider, Button, IconButton} from '@mui/material';
-import {toChildArray} from "preact";
-import useIsMobile from "../helpers/react/isMobileContext";
 
 
 interface DefaultNavbarParams {
@@ -265,7 +265,7 @@ function ItemsList(props: {
 }
 
 
-function Navbar(props: {needsAuth: boolean}) {
+function Navbar(props: { needsAuth: boolean }) {
     const [state, setState] = React.useState({
         opened: false,
         warning: false
@@ -286,16 +286,13 @@ function Navbar(props: {needsAuth: boolean}) {
         console.log(props.needsAuth, authenticated)
         if (props.needsAuth && !authenticated && !loading) {
             callback();
-        }
-        else
-        {
+        } else {
             setState(s => ({...s, warning: false}));
         }
     }, [props.needsAuth, router.pathname, authenticated, loading, callback]);
 
     const handleCloseWarning = async () => {
-        if(props.needsAuth)
-        {
+        if (props.needsAuth) {
             await router.push("/");
         }
         setState({...state, warning: false});

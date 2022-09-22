@@ -1,8 +1,8 @@
 import 'styles/globals.css'
-import {SessionProvider, useSession} from "next-auth/react"
+import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import React, {ReactNode, useState, useCallback} from "react";
+import React, {ReactNode, useState} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
@@ -15,7 +15,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../helpers/react/useMediaQuery";
 import {IsMobileProvider} from "../helpers/react/isMobileContext";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 
 
 const queryClient = new QueryClient()
@@ -110,24 +110,22 @@ function MyApp(
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
 
     return (
-        <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""} 
-        scriptProps={{
-            async: false,
-            defer: false,
-            appendTo: "head",
-            nonce: undefined,
-          }}
-          language="ru">
-        { (isMobile === null) ? null :
+        <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""}
+                                 scriptProps={{
+                                     async: false,
+                                     defer: false,
+                                     appendTo: "head",
+                                     nonce: undefined,
+                                 }}
+                                 language="ru">
             <IsMobileProvider value={isMobile}>
                 <QueryClientProvider client={queryClient}>
                     <SessionProvider session={session}>
                         <ThemeProvider theme={theme}>
-                            <BackgroundComp {...{home, isMobile}}/>
-
+                            {isMobile == null ? null : <BackgroundComp {...{home, isMobile}}/>}
                             <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
                                 + (home ? "" : "max-w-[85rem] mx-auto")}>
-                                <Navbar needsAuth={needsAuth}/>
+                                {isMobile == null ? null : <Navbar needsAuth={needsAuth}/>}
                                 {home1 ?
                                     <div className={"md:px-8 mx-auto"}>
                                         <Component {...pageProps}/>
@@ -138,13 +136,12 @@ function MyApp(
                                             bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
                                         <Component {...pageProps} />
                                     </div>}
-                                <Footer/>
+                                {isMobile == null ? null : <Footer/>}
                             </div>
                         </ThemeProvider>
                     </SessionProvider>
                 </QueryClientProvider>
             </IsMobileProvider>
-        }
         </GoogleReCaptchaProvider>
     )
 

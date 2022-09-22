@@ -1,17 +1,14 @@
 // import styled from "@mui/material/styles/styled";
 import SearchIcon from "@mui/icons-material/Search";
-import { Input } from '@mui/material';
-
+import {Input} from '@mui/material';
 
 
 // On enter press in search input
 
 // const StyledInput = styled(Input)(() => ());
 
-export default function SearchBar(props: {handleEnterPress: any, input: string, setInput: any}) {
+export default function SearchBar(props: { handleEnterPress: any, input: string, setInput: any }) {
     // input state
-
-
 
 
     return <div className="bg-transparent flex border-2
