@@ -101,6 +101,7 @@ function Review(props: { onClick: () => void }) {
 function Tutor() {
     const router = useRouter();
     const {id} = router.query;
+
     const [value, setValue] = React.useState(0);
     const [postValue, setPostValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -123,7 +124,7 @@ function Tutor() {
     return (
         <>
             {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
-            <SEO title={'Трифоненков В.П.'} card={'https://daily-mephi.vercel.app/api/cover'}/>
+            <SEO title={'Трифоненков В.П.'} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${id}`}/>
             <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
                         setValue={setPostValue}/>
             <div className="flex-wrap w-full">
