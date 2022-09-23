@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import TutorImage from 'images/tutor.png'
+import React, {useEffect, useState} from "react";
+import DeadCat from "images/dead_cat.svg";
 import Image from "next/image";
 import HoverRating from "components/rating";
 
@@ -17,10 +17,12 @@ import RippledButton from "components/rippledButton";
 import RatingPlace from "components/ratingPlace";
 import dynamic from "next/dynamic";
 import useIsMobile from "helpers/react/isMobileContext";
-import {TutorType} from "lib/database/types";
-import {getTutors} from "../api/v1/tutors/[id]";
 import {getCache, setCache} from "../../helpers/utils";
 import {useSession} from "next-auth/react";
+import prisma from "../../lib/database/prisma";
+import {Skeleton} from "@mui/material";
+import {useQuery} from "@tanstack/react-query";
+import {useRouter} from "next/router";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
@@ -102,7 +104,7 @@ function Review(props: { onClick: () => void }) {
 }
 
 
-function Tutor({tutor}: { tutor: TutorType }) {
+function Tutor({tutor}: { tutor: any }) {
     // const router = useRouter();
     // const {id} = router.query;
     const session = useSession();
@@ -114,6 +116,31 @@ function Tutor({tutor}: { tutor: TutorType }) {
     };
     const [open, setOpen] = useState(false)
     const isMobile = useIsMobile();
+
+    async function getTutor() {
+        return await (await fetch(`/api/v1/tutors/${tutor.id}`, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }))?.json();
+    }
+
+    const {data, isFetching, refetch, isError, error} = useQuery([`tutor-${tutor.id}`], getTutor, {
+        cacheTime: 0,
+        refetchOnWindowFocus: false,
+        enabled: false // disable this query from automatically running
+    });
+    const isLoading = isFetching || !data || true;
+    const router = useRouter();
+    useEffect(() => {
+        refetch();
+    }, [router.pathname, refetch])
+    useEffect(() => {
+        if (isError && error) {
+            // console.log(`Ошибка ${error}`)
+            console.log(error)
+            // router.push('/500');
+        }
+    }, [isError, error, router])
     // constructor(props: any) {
     //     super(props);
     //     this.state = {id: ''};
@@ -146,9 +173,11 @@ function Tutor({tutor}: { tutor: TutorType }) {
                             <div className="flex items-center w-full mb-2">
                                 <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
                                     <Image
-                                        src={TutorImage}
+                                        src={tutor.images[0] ?? DeadCat}
                                         alt="Tutor image"
                                         className="rounded-full z-0"
+                                        width={458}
+                                        height={458}
                                     />
 
                                 </div>
@@ -165,9 +194,11 @@ function Tutor({tutor}: { tutor: TutorType }) {
                                     <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
                                         <div className="flex mb-3 w-32 md:w-60">
                                             <Image
-                                                src={TutorImage}
+                                                src={tutor.images[0] ?? DeadCat}
                                                 alt="Tutor image"
                                                 className="rounded-full z-0"
+                                                width={458}
+                                                height={458}
                                             />
                                         </div>
                                         <div className="flex space-x-2 items-center justify-center md:hidden">
@@ -183,19 +214,28 @@ function Tutor({tutor}: { tutor: TutorType }) {
                                             {tutor.disciplines.join(', ')}
                                         </div>
                                     </> : ""}
+                                    {tutor.faculties.length > 0 ? <>
+                                        <h1 className="font-semibold">Факультеты:</h1>
+                                        <div className="my-2">
+                                            {tutor.faculties.join(', ')}
+                                        </div>
+                                    </> : ""}
                                     <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
-                                        <div className="my-auto flex w-full justify-between mb-1">
-                                            <div className="font-semibold">Кафедра:</div>
-                                            <div>30</div>
-                                        </div>
-                                        <div className="my-auto flex w-full justify-between">
-                                            <div className="font-semibold">Daily Mephi:</div>
-                                            <div>{tutor.rating}</div>
-                                        </div>
-                                        <div className="my-auto flex w-full justify-between">
-                                            <div className="font-semibold">mephist.ru:</div>
-                                            <div>{tutor.legacyRating}</div>
-                                        </div>
+                                        {isLoading ?
+                                            <>
+                                                <Skeleton className="w-[14rem] h-7" variant="rounded"/>
+                                                <Skeleton className="w-[14rem] h-7" variant="rounded"/>
+                                            </> :
+                                            <>
+                                                <div className="my-auto flex w-full justify-between">
+                                                    <div className="font-semibold">Daily Mephi:</div>
+                                                    <div>{tutor.rating}</div>
+                                                </div>
+                                                <div className="my-auto flex w-full justify-between">
+                                                    <div className="font-semibold">mephist.ru:</div>
+                                                    <div>{tutor.legacyRating}</div>
+                                                </div>
+                                            </>}
                                     </div>
                                 </div>
                             </div>
@@ -244,10 +284,32 @@ function Tutor({tutor}: { tutor: TutorType }) {
 }
 
 export async function getStaticPaths() {
-    const tutors = await getTutors();
+    const tutors = await prisma.tutor.findMany({
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            fatherName: true,
+            disciplines: {
+                select: {
+                    name: true
+                }
+            },
+            faculties: {
+                select: {
+                    name: true
+                }
+            },
+            images: {
+                select: {
+                    url: true
+                }
+            }
+        }
+    });
     await setCache(tutors, "tutors");
     return {
-        paths: tutors.map((tutor: TutorType) =>
+        paths: tutors.map((tutor) =>
             ({params: {id: tutor.id}})
         ),
         fallback: false, // can also be true or 'blocking'
@@ -256,13 +318,18 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: any) {
     const {id} = context.params;
-    const tutor: TutorType = await getCache(id, "tutors");
+    const tutor: any = await getCache(id, "tutors");
     if (!tutor) {
         return {
-            notFound: true,
+            redirect: {
+                destination: '/404',
+                permanent: true,
+            },
         }
     }
-    console.log(tutor);
+    tutor.images = tutor.images.map((image: any) => image.url);
+    tutor.disciplines = tutor.disciplines.map((image: any) => image.name);
+    tutor.faculties = tutor.faculties.map((image: any) => image.name);
     // console.log(tutor)
     return {
         // Passed to the page component as props

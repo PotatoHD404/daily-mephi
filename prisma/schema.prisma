@@ -64,7 +64,7 @@ enum Course {
 model User {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String?   @unique @db.String(100)
-  image         String?   @unique
+  imageId       String?   @unique @db.Uuid
   rating        Int       @default(0)
   role          String    @default("default")
   email         String?   @unique
@@ -73,6 +73,7 @@ model User {
   score         Float     @default(0) @db.Float8
   userCourse    Course?
 
+  image               File?          @relation("userImage", fields: [imageId], references: [id])
   accounts            Account[]
   sessions            Session[]
   comments            Comment[]
@@ -152,9 +153,10 @@ model File {
   tutorId    String?  @db.Uuid
   materialId String?  @db.Uuid
 
-  tutor    Tutor?    @relation(fields: [tutorId], references: [id])
-  user     User?     @relation(fields: [userId], references: [id])
-  material Material? @relation(fields: [materialId], references: [id])
+  user       User?     @relation("userImage")
+  tutor      Tutor?    @relation(fields: [tutorId], references: [id])
+  uploadedBy User?     @relation(fields: [userId], references: [id])
+  material   Material? @relation(fields: [materialId], references: [id])
 
   @@index([userId])
   @@index([tutorId])

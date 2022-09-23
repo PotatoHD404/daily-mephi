@@ -11,23 +11,27 @@ export default async function handler(
     let calculatedTake: number = 4;
     if (req.query) {
         const {place, take} = req.query;
-        calculatedPlace = +(place || 0);
-        calculatedTake = +(take || 4);
+        calculatedPlace = +(place ?? 0);
+        calculatedTake = +(take ?? 4);
     }
-    const userCount = await (await prisma.user.aggregate({_count: true}))._count;
+    const userCount = (await prisma.user.aggregate({_count: true}))._count;
     let skip: number;
-    if (calculatedPlace == 0) {
+    if (calculatedPlace == 1) {
         skip = 0;
     } else if (calculatedPlace <= userCount - 1 && calculatedPlace >= userCount - 2) {
         skip = userCount - calculatedTake;
     } else {
         skip = calculatedPlace - (calculatedTake - 2);
     }
-    const users = await prisma.user.findMany({
+    let users = await prisma.user.findMany({
             select: {
                 name: true,
                 id: true,
-                image: true,
+                image: {
+                    select: {
+                        url: true
+                    }
+                },
                 rating: true,
             },
             orderBy: {
@@ -37,6 +41,9 @@ export default async function handler(
             skip
         }
     )
-
+    // @ts-ignore
+    users = users.map((user) => {
+       return {...user, image: user.image?.url}
+    });
     res.status(200).json(users);
 }

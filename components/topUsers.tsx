@@ -1,4 +1,4 @@
-import ProfileIco from "../images/profile3.png";
+import DeadCat from "images/dead_cat.svg";
 import React, {useEffect} from "react";
 import Image from "next/image";
 import GoldenCrown from "../images/golden_crown.svg";
@@ -70,6 +70,8 @@ function TopUserContent(props: TopUserParams) {
                             src={props.src}
                             alt="Profile pic"
                             className="rounded-full"
+                            height={500}
+                            width={500}
                         />
                         <Crown place={props.place}/>
                     </div>
@@ -144,7 +146,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
             className="text-[1.25rem] ml-auto w-[99.5%] whiteBox flex-wrap space-y-5
                     text-[#5B5959]">
 
-            <table className="table-auto w-full">
+            <table className={`table-auto ${isLoading ? "w-[252px]" : "w-full"}`}>
                 <thead>
                 <tr>
                     <th className="font-medium">{
@@ -165,13 +167,13 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                     isLoading ?
                         <>
                             {toChildArray(Array(props.take || 4).map((_: any, index: number) =>
-                                <TopUser key={index} src={ProfileIco} place={0} rating={0} nickname=""
+                                <TopUser key={index} src={DeadCat} place={0} rating={0} nickname=""
                                          isLoading={isLoading}/>))}
                         </> :
                         // <></>
                         data?.map((user: any, index: number) => {
-                            return <TopUser src={user.image || ProfileIco} key={index} nickname={user.name}
-                                            place={index + place + 1} isLoading={isLoading} id={user.id}
+                            return <TopUser src={user.image || DeadCat} key={index} nickname={user.name}
+                                            place={index + place} isLoading={isLoading} id={user.id}
                                             rating={user.rating}/>
                         })
                     // <TopUser src={ProfileIco} place={1} rating={3100} nickname={"Burunduk"} id={"uuid"}
