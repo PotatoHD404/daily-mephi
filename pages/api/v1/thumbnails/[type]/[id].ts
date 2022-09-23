@@ -217,7 +217,64 @@ export default async function handler(
             font_path: fontPath,
         }).then((html) => Buffer.from(html));
     } else if (type == "reviews") {
-        rendered = new Buffer(0);
+        const review = await prisma.review.findUnique({
+            where: {
+                id: id
+            },
+            select: {
+                tutor: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        fatherName: true,
+                        images: {
+                            select: {
+                                url: true
+                            }
+                        }
+                    }
+                },
+                header: true,
+                body: true,
+                user: {
+                    select: {
+                        name: true,
+                        image: true
+                    }
+                }
+            }
+        });
+        if (!review) {
+            returnNotFound(res);
+            return;
+        }
+
+        let avatarString: string = "";
+        if (review.user?.image) {
+            avatarString = await fetch(review.user.image)
+                .then((res) => res.arrayBuffer())
+                .then((buffer) => Buffer.from(buffer))
+                .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
+        }
+        let tutorAvatarString: string = "";
+        if (review.tutor.images.length > 0) {
+            // const avatarUrl = "https://logos-world.net/wp-content/uploads/2021/08/Among-Us-Logo.png";
+            // fetch image from url and convert it to buffer
+            tutorAvatarString = await fetch(review.tutor.images[0].url)
+                .then((res) => res.arrayBuffer())
+                .then((buffer) => Buffer.from(buffer))
+                .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
+        }
+        rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'review.ejs'), {
+            nickname: review.user?.name ?? "",
+            header: review.header,
+            body: review.body,
+            tutor_name: review.tutor.lastName + " " + (review.tutor.firstName ? review.tutor.firstName[0] + "." : "") +
+                (review.tutor.fatherName ? review.tutor.fatherName[0] + "." : ""),
+            tutor_image: tutorAvatarString,
+            image: avatarString,
+            font_path: fontPath,
+        }).then((html) => Buffer.from(html));
     } else {
         returnNotFound(res);
         return;
