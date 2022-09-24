@@ -8,6 +8,7 @@ import sharp from "sharp";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 import prisma from "lib/database/prisma";
 import {getTutorName} from "../../../../../helpers/utils";
+import {getWrappedText, italic, regular} from "../../../../../helpers/textSize";
 // import ejs template from file
 
 
@@ -168,13 +169,19 @@ export default async function handler(
                 }
             }
         });
+
         if (!quote) {
             returnNotFound(res);
             return;
         }
+        const wrappedBody = getWrappedText(italic, quote.body, 915, 8, 1.0);
+        const tutorName = getTutorName(quote.tutor);
+        const wrappedTutor = getWrappedText(regular, tutorName, 1200, 1, 1.33);
+        // console.log(wrappedBody, quote.body);
+        // console.log(wrappedTutor, tutorName);
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
-            body: quote.body,
-            tutor_name: getTutorName(quote.tutor),
+            body: wrappedBody,
+            tutor_name: wrappedTutor[0],
             font_path: fontPath
         }).then((html) => Buffer.from(html));
     } else if (type == "users") {
@@ -297,52 +304,4 @@ export default async function handler(
     image.cork();
     image.pipe(res);
     image.uncork();
-
-
-    const alphabet: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэюя0123456789;:,.!?-+*/()[]{}<>|\\\"\'&%$#@^~_`";
-
-    const htmlSymbolsMapping = {
-        "\"": "&quot;",
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        " ": "&nbsp;"
-    }
-
-
-
-    //   // map alphabet to object
-    //   const alphabetMap: { [key: string]: number } = {};
-    //   for (let i = 0; i < alphabet.length; i++) {
-    //
-    //       const watermark = new Buffer(`<svg>
-    //   <style type="text/css">
-    //       /* set up font */
-    //       @font-face {
-    //           font-family: Montserrat;
-    //           src: url(${fontPath});
-    //       }
-    //       /* apply font to all text elements */
-    //   </style>
-    //   <text y="50" fill="#000" font-family="Montserrat" font-size="30" font-style="italic" font-weight="500" text-anchor="start">${alphabet[i]}</text>
-    // </svg>`)
-    //       const text = sharp(watermark).png();
-    //       let result: { data: any, info: any } | null = null;
-    //       console.log(alphabet[i]);
-    //       while (!result) {
-    //           try {
-    //               result = await text.toBuffer({resolveWithObject: true});
-    //           } catch (e) {
-    //               console.log(e)
-    //           }
-    //       }
-    //       alphabetMap[alphabet[i]] = result.info.width;
-    //   }
-    //   // res header json
-    //   res.setHeader('Content-Type', 'application/json');
-    //
-    //   res.status(200).json(alphabetMap);
-
-    // console.log(result.info.width)
-    // res.end(result.data);
 }
