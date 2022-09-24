@@ -3,7 +3,7 @@ import Image from "next/image";
 import ProfilePicture2 from 'images/profile2.png';
 
 
-export default function UserHeaderComponent(props: { name: string, date: string }) {
+export default function UserHeaderComponent(props: { name: string, date: string, isLoading?: boolean }) {
     return <div className="flex w-full mb-3 content-center items-center">
         <div className="h-14 my-auto w-14">
             <Image

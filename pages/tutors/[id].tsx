@@ -26,7 +26,12 @@ import {useRouter} from "next/router";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
-function RatingComponent(props: { text: string, rate: string }) {
+function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
+    if(props.isLoading) {
+        return (
+            <Skeleton className="w-[25rem] h-7" variant="rounded"/>
+        );
+    }
     return (
         <div className="flex justify-between w-auto text-[0.9rem] md:text-lg">
             <div className="flex">
@@ -141,6 +146,8 @@ function Tutor({tutor}: { tutor: any }) {
             // router.push('/500');
         }
     }, [isError, error, router])
+    const authenticating = session.status === 'loading';
+    const authenticated = session.status === 'authenticated';
     // constructor(props: any) {
     //     super(props);
     //     this.state = {id: ''};
@@ -213,13 +220,13 @@ function Tutor({tutor}: { tutor: any }) {
                                         <h2 className="my-2">
                                             {tutor.disciplines.join(', ')}
                                         </h2>
-                                    </div> : ""}
+                                    </div> : null}
                                     {tutor.faculties.length > 0 ? <div className="w-full">
                                         <h2 className="font-semibold">Факультеты:</h2>
                                         <h2 className="my-2">
                                             {tutor.faculties.join(', ')}
                                         </h2>
-                                    </div> : ""}
+                                    </div> : null}
                                     <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
                                         {isLoading ?
                                             <>
@@ -238,17 +245,22 @@ function Tutor({tutor}: { tutor: any }) {
                                             </>}
                                     </div>
                                     {
+                                        (tutor.disciplines.length + tutor.faculties.length) == 0 ?
                                         <h2 className="font-semibold text-xl opacity-50 w-full mt-4 -mb-4">Информация о
-                                            преподавателе отсутствует</h2>
+                                            преподавателе отсутствует</h2> : null
                                     }
                                 </div>
                             </div>
                             <div className="w-full h-[1px] bg-black my-3"/>
+                            { 
+                            authenticating || authenticated ?
                             <div className="w-full space-y-1 font-semibold md:max-w-[37.7rem]">
-                                <RatingComponent text="Характер" rate="(4.6)"/>
-                                <RatingComponent text="Преподавание" rate="(4.6)"/>
-                                <RatingComponent text="Пунктуальность" rate="(4.6)"/>
-                                <RatingComponent text="Прием экзаменов" rate="(4.6)"/>
+                                <RatingComponent text="Характер" rate="(4.6)" isLoading={authenticating}/>
+                                <RatingComponent text="Преподавание" rate="(4.6)" isLoading={authenticating}/>
+                                <RatingComponent text="Пунктуальность" rate="(4.6)" isLoading={authenticating}/>
+                                <RatingComponent text="Прием экзаменов" rate="(4.6)" isLoading={authenticating}/>
+                                {authenticating ? 
+                                <Skeleton className="w-[25rem] h-7" variant="rounded"/> :
                                 <div
                                     className="rounded-full w-auto border-2 border-black
                              font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
@@ -257,7 +269,11 @@ function Tutor({tutor}: { tutor: any }) {
                                         <div>Отправить</div>
                                     </RippledButton>
                                 </div>
-                            </div>
+                            }
+                            </div> :
+                            null
+                            }
+
                         </div>
                         <div className="w-full mt-7">
                             <TabsBox value={value} onChange={handleChange}
