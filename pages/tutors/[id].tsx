@@ -21,13 +21,16 @@ import {getCache, setCache} from "../../helpers/utils";
 import {useSession} from "next-auth/react";
 import prisma from "../../lib/database/prisma";
 import {Skeleton} from "@mui/material";
-import {useQuery} from "@tanstack/react-query";
+import {useInfiniteQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
+import sendQuery from "../../helpers/react/sendQuery";
+import {ReviewType} from "../../lib/database/types";
+import {toChildArray} from "preact";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
-    if(props.isLoading) {
+    if (props.isLoading) {
         return (
             <Skeleton className="w-[25rem] h-7" variant="rounded"/>
         );
@@ -44,84 +47,135 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
         ;
 }
 
-function Quote(props: { onClick: () => void }) {
-    return <div className="flex-wrap space-y-10 w-full">
-        <div className="space-y-10">
-            <NewPost placeholder={"Загрузить цитату"} onClick={props.onClick}/>
-            <div className="text-xl w-full whiteBox">
-                <UserHeader name={"User1"}
-                            date={"15 февраля 2022"}/>
-                <div className="relative flex">
-                    <div className="h-4 w-4">
-                        <Image
-                            src={QuoteIco}
-                            alt="Quote symbol"
-                        />
-                    </div>
-                    <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
-                        consectetur
-                        adipisicing
-                        elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                        repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                        nesciunt
-                        pariatur, sed sunt tempora, ullam?
-                    </div>
-                    <div className="h-4 w-4 mt-auto">
-                        <Image
-                            src={QuoteIco}
-                            alt="Quote symbol"
-                            className="rotate-180"
-                        />
-                    </div>
-                </div>
-                <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
-                <div className="flex space-x-4 font-semibold">
-                    <Like/>
-                    <Dislike/>
-                </div>
+function Quote() {
+    return (<div className="text-xl w-full whiteBox">
+        <UserHeader legacyNickname={"User1"}
+                    date={new Date()} isLoading={true}/>
+        <div className="relative flex">
+            <div className="h-4 w-4">
+                <Image
+                    src={QuoteIco}
+                    alt="Quote symbol"
+                />
+            </div>
+            <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
+                consectetur
+                adipisicing
+                elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
+                nesciunt
+                pariatur, sed sunt tempora, ullam?
+            </div>
+            <div className="h-4 w-4 mt-auto">
+                <Image
+                    src={QuoteIco}
+                    alt="Quote symbol"
+                    className="rotate-180"
+                />
             </div>
         </div>
-    </div>;
+        <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
+        <div className="flex space-x-4 font-semibold">
+            <Like/>
+            <Dislike/>
+        </div>
+    </div>);
 }
 
 
-function Review(props: { onClick: () => void }) {
-    return <div className="flex-wrap space-y-10 w-full">
-        <NewPost placeholder={"Оставить отзыв"} onClick={props.onClick}/>
-
-
-        <div className="text-[1.7rem] w-full whiteBox">
-            <UserHeader name={"User1"}
-                        date={"15 февраля 2022"}/>
-            <h1 className="font-bold text-[1.1rem] leading-6">Заголовок</h1>
-            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit.
-                Adipisci
-                aut autem
-                dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
-                officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
-            </div>
-            <Reactions/>
+function Review({review, isLoading}: { review?: ReviewType, isLoading?: boolean }) {
+    return (<div className="text-[1.7rem] w-full whiteBox">
+        <UserHeader user={review?.user}
+                    legacyNickname={review?.legacyNickname}
+                    date={review?.createdAt}
+                    isLoading={isLoading}/>
+        {isLoading ?
+            <>
+                <Skeleton className="w-full h-6 mt-2" variant="rounded"/>
+                <Skeleton className="w-full h-6 mt-2" variant="rounded"/>
+                <Skeleton className="w-full h-6 mt-2 mb-2" variant="rounded"/>
+            </> :
+            <>
+                <h1 className="font-bold text-[1.1rem] leading-6">{review?.header}</h1>
+                <div className="mb-2 text-[1.0rem] leading-5">{review?.body}</div>
+            </>
+        }
+        <Reactions isLoading={isLoading}/>
+        {!isLoading ? <>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>
-        </div>
-    </div>;
+        </> : null}
+    </div>);
 }
 
+function Reviews(props: { tutorId: string }) {
+    const [pages, setPages] = useState<any[]>([]);
+    const router = useRouter();
+    const {review: reviewId} = router.query;
 
-function Tutor({tutor}: { tutor: any }) {
-    // const router = useRouter();
-    // const {id} = router.query;
-    const session = useSession();
-    const [value, setValue] = React.useState(0);
-    const [postValue, setPostValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-        setPostValue(newValue);
-    };
-    const [open, setOpen] = useState(false)
-    const isMobile = useIsMobile();
+    async function fetchReviews(cursor: any) {
+        const result = await (await fetch(`/api/v1/tutors/${props.tutorId}/reviews?cursor=${cursor}`, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }))?.json();
+        return result.map((review: any) => {review.createdAt = new Date(review.createdAt); return review;});
+    }
 
+    const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
+        [`tutor-${props.tutorId}-reviews`],
+        ({pageParam = 0}) => fetchReviews(pageParam),
+        {
+            getNextPageParam: (lastPage, allPages) => {
+                return allPages.length;
+            }
+        }
+    )
+    useEffect(() => {
+        let fetching = false;
+        const handleScroll = async (e: any) => {
+            const {scrollHeight, scrollTop, clientHeight} = e.target.scrollingElement;
+            if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.2) {
+                fetching = true
+                if (hasNextPage) await fetchNextPage()
+                fetching = false
+            }
+        }
+        document.addEventListener('scroll', handleScroll)
+        return () => {
+            document.removeEventListener('scroll', handleScroll)
+        }
+    }, [fetchNextPage, hasNextPage]);
+
+    const isLoading = isFetchingNextPage || !data;
+    useEffect(() => {
+        if (data && !isFetchingNextPage && data.pages.length > 0) {
+            pages.push(...data.pages[data.pages.length - 1]);
+            setPages([...pages]);
+            console.log(pages);
+        }
+    }, [data, isFetchingNextPage]);
+
+    return (
+        <>
+            {pages.length > 0 ?
+                toChildArray(pages.map((review, index) => (review != reviewId ?
+                    <Review key={index} review={review}/>
+                    : null)))
+                : <div>Цитат пока нет</div>}
+            {isLoading ?
+                <>
+                    <Review isLoading={true}/>
+                    <Review isLoading={true}/>
+                    <Review isLoading={true}/>
+                </>
+                : null
+            }
+
+        </>
+    );
+}
+
+function TutorProfile({tutor}: { tutor: any }) {
     async function getTutor() {
         return await (await fetch(`/api/v1/tutors/${tutor.id}`, {
             method: 'GET',
@@ -129,40 +183,134 @@ function Tutor({tutor}: { tutor: any }) {
         }))?.json();
     }
 
-    const {data, isFetching, refetch, isError, error} = useQuery([`tutor-${tutor.id}`], getTutor, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
+    const {data, isFetching} = sendQuery(`tutor-${tutor.id}`, getTutor);
     const isLoading = isFetching || !data;
-    const router = useRouter();
-    useEffect(() => {
-        refetch();
-    }, [router.pathname, refetch])
-    useEffect(() => {
-        if (isError && error) {
-            // console.log(`Ошибка ${error}`)
-            console.log(error)
-            // router.push('/500');
-        }
-    }, [isError, error, router])
+    const session = useSession();
     const authenticating = session.status === 'loading';
     const authenticated = session.status === 'authenticated';
-    // constructor(props: any) {
-    //     super(props);
-    //     this.state = {id: ''};
-    // }
-    //
-    // static getDerivedStateFromProps(props: any, state: any) {
-    //     return {...state, id: props.router.query.id};
-    // }
 
-    // bg-white bg-opacity-[36%]
-    // bg-white bg-opacity-[80%]
-    // ID: {this.state.id}
+    return <div className="flex flex-wrap whiteBox overflow-x-hidden">
+        <div className="flex items-center w-full mb-2">
+            <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
+                <Image
+                    src={tutor.images[0] ?? DeadCat}
+                    alt="Tutor image"
+                    className="rounded-full z-0"
+                    width={458}
+                    height={458}
+                />
+
+            </div>
+            <h1 className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
+                         mx-auto md:mb-5 text-center h-fit ">
+                {`${tutor.lastName} ${tutor.firstName} ${tutor.fatherName}`}
+            </h1>
+        </div>
+        <div className="hidden md:block -ml-2 -mt-2 absolute">
+            <RatingPlace place={47}/>
+        </div>
+        <div className="flex flex-nowrap items-center">
+            <div className="flex items-center w-fit hidden mr-4 md:block">
+                <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
+                    <div className="flex mb-3 w-32 md:w-60">
+                        <Image
+                            src={tutor.images[0] ?? DeadCat}
+                            alt="Tutor image"
+                            className="rounded-full z-0"
+                            width={458}
+                            height={458}
+                        />
+                    </div>
+                    <div className="flex space-x-2 items-center justify-center md:hidden">
+                        <RatingPlace place={47}/>
+                        <div className="font-semibold">место</div>
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-wrap w-fit h-fit md:text-xl">
+                {tutor.disciplines.length > 0 ? <div className="w-full">
+                    <h2 className="font-semibold">Дисциплины:</h2>
+                    <h2 className="my-2">
+                        {tutor.disciplines.join(", ")}
+                    </h2>
+                </div> : null}
+                {tutor.faculties.length > 0 ? <div className="w-full">
+                    <h2 className="font-semibold">Факультеты:</h2>
+                    <h2 className="my-2">
+                        {tutor.faculties.join(", ")}
+                    </h2>
+                </div> : null}
+                <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
+                    {isLoading ?
+                        <>
+                            <Skeleton className="w-[14rem] h-7" variant="rounded"/>
+                            <Skeleton className="w-[14rem] h-7" variant="rounded"/>
+                        </> :
+                        <>
+                            <div className="my-auto flex w-full justify-between">
+                                <div className="font-semibold">Daily Mephi:</div>
+                                <div>{data.rating}</div>
+                            </div>
+                            <div className="my-auto flex w-full justify-between">
+                                <div className="font-semibold">mephist.ru:</div>
+                                <div>{data.legacyRating || "-"}</div>
+                            </div>
+                        </>}
+                </div>
+                {
+                    (tutor.disciplines.length + tutor.faculties.length) == 0 ?
+                        <h2 className="font-semibold text-xl opacity-50 w-full mt-4">Информация
+                            о
+                            преподавателе отсутствует</h2> : null
+                }
+            </div>
+        </div>
+        <div className="w-full h-[1px] bg-black my-3"/>
+        {authenticating || authenticated ?
+            <div className="w-full space-y-1 font-semibold md:max-w-[37.7rem]">
+                <RatingComponent text="Характер" rate="(4.6)" isLoading={authenticating}/>
+                <RatingComponent text="Преподавание" rate="(4.6)" isLoading={authenticating}/>
+                <RatingComponent text="Пунктуальность" rate="(4.6)" isLoading={authenticating}/>
+                <RatingComponent text="Прием экзаменов" rate="(4.6)" isLoading={authenticating}/>
+                {authenticating ?
+                    <Skeleton className="w-[25rem] h-7" variant="rounded"/> :
+                    <div
+                        className="rounded-full w-auto border-2 border-black
+                                                font-bold text-center md:max-w-[25.0rem] md:text-lg
+                                                 text-sm max-w-[7.5rem] md:mx-0 ml-auto">
+                        {/* TODO: add action */}
+                        <RippledButton onClick={() => {
+                        }}>
+                            <div>Отправить</div>
+                        </RippledButton>
+                    </div>
+                }
+            </div> :
+            null
+        }
+
+    </div>;
+}
+
+function Tutor({tutor}: { tutor: any }) {
+    const [value, setValue] = React.useState<0 | 1 | 2>(0);
+    const [postValue, setPostValue] = React.useState(0);
+    const handleChange = (event: React.SyntheticEvent, newValue: 0 | 1 | 2) => {
+        setValue(newValue);
+        setPostValue(newValue);
+    };
+    const [open, setOpen] = useState(false)
+    const isMobile = useIsMobile();
+
+
+    const newPostPlaceholders = {
+        0: "Оставить отзыв",
+        1: "Загрузить цитату",
+        2: "Загрузить материал"
+    }
+
     return (
         <>
-            {/*<SEO title={'Трифоненков В.П.'} card={`https://daily-mephi.vercel.app/api/cover?type=tutor&id=${id}`}/>*/}
             <SEO title={'Трифоненков В.П.'}
                  thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${tutor.id}.png`}/>
             {isMobile == null ? null :
@@ -170,131 +318,28 @@ function Tutor({tutor}: { tutor: any }) {
                     <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
                                 setValue={setPostValue}/>
                     <div className="flex-wrap w-full">
-                        <div className="flex flex-wrap whiteBox overflow-x-hidden">
-
-                            {/*<div className="font-bold text-[1.0rem] xs:text-lg w-full text-justify mx-auto mb-5 greenBox whitespace-nowrap flex justify-between max-w-[25.0rem]">*/}
-                            {/*    <div>Трифоненков</div>*/}
-                            {/*    <div>Владимир</div>*/}
-                            {/*    <div>Петрович</div>*/}
-                            {/*</div>*/}
-                            <div className="flex items-center w-full mb-2">
-                                <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
-                                    <Image
-                                        src={tutor.images[0] ?? DeadCat}
-                                        alt="Tutor image"
-                                        className="rounded-full z-0"
-                                        width={458}
-                                        height={458}
-                                    />
-
-                                </div>
-                                <h1 className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
-                         mx-auto md:mb-5 text-center h-fit ">
-                                    {`${tutor.lastName} ${tutor.firstName} ${tutor.fatherName}`}
-                                </h1>
-                            </div>
-                            <div className="hidden md:block -ml-2 -mt-2 absolute">
-                                <RatingPlace place={47}/>
-                            </div>
-                            <div className="flex flex-nowrap items-center">
-                                <div className="flex items-center w-fit hidden mr-4 md:block">
-                                    <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
-                                        <div className="flex mb-3 w-32 md:w-60">
-                                            <Image
-                                                src={tutor.images[0] ?? DeadCat}
-                                                alt="Tutor image"
-                                                className="rounded-full z-0"
-                                                width={458}
-                                                height={458}
-                                            />
-                                        </div>
-                                        <div className="flex space-x-2 items-center justify-center md:hidden">
-                                            <RatingPlace place={47}/>
-                                            <div className="font-semibold">место</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex flex-wrap w-fit h-fit md:text-xl">
-                                    {tutor.disciplines.length > 0 ? <div className="w-full">
-                                        <h2 className="font-semibold">Дисциплины:</h2>
-                                        <h2 className="my-2">
-                                            {tutor.disciplines.join(', ')}
-                                        </h2>
-                                    </div> : null}
-                                    {tutor.faculties.length > 0 ? <div className="w-full">
-                                        <h2 className="font-semibold">Факультеты:</h2>
-                                        <h2 className="my-2">
-                                            {tutor.faculties.join(', ')}
-                                        </h2>
-                                    </div> : null}
-                                    <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
-                                        {isLoading ?
-                                            <>
-                                                <Skeleton className="w-[14rem] h-7" variant="rounded"/>
-                                                <Skeleton className="w-[14rem] h-7" variant="rounded"/>
-                                            </> :
-                                            <>
-                                                <div className="my-auto flex w-full justify-between">
-                                                    <div className="font-semibold">Daily Mephi:</div>
-                                                    <div>{data.rating}</div>
-                                                </div>
-                                                <div className="my-auto flex w-full justify-between">
-                                                    <div className="font-semibold">mephist.ru:</div>
-                                                    <div>{data.legacyRating || "-"}</div>
-                                                </div>
-                                            </>}
-                                    </div>
-                                    {
-                                        (tutor.disciplines.length + tutor.faculties.length) == 0 ?
-                                        <h2 className="font-semibold text-xl opacity-50 w-full mt-4 -mb-4">Информация о
-                                            преподавателе отсутствует</h2> : null
-                                    }
-                                </div>
-                            </div>
-                            <div className="w-full h-[1px] bg-black my-3"/>
-                            { 
-                            authenticating || authenticated ?
-                            <div className="w-full space-y-1 font-semibold md:max-w-[37.7rem]">
-                                <RatingComponent text="Характер" rate="(4.6)" isLoading={authenticating}/>
-                                <RatingComponent text="Преподавание" rate="(4.6)" isLoading={authenticating}/>
-                                <RatingComponent text="Пунктуальность" rate="(4.6)" isLoading={authenticating}/>
-                                <RatingComponent text="Прием экзаменов" rate="(4.6)" isLoading={authenticating}/>
-                                {authenticating ? 
-                                <Skeleton className="w-[25rem] h-7" variant="rounded"/> :
-                                <div
-                                    className="rounded-full w-auto border-2 border-black
-                             font-bold text-center md:max-w-[25.0rem] md:text-lg text-sm max-w-[7.5rem] md:mx-0 ml-auto">
-                                    <RippledButton onClick={() => {
-                                    }}>
-                                        <div>Отправить</div>
-                                    </RippledButton>
-                                </div>
-                            }
-                            </div> :
-                            null
-                            }
-
-                        </div>
+                        <TutorProfile tutor={tutor}/>
                         <div className="w-full mt-7">
+                            {/* @ts-ignore */}
                             <TabsBox value={value} onChange={handleChange}
                                      tabs={['Отзывы', 'Цитаты', 'Материалы']}/>
 
                             <div className="mt-6 mx-auto">
-                                {value == 0 ?
-                                    <Review onClick={() => setOpen(true)}/>
-                                    : null}
-                                {value == 1 ?
-                                    <Quote onClick={() => setOpen(true)}/>
-                                    : null}
-                                {value == 2 ? <>
-                                        <div className="mb-10">
-                                            <NewPost placeholder={"Загрузить материал"}
-                                                     onClick={() => setOpen(true)}/>
-                                        </div>
-
-                                        <Material/>
-                                    </>
-                                    : null}
+                                <div className="flex-wrap space-y-4 w-full">
+                                    <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)}/>
+                                    {value == 0 ?
+                                        <Reviews tutorId={tutor.id}/>
+                                        : null}
+                                    {value == 1 ?
+                                        <>
+                                            <Quote/>
+                                        </>
+                                        : null}
+                                    {value == 2 ? <>
+                                            <Material/>
+                                        </>
+                                        : null}
+                                </div>
                             </div>
                         </div>
                     </div>

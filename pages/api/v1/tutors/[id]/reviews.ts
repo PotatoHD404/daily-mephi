@@ -5,8 +5,8 @@ import {getToken} from "next-auth/jwt";
 import {UUID_REGEX} from "./materials";
 
 async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
-    const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
+    const {id, cursor} = req.query;
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX) || cursor && (typeof cursor !== "string" || !cursor.match(/^\d+$/))) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -22,7 +22,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                 select: {
                     id: true,
                     name: true,
-                    image: true,
+                    image: {select: {url: true}}
                 }
             },
             likes: true,
@@ -30,6 +30,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             comment_count: true
         },
         take: 10,
+        skip: +(cursor ?? 0),
         orderBy: {createdAt: 'desc'}
     });
 

@@ -18,3 +18,22 @@ export type TutorType = {
     url: string | null,
     images: string[],
 };
+
+
+export type UserType = {
+    id: string;
+    name: string;
+    image: { url: string };
+}
+
+export type ReviewType = {
+    id: string;
+    body: string;
+    header: string;
+    likes: number;
+    dislikes: number;
+    comment_count: number;
+    createdAt: Date;
+    legacyNickname?: string;
+    user?: UserType;
+}

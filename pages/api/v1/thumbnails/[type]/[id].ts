@@ -219,7 +219,7 @@ export default async function handler(
             quotes: getNoun(user._count.quotes, "Цитата", "Цитаты", "Цитат"),
             quotes_count: user._count.quotes,
             nickname: user.name,
-            user_type: user.role == "tutor" ? "Преподаватель" :"Студент",
+            user_type: user.role == "tutor" ? "Преподаватель" : "Студент",
             rating: user.rating,
             image: avatarString,
             font_path: fontPath,
@@ -298,7 +298,19 @@ export default async function handler(
     image.pipe(res);
     image.uncork();
 
-    //   const alphabet: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэюя0123456789.,!?:;()[]{}@#$%^*-_+=|/\\`~";
+
+    const alphabet: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэюя0123456789;:,.!?-+*/()[]{}<>|\\\"\'&%$#@^~_`";
+
+    const htmlSymbolsMapping = {
+        "\"": "&quot;",
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        " ": "&nbsp;"
+    }
+
+
+
     //   // map alphabet to object
     //   const alphabetMap: { [key: string]: number } = {};
     //   for (let i = 0; i < alphabet.length; i++) {

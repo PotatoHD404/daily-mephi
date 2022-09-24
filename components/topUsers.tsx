@@ -166,7 +166,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                 {
                     isLoading ?
                         <>
-                            {toChildArray(Array(props.take || 4).map((_: any, index: number) =>
+                            {toChildArray(Array(props.take || 4).map((_, index) =>
                                 <TopUser key={index} src={DeadCat} place={0} rating={0} nickname=""
                                          isLoading={isLoading}/>))}
                         </> :
