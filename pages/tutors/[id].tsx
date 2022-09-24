@@ -181,10 +181,10 @@ function Tutor({tutor}: { tutor: any }) {
                                     />
 
                                 </div>
-                                <div className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
+                                <h1 className="font-bold text-[1.0rem] xs:text-lg md:text-2xl
                          mx-auto md:mb-5 text-center h-fit ">
                                     {`${tutor.lastName} ${tutor.firstName} ${tutor.fatherName}`}
-                                </div>
+                                </h1>
                             </div>
                             <div className="hidden md:block -ml-2 -mt-2 absolute">
                                 <RatingPlace place={47}/>
@@ -208,18 +208,18 @@ function Tutor({tutor}: { tutor: any }) {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap w-fit h-fit md:text-xl">
-                                    {tutor.disciplines.length > 0 ? <>
-                                        <h1 className="font-semibold">Дисциплины:</h1>
-                                        <div className="my-2">
+                                    {tutor.disciplines.length > 0 ? <div className="w-full">
+                                        <h2 className="font-semibold">Дисциплины:</h2>
+                                        <h2 className="my-2">
                                             {tutor.disciplines.join(', ')}
-                                        </div>
-                                    </> : ""}
-                                    {tutor.faculties.length > 0 ? <>
-                                        <h1 className="font-semibold">Факультеты:</h1>
-                                        <div className="my-2">
+                                        </h2>
+                                    </div> : ""}
+                                    {tutor.faculties.length > 0 ? <div className="w-full">
+                                        <h2 className="font-semibold">Факультеты:</h2>
+                                        <h2 className="my-2">
                                             {tutor.faculties.join(', ')}
-                                        </div>
-                                    </> : ""}
+                                        </h2>
+                                    </div> : ""}
                                     <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
                                         {isLoading ?
                                             <>
@@ -237,6 +237,10 @@ function Tutor({tutor}: { tutor: any }) {
                                                 </div>
                                             </>}
                                     </div>
+                                    {
+                                        <h2 className="font-semibold text-xl opacity-50 w-full mt-4 -mb-4">Информация о
+                                            преподавателе отсутствует</h2>
+                                    }
                                 </div>
                             </div>
                             <div className="w-full h-[1px] bg-black my-3"/>
