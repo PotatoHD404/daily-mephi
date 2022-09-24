@@ -8,8 +8,7 @@ import {IconButton} from '@mui/material';
 export default function Material() {
     return <>
         <div className="whiteBox text-xl w-full mt-4 pb-2">
-        <UserHeader name={"User1"}
-                    date={"15 февраля 2022"}/>
+        <UserHeader date={new Date()}/>
         <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
         <div className="relative flex text-[1.0rem] leading-5">
 

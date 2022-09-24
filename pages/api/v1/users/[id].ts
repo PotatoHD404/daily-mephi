@@ -80,7 +80,7 @@ LIMIT 1` as any)[0];
     user.reviews_count = Number(user.reviews_count);
     user.quotes_count = Number(user.quotes_count);
     user.place = Number(user.place);
-    console.log(user);
+    // console.log(user);
     // Generate sql query from above
 
 

@@ -108,28 +108,38 @@ function Review({review, isLoading}: { review?: ReviewType, isLoading?: boolean 
     </div>);
 }
 
-function Reviews(props: { tutorId: string }) {
-    const [pages, setPages] = useState<any[]>([]);
+function Reviews({tutorId, pages, setPages}: { tutorId: string, pages: any[], setPages: (a: any) => void }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
 
     async function fetchReviews(cursor: any) {
-        const result = await (await fetch(`/api/v1/tutors/${props.tutorId}/reviews?cursor=${cursor}`, {
+        return await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
-        return result.map((review: any) => {review.createdAt = new Date(review.createdAt); return review;});
     }
 
-    const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
-        [`tutor-${props.tutorId}-reviews`],
+    function getCursor(lastPage: { reviews_count: number; }) {
+        return lastPage.reviews_count > pages.length ? pages.length : undefined;
+    }
+
+    const {data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch} = useInfiniteQuery(
+        [`tutor-${tutorId}-reviews`],
         ({pageParam = 0}) => fetchReviews(pageParam),
         {
-            getNextPageParam: (lastPage, allPages) => {
-                return allPages.length;
-            }
+            getNextPageParam: (lastPage) => {
+                return getCursor(lastPage);
+            },
+            cacheTime: 0,
+            refetchOnWindowFocus: false,
+            enabled: false
         }
     )
+    useEffect(() => {
+        if (data) {
+            setPages(data.pages);
+        }
+    });
     useEffect(() => {
         let fetching = false;
         const handleScroll = async (e: any) => {
@@ -149,9 +159,9 @@ function Reviews(props: { tutorId: string }) {
     const isLoading = isFetchingNextPage || !data;
     useEffect(() => {
         if (data && !isFetchingNextPage && data.pages.length > 0) {
-            pages.push(...data.pages[data.pages.length - 1]);
-            setPages([...pages]);
-            console.log(pages);
+            // pages.push(...data.pages[data.pages.length - 1]);
+            // setPages([...pages]);
+            console.log(data);
         }
     }, [data, isFetchingNextPage]);
 
@@ -309,6 +319,8 @@ function Tutor({tutor}: { tutor: any }) {
         2: "Загрузить материал"
     }
 
+    const [reviews, setReviews] = useState<any[]>([]);
+
     return (
         <>
             <SEO title={'Трифоненков В.П.'}
@@ -328,7 +340,7 @@ function Tutor({tutor}: { tutor: any }) {
                                 <div className="flex-wrap space-y-4 w-full">
                                     <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)}/>
                                     {value == 0 ?
-                                        <Reviews tutorId={tutor.id}/>
+                                        <Reviews tutorId={tutor.id} pages={reviews} setPages={setReviews}/>
                                         : null}
                                     {value == 1 ?
                                         <>

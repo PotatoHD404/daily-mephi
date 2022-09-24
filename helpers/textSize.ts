@@ -394,7 +394,7 @@ export function getWrappedText(font: { [x: string]: number; }, text: string, max
             if (width + word_width > maxWidth) {
                 // console.log(line, line_count)
                 line_count++;
-                console.log(line, line_count)
+                // console.log(line, line_count)
                 if (line_count >= maxLines) {
                     return addDots(line, font, width, maxWidth, res, multiplier, (words.length + lines.length - 1 - i) > 0);
                 }

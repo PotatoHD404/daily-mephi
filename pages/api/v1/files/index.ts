@@ -276,7 +276,7 @@ async function putFile(
     }
     const unsignedUrl: string = signedPutUrl.split('?')[0];
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
-    console.log(unsignedUrl)
+    // console.log(unsignedUrl)
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
     const res1 = await fetch(unsignedUrl)
 

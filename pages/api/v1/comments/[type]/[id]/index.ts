@@ -25,7 +25,7 @@ async function newComment(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    console.log(session.sub, parentId, id);
+    // console.log(session.sub, parentId, id);
 
     let typeMapping: Record<string, any> = {review: prisma.review, material: prisma.material, news: prisma.news};
 

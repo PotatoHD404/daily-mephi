@@ -27,14 +27,15 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             },
             likes: true,
             dislikes: true,
-            comment_count: true
+            comment_count: true,
         },
         take: 10,
         skip: +(cursor ?? 0),
         orderBy: {createdAt: 'desc'}
-    });
 
-    res.status(200).json(reviews);
+    });
+    const reviews_count = await prisma.user.count()
+    res.status(200).json({reviews, reviews_count});
 }
 
 
