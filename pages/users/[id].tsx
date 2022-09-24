@@ -5,10 +5,11 @@ import TopUsers from "components/topUsers";
 import User from "components/user"
 import {useQuery} from "@tanstack/react-query";
 import useIsMobile from "../../helpers/react/isMobileContext";
-import {NextApiRequest} from "next";
+import {GetServerSideProps, NextApiRequest} from "next";
 import prisma from "../../lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
+import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
 
 function Profile({user}: { user: any }) {
     async function getUser() {
@@ -112,15 +113,13 @@ function UserProfile({user, me, changeNeedsAuth}: { user: any, me: boolean, chan
 
 }
 
-export async function getServerSideProps({req}: { req: NextApiRequest }): Promise<any> {
-    const id = req.url?.split('/').pop()?.split('.')[0];
+
+export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
+    const {id} = query;
     const isUUID = id && typeof id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)
     if (!isUUID) {
         return {
-            redirect: {
-                destination: '/404',
-                permanent: true,
-            },
+            notFound: true
         }
     }
     // get user from database
@@ -140,10 +139,7 @@ export async function getServerSideProps({req}: { req: NextApiRequest }): Promis
     });
     if (!user) {
         return {
-            redirect: {
-                destination: '/404',
-                permanent: true,
-            },
+            notFound: true
         }
     }
     const session = await getToken({req})
@@ -156,13 +152,12 @@ export async function getServerSideProps({req}: { req: NextApiRequest }): Promis
     // @ts-ignore
     user.image = user.image?.url ?? null;
     if(user.image)
-        { // @ts-ignore
-            delete user.image;
-        }
+    { // @ts-ignore
+        delete user.image;
+    }
     return {
         props: {user, me: session?.sub === user.id}
     }
 }
-
 
 export default UserProfile;

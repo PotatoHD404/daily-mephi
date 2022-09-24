@@ -7,6 +7,7 @@ import ejs from "ejs";
 import sharp from "sharp";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 import prisma from "lib/database/prisma";
+import {getTutorName} from "../../../../../helpers/utils";
 // import ejs template from file
 
 
@@ -118,7 +119,11 @@ export default async function handler(
                 user: {
                     select: {
                         name: true,
-                        image: true
+                        image: {
+                            select: {
+                                url: true
+                            }
+                        }
                     }
                 }
             }
@@ -130,7 +135,7 @@ export default async function handler(
         // const material = await getMaterial(id);
         let avatarString: string = "";
         if (material.user?.image) {
-            avatarString = await fetch(material.user.image)
+            avatarString = await fetch(material.user.image.url)
                 .then((res) => res.arrayBuffer())
                 .then((buffer) => Buffer.from(buffer))
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
@@ -169,8 +174,7 @@ export default async function handler(
         }
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
             body: quote.body,
-            tutor_name: quote.tutor.lastName + " " + (quote.tutor.firstName ? quote.tutor.firstName[0] + "." : "") +
-                (quote.tutor.fatherName ? quote.tutor.fatherName[0] + "." : ""),
+            tutor_name: getTutorName(quote.tutor),
             font_path: fontPath
         }).then((html) => Buffer.from(html));
     } else if (type == "users") {
@@ -180,7 +184,11 @@ export default async function handler(
             },
             select: {
                 name: true,
-                image: true,
+                image: {
+                    select: {
+                        url: true
+                    }
+                },
                 role: true,
                 rating: true,
                 _count: {
@@ -198,7 +206,7 @@ export default async function handler(
         }
         let avatarString: string = "";
         if (user.image) {
-            avatarString = await fetch(user.image)
+            avatarString = await fetch(user.image.url)
                 .then((res) => res.arrayBuffer())
                 .then((buffer) => Buffer.from(buffer))
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
@@ -239,7 +247,11 @@ export default async function handler(
                 user: {
                     select: {
                         name: true,
-                        image: true
+                        image: {
+                            select: {
+                                url: true
+                            }
+                        }
                     }
                 }
             }
@@ -251,7 +263,7 @@ export default async function handler(
 
         let avatarString: string = "";
         if (review.user?.image) {
-            avatarString = await fetch(review.user.image)
+            avatarString = await fetch(review.user.image.url)
                 .then((res) => res.arrayBuffer())
                 .then((buffer) => Buffer.from(buffer))
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));

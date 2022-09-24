@@ -2,23 +2,25 @@ import React, {useEffect} from "react";
 import SEO from "components/seo";
 import useIsMobile from "../../helpers/react/isMobileContext";
 import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
-import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
-import prisma from "../../lib/database/prisma";
 import {useRouter} from "next/router";
+import prisma from "../../lib/database/prisma";
+import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
+import {getTutorName} from "../../helpers/utils";
 
 
-function Material({material}: { material: any }) {
+function Quote({quote}: { quote: any}) {
     const router = useRouter();
     useEffect(() => {
-        router.push(`/tutors/${material.tutorId}?material=${material.id}`);
+        router.push(`/tutors/${quote.tutorId}?quote=${quote.id}`);
     });
     return (
         <>
-            <SEO title={`${material}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${material.id}.png`}/>
+            <SEO title={`Цатата ${quote.tutorName}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/quotes/${quote.id}.png`}/>
         </>
     );
 
 }
+
 
 export const getServerSideProps: GetServerSideProps = async ({query}) => {
     const {id} = query;
@@ -27,21 +29,35 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
             notFound: true
         }
     }
-    const material = await prisma.material.findUnique({
+    const quote = await prisma.quote.findUnique({
         where: {
             id
         },
         select: {
             id: true,
-            header: true,
-            tutorId: true,
+            tutor: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    fatherName: true,
+                }
+            }
         }
     });
-    if (!material) {
+    if (!quote) {
         return {
             notFound: true
         }
     }
+    // @ts-ignore
+    quote.tutorId = quote.tutor.id;
+    // @ts-ignore
+    quote.tutorName = getTutorName(quote.tutor);
+
+    // @ts-ignore
+    delete quote.tutor;
+
     // get material from database
 
     // res.setHeader(
@@ -50,9 +66,10 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
     // )
 
     return {
-        props: {material}
+        props: {quote}
     }
 }
 
-export default Material;
+
+export default Quote;
 

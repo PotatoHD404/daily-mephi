@@ -3,18 +3,18 @@ import SEO from "components/seo";
 import useIsMobile from "../../helpers/react/isMobileContext";
 import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
 import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
-import prisma from "../../lib/database/prisma";
 import {useRouter} from "next/router";
+import prisma from "../../lib/database/prisma";
 
 
-function Material({material}: { material: any }) {
+function Review({review}: { review: any }) {
     const router = useRouter();
     useEffect(() => {
-        router.push(`/tutors/${material.tutorId}?material=${material.id}`);
+        router.push(`/tutors/${review.tutorId}?review=${review.id}`);
     });
     return (
         <>
-            <SEO title={`${material}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${material.id}.png`}/>
+            <SEO title={`${review.header}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/reviews/${review.id}.png`}/>
         </>
     );
 
@@ -27,21 +27,34 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
             notFound: true
         }
     }
-    const material = await prisma.material.findUnique({
+    const review = await prisma.review.findUnique({
         where: {
             id
         },
         select: {
             id: true,
+            tutor: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    fatherName: true,
+                }
+            },
             header: true,
-            tutorId: true,
         }
     });
-    if (!material) {
+    if (!review) {
         return {
             notFound: true
         }
     }
+    // @ts-ignore
+    review.tutorId = review.tutor.id;
+    // @ts-ignore
+    review.tutorName = getTutorName(review.tutor);
+    // @ts-ignore
+    delete review.tutor;
     // get material from database
 
     // res.setHeader(
@@ -50,9 +63,9 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
     // )
 
     return {
-        props: {material}
+        props: {review}
     }
 }
 
-export default Material;
+export default Review;
 

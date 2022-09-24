@@ -129,7 +129,7 @@ function Tutor({tutor}: { tutor: any }) {
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });
-    const isLoading = isFetching || !data || true;
+    const isLoading = isFetching || !data;
     const router = useRouter();
     useEffect(() => {
         refetch();
@@ -229,11 +229,11 @@ function Tutor({tutor}: { tutor: any }) {
                                             <>
                                                 <div className="my-auto flex w-full justify-between">
                                                     <div className="font-semibold">Daily Mephi:</div>
-                                                    <div>{tutor.rating}</div>
+                                                    <div>{data.rating}</div>
                                                 </div>
                                                 <div className="my-auto flex w-full justify-between">
                                                     <div className="font-semibold">mephist.ru:</div>
-                                                    <div>{tutor.legacyRating}</div>
+                                                    <div>{data.legacyRating || "-"}</div>
                                                 </div>
                                             </>}
                                     </div>
@@ -321,10 +321,7 @@ export async function getStaticProps(context: any) {
     const tutor: any = await getCache(id, "tutors");
     if (!tutor) {
         return {
-            redirect: {
-                destination: '/404',
-                permanent: true,
-            },
+            notFound: true
         }
     }
     tutor.images = tutor.images.map((image: any) => image.url);

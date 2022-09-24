@@ -2,13 +2,15 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "../tutors/[id]/materials";
 
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
-    let {id}: { id: string | undefined } = req.query as any;
+    let {id} = req.query;
+
     if (id == "me") {
         const session = await getToken({req})
         if (!session?.sub) {
@@ -16,6 +18,10 @@ export default async function handler(
             return;
         }
         id = session.sub;
+    }
+    if (!id || typeof id != "string" || !id.match(UUID_REGEX)) {
+        res.status(400).json({status: "bad request"});
+        return;
     }
     // const allUsers = {status: "ok"}
     // const user = await prisma.user.findFirst({
