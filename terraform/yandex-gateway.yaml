@@ -11,6 +11,7 @@ paths:
         object: static/index.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /404:
     get:
@@ -20,6 +21,7 @@ paths:
         object: static/404.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /500:
     get:
@@ -29,6 +31,7 @@ paths:
         object: static/500.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /about:
     get:
@@ -38,6 +41,7 @@ paths:
         object: static/about.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /index:
     get:
@@ -47,6 +51,7 @@ paths:
         object: static/index.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /search:
     get:
@@ -56,6 +61,7 @@ paths:
         object: static/search.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /materials:
     get:
@@ -65,6 +71,7 @@ paths:
         object: static/materials.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /materials/{id+}:
     get:
@@ -74,6 +81,7 @@ paths:
         object: static/materials/[id].html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -91,6 +99,7 @@ paths:
         object: static/tutors.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
   /tutors/{id+}:
     get:
@@ -100,6 +109,7 @@ paths:
         object: static/tutors/{id}.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -117,6 +127,7 @@ paths:
         object: static/users/me.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -134,6 +145,7 @@ paths:
         object: static/users/[id].html
         presigned_redirect: true
         service_account_id: ${service_account_id}
+        error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
@@ -147,8 +159,10 @@ paths:
     delete:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${function_id}
+        function_id: ${api_function_id}
         tag: $latest
+        headers:
+          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -160,8 +174,10 @@ paths:
     get:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${function_id}
+        function_id: ${api_function_id}
         tag: $latest
+        headers:
+          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -173,8 +189,10 @@ paths:
     patch:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${function_id}
+        function_id: ${api_function_id}
         tag: $latest
+        headers:
+          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -186,8 +204,10 @@ paths:
     post:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${function_id}
+        function_id: ${api_function_id}
         tag: $latest
+        headers:
+          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -199,12 +219,62 @@ paths:
     put:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${function_id}
+        function_id: ${api_function_id}
         tag: $latest
+        headers:
+          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
           name: file
+          required: true
+          schema:
+            type: string
+          style: simple
+  /reviews/{id}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${pages_function_id}
+        tag: $latest
+        headers:
+          "x-nextjs-page": /reviews/[id]
+      parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          style: simple
+  /quotes/{id}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${pages_function_id}
+        tag: $latest
+        headers:
+          "x-nextjs-page": /quotes/[id]
+      parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          style: simple
+  /users/{id}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${pages_function_id}
+        tag: $latest
+        headers:
+          "x-nextjs-page": /users/[id]
+      parameters:
+        - explode: false
+          in: path
+          name: id
           required: true
           schema:
             type: string
