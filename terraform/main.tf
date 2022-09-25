@@ -210,11 +210,9 @@ rm -rf .next-tf/deployment.zip
 mv .next-tf/static ./terraform/static
 mv .next-tf/lambdas ./terraform/main-lambdas
 
-mv ./.vercel/output/functions/api ./terraform/main-lambda/api
-
 aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
 aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambda.zip s3://daily-service/main-lambda.zip
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/main-lambdas/ s3://daily-service/main-lambdas
     EOT
   }
 }
@@ -280,8 +278,8 @@ data "external" "zip_main_api" {
 
 resource "yandex_function" "backend_api" {
   depends_on        = [null_resource.build, data.external.zip_main_api]
-  name              = "daily-mephi-backend"
-  description       = "daily-mephi-backend"
+  name              = "daily-mephi-backend-api"
+  description       = "daily-mephi-backend-api"
   user_hash         = data.external.zip_main_api.result.sha256
   runtime           = "nodejs16"
   entrypoint        = "now__launcher.launcher"
@@ -296,8 +294,8 @@ resource "yandex_function" "backend_api" {
 
 resource "yandex_function" "backend_pages" {
   depends_on        = [null_resource.build, data.external.zip_main_pages]
-  name              = "daily-mephi-backend"
-  description       = "daily-mephi-backend"
+  name              = "daily-mephi-backend-pages"
+  description       = "daily-mephi-backend-pages"
   user_hash         = data.external.zip_main_pages.result.sha256
   runtime           = "nodejs16"
   entrypoint        = "now__launcher.launcher"
