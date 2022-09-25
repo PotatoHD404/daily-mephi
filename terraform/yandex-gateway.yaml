@@ -97,7 +97,7 @@ paths:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/tutors/[id].html
+        object: static/tutors/{id}.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
       summary: Serve static file from Yandex Cloud Object Storage
