@@ -204,10 +204,11 @@ cd ${path.root}/../
 
 rm -rf ./terraform/static ./terraform/main-lambda
 
-tf-next build
+tf-next build --skipDownload
+yarn next export
 unzip -o .next-tf/deployment.zip -d .next-tf
 rm -rf .next-tf/deployment.zip
-mv .next-tf/static ./terraform/static
+mv out ./terraform/static
 mv .next-tf/lambdas ./terraform/main-lambdas
 
 aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
