@@ -25,11 +25,13 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             credentials: 'same-origin'
         }))?.json();
     }
+
     const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });
+
     function getCursor(lastPage: { next_cursor: any; }) {
         return lastPage.next_cursor ?? undefined;
         // return lastPage.reviews_count;
@@ -54,7 +56,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         })) ?? [];
     }, [data]);
     useEffect(() => {
-        if(reviewId) {
+        if (reviewId) {
             refetch();
         }
     }, [reviewId]);

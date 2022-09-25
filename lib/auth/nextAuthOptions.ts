@@ -35,7 +35,7 @@ export const nextAuthOptions: NextAuthOptions = {
             // console.log(session)
             // console.log(user)
             // console.log(token)
-            if(session.user || token) {
+            if (session.user || token) {
                 // @ts-ignore
                 session.user.id = user?.id ?? token?.sub;
                 // @ts-ignore

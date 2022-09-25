@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
-import useIsMobile from "../../lib/react/isMobileContext";
-import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
-import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
+import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
-import prisma from "../../lib/database/prisma";
+import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "lib/uuidRegex";
+import {getTutorName} from "lib/react/getTutorName";
 
 
 function Review({review}: { review: any }) {
@@ -14,7 +14,8 @@ function Review({review}: { review: any }) {
     });
     return (
         <>
-            <SEO title={`${review.header}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/reviews/${review.id}.png`}/>
+            <SEO title={`${review.header}`}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/reviews/${review.id}.png`}/>
         </>
     );
 

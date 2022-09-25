@@ -5,7 +5,7 @@ import DeadCat from "../images/dead_cat.svg";
 import RatingPlace from "./ratingPlace";
 import {Skeleton} from "@mui/material";
 import RippledButton from "./rippledButton";
-import React, {useMemo} from "react";
+import React from "react";
 import HoverRating from "./rating";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {

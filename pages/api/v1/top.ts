@@ -43,7 +43,7 @@ export default async function handler(
     )
     // @ts-ignore
     users = users.map((user) => {
-       return {...user, image: user.image?.url}
+        return {...user, image: user.image?.url}
     });
     res.status(200).json(users);
 }

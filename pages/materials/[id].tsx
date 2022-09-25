@@ -1,9 +1,8 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
-import useIsMobile from "../../lib/react/isMobileContext";
-import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
-import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
-import prisma from "../../lib/database/prisma";
+import {GetServerSideProps} from "next";
+import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "lib/uuidRegex";
 import {useRouter} from "next/router";
 
 
@@ -14,7 +13,8 @@ function Material({material}: { material: any }) {
     });
     return (
         <>
-            <SEO title={`${material}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${material.id}.png`}/>
+            <SEO title={`${material}`}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${material.id}.png`}/>
         </>
     );
 

@@ -57,7 +57,7 @@ export default async function handler(
         GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality",
                  "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
         ORDER BY rating DESC, "legacyRating" DESC
-        ${limit ? `LIMIT ${limit};` : ";"}
+            ${limit ? `LIMIT ${limit};` : ";"}
     `
     // console.log(result)
     result = result.map(item => {

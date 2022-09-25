@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
-import {UUID_REGEX} from "./materials";
 import {TutorType} from "lib/database/types";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 
 export function processTutor(item: TutorType) {
@@ -20,9 +20,11 @@ export function processTutor(item: TutorType) {
     return item
 
 }
+
 export async function getTutor(id: string) {
     return (await getTutors(id))[0];
 }
+
 export async function getTutors(id?: string): Promise<TutorType[]> {
     let result: TutorType[] = await prisma.$queryRaw`
         SELECT "Tutor".id                                                           as id,

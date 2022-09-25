@@ -4,12 +4,12 @@ import React, {useEffect} from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
 import {useQuery} from "@tanstack/react-query";
-import useIsMobile from "../../lib/react/isMobileContext";
-import {GetServerSideProps, NextApiRequest} from "next";
-import prisma from "../../lib/database/prisma";
+import useIsMobile from "lib/react/isMobileContext";
+import {GetServerSideProps} from "next";
+import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
-import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
+import {UUID_REGEX} from "../../lib/uuidRegex";
 
 function Profile({user}: { user: any }) {
     async function getUser() {
@@ -114,10 +114,11 @@ function UserProfile({user, me, changeNeedsAuth}: { user: any, me: boolean, chan
 }
 
 
+
+
 export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
     const {id} = query;
-    const isUUID = id && typeof id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)
-    if (!isUUID) {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         return {
             notFound: true
         }
@@ -151,8 +152,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
 
     // @ts-ignore
     user.image = user.image?.url ?? null;
-    if(user.image)
-    { // @ts-ignore
+    if (user.image) { // @ts-ignore
         delete user.image;
     }
     return {

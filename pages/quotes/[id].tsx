@@ -1,21 +1,20 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
-import useIsMobile from "../../lib/react/isMobileContext";
-import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
+import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
-import prisma from "../../lib/database/prisma";
-import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
-import {getTutorName} from "../../lib/utils";
+import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "lib/uuidRegex";
+import {getTutorName} from "lib/react/getTutorName";
 
-
-function Quote({quote}: { quote: any}) {
+function Quote({quote}: { quote: any }) {
     const router = useRouter();
     useEffect(() => {
         router.push(`/tutors/${quote.tutorId}?quote=${quote.id}`);
     });
     return (
         <>
-            <SEO title={`Цатата ${quote.tutorName}`} thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/quotes/${quote.id}.png`}/>
+            <SEO title={`Цатата ${quote.tutorName}`}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/quotes/${quote.id}.png`}/>
         </>
     );
 

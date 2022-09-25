@@ -1,8 +1,8 @@
 import {ClientRequest} from "http";
 import https from "https";
+import * as fs2 from 'fs'
 import {promises as fs} from 'fs'
 import path from 'path'
-import * as fs2 from "fs";
 
 
 export function checkStatus(options: https.RequestOptions, data?: any): Promise<{ code: number | undefined, redirect: string | undefined }> {
@@ -35,8 +35,8 @@ export async function getCache(id: string, name: string): Promise<any | null | u
 }
 
 export async function setCache(products: any[], name: string) {
-    if (!fs2.existsSync(path.join(process.cwd(),'/tmp/'))){
-        fs2.mkdirSync(path.join(process.cwd(),'/tmp/'));
+    if (!fs2.existsSync(path.join(process.cwd(), '/tmp/'))) {
+        fs2.mkdirSync(path.join(process.cwd(), '/tmp/'));
     }
     return await fs.writeFile(
         path.join(process.cwd(), `/tmp/${name}.json`),
@@ -56,9 +56,3 @@ export function getHost() {
 export const camelToSnakeCase = (str: string) =>
     str.replace(/^[A-Z]/g, letter => letter.toLowerCase())
         .replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-
-
-export function getTutorName(tutor: {  firstName: string | null; lastName: string | null; fatherName: string | null; }) {
-    return tutor.lastName + " " + (tutor.firstName ? tutor.firstName[0] + "." : "") +
-        (tutor.fatherName ? tutor.fatherName[0] + "." : "");
-}

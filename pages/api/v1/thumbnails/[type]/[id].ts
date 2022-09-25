@@ -5,10 +5,10 @@ import path from 'path'
 import {getTutor} from "../../tutors/[id]";
 import ejs from "ejs";
 import sharp from "sharp";
-import {UUID_REGEX} from "../../tutors/[id]/materials";
 import prisma from "lib/database/prisma";
-import {getTutorName} from "../../../../../lib/utils";
-import {getWrappedText, italic, regular} from "../../../../../lib/textSize";
+import {getWrappedText, italic, regular} from "lib/textSize";
+import {getTutorName} from "lib/react/getTutorName";
+import {UUID_REGEX} from "lib/uuidRegex";
 // import ejs template from file
 
 
