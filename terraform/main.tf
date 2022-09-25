@@ -284,13 +284,13 @@ resource "yandex_function" "backend_api" {
   description       = "daily-mephi-backend"
   user_hash         = data.external.zip_main_api.result.sha256
   runtime           = "nodejs16"
-  entrypoint        = "lambda.handler"
+  entrypoint        = "now__launcher.launcher"
   memory            = "1024"
   execution_timeout = "10"
   package {
     sha_256     = data.external.zip_main_api.result.sha256
     bucket_name = "daily-service"
-    object_name = "main-lambda.zip"
+    object_name = "main-lambdas/__NEXT_API_LAMBDA_0.zip"
   }
 }
 
@@ -300,13 +300,13 @@ resource "yandex_function" "backend_pages" {
   description       = "daily-mephi-backend"
   user_hash         = data.external.zip_main_pages.result.sha256
   runtime           = "nodejs16"
-  entrypoint        = "lambda.handler"
-  memory            = "1024"
-  execution_timeout = "10"
+  entrypoint        = "now__launcher.launcher"
+  memory            = "256"
+  execution_timeout = "5"
   package {
     sha_256     = data.external.zip_main_pages.result.sha256
     bucket_name = "daily-service"
-    object_name = "main-lambda.zip"
+    object_name = "main-lambdas/__NEXT_PAGE_LAMBDA_0.zip"
   }
   environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
 }
