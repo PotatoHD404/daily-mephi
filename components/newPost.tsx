@@ -3,8 +3,7 @@ import React from "react";
 
 export default function NewPost(props: { placeholder: string, onClick: () => void }) {
     return <div className="text-lg w-full whiteBox">
-        <UserHeader name={"User1"}
-                    date={"15 февраля 2022"}/>
+        <UserHeader date={new Date()}/>
         <textarea
             className="rounded-2xl appearance-none block w-full bg-gray-200 text-gray-700
                                         border focus:border-gray-200 p-3 focus:outline-none

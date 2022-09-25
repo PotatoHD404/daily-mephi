@@ -1,6 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 // Request: GET /api/v1/news/[id]
 
@@ -45,7 +46,7 @@ export default async function handler(
         return;
     }
     const {id} = req.query;
-    if (!id || typeof id !== "string") {
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }

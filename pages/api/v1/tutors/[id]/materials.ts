@@ -1,9 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "lib/uuidRegex";
 
-
-export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>

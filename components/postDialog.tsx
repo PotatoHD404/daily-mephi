@@ -18,7 +18,7 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
     function onChange(value: any) {
         // props.onChange(value);
         setValue(value);
-        console.log(value);
+        // console.log(value);
         // props.value = value;
     }
 

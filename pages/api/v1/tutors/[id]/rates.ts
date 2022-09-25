@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {UUID_REGEX} from "./materials";
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 async function getRates(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;

@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 
 import {Box, Button, Divider, IconButton} from '@mui/material';
 import {toChildArray} from "preact";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
@@ -81,6 +81,7 @@ function AuthSection(props: DefaultNavbarParams) {
 
 
     useEffect(() => {
+        // console.log(session)
         if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
@@ -127,7 +128,8 @@ function AuthSection(props: DefaultNavbarParams) {
                     opened={open}/>
 
                 {!isMobile ?
-                    <Link href="/users/me">
+                    // @ts-ignore
+                    <Link href={`/users/${session?.user?.id}`}>
                         <a
                             className={`${style.authText}`}>
                             <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
@@ -283,7 +285,7 @@ function Navbar(props: { needsAuth: boolean }) {
     const callback = useCallback(handleClickOpenWarning, []);
 
     useEffect(() => {
-        console.log(props.needsAuth, authenticated)
+        // console.log(props.needsAuth, authenticated)
         if (props.needsAuth && !authenticated && !loading) {
             callback();
         } else {

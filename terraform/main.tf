@@ -254,7 +254,7 @@ resource "yandex_storage_bucket" "public" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
-    allowed_origins = ["https://login.mephi.ru", "https://daily-mephi.ru"]
+    allowed_origins = ["https://login.mephi.ru", "https://daily-mephi.ru", "https://mc.yandex.ru", "https://yastatic.net"]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
   }

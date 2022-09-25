@@ -3,7 +3,7 @@ import SEO from "components/seo";
 import Material from "components/material";
 
 import dynamic from "next/dynamic";
-import useIsMobile from "../../helpers/react/isMobileContext";
+import useIsMobile from "../../lib/react/isMobileContext";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});

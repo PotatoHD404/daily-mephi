@@ -6,6 +6,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    const {limit} = req.query;
     if (req.method !== "GET") {
         res.status(405).json({status: "method not allowed"});
         return;
@@ -56,7 +57,7 @@ export default async function handler(
         GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality",
                  "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
         ORDER BY rating DESC, "legacyRating" DESC
-        LIMIT 20;
+            ${limit ? `LIMIT ${limit};` : ";"}
     `
     // console.log(result)
     result = result.map(item => {

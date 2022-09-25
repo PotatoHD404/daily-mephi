@@ -1,5 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 
 export default async function handler(
@@ -13,6 +14,8 @@ export default async function handler(
         typeof type !== "string" ||
         !comment_id ||
         typeof comment_id !== "string" ||
+        !comment_id.match(UUID_REGEX) ||
+        !id.match(UUID_REGEX) ||
         type !== "news" && type !== "material" && type !== "review") {
         res.status(400).json({status: "bad request"});
         return;

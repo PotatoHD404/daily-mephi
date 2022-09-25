@@ -3,8 +3,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "../../../tutors/[id]/materials";
-
+import {UUID_REGEX} from "lib/uuidRegex";
 
 async function newComment(
     req: NextApiRequest,
@@ -25,7 +24,7 @@ async function newComment(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    console.log(session.sub, parentId, id);
+    // console.log(session.sub, parentId, id);
 
     let typeMapping: Record<string, any> = {review: prisma.review, material: prisma.material, news: prisma.news};
 

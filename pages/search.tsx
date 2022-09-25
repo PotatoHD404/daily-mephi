@@ -5,7 +5,7 @@ import SearchBar from "../components/searchBar";
 import {useRouter} from "next/router";
 import Material from "../components/material";
 import Tutor from "../components/tutor";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});

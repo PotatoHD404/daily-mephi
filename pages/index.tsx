@@ -7,7 +7,7 @@ import MiniCat from 'images/minicat.svg'
 import {Button} from "@mui/material";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});

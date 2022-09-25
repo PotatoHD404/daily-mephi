@@ -2,11 +2,11 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "./materials";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
-    const {id} = req.query;
-    if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
+    const {id, cursor} = req.query;
+    if (!id || typeof id !== "string" || !id.match(UUID_REGEX) || cursor && (typeof cursor !== "string" || !cursor.match(/^\d+$/))) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -22,18 +22,21 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                 select: {
                     id: true,
                     name: true,
-                    image: true,
+                    image: {select: {url: true}}
                 }
             },
             likes: true,
             dislikes: true,
-            comment_count: true
+            comment_count: true,
         },
         take: 10,
-        orderBy: {createdAt: 'desc'}
-    });
+        skip: +(cursor ?? 0),
+        orderBy: {score: 'desc'}
 
-    res.status(200).json(reviews);
+    });
+    const reviews_count = await prisma.review.count()
+    const hasMore = reviews_count > +(cursor ?? 0) + 10;
+    res.status(200).json({reviews, next_cursor: hasMore ? +(cursor ?? 0) + 10 : null});
 }
 
 

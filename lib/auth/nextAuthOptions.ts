@@ -22,15 +22,29 @@ export const nextAuthOptions: NextAuthOptions = {
     providers: [
         HomeMEPhiOauth(),
     ],
-    // callbacks: {
-    //     jwt: async ({ user, token }) => {
-    //         // if (user) {
-    //         //     token.id = user.id;
-    //         // }
-    //         console.log("newToken", token);
-    //         return token;
-    //     },
-    // },
+    callbacks: {
+        async jwt({token, user, account, profile, isNewUser}) {
+            if (user || profile) {
+                token.id = user?.id ?? profile?.id;
+                token.role = user?.role ?? profile?.role;
+            }
+            return token;
+        },
+        session: async ({session, token, user}) => {
+            // console.log("session");
+            // console.log(session)
+            // console.log(user)
+            // console.log(token)
+            if (session.user || token) {
+                // @ts-ignore
+                session.user.id = user?.id ?? token?.sub;
+                // @ts-ignore
+                session.user.role = user?.role ?? token?.role;
+            }
+            // console.log("session1");
+            return session;
+        }
+    },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',

@@ -9,7 +9,7 @@ import React from "react";
 import RatingPlace from "./ratingPlace";
 import {Button} from '@mui/material';
 import {toChildArray} from "preact";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 export default function Tutor() {
     const isMobile = useIsMobile();

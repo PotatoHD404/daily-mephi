@@ -34,7 +34,7 @@ export default async function handler(
         res.status(405).json({status: "method not allowed"});
         return;
     }
-    const {name, image, course} = req.body;
+    let {name, image, course} = req.body;
     const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
 
     // @ts-ignore
@@ -47,25 +47,20 @@ export default async function handler(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
+    const isNew = session.name == null;
 
-    try {
-        await prisma.user.update({
-                where: {
-                    id: session.sub
-                },
-                data: {
-                    name,
-                    // image,
-                    // @ts-ignore
-                    userCourse: courses[course as keyof typeof courses] as any
-                }
+    await prisma.user.update({
+            where: {
+                id: session.sub
+            },
+            data: {
+                name,
+                image: image ? {connect: {id: image}} : undefined,
+                // @ts-ignore
+                userCourse: courses[course as keyof typeof courses] as any
             }
-        )
-    } catch (e) {
-        console.log(e)
-        res.status(500).json({status: "internal server error"});
-        return;
-    }
+        }
+    )
 
 
     res.status(200).json({status: "ok"});

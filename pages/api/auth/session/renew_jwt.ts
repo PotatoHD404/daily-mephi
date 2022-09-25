@@ -33,7 +33,11 @@ export default async function handler(
             select: {
                 name: true,
                 email: true,
-                image: true,
+                image: {
+                    select: {
+                        url: true
+                    }
+                },
                 id: true,
             },
         }
@@ -47,7 +51,7 @@ export default async function handler(
     session = {
         name: user.name,
         email: user.email,
-        picture: user.image,
+        picture: user.image?.url || null,
         sub: user.id,
     }
 

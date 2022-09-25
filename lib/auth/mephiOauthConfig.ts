@@ -1,6 +1,8 @@
 import {OAuthConfig} from "next-auth/providers";
-import {getHost} from "helpers/utils";
-import {hash} from "helpers/crypto";
+import {getHost} from "lib/utils";
+import {hash} from "lib/crypto";
+import prisma from "../database/prisma";
+import avatars from "../database/jsons/avatars.json";
 
 export interface Profile {
     id: string
@@ -49,13 +51,27 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 return {id: access_token, role: id_token}
             }
         },
-        profile(profile) {
+        async profile(profile) {
+            const addedAvatars = await prisma.user.findMany({
+                select: {
+                    image: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            });
+            // get random avatar
+            let image: string | undefined = undefined;
+            do {
+                image = avatars[Math.floor(Math.random() * avatars.length)];
+            } while (addedAvatars.find(a => a.image?.id == image));
             // console.log(profile)
             return {
                 id: profile.id,
                 role: profile.role,
                 name: null,
-                image: null
+                imageId: image
             };
         },
         clientId: '1'
