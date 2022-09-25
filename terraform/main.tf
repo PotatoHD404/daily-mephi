@@ -22,151 +22,7 @@ variable "zone" {
   sensitive = true
 }
 
-variable "DATABASE_URL" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "LOCAL" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NEXTAUTH_SECRET" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_SECRET" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_SALT" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_MEMORY_COST" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_TYPE" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_TIME_COST" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "HASH_PARALLELISM" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "AES_NONCE" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "AES_KEY256" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NEXTAUTH_URL" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "JWT_PRIVATE" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NOTION_TOKEN" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NOTION_PRIVATE_PAGE" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NOTION_TOKEN_V2" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NOTION_EMAIL" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "NOTION_PASSWORD" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "RECAPTCHA_SECRET" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "RECAPTCHA_PUBLIC" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "DATABASE_KEY" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "VERCEL_TOKEN" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "certificate_id" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
 variable "DOMAIN_ID" {
-  type     = string
-  nullable = false
-  sensitive = true
-}
-
-variable "GOOGLE_API_KEY" {
   type     = string
   nullable = false
   sensitive = true
@@ -219,8 +75,6 @@ provider "yandex" {
 #
 #  }
 #}
-
-
 
 resource "yandex_iam_service_account" "sa" {
   folder_id = var.folder_id
@@ -300,7 +154,7 @@ data "archive_file" "zip_notion" {
 
 resource "yandex_function" "notion" {
   depends_on = [data.archive_file.zip_notion]
-  for_each = toset( [for i in range(1, 7) : tostring(i)] )
+  for_each = toset( [for i in range(1, 6) : tostring(i)] )
   name               = "notion-api-${each.value}"
   description        = "notion-api-${each.value}"
   user_hash          = data.archive_file.zip_notion.output_sha
@@ -312,8 +166,9 @@ resource "yandex_function" "notion" {
     zip_filename   = data.archive_file.zip_notion.output_path
   }
 }
+
 locals {
-  notion_ids = [for k, v in yandex_function.notion: v.id]
+  notion_ids = sensitive([for k, v in yandex_function.notion: v.id])
 }
 
 resource "yandex_function_iam_binding" "notion" {
@@ -325,51 +180,19 @@ resource "yandex_function_iam_binding" "notion" {
 
 
 
-resource "local_file" "environment_vars" {
-  content  = <<EOF
-DATABASE_URL="${var.DATABASE_URL}"
-
-LOCAL = "${var.LOCAL}"
-
-NEXTAUTH_SECRET="${var.NEXTAUTH_SECRET}"
-
-HASH_SECRET="${var.HASH_SECRET}"
-HASH_SALT="${var.HASH_SALT}"
-HASH_MEMORY_COST="${var.HASH_MEMORY_COST}"
-HASH_TYPE="${var.HASH_TYPE}"
-HASH_TIME_COST="${var.HASH_TIME_COST}"
-HASH_PARALLELISM="${var.HASH_PARALLELISM}"
-
-
-
-AES_NONCE="${var.AES_NONCE}"
-AES_KEY256="${var.AES_KEY256}"
-NEXTAUTH_URL="${var.NEXTAUTH_URL}"
-
-JWT_PRIVATE="${var.JWT_PRIVATE}"
-
-NOTION_YC_IDS="${join(";", local.notion_ids)}"
-
-NOTION_TOKEN="${var.NOTION_TOKEN}"
-
-NOTION_PRIVATE_PAGE="${var.NOTION_PRIVATE_PAGE}"
-NOTION_TOKEN_V2="${var.NOTION_TOKEN_V2}"
-
-NOTION_EMAIL="${var.NOTION_EMAIL}"
-NOTION_PASSWORD="${var.NOTION_PASSWORD}"
-
-RECAPTCHA_SECRET="${var.RECAPTCHA_SECRET}"
-RECAPTCHA_PUBLIC="${var.RECAPTCHA_PUBLIC}"
-
-DATABASE_KEY="${var.DATABASE_KEY}"
-
-GOOGLE_API_KEY="${var.GOOGLE_API_KEY}"
-EOF
-  filename = "${path.module}/../.env"
+resource "null_resource" "environment_vars" {
+  triggers = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+    command = <<-EOT
+echo NOTION_YC_IDS="${join(";", local.notion_ids)}" >> ${path.module}/../.env
+EOT
+  }
 }
 
 resource "null_resource" "build" {
-  depends_on = [yandex_storage_bucket.public, local_file.environment_vars, yandex_function_iam_binding.notion]
+  depends_on = [yandex_storage_bucket.public, null_resource.environment_vars, yandex_function_iam_binding.notion]
   triggers = {
     build_number = timestamp()
   }
@@ -378,17 +201,17 @@ resource "null_resource" "build" {
     #rm -rf ./terraform/main-lambda/api/v1
     command = <<-EOT
 cd ${path.root}/../
-vercel pull --yes --environment=preview --token=${var.VERCEL_TOKEN}
-vercel build --token=${var.VERCEL_TOKEN}
+
 rm -rf ./terraform/static ./terraform/main-lambda
-cp -R ./cloud-functions/main ./terraform/main-lambda
-mv ./.vercel/output/static ./terraform/static
+
+tf-next build
+unzip -o .next-tf/deployment.zip -d .next-tf
+rm -rf .next-tf/deployment.zip
+mv .next-tf/static ./terraform/static
+mv .next-tf/lambdas ./terraform/main-lambdas
+
 mv ./.vercel/output/functions/api ./terraform/main-lambda/api
 
-yarn --cwd ./terraform/main-lambda install
-rm -rf ./terraform/main-lambda/api/v1
-cd ./terraform/main-lambda/ && zip -r ./../main-lambda.zip . > /dev/null 2>&1
-cd ./../../
 aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
 aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
 aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambda.zip s3://daily-service/main-lambda.zip
@@ -445,30 +268,57 @@ resource "null_resource" "set_domain" {
 #  filename = "main-lambda.zip"
 #}
 
-data "external" "zip_main" {
+data "external" "zip_main_pages" {
   depends_on = [null_resource.build]
-  program = ["./hash.sh", "main-lambda.zip"]
+  program = ["./hash.sh", "main-lambdas/__NEXT_PAGE_LAMBDA_0.zip"]
 }
 
-resource "yandex_function" "backend" {
-  depends_on        = [null_resource.build, data.external.zip_main]
+data "external" "zip_main_api" {
+  depends_on = [null_resource.build]
+  program = ["./hash.sh", "main-lambdas/__NEXT_API_LAMBDA_0.zip"]
+}
+
+resource "yandex_function" "backend_api" {
+  depends_on        = [null_resource.build, data.external.zip_main_api]
   name              = "daily-mephi-backend"
   description       = "daily-mephi-backend"
-  user_hash         = data.external.zip_main.result.sha256
+  user_hash         = data.external.zip_main_api.result.sha256
   runtime           = "nodejs16"
   entrypoint        = "lambda.handler"
   memory            = "1024"
   execution_timeout = "10"
   package {
-    sha_256     = data.external.zip_main.result.sha256
+    sha_256     = data.external.zip_main_api.result.sha256
+    bucket_name = "daily-service"
+    object_name = "main-lambda.zip"
+  }
+}
+
+resource "yandex_function" "backend_pages" {
+  depends_on        = [null_resource.build, data.external.zip_main_pages]
+  name              = "daily-mephi-backend"
+  description       = "daily-mephi-backend"
+  user_hash         = data.external.zip_main_pages.result.sha256
+  runtime           = "nodejs16"
+  entrypoint        = "lambda.handler"
+  memory            = "1024"
+  execution_timeout = "10"
+  package {
+    sha_256     = data.external.zip_main_pages.result.sha256
     bucket_name = "daily-service"
     object_name = "main-lambda.zip"
   }
   environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
 }
 
-resource "yandex_function_iam_binding" "backend" {
-  function_id = yandex_function.backend.id
+resource "yandex_function_iam_binding" "backend_api" {
+  function_id = yandex_function.backend_api.id
+  role        = "serverless.functions.invoker"
+  members     = ["system:allUsers"]
+}
+
+resource "yandex_function_iam_binding" "backend_pages" {
+  function_id = yandex_function.backend_pages.id
   role        = "serverless.functions.invoker"
   members     = ["system:allUsers"]
 }
@@ -477,7 +327,8 @@ data "template_file" "api_gateway" {
   template = file("${path.module}/yandex-gateway.yaml")
   vars = {
     service_account_id = yandex_iam_service_account.sa.id
-    function_id = yandex_function.backend.id
+    api_function_id = yandex_function.backend_api.id
+    pages_function_id = yandex_function.backend_pages.id
     bucket_name = yandex_storage_bucket.public.bucket
   }
 }
