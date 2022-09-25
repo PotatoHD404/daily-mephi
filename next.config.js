@@ -55,7 +55,7 @@ const securityHeaders = [
 
 const nextConfig = withPWA(
     {
-        target: 'serverless',
+        // target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
         webpack: (config) => {
