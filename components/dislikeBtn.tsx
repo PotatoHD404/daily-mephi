@@ -1,7 +1,7 @@
 import Image from "next/image";
 import LikeIco from "images/like.svg";
 import {useState} from "react";
-import addPrefixes from "helpers/react/addPrefixes";
+import addPrefixes from "lib/react/addPrefixes";
 import PressedLikeIco from "images/pressed_like.svg";
 import {Button} from '@mui/material';
 

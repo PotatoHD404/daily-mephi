@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
-import useIsMobile from "../../helpers/react/isMobileContext";
+import useIsMobile from "../../lib/react/isMobileContext";
 import {GetServerSideProps, NextApiRequest, NextApiResponse} from "next";
 import {useRouter} from "next/router";
 import prisma from "../../lib/database/prisma";
 import {UUID_REGEX} from "../api/v1/tutors/[id]/materials";
-import {getTutorName} from "../../helpers/utils";
+import {getTutorName} from "../../lib/utils";
 
 
 function Quote({quote}: { quote: any}) {

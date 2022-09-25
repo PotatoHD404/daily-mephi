@@ -13,8 +13,8 @@ import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import useMediaQuery from "../helpers/react/useMediaQuery";
-import {IsMobileProvider} from "../helpers/react/isMobileContext";
+import useMediaQuery from "../lib/react/useMediaQuery";
+import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 
 

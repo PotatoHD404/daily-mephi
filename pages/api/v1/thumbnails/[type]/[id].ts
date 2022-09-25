@@ -7,8 +7,8 @@ import ejs from "ejs";
 import sharp from "sharp";
 import {UUID_REGEX} from "../../tutors/[id]/materials";
 import prisma from "lib/database/prisma";
-import {getTutorName} from "../../../../../helpers/utils";
-import {getWrappedText, italic, regular} from "../../../../../helpers/textSize";
+import {getTutorName} from "../../../../../lib/utils";
+import {getWrappedText, italic, regular} from "../../../../../lib/textSize";
 // import ejs template from file
 
 

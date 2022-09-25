@@ -1,4 +1,4 @@
-import sendQuery from "../helpers/react/sendQuery";
+import sendQuery from "../lib/react/sendQuery";
 import {useSession} from "next-auth/react";
 import Image from "next/image";
 import DeadCat from "../images/dead_cat.svg";

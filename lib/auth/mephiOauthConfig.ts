@@ -1,6 +1,6 @@
 import {OAuthConfig} from "next-auth/providers";
-import {getHost} from "helpers/utils";
-import {hash} from "helpers/crypto";
+import {getHost} from "lib/utils";
+import {hash} from "lib/crypto";
 import prisma from "../database/prisma";
 import avatars from "../database/jsons/avatars.json";
 

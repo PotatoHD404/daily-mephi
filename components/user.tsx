@@ -7,7 +7,7 @@ import RatingPlace from "./ratingPlace";
 
 
 import {ButtonBase, Divider, Skeleton, Tooltip} from '@mui/material';
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 import {signOut} from "next-auth/react";
 
 export default function User(props: { name?: string, userCourse?: string, rating?: number, reviews?: number, materials?: number, quotes?: number, image?: string, place?: number, role?: string, me?: boolean, isLoading?: boolean }) {

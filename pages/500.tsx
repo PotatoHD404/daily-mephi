@@ -2,7 +2,7 @@ import SEO from "components/seo";
 import React from "react";
 import Image from "next/image";
 import Logo from "images/cat_500.svg";
-import useIsMobile from "helpers/react/isMobileContext";
+import useIsMobile from "lib/react/isMobileContext";
 
 export default function Custom500() {
     const isMobile = useIsMobile();

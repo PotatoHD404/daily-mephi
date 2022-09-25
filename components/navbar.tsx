@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 
 import {Box, Button, Divider, IconButton} from '@mui/material';
 import {toChildArray} from "preact";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});

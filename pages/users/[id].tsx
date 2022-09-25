@@ -4,7 +4,7 @@ import React, {useEffect} from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
 import {useQuery} from "@tanstack/react-query";
-import useIsMobile from "../../helpers/react/isMobileContext";
+import useIsMobile from "../../lib/react/isMobileContext";
 import {GetServerSideProps, NextApiRequest} from "next";
 import prisma from "../../lib/database/prisma";
 import {getToken} from "next-auth/jwt";

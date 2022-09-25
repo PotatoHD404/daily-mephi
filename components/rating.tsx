@@ -2,7 +2,7 @@ import StarIcon from '@mui/icons-material/Star';
 
 import {Rating} from '@mui/material';
 import React from "react";
-import useIsMobile from "../helpers/react/isMobileContext";
+import useIsMobile from "../lib/react/isMobileContext";
 
 const labels: { [index: string]: string } = {
     0.5: 'Невыносимо',
