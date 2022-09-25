@@ -1,11 +1,11 @@
-import sendQuery from "../lib/react/sendQuery";
+import useSendQuery from "../lib/react/useSendQuery";
 import {useSession} from "next-auth/react";
 import Image from "next/image";
 import DeadCat from "../images/dead_cat.svg";
 import RatingPlace from "./ratingPlace";
 import {Skeleton} from "@mui/material";
 import RippledButton from "./rippledButton";
-import React from "react";
+import React, {useMemo} from "react";
 import HoverRating from "./rating";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
@@ -34,7 +34,7 @@ export default function TutorProfile({tutor}: { tutor: any }) {
         }))?.json();
     }
 
-    const {data, isFetching} = sendQuery(`tutor-${tutor.id}`, getTutor);
+    const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
     const isLoading = isFetching || !data;
     const session = useSession();
     const authenticating = session.status === 'loading';

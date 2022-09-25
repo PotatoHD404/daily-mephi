@@ -2,7 +2,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "./materials";
+import {UUID_REGEX} from "lib/uuidRegex";
 
 async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id, cursor} = req.query;
@@ -31,11 +31,12 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         },
         take: 10,
         skip: +(cursor ?? 0),
-        orderBy: {createdAt: 'desc'}
+        orderBy: {score: 'desc'}
 
     });
-    const reviews_count = await prisma.user.count()
-    res.status(200).json({reviews, reviews_count});
+    const reviews_count = await prisma.review.count()
+    const hasMore = reviews_count > +(cursor ?? 0) + 10;
+    res.status(200).json({reviews, next_cursor: hasMore ? +(cursor ?? 0) + 10 : null});
 }
 
 

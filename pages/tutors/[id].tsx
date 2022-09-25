@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 
 import QuoteIco from "images/quote.svg";
@@ -15,6 +15,7 @@ import {getCache, setCache} from "../../lib/utils";
 import prisma from "../../lib/database/prisma";
 import TutorProfile from "../../components/tutorProfile";
 import Reviews from "../../components/reviews";
+import {useRouter} from "next/router";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
@@ -53,22 +54,60 @@ function Quote() {
     </div>);
 }
 
-function Tutor({tutor}: { tutor: any }) {
-    const [value, setValue] = React.useState<0 | 1 | 2>(0);
-    const [postValue, setPostValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent, newValue: 0 | 1 | 2) => {
-        setValue(newValue);
-        setPostValue(newValue);
-    };
-    const [open, setOpen] = useState(false)
-    const isMobile = useIsMobile();
-
-
+function Tabs(props: { tutorId: any }) {
     const newPostPlaceholders = {
         0: "Оставить отзыв",
         1: "Загрузить цитату",
         2: "Загрузить материал"
     }
+    const router = useRouter();
+
+    const [value, setValue] = React.useState<0 | 1 | 2>(0);
+    const [postValue, setPostValue] = React.useState(0);
+    const handleChange = (event: React.SyntheticEvent | null, newValue: 0 | 1 | 2) => {
+        setValue(newValue);
+        setPostValue(newValue);
+    };
+    useEffect(() => {
+        if (router.query?.review) {
+            handleChange(null, 0);
+        } else if (router.query?.quote) {
+            handleChange(null, 1);
+        } else if (router.query?.material) {
+            handleChange(null, 2);
+        }
+    }, [router.query]);
+    const [open, setOpen] = useState(false)
+
+    return (
+        <>
+            <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
+                        setValue={setPostValue}/>
+            {/* @ts-ignore */}
+            <TabsBox value={value} onChange={handleChange} tabs={["Отзывы", "Цитаты", "Материалы"]}/>
+
+            <div className="mt-6 mx-auto">
+                <div className="flex-wrap space-y-4 w-full">
+                    <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)}/>
+                    {value == 0 ?
+                        <Reviews tutorId={props.tutorId}/>
+                        : null}
+                    {value == 1 ?
+                        <>
+                            <Quote/>
+                        </>
+                        : null}
+                    {value == 2 ? <>
+                            <Material/>
+                        </>
+                        : null}
+                </div>
+            </div>
+        </>);
+}
+
+function Tutor({tutor}: { tutor: any }) {
+    const isMobile = useIsMobile();
 
 
     return (
@@ -77,32 +116,10 @@ function Tutor({tutor}: { tutor: any }) {
                  thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${tutor.id}.png`}/>
             {isMobile == null ? null :
                 <>
-                    <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
-                                setValue={setPostValue}/>
                     <div className="flex-wrap w-full">
                         <TutorProfile tutor={tutor}/>
                         <div className="w-full mt-7">
-                            {/* @ts-ignore */}
-                            <TabsBox value={value} onChange={handleChange}
-                                     tabs={['Отзывы', 'Цитаты', 'Материалы']}/>
-
-                            <div className="mt-6 mx-auto">
-                                <div className="flex-wrap space-y-4 w-full">
-                                    <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)}/>
-                                    {value == 0 ?
-                                        <Reviews tutorId={tutor.id}/>
-                                        : null}
-                                    {value == 1 ?
-                                        <>
-                                            <Quote/>
-                                        </>
-                                        : null}
-                                    {value == 2 ? <>
-                                            <Material/>
-                                        </>
-                                        : null}
-                                </div>
-                            </div>
+                            <Tabs tutorId={tutor.id}/>
                         </div>
                     </div>
                 </>

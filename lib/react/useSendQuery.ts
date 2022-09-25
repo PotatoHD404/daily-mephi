@@ -2,7 +2,7 @@ import {useQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
 import {useEffect} from "react";
 
-export default function sendQuery(queryKey: string, queryFunc: () => Promise<any>) {
+export default function useSendQuery(queryKey: string, queryFunc: () => Promise<any>) {
     const result = useQuery([queryKey], queryFunc, {
         cacheTime: 0,
         refetchOnWindowFocus: false,

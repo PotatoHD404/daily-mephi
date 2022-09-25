@@ -65,12 +65,11 @@ model User {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String?   @unique @db.String(100)
   imageId       String?   @unique @db.Uuid
-  rating        Int       @default(0)
   role          String    @default("default")
   email         String?   @unique
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
-  score         Float     @default(0) @db.Float8
+  rating         Float    @default(0) @db.Float8
   userCourse    Course?
 
   image               File?          @relation("userImage", fields: [imageId], references: [id])

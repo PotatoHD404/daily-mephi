@@ -81,7 +81,7 @@ function AuthSection(props: DefaultNavbarParams) {
 
 
     useEffect(() => {
-        console.log(session)
+        // console.log(session)
         if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
