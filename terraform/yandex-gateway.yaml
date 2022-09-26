@@ -119,50 +119,12 @@ paths:
           schema:
             type: string
           style: simple
-  /users/me:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/users/me.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-      parameters:
-        - explode: false
-          in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          style: simple
-  /users/{id+}:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/users/[id].html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-      parameters:
-        - explode: false
-          in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          style: simple
   /api/{file+}:
     delete:
       x-yc-apigateway-integration:
         type: cloud-functions
         function_id: ${api_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -176,8 +138,6 @@ paths:
         type: cloud-functions
         function_id: ${api_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -191,8 +151,6 @@ paths:
         type: cloud-functions
         function_id: ${api_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -206,8 +164,6 @@ paths:
         type: cloud-functions
         function_id: ${api_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -221,8 +177,6 @@ paths:
         type: cloud-functions
         function_id: ${api_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /api/{file}
       parameters:
         - explode: false
           in: path
@@ -237,8 +191,6 @@ paths:
         type: cloud-functions
         function_id: ${pages_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /reviews/[id]
       parameters:
         - explode: false
           in: path
@@ -253,8 +205,6 @@ paths:
         type: cloud-functions
         function_id: ${pages_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /quotes/[id]
       parameters:
         - explode: false
           in: path
@@ -269,9 +219,30 @@ paths:
         type: cloud-functions
         function_id: ${pages_function_id}
         tag: $latest
-        headers:
-          "x-nextjs-page": /users/[id]
       parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          style: simple
+  /_next/data/{hash}/tutors/{id}.json:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${bucket_name}
+        object: static/_next/data/{hash}/tutors/{id}.json
+        presigned_redirect: true
+        service_account_id: ${service_account_id}
+      parameters:
+        - explode: false
+          in: path
+          name: hash
+          required: true
+          schema:
+            type: string
+          style: simple
         - explode: false
           in: path
           name: id

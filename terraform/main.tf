@@ -197,8 +197,6 @@ resource "null_resource" "build" {
     build_number = timestamp()
   }
   provisioner "local-exec" {
-#    interpreter = ["PowerShell", "-Command"]
-    #rm -rf ./terraform/main-lambda/api/v1
     command = <<-EOT
 cd ${path.root}/../
 
@@ -208,16 +206,93 @@ tf-next build --skipDownload
 yarn next export
 unzip -o .next-tf/deployment.zip -d .next-tf
 rm -rf .next-tf/deployment.zip
-mv out ./terraform/static
-mv .next-tf/lambdas ./terraform/main-lambdas
-
-aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/main-lambdas/ s3://daily-service/main-lambdas
+rm -rf ./terraform/main-lambdas
+mkdir ./terraform/main-lambdas
     EOT
   }
 }
 
+resource "null_resource" "upload_static" {
+  depends_on = [null_resource.build]
+  triggers = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+    command = <<-EOT
+cd ${path.root}/../
+
+mv out ./terraform/static
+
+aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
+    EOT
+  }
+}
+
+resource "null_resource" "build_api" {
+  depends_on = [null_resource.build]
+  triggers   = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+
+    command = <<-EOT
+cd ${path.root}/../
+
+unzip -o .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip -d .next-tf/api-lambda
+rm -rf .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip
+
+mv .next-tf/api-lambda ./terraform/main-lambdas/api-lambda
+
+mv ./thumbnails ./terraform/main-lambdas/api-lambda/thumbnails
+mv ./fonts ./terraform/main-lambdas/api-lambda/fonts
+
+rm ./terraform/main-lambdas/api-lambda/now__bridge.js
+cp ./cloud-functions/main/now__bridge.js ./terraform/main-lambdas/api-lambda/now__bridge.js
+
+sed -i 's/console.error(*console.error('pages in lambda', Object.keys(pages))//' ./terraform/main-lambdas/api-lambda/now__launcher.js
+sed -i "s/500/400/" ./terraform/main-lambdas/api-lambda/now__launcher.js
+sed -i "s/internal server error/page not found/" ./terraform/main-lambdas/api-lambda/now__launcher.js
+
+cd ./terraform/main-lambdas/api-lambda
+zip -r ../api-lambda.zip .
+cd ../../../
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip
+    EOT
+  }
+}
+
+
+resource "null_resource" "build_pages" {
+    depends_on = [null_resource.build]
+    triggers   = {
+        build_number = timestamp()
+    }
+    provisioner "local-exec" {
+
+        command = <<-EOT
+cd ${path.root}/../
+
+unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda
+rm -rf .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip
+
+mv .next-tf/pages-lambda ./terraform/main-lambdas/pages-lambda
+
+rm ./terraform/main-lambdas/pages-lambda/now__bridge.js
+cp ./cloud-functions/main/now__bridge.js ./terraform/main-lambdas/pages-lambda/now__bridge.js
+
+sed -i 's/console.error(*console.error('pages in lambda', Object.keys(pages))//' ./terraform/main-lambdas/pages-lambda/now__launcher.js
+sed -i "s/500/400/" ./terraform/main-lambdas/pages-lambda/now__launcher.js
+sed -i "s/internal server error/page not found/" ./terraform/main-lambdas/pages-lambda/now__launcher.js
+
+cd ./terraform/main-lambdas/pages-lambda
+zip -r ../pages-lambda.zip .
+cd ../../../
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip
+        EOT
+    }
+
+}
 #access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
 #secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
 
@@ -268,17 +343,17 @@ resource "null_resource" "set_domain" {
 #}
 
 data "external" "zip_main_pages" {
-  depends_on = [null_resource.build]
-  program = ["./hash.sh", "main-lambdas/__NEXT_PAGE_LAMBDA_0.zip"]
+  depends_on = [null_resource.build_pages]
+  program = ["./hash.sh", "main-lambdas/pages-lambda.zip"]
 }
 
 data "external" "zip_main_api" {
-  depends_on = [null_resource.build]
-  program = ["./hash.sh", "main-lambdas/__NEXT_API_LAMBDA_0.zip"]
+  depends_on = [null_resource.build_api]
+  program = ["./hash.sh", "main-lambdas/api-lambda.zip"]
 }
 
 resource "yandex_function" "backend_api" {
-  depends_on        = [null_resource.build, data.external.zip_main_api]
+  depends_on        = [null_resource.build_api, data.external.zip_main_api]
   name              = "daily-mephi-backend-api"
   description       = "daily-mephi-backend-api"
   user_hash         = data.external.zip_main_api.result.sha256
@@ -289,12 +364,13 @@ resource "yandex_function" "backend_api" {
   package {
     sha_256     = data.external.zip_main_api.result.sha256
     bucket_name = "daily-service"
-    object_name = "main-lambdas/__NEXT_API_LAMBDA_0.zip"
+    object_name = "main-lambdas/api-lambda.zip"
   }
+  environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
 }
 
 resource "yandex_function" "backend_pages" {
-  depends_on        = [null_resource.build, data.external.zip_main_pages]
+  depends_on        = [null_resource.build_pages, data.external.zip_main_pages]
   name              = "daily-mephi-backend-pages"
   description       = "daily-mephi-backend-pages"
   user_hash         = data.external.zip_main_pages.result.sha256
@@ -305,9 +381,8 @@ resource "yandex_function" "backend_pages" {
   package {
     sha_256     = data.external.zip_main_pages.result.sha256
     bucket_name = "daily-service"
-    object_name = "main-lambdas/__NEXT_PAGE_LAMBDA_0.zip"
+    object_name = "main-lambdas/pages-lambda.zip"
   }
-  environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
 }
 
 resource "yandex_function_iam_binding" "backend_api" {

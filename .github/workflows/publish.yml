@@ -62,12 +62,10 @@ jobs:
             region=ru-central1' > ~/.aws/config
 
       - name: Install Yandex Cloud CLI
-        run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-
-      - name: Add Yandex Cloud CLI to $PATH
-        run: echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
-
-      - name: Init Yandex Cloud CLI
+        run: |
+          curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+      - name: Configure Yandex Cloud Credentials
         run: |
           yc config profile create github-actions
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
@@ -78,30 +76,30 @@ jobs:
           npm i -g tf-next@canary
       - name: Create .env file
         run: |
-          echo DATABASE_URL="$DATABASE_URL" >> .env
-          echo LOCAL="$LOCAL" >> .env
+          echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
+          echo LOCAL=\""$LOCAL"\" >> .env
           
-          echo NEXTAUTH_SECRET="$NEXTAUTH_SECRET" >> .env       
-          echo HASH_SECRET="$HASH_SECRET" >> .env
-          echo HASH_SALT="$HASH_SALT" >> .env
-          echo HASH_MEMORY_COST="$HASH_MEMORY_COST" >> .env
-          echo HASH_TYPE="$HASH_TYPE" >> .env
-          echo HASH_TIME_COST="$HASH_TIME_COST" >> .env
-          echo HASH_PARALLELISM="$HASH_PARALLELISM" >> .env
-          echo AES_NONCE="$AES_NONCE" >> .env
-          echo AES_KEY256="$AES_KEY256" >> .env
-          echo NEXTAUTH_URL="$NEXTAUTH_URL" >> .env
-          echo JWT_PRIVATE="$JWT_PRIVATE" >> .env
-          echo NOTION_TOKEN="$NOTION_TOKEN" >> .env
-          echo NOTION_PRIVATE_PAGE="$NOTION_PRIVATE_PAGE" >> .env
-          echo NOTION_TOKEN_V2="$NOTION_TOKEN_V2" >> .env
-          echo NOTION_EMAIL="$NOTION_EMAIL" >> .env
-          echo NOTION_PASSWORD="$NOTION_PASSWORD" >> .env
-          echo RECAPTCHA_SECRET="$RECAPTCHA_SECRET" >> .env
-          echo RECAPTCHA_PUBLIC="$RECAPTCHA_PUBLIC" >> .env
-          echo DATABASE_KEY="$DATABASE_KEY" >> .env
+          echo NEXTAUTH_SECRET=\""$NEXTAUTH_SECRET"\" >> .env       
+          echo HASH_SECRET=\""$HASH_SECRET"\" >> .env
+          echo HASH_SALT=\""$HASH_SALT"\" >> .env
+          echo HASH_MEMORY_COST=\""$HASH_MEMORY_COST"\" >> .env
+          echo HASH_TYPE=\""$HASH_TYPE"\" >> .env
+          echo HASH_TIME_COST=\""$HASH_TIME_COST"\" >> .env
+          echo HASH_PARALLELISM=\""$HASH_PARALLELISM"\" >> .env
+          echo AES_NONCE=\""$AES_NONCE"\" >> .env
+          echo AES_KEY256=\""$AES_KEY256"\" >> .env
+          echo NEXTAUTH_URL=\""$NEXTAUTH_URL"\" >> .env
+          echo JWT_PRIVATE=\""$JWT_PRIVATE"\" >> .env
+          echo NOTION_TOKEN=\""$NOTION_TOKEN"\" >> .env
+          echo NOTION_PRIVATE_PAGE=\""$NOTION_PRIVATE_PAGE"\" >> .env
+          echo NOTION_TOKEN_V2=\""$NOTION_TOKEN_V2"\" >> .env
+          echo NOTION_EMAIL=\""$NOTION_EMAIL"\" >> .env
+          echo NOTION_PASSWORD=\""$NOTION_PASSWORD"\" >> .env
+          echo RECAPTCHA_SECRET=\""$RECAPTCHA_SECRET"\" >> .env
+          echo RECAPTCHA_PUBLIC=\""$RECAPTCHA_PUBLIC"\" >> .env
+          echo DATABASE_KEY=\""$DATABASE_KEY"\" >> .env
           
-          echo GOOGLE_API_KEY="$GOOGLE_API_KEY" >> .env
+          echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
       - name: Run Terraform init
         run: |
           cd terraform
