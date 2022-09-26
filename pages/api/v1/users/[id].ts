@@ -54,7 +54,7 @@ export default async function handler(
                "aggr_selection_0_Material"."_aggr_count_materials" as "materials_count",
                "aggr_selection_1_Review"."_aggr_count_reviews"     as "reviews_count",
                "aggr_selection_2_Quote"."_aggr_count_quotes"       as "quotes_count",
-               ROW_NUMBER() OVER (ORDER BY "score" DESC)           as place,
+               ROW_NUMBER() OVER (ORDER BY "rating" DESC)           as place,
                "public"."File"."url"                               as "image"
         FROM "public"."User"
                  LEFT JOIN (SELECT "public"."Material"."userId", COUNT(*) AS "_aggr_count_materials"
