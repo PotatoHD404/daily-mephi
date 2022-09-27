@@ -256,13 +256,13 @@ TEXT1="\"Failed to find matching page for\""
 TEXTR1="// \"Failed to find matching page for\""
 TEXT2="// console.error('Unhandled error during request:', err)"
 TEXTR2="console.error('pages in lambda', Object.keys(pages))"
-NUM=`grep -n "\"Failed to find matching page for\"" message.txt | cut -d : -f 1`
+NUM=`grep -n "\"Failed to find matching page for\"" ./terraform/main-lambdas/api-lambda/now__launcher.js | cut -d : -f 1`
 NUM=$((NUM+1))
 sed -i "s@$TEXT@$TEXTR@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i "s@$TEXT1@$TEXTR1@g" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i "s@$TEXT2@$TEXTR2@g" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i ""$NUM"s@)@// )@" ./terraform/main-lambdas/api-lambda/now__launcher.js
-sed -i "s@500@400@" ./terraform/main-lambdas/api-lambda/now__launcher.js
+sed -i "s@500@404@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/api-lambda
@@ -298,13 +298,13 @@ TEXT1="\"Failed to find matching page for\""
 TEXTR1="// \"Failed to find matching page for\""
 TEXT2="// console.error('Unhandled error during request:', err)"
 TEXTR2="console.error('pages in lambda', Object.keys(pages))"
-NUM=`grep -n "\"Failed to find matching page for\"" message.txt | cut -d : -f 1`
+NUM=`grep -n "\"Failed to find matching page for\"" ./terraform/main-lambdas/pages-lambda/now__launcher.js | cut -d : -f 1`
 NUM=$((NUM+1))
 sed -i "s@$TEXT@$TEXTR@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i "s@$TEXT1@$TEXTR1@g" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i "s@$TEXT2@$TEXTR2@g" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i ""$NUM"s@)@// )@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
-sed -i "s@500@400@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
+sed -i "s@500@404@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/pages-lambda
