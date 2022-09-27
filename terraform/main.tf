@@ -204,12 +204,18 @@ rm -rf ./terraform/static ./terraform/main-lambda
 
 tf-next build --skipDownload
 yarn next export
-unzip -o .next-tf/deployment.zip -d .next-tf
+unzip -o .next-tf/deployment.zip -d .next-tf &> /dev/null
+echo "Unzipped deployment.zip"
 rm -rf .next-tf/deployment.zip
 rm -rf ./terraform/main-lambdas
 mkdir ./terraform/main-lambdas
+find .next-tf/static/_next/data/*/tutors | cut -d/ -f5 > ./terraform/main-lambdas/folder.txt
     EOT
   }
+}
+
+locals {
+  folder = file("${path.module}/main-lambdas/folder.txt")
 }
 
 resource "null_resource" "upload_static" {
@@ -223,8 +229,10 @@ cd ${path.root}/../
 
 mv out ./terraform/static
 
-aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static
+aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive &> /dev/null
+echo "Removed old static files"
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static &> /dev/null
+echo "Uploaded new static files"
     EOT
   }
 }
@@ -239,7 +247,8 @@ resource "null_resource" "build_api" {
     command = <<-EOT
 cd ${path.root}/../
 
-unzip -o .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip -d .next-tf/api-lambda
+unzip -o .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip -d .next-tf/api-lambda &> /dev/null
+echo "Unzipped __NEXT_API_LAMBDA_0.zip"
 rm -rf .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip
 
 mv .next-tf/api-lambda ./terraform/main-lambdas/api-lambda
@@ -266,9 +275,11 @@ sed -i "s@500@404@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/api-lambda
-zip -r ../api-lambda.zip .
+zip -r ../api-lambda.zip . &> /dev/null
+echo "Zipped api-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip &> /dev/null
+echo "Uploaded api-lambda.zip"
     EOT
   }
 }
@@ -284,7 +295,8 @@ resource "null_resource" "build_pages" {
         command = <<-EOT
 cd ${path.root}/../
 
-unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda
+unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda &> /dev/null
+echo "Unzipped __NEXT_PAGE_LAMBDA_0.zip"
 rm -rf .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip
 
 mv .next-tf/pages-lambda ./terraform/main-lambdas/pages-lambda
@@ -308,9 +320,11 @@ sed -i "s@500@404@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/pages-lambda
-zip -r ../pages-lambda.zip .
+zip -r ../pages-lambda.zip . &> /dev/null
+echo "Zipped pages-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip &> /dev/null
+echo "Uploaded pages-lambda.zip"
         EOT
     }
 

@@ -73,12 +73,12 @@ paths:
         service_account_id: ${service_account_id}
         error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
-  /materials/{id+}:
+  /{route}/{id}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/materials/[id].html
+        object: static/{route}/[id].html
         presigned_redirect: true
         service_account_id: ${service_account_id}
         error_object: static/404.html
@@ -87,6 +87,15 @@ paths:
         - explode: false
           in: path
           name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^materials$'
+          name: route
           required: true
           schema:
             type: string
@@ -107,6 +116,7 @@ paths:
         type: object_storage
         bucket: ${bucket_name}
         object: static/tutors/{id}.html
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
         presigned_redirect: true
         service_account_id: ${service_account_id}
         error_object: static/404.html
@@ -120,59 +130,7 @@ paths:
             type: string
           style: simple
   /api/{file+}:
-    delete:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: ${api_function_id}
-        tag: $latest
-      parameters:
-        - explode: false
-          in: path
-          name: file
-          required: true
-          schema:
-            type: string
-          style: simple
-    get:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: ${api_function_id}
-        tag: $latest
-      parameters:
-        - explode: false
-          in: path
-          name: file
-          required: true
-          schema:
-            type: string
-          style: simple
-    patch:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: ${api_function_id}
-        tag: $latest
-      parameters:
-        - explode: false
-          in: path
-          name: file
-          required: true
-          schema:
-            type: string
-          style: simple
-    post:
-      x-yc-apigateway-integration:
-        type: cloud-functions
-        function_id: ${api_function_id}
-        tag: $latest
-      parameters:
-        - explode: false
-          in: path
-          name: file
-          required: true
-          schema:
-            type: string
-          style: simple
-    put:
+    x-yc-apigateway-any-method:
       x-yc-apigateway-integration:
         type: cloud-functions
         function_id: ${api_function_id}
