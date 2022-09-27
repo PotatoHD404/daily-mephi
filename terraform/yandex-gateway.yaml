@@ -26,18 +26,18 @@ paths:
       parameters:
         - explode: false
           in: path
-          pattern: '^tutors|materials|search|about|500|404$'
           name: route
           required: true
           schema:
             type: string
+            pattern: '^tutors|materials|search|about|500|404$'
           style: simple
   /tutors/{id}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/{route}/{id}.html
+        object: static/tutors/{id}.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
         error_object: static/404.html
@@ -68,11 +68,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^materials|quotes|reviews|users$'
-          name: path
+          name: route
           required: true
           schema:
             type: string
+            pattern: '^materials|quotes|reviews|users$'
           style: simple
   /_next/data/${hash}/tutors/{id}.json:
     get:
@@ -107,11 +107,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^materials|quotes|reviews|users$'
           name: path
           required: true
           schema:
             type: string
+            pattern: '^materials|quotes|reviews|users$'
           style: simple
   /api/v1/{route}/{id}:
     x-yc-apigateway-any-method:
@@ -130,11 +130,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^tutors|users|reviews|quotes|news|materials|files$'
           name: route
           required: true
           schema:
             type: string
+            pattern: '^tutors|users|reviews|quotes|news|materials|files$'
           style: simple
   /api/v1/{route}:
     x-yc-apigateway-any-method:
@@ -145,11 +145,11 @@ paths:
       parameters:
         - explode: false
           in: path
-          pattern: '^tutors|users|reviews|quotes|news|materials|files|calculate_score|disciplines|faculties|likes|semesters|top$'
           name: route
           required: true
           schema:
             type: string
+            pattern: '^tutors|users|reviews|quotes|news|materials|files|calculate_score|disciplines|faculties|likes|semesters|top$'
           style: simple
   /api/v1/users/{type}:
     x-yc-apigateway-any-method:
@@ -160,11 +160,11 @@ paths:
       parameters:
         - explode: false
           in: path
-          pattern: '^edit|me$'
           name: type
           required: true
           schema:
             type: string
+            pattern: '^edit|me$'
           style: simple
   /api/v1/comments/{type}/{id}:
     x-yc-apigateway-any-method:
@@ -183,11 +183,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^review|material|news$'
           name: type
           required: true
           schema:
             type: string
+            pattern: '^review|material|news$'
           style: simple
   /api/auth/{path+}:
     x-yc-apigateway-any-method:
@@ -228,11 +228,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^review|material|news$'
           name: type
           required: true
           schema:
             type: string
+            pattern: '^review|material|news$'
           style: simple
   /api/v1/thumbnails/{type}/{id}:
     x-yc-apigateway-any-method:
@@ -251,11 +251,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^reviews|materials|quotes|reviews|tutors|users$'
           name: type
           required: true
           schema:
             type: string
+            pattern: '^reviews|materials|quotes|reviews|tutors|users$'
           style: simple
   /api/v1/tutors/{id}/{type}:
     x-yc-apigateway-any-method:
@@ -274,11 +274,11 @@ paths:
           style: simple
         - explode: false
           in: path
-          pattern: '^reviews|materials|rates|quotes$'
           name: type
           required: true
           schema:
             type: string
+            pattern: '^reviews|materials|rates|quotes$'
           style: simple
   /{file+}:
     get:

@@ -210,11 +210,6 @@ rm -rf .next-tf/deployment.zip
 rm -rf ./terraform/main-lambdas
 mkdir ./terraform/main-lambdas
 cd ./terraform
-cat <<EOF
-{
-  "pages_hash": "$(find ../out/_next/data/*/tutors  | head -1 | cut -d/ -f5 | awk '{print $1}')"
-}
-EOF
     EOT
   }
 }
