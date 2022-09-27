@@ -215,7 +215,8 @@ find .next-tf/static/_next/data/*/tutors | cut -d/ -f5 > ./terraform/main-lambda
 }
 
 locals {
-  folder = file("${path.module}/main-lambdas/folder.txt")
+  depends_on = [null_resource.build]
+  pages_hash = file("${path.module}/main-lambdas/folder.txt")
 }
 
 resource "null_resource" "upload_static" {
@@ -440,6 +441,7 @@ data "template_file" "api_gateway" {
     api_function_id = yandex_function.backend_api.id
     pages_function_id = yandex_function.backend_pages.id
     bucket_name = yandex_storage_bucket.public.bucket
+    hash = local.pages_hash
   }
 }
 

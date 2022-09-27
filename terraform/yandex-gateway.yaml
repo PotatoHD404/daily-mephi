@@ -13,72 +13,31 @@ paths:
         service_account_id: ${service_account_id}
         error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
-  /404:
+  /{route}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/404.html
+        object: static/{route}.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
         error_object: static/404.html
       summary: Serve static file from Yandex Cloud Object Storage
-  /500:
+      parameters:
+        - explode: false
+          in: path
+          pattern: '^tutors|materials|search|about|500|404$'
+          name: route
+          required: true
+          schema:
+            type: string
+          style: simple
+  /tutors/{id}:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/500.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /about:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/about.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /index:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/index.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /search:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/search.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /materials:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/materials.html
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /{route}/{id}:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/{route}/[id].html
+        object: static/{route}/{id}.html
         presigned_redirect: true
         service_account_id: ${service_account_id}
         error_object: static/404.html
@@ -92,35 +51,37 @@ paths:
             type: string
             format: uuid
           style: simple
+  /{route}/{id}:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${pages_function_id}
+        tag: $latest
+      parameters:
         - explode: false
           in: path
-          pattern: '^materials$'
-          name: route
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^materials|quotes|reviews|users$'
+          name: path
           required: true
           schema:
             type: string
           style: simple
-  /tutors:
+  /_next/data/${hash}/tutors/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/tutors.html
+        object: static/_next/data/${hash}/tutors/{id}.json
         presigned_redirect: true
         service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
-  /tutors/{id+}:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/tutors/{id}.html
-        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-        error_object: static/404.html
-      summary: Serve static file from Yandex Cloud Object Storage
       parameters:
         - explode: false
           in: path
@@ -129,7 +90,30 @@ paths:
           schema:
             type: string
           style: simple
-  /api/{file+}:
+  /_next/data/${hash}/{path}/{id}.json:
+    get:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${pages_function_id}
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^materials|quotes|reviews|users$'
+          name: path
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/v1/{route}/{id}:
     x-yc-apigateway-any-method:
       x-yc-apigateway-integration:
         type: cloud-functions
@@ -138,16 +122,55 @@ paths:
       parameters:
         - explode: false
           in: path
-          name: file
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^tutors|users|reviews|quotes|news|materials|files$'
+          name: route
           required: true
           schema:
             type: string
           style: simple
-  /reviews/{id}:
-    get:
+  /api/v1/{route}:
+    x-yc-apigateway-any-method:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${pages_function_id}
+        function_id: ${api_function_id}
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          pattern: '^tutors|users|reviews|quotes|news|materials|files|calculate_score|disciplines|faculties|likes|semesters|top$'
+          name: route
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/v1/users/{type}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${api_function_id}
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          pattern: '^edit|me$'
+          name: type
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/v1/comments/{type}/{id}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${api_function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -156,12 +179,35 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           style: simple
-  /quotes/{id}:
-    get:
+        - explode: false
+          in: path
+          pattern: '^review|material|news$'
+          name: type
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/auth/{path+}:
+    x-yc-apigateway-any-method:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${pages_function_id}
+        function_id: ${api_function_id}
+        tag: $latest
+      parameters:
+        - explode: false
+          in: path
+          name: path
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/v1/comments/{type}/{id}/{comment_id}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${api_function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -170,12 +216,29 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           style: simple
-  /users/{id}:
-    get:
+        - explode: false
+          in: path
+          name: comment_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^review|material|news$'
+          name: type
+          required: true
+          schema:
+            type: string
+          style: simple
+  /api/v1/thumbnails/{type}/{id}:
+    x-yc-apigateway-any-method:
       x-yc-apigateway-integration:
         type: cloud-functions
-        function_id: ${pages_function_id}
+        function_id: ${api_function_id}
         tag: $latest
       parameters:
         - explode: false
@@ -184,26 +247,35 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           style: simple
-  /_next/data/{hash}/tutors/{id}.json:
-    get:
-      x-yc-apigateway-integration:
-        type: object_storage
-        bucket: ${bucket_name}
-        object: static/_next/data/{hash}/tutors/{id}.json
-        presigned_redirect: true
-        service_account_id: ${service_account_id}
-      parameters:
         - explode: false
           in: path
-          name: hash
+          pattern: '^reviews|materials|quotes|reviews|tutors|users$'
+          name: type
           required: true
           schema:
             type: string
           style: simple
+  /api/v1/tutors/{id}/{type}:
+    x-yc-apigateway-any-method:
+      x-yc-apigateway-integration:
+        type: cloud-functions
+        function_id: ${api_function_id}
+        tag: $latest
+      parameters:
         - explode: false
           in: path
           name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          style: simple
+        - explode: false
+          in: path
+          pattern: '^reviews|materials|rates|quotes$'
+          name: type
           required: true
           schema:
             type: string
