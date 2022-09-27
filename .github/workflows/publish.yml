@@ -104,6 +104,7 @@ jobs:
         run: |
           cd terraform
           chmod +x hash.sh
+          chmod +x find_hash.sh
           terraform init \
           -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
           -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"

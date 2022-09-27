@@ -204,19 +204,19 @@ rm -rf ./terraform/static ./terraform/main-lambda
 
 tf-next build --skipDownload
 yarn next export
-unzip -o .next-tf/deployment.zip -d .next-tf &> /dev/null
+unzip -o .next-tf/deployment.zip -d .next-tf >/dev/null 2>&1
 echo "Unzipped deployment.zip"
 rm -rf .next-tf/deployment.zip
 rm -rf ./terraform/main-lambdas
 mkdir ./terraform/main-lambdas
-find .next-tf/static/_next/data/*/tutors | cut -d/ -f5 > ./terraform/main-lambdas/folder.txt
+cd ./terraform
+cat <<EOF
+{
+  "pages_hash": "$(find ../out/_next/data/*/tutors  | head -1 | cut -d/ -f5 | awk '{print $1}')"
+}
+EOF
     EOT
   }
-}
-
-locals {
-  depends_on = [null_resource.build]
-  pages_hash = file("${path.module}/main-lambdas/folder.txt")
 }
 
 resource "null_resource" "upload_static" {
@@ -230,9 +230,9 @@ cd ${path.root}/../
 
 mv out ./terraform/static
 
-aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive &> /dev/null
+aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://${yandex_storage_bucket.public.bucket}/static --recursive >/dev/null 2>&1
 echo "Removed old static files"
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static &> /dev/null
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp --recursive ./terraform/static/ s3://${yandex_storage_bucket.public.bucket}/static >/dev/null 2>&1
 echo "Uploaded new static files"
     EOT
   }
@@ -248,7 +248,7 @@ resource "null_resource" "build_api" {
     command = <<-EOT
 cd ${path.root}/../
 
-unzip -o .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip -d .next-tf/api-lambda &> /dev/null
+unzip -o .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip -d .next-tf/api-lambda >/dev/null 2>&1
 echo "Unzipped __NEXT_API_LAMBDA_0.zip"
 rm -rf .next-tf/lambdas/__NEXT_API_LAMBDA_0.zip
 
@@ -276,10 +276,10 @@ sed -i "s@500@404@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/api-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/api-lambda
-zip -r ../api-lambda.zip . &> /dev/null
+zip -r ../api-lambda.zip . >/dev/null 2>&1
 echo "Zipped api-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip &> /dev/null
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip >/dev/null 2>&1
 echo "Uploaded api-lambda.zip"
     EOT
   }
@@ -296,7 +296,7 @@ resource "null_resource" "build_pages" {
         command = <<-EOT
 cd ${path.root}/../
 
-unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda &> /dev/null
+unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda >/dev/null 2>&1
 echo "Unzipped __NEXT_PAGE_LAMBDA_0.zip"
 rm -rf .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip
 
@@ -321,10 +321,10 @@ sed -i "s@500@404@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 sed -i "s@internal server error@page not found@" ./terraform/main-lambdas/pages-lambda/now__launcher.js
 
 cd ./terraform/main-lambdas/pages-lambda
-zip -r ../pages-lambda.zip . &> /dev/null
+zip -r ../pages-lambda.zip . >/dev/null 2>&1
 echo "Zipped pages-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip &> /dev/null
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip >/dev/null 2>&1
 echo "Uploaded pages-lambda.zip"
         EOT
     }
@@ -434,6 +434,11 @@ resource "yandex_function_iam_binding" "backend_pages" {
   members     = ["system:allUsers"]
 }
 
+data "external" "pages_hash" {
+  depends_on = [null_resource.build]
+  program = ["./find_hash.sh"]
+}
+
 data "template_file" "api_gateway" {
   template = file("${path.module}/yandex-gateway.yaml")
   vars = {
@@ -441,7 +446,7 @@ data "template_file" "api_gateway" {
     api_function_id = yandex_function.backend_api.id
     pages_function_id = yandex_function.backend_pages.id
     bucket_name = yandex_storage_bucket.public.bucket
-    hash = local.pages_hash
+    hash = data.external.pages_hash.result.pages_hash
   }
 }
 
