@@ -94,3 +94,5 @@ public/service-worker.js.map
 
 *.map
 /tmp/
+
+.next-tf/config.json
