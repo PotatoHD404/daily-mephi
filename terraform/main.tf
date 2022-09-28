@@ -41,7 +41,7 @@ terraform {
   required_version = ">= 0.13"
   backend "s3" {
     endpoint   = "storage.yandexcloud.net"
-    bucket     = "daily-service"
+    bucket     = "daily-service-1"
     region     = "ru-central1"
     key        = "daily-mephi-terraform/main.tfstate"
 
@@ -63,7 +63,7 @@ provider "yandex" {
 #  backend = "s3"
 #  config = {
 #    endpoint   = "storage.yandexcloud.net"
-#    bucket     = "daily-service"
+#    bucket     = "daily-service-1"
 #    region     = "ru-central1"
 #    key        = "daily-mephi-terraform/main.tfstate"
 
@@ -274,7 +274,7 @@ cd ./terraform/main-lambdas/api-lambda
 zip -r ../api-lambda.zip . >/dev/null 2>&1
 echo "Zipped api-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service/main-lambdas/api-lambda.zip >/dev/null 2>&1
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/api-lambda.zip s3://daily-service-1/main-lambdas/api-lambda.zip >/dev/null 2>&1
 echo "Uploaded api-lambda.zip"
     EOT
   }
@@ -319,7 +319,7 @@ cd ./terraform/main-lambdas/pages-lambda
 zip -r ../pages-lambda.zip . >/dev/null 2>&1
 echo "Zipped pages-lambda.zip"
 cd ../../../
-aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service/main-lambdas/pages-lambda.zip >/dev/null 2>&1
+aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service-1/main-lambdas/pages-lambda.zip >/dev/null 2>&1
 echo "Uploaded pages-lambda.zip"
         EOT
     }
@@ -395,7 +395,7 @@ resource "yandex_function" "backend_api" {
   execution_timeout = "10"
   package {
     sha_256     = data.external.zip_main_api.result.sha256
-    bucket_name = "daily-service"
+    bucket_name = "daily-service-1"
     object_name = "main-lambdas/api-lambda.zip"
   }
   environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
@@ -412,7 +412,7 @@ resource "yandex_function" "backend_pages" {
   execution_timeout = "5"
   package {
     sha_256     = data.external.zip_main_pages.result.sha256
-    bucket_name = "daily-service"
+    bucket_name = "daily-service-1"
     object_name = "main-lambdas/pages-lambda.zip"
   }
 }
