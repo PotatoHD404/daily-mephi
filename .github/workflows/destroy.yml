@@ -1,4 +1,4 @@
-name: 'Deploy on YC'
+name: 'Destroy cloud'
 on: workflow_dispatch
 
 jobs:
@@ -105,7 +105,9 @@ jobs:
           terraform init \
           -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
           -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-      - name: Run Terraform apply
+      - name: Remove files from bucket
+        run: aws --endpoint-url=https://storage.yandexcloud.net s3 rm s3://public-bucket --recursive
+      - name: Run Terraform destroy
         run: |
           cd terraform
-          terraform destroy -auto-approve
+          terraform destroy -input=false --auto-approve
