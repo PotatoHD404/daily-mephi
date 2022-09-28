@@ -1,0 +1,111 @@
+name: 'Deploy on YC'
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    name: 'Destroy cloud'
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.TF_VAR_DATABASE_URL }}
+      LOCAL: ${{ secrets.TF_VAR_LOCAL }}
+      NEXTAUTH_SECRET: ${{secrets.TF_VAR_NEXTAUTH_SECRET}}
+      HASH_SECRET: ${{secrets.TF_VAR_HASH_SECRET}}
+      HASH_SALT: ${{secrets.TF_VAR_HASH_SALT}}
+      HASH_MEMORY_COST: ${{secrets.TF_VAR_HASH_MEMORY_COST}}
+      HASH_TYPE: ${{secrets.TF_VAR_HASH_TYPE}}
+      HASH_TIME_COST: ${{secrets.TF_VAR_HASH_TIME_COST}}
+      HASH_PARALLELISM: ${{secrets.TF_VAR_HASH_PARALLELISM}}
+      AES_NONCE: ${{secrets.TF_VAR_AES_NONCE}}
+      AES_KEY256: ${{secrets.TF_VAR_AES_KEY256}}
+      NEXTAUTH_URL: ${{secrets.TF_VAR_NEXTAUTH_URL}}
+      JWT_PRIVATE: ${{secrets.TF_VAR_JWT_PRIVATE}}
+      NOTION_TOKEN: ${{secrets.TF_VAR_NOTION_TOKEN}}
+      NOTION_PRIVATE_PAGE: ${{secrets.TF_VAR_NOTION_PRIVATE_PAGE}}
+      NOTION_TOKEN_V2: ${{secrets.TF_VAR_NOTION_TOKEN_V2}}
+      NOTION_EMAIL: ${{secrets.TF_VAR_NOTION_EMAIL}}
+      NOTION_PASSWORD: ${{secrets.TF_VAR_NOTION_PASSWORD}}
+      RECAPTCHA_SECRET: ${{secrets.TF_VAR_RECAPTCHA_SECRET}}
+      RECAPTCHA_PUBLIC: ${{secrets.TF_VAR_RECAPTCHA_PUBLIC}}
+      DATABASE_KEY: ${{secrets.TF_VAR_DATABASE_KEY}}
+      GOOGLE_API_KEY: ${{secrets.TF_VAR_GOOGLE_API_KEY}}
+      TF_VAR_token: ${{secrets.TF_VAR_TOKEN}}
+      TF_VAR_cloud_id: ${{secrets.TF_VAR_CLOUD_ID}}
+      TF_VAR_folder_id: ${{secrets.TF_VAR_FOLDER_ID}}
+      TF_VAR_zone: ${{secrets.TF_VAR_ZONE}}
+      TF_VAR_DOMAIN_ID: ${{secrets.TF_VAR_DOMAIN_ID}}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Pull Terraform CLI
+        uses: hashicorp/setup-terraform@v2
+      - name: Add .terraformrc
+        run: echo 'provider_installation {
+          network_mirror {
+          url = "https://terraform-mirror.yandexcloud.net/"
+          include = ["registry.terraform.io/*/*"]
+          }
+          direct {
+          exclude = ["registry.terraform.io/*/*"]
+          }
+          }' > ~/.terraformrc
+      - name: Configure AWS Credentials
+        run: |
+          rm -rf ~/.aws
+          mkdir -p ~/.aws
+          echo '[default]
+            aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}' > ~/.aws/credentials
+          echo '[default]
+            region=ru-central1' > ~/.aws/config
+
+      - name: Install Yandex Cloud CLI
+        run: |
+          curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+      - name: Configure Yandex Cloud Credentials
+        run: |
+          yc config profile create github-actions
+          yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
+          yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+          yc config set token ${{ secrets.YC_TOKEN }}
+      - name: Install tf-next
+        run: |
+          npm i -g tf-next@canary
+      - name: Create .env file
+        run: |
+          echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
+          echo LOCAL=\""$LOCAL"\" >> .env
+          
+          echo NEXTAUTH_SECRET=\""$NEXTAUTH_SECRET"\" >> .env       
+          echo HASH_SECRET=\""$HASH_SECRET"\" >> .env
+          echo HASH_SALT=\""$HASH_SALT"\" >> .env
+          echo HASH_MEMORY_COST=\""$HASH_MEMORY_COST"\" >> .env
+          echo HASH_TYPE=\""$HASH_TYPE"\" >> .env
+          echo HASH_TIME_COST=\""$HASH_TIME_COST"\" >> .env
+          echo HASH_PARALLELISM=\""$HASH_PARALLELISM"\" >> .env
+          echo AES_NONCE=\""$AES_NONCE"\" >> .env
+          echo AES_KEY256=\""$AES_KEY256"\" >> .env
+          echo NEXTAUTH_URL=\""$NEXTAUTH_URL"\" >> .env
+          echo JWT_PRIVATE=\""$JWT_PRIVATE"\" >> .env
+          echo NOTION_TOKEN=\""$NOTION_TOKEN"\" >> .env
+          echo NOTION_PRIVATE_PAGE=\""$NOTION_PRIVATE_PAGE"\" >> .env
+          echo NOTION_TOKEN_V2=\""$NOTION_TOKEN_V2"\" >> .env
+          echo NOTION_EMAIL=\""$NOTION_EMAIL"\" >> .env
+          echo NOTION_PASSWORD=\""$NOTION_PASSWORD"\" >> .env
+          echo RECAPTCHA_SECRET=\""$RECAPTCHA_SECRET"\" >> .env
+          echo RECAPTCHA_PUBLIC=\""$RECAPTCHA_PUBLIC"\" >> .env
+          echo DATABASE_KEY=\""$DATABASE_KEY"\" >> .env
+          
+          echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
+      - name: Run Terraform init
+        run: |
+          cd terraform
+          chmod +x hash.sh
+          chmod +x find_hash.sh
+          terraform init \
+          -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+          -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      - name: Run Terraform apply
+        run: |
+          cd terraform
+          terraform destroy -auto-approve
