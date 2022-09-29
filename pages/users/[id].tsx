@@ -68,8 +68,12 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     }, [changeNeedsAuth, me]);
     return (
         <>
+        {user ?
             <SEO title={`Пользователь ${user.name}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${user.id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${user.id}.png`}/> :
+                  <SEO title={`Пользователь ${data.name || '...'}`}
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/> 
+        }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={isMe} user={data ?? user} isLoading={isLoading}/>
