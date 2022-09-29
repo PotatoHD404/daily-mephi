@@ -8,6 +8,19 @@ import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 import {toChildArray} from "preact";
 
+function Review({review}: { review?: ReviewType }) {
+    return (<div className="text-[1.7rem] w-full whiteBox">
+        <UserHeader user={review?.user}
+                    legacyNickname={review?.legacyNickname}
+                    date={review?.createdAt}/>
+        <h1 className="font-bold text-[1.1rem] leading-6">{review?.header}</h1>
+        <div className="mb-2 text-[1.0rem] leading-5">{review?.body}</div>
+        <Reactions/>
+        <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
+        <Comments/>
+    </div>);
+}
+
 export default function Reviews({tutorId}: { tutorId: string }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
@@ -96,17 +109,4 @@ export default function Reviews({tutorId}: { tutorId: string }) {
 
         </>
     );
-}
-
-function Review({review}: { review?: ReviewType }) {
-    return (<div className="text-[1.7rem] w-full whiteBox">
-        <UserHeader user={review?.user}
-                    legacyNickname={review?.legacyNickname}
-                    date={review?.createdAt}/>
-        <h1 className="font-bold text-[1.1rem] leading-6">{review?.header}</h1>
-        <div className="mb-2 text-[1.0rem] leading-5">{review?.body}</div>
-        <Reactions/>
-        <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
-        <Comments/>
-    </div>);
 }

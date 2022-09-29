@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import DeadCat from "images/dead_cat.svg";
 import {Skeleton} from "@mui/material";
-import {UserType} from "../lib/database/types";
+import {UserType} from "lib/database/types";
 import Link from "next/link";
 
 
@@ -43,7 +43,7 @@ export default function UserHeaderComponent(props: { user?: UserType, legacyNick
                             {props.user?.name ?? props?.legacyNickname ?? "Аноним"}
                         </div>
                         <div className="text-[0.8rem] leading-5 my-auto opacity-60">
-                            {/*{props.date ?? "Неизвестно"}*/}
+                            {typeof props.date}
                         </div>
                     </a></Link> :
                 <div className="ml-2 h-fit">

@@ -37,17 +37,17 @@ export async function getTutors(id?: string): Promise<TutorType[]> {
                 COALESCE("LegacyRating".quality / CAST(NULLIF("LegacyRating"."qualityCount", 0) AS FLOAT), 0.0) +
                 COALESCE("LegacyRating".personality / CAST(NULLIF("LegacyRating"."personalityCount", 0) AS FLOAT),
                          0.0)) / 3                                                  AS "legacyRating",
-               IFNULL(AVG("Rate".quality), 0)                                       AS quality,
-               IFNULL(AVG("Rate".exams), 0)                                         AS exams,
-               IFNULL(AVG("Rate".personality), 0)                                   AS personality,
-               IFNULL(AVG("Rate".punctuality), 0)                                   AS punctuality,
-               COUNT("Review".id)                                                   as "reviewsCount",
-               COUNT("Material".id)                                                 as "materialsCount",
-               COUNT("Quote".id)                                                    as "quotesCount",
-               IF(COUNT("File".id) > 0, ARRAY_AGG("File".url), '{}')                as images,
-               IF(COUNT("Discipline".name) > 0, ARRAY_AGG("Discipline".name), '{}') as disciplines,
-               IF(COUNT("Faculty".name) > 0, ARRAY_AGG("Faculty".name), '{}')       as faculties,
-               "Tutor"."rating"                                                     as rating
+               IFNULL("tutorRating".quality, 0)                                       AS quality,
+               IFNULL("tutorRating".exams, 0)                                         AS exams,
+               IFNULL("tutorRating".personality, 0)                                   AS personality,
+               IFNULL("tutorRating".punctuality, 0)                                   AS punctuality,
+               "tutorImages".result                as images,
+               "tutorDisciplines".result as disciplines,
+               "tutorFaculties".result       as faculties,
+               "Tutor"."rating"                                                     as rating,
+               "quotesCount".result                                                  as "quotesCount",
+                "materialsCount".result                                               as "materialsCount",
+                "reviewsCount".result                                                 as "reviewsCount"
         FROM "Tutor"
                  LEFT JOIN "LegacyRating"
                            ON
@@ -76,12 +76,44 @@ export async function getTutors(id?: string): Promise<TutorType[]> {
                  LEFT JOIN "Discipline"
                            ON
                                "_DisciplineToTutor"."A" = "Discipline".id
-                 LEFT JOIN "Quote"
-                           ON
-                               "Quote"."tutorId" = "Tutor".id
-        GROUP BY "Tutor".id, "LegacyRating"."exams", "LegacyRating"."examsCount", "LegacyRating"."quality",
-                 "LegacyRating"."qualityCount", "LegacyRating"."personality", "LegacyRating"."personalityCount"
+                 LEFT JOIN (SELECT COUNT("Quote".id) as result
+                           FROM "Quote"
+                        WHERE "Quote"."tutorId" = ${id}) AS "quotesCount"
+                            ON TRUE
+                LEFT JOIN (SELECT COUNT("Review".id) as result
+                            FROM "Review"
+                            WHERE "Review"."tutorId" = ${id}) AS "reviewsCount"
+                            ON TRUE
+                LEFT JOIN (SELECT COUNT("Material".id) as result
+                            FROM "Material"
+                            WHERE "Material"."tutorId" = ${id}) AS "materialsCount"
+                            ON TRUE
+                LEFT JOIN (SELECT AVG("Rate".quality) as quality, AVG("Rate".exams) as exams,
+                 AVG("Rate".personality) as personality, AVG("Rate".punctuality) as punctuality
+                            FROM "Rate"
+                            WHERE "Rate"."tutorId" = ${id}) AS "tutorRating"
+                            ON TRUE
+                LEFT JOIN (SELECT IF(COUNT("File".id) > 0, ARRAY_AGG("File".url), '{}') as result
+                            FROM "File"
+                            WHERE "File"."tutorId" = ${id}) AS "tutorImages"
+                            ON TRUE
+                LEFT JOIN (SELECT IF(COUNT("Discipline".name) > 0, ARRAY_AGG("Discipline".name), '{}') as result
+                            FROM "_DisciplineToTutor"
+                                        LEFT JOIN "Discipline"
+                                                    ON
+                                                        "_DisciplineToTutor"."A" = "Discipline".id
+                            WHERE "_DisciplineToTutor"."B" = ${id}) AS "tutorDisciplines"
+                            ON TRUE
+                LEFT JOIN (SELECT IF(COUNT("Faculty".name) > 0, ARRAY_AGG("Faculty".name), '{}') as result
+                            FROM "_FacultyToTutor"
+                                        LEFT JOIN "Faculty"
+                                                    ON
+                                                        "_FacultyToTutor"."A" = "Faculty".id
+                            WHERE "_FacultyToTutor"."B" = ${id}) AS "tutorFaculties"
+                            ON TRUE
+                WHERE "Tutor".id = ${id}
     `;
+    console.log(result)
     result = result.map(processTutor);
     return result;
 }

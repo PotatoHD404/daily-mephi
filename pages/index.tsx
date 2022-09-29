@@ -8,7 +8,7 @@ import {Button} from "@mui/material";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import useIsMobile from "../lib/react/isMobileContext";
-
+// {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
 const SearchBar = dynamic(() => import("components/searchBar"), {ssr: false});
@@ -70,7 +70,10 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     return (
         <>
             <SEO thumbnail={`https://daily-mephi.ru/images/thumbnails/index.png`}/>
-            {isMobile == null ? null :
+            {isMobile == null ?                                 <h1 className="hidden">Самый
+                                    классный студенческий портал. Здесь вы можете оценить качества преподавателя или
+                                    оставить материалы для других студентов.
+                                </h1> :
                 <>
                     <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
                         <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>

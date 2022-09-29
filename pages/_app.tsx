@@ -2,7 +2,7 @@ import 'styles/globals.css'
 import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import React, {ReactNode, useState} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";
@@ -16,7 +16,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../lib/react/useMediaQuery";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
-
+import NProgress from 'nprogress';
 
 const queryClient = new QueryClient()
 
@@ -108,7 +108,12 @@ function MyApp(
     const home: boolean = router.pathname === '/';
     const home1: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
-
+    // useEffect(() => {
+    //     router.events.on('routeChangeStart', () =>  NProgress.start());
+    
+    //     router.events.on('routeChangeComplete', () =>  NProgress.done());
+    //     router.events.on('routeChangeError', () =>  NProgress.done());
+    //   }, []);
     return (
         <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""}
                                  scriptProps={{

@@ -10,15 +10,6 @@ export default async function handler(
     res: NextApiResponse<object>
 ) {
     let {id} = req.query;
-
-    if (id == "me") {
-        const session = await getToken({req})
-        if (!session?.sub) {
-            res.status(401).json({status: 'You are not authenticated'});
-            return;
-        }
-        id = session.sub;
-    }
     if (!id || typeof id != "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;

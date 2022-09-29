@@ -11,9 +11,27 @@ import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "../../lib/uuidRegex";
 
-function Profile({user}: { user: any }) {
+function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
+    const {status} = useSession();
+
+    const router = useRouter();
+    // if(!isFetching)
+    // console.log(data);
+
+    return <div className="flex">
+        <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
+            <User {...(isLoading ? user ?? {} : user)} isLoading={isLoading} me/>
+        </div>
+        <div className="ml-auto hidden lg:block">
+            <TopUsers isLoading={isLoading} place={user?.place}/>
+        </div>
+    </div>;
+}
+
+
+function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, changeNeedsAuth: (a: boolean) => void }) {
     async function getUser() {
-        return await (await fetch(`/api/v1/users/${user.id}`, {
+        return await (await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
@@ -24,11 +42,17 @@ function Profile({user}: { user: any }) {
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });
-    const isLoading = isFetching || !data;
+    const isLoading = isFetching;
     const router = useRouter();
+    const {id} = router.query;
+    const {data: session} = useSession();
+    // @ts-ignore
+    const isMe = session?.user?.id === id;
+
     useEffect(() => {
-        refetch();
-    }, [router.pathname, refetch])
+        if(id)
+            refetch();
+    }, [router.pathname, refetch, id])
     useEffect(() => {
         if (isError && error) {
             // console.log(`Ошибка ${error}`)
@@ -36,63 +60,6 @@ function Profile({user}: { user: any }) {
             // router.push('/500');
         }
     }, [isError, error, router])
-
-    // if(!isFetching)
-    // console.log(data);
-
-    return <div className="flex">
-        <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            <User {...(isLoading ? user : data)} isLoading={isLoading}/>
-        </div>
-        <div className="ml-auto hidden lg:block">
-            <TopUsers place={data?.place} isLoading={isLoading}/>
-        </div>
-    </div>;
-}
-
-function Me({user}: { user: any }) {
-    const {status} = useSession();
-
-    async function getUser() {
-        return await (await fetch('/api/v1/users/me', {
-            method: 'GET',
-            credentials: 'same-origin'
-        }))?.json();
-    }
-
-    const {data, isFetching, refetch, isError, error} = useQuery([`user-me`], getUser, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
-    const router = useRouter();
-    const authenticated = status === "authenticated";
-    const loading = status === "loading";
-    const isLoading = loading || isFetching || !data;
-    useEffect(() => {
-        if (authenticated)
-            refetch();
-    }, [router.pathname, authenticated, refetch])
-    if (isError) {
-        // console.log(`Ошибка ${error}`)
-
-        router.push('/500');
-    }
-    // if(!isFetching)
-    // console.log(data);
-
-    return <div className="flex">
-        <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            <User {...(isLoading ? user : data)} isLoading={isLoading} me/>
-        </div>
-        <div className="ml-auto hidden lg:block">
-            <TopUsers isLoading={isLoading} place={data?.place}/>
-        </div>
-    </div>;
-}
-
-
-function UserProfile({user, me, changeNeedsAuth}: { user: any, me: boolean, changeNeedsAuth: (a: boolean) => void }) {
     const isMobile = useIsMobile();
     useEffect(() => {
         if (me)
@@ -105,7 +72,7 @@ function UserProfile({user, me, changeNeedsAuth}: { user: any, me: boolean, chan
                  thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${user.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    {me ? <Me user={user}/> : <Profile user={user}/>}
+                    <Profile me={isMe} user={data ?? user} isLoading={isLoading}/>
                 </div>
             }
         </>
@@ -116,7 +83,9 @@ function UserProfile({user, me, changeNeedsAuth}: { user: any, me: boolean, chan
 
 
 
-export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
+export const getServerSideProps: GetServerSideProps = async (props) => {
+    const {req, query} = props;
+    console.log(props);
     const {id} = query;
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         return {
