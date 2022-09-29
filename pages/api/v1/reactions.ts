@@ -29,7 +29,7 @@ export default async function handler(
         return;
     }
 
-    await prisma.$transaction(async (prisma) => {
+    const result = await prisma.$transaction(async (prisma) => {
             const typeMap: Record<string, any> = {
                 "quote": prisma.quoteLike,
                 "review": prisma.reviewLike,
@@ -43,6 +43,7 @@ export default async function handler(
                 "comment": prisma.comment
             }
             const like = typeMap[type];
+            const table = typeMap2[type];
             const likeExists = await like.findFirst({
                 where: {
                     user: {
@@ -57,7 +58,7 @@ export default async function handler(
                 }
             });
             if (!likeExists && reaction === "unlike") {
-                return;
+                return {};
             }
             if (likeExists && reaction === "unlike") {
                 await like.delete({
@@ -68,19 +69,18 @@ export default async function handler(
                         }
                     }
                 });
-
-                return await typeMap2[type].update({
+                await table.update({
                     where: {id},
                     data: {
                         [likeExists.like ? "likes" : "dislikes"]: {
                             decrement: 1
                         }
                     }
-                });
+                });                
             }
             if (likeExists) {
                 if (likeExists.like === (reaction === "like") || !likeExists.like === (reaction === "dislike")) {
-                    return;
+                    return {};
                 }
                 await like.update({
                     where: {
@@ -93,7 +93,7 @@ export default async function handler(
                         like: reaction === "like"
                     }
                 });
-                return await typeMap2[type].update({
+                await table.update({
                     where: {id},
                     data: {
                         [likeExists.like ? "likes" : "dislikes"]: {
@@ -120,7 +120,7 @@ export default async function handler(
                         like: reaction === "like"
                     }
                 });
-                return typeMap2[type].update({
+                await table.update({
                     where: {id},
                     data: {
                         [reaction === "like" ? "likes" : "dislikes"]: {
@@ -129,10 +129,16 @@ export default async function handler(
                     }
                 });
             }
+            return await table.findUnique({
+                where: {id},
+                select: {
+                    likes: true,
+                    dislikes: true
+                }});
         },
         {
             isolationLevel: "Serializable"
         });
-    res.status(200).json({status: "ok"});
+    res.status(200).json({...result});
 }
 
