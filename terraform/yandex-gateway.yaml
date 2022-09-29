@@ -167,7 +167,7 @@ paths:
         type: dummy
         http_code: 200
         content:
-          application/json: '{"pageProps":{"material":{"id": "{id}"}},"__N_SSP":true}'
+          application/json: '{"pageProps":{},"__N_SSP":true}'
       parameters:
         - name: id
           in: path
@@ -180,7 +180,7 @@ paths:
         type: dummy
         http_code: 200
         content:
-          application/json: '{"pageProps":{"quote": "{id}"},"__N_SSP":true}'
+          application/json: '{"pageProps":{},"__N_SSP":true}'
       parameters:
         - name: id
           in: path
@@ -193,7 +193,7 @@ paths:
         type: dummy
         http_code: 200
         content:
-          application/json: '{"pageProps":{"review": {"id": "{id}"}},"__N_SSP":true}'
+          application/json: '{"pageProps":{},"__N_SSP":true}'
       parameters:
         - name: id
           in: path
@@ -206,20 +206,7 @@ paths:
         type: dummy
         http_code: 200
         content:
-          application/json: '{"pageProps":{"user": {"id": "{id}"}},"__N_SSP":true}'
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-  /_next/data/${hash}/users/{id}:
-    get:
-      x-yc-apigateway-integration:
-        type: dummy
-        http_code: 200
-        content:
-          application/json: '{"pageProps":{"user": {"id": "{id}"}},"__N_SSP":true}'
+          application/json: '{"pageProps":{},"__N_SSP":true}'
       parameters:
         - name: id
           in: path

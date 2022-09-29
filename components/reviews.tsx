@@ -7,15 +7,16 @@ import Reactions from "./reactions";
 import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 import {toChildArray} from "preact";
+import { CircularProgress } from "@mui/material";
 
-function Review({review}: { review?: ReviewType }) {
+function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">
-        <UserHeader user={review?.user}
-                    legacyNickname={review?.legacyNickname}
-                    date={review?.createdAt}/>
-        <h1 className="font-bold text-[1.1rem] leading-6">{review?.header}</h1>
-        <div className="mb-2 text-[1.0rem] leading-5">{review?.body}</div>
-        <Reactions/>
+        <UserHeader user={review.user}
+                    legacyNickname={review.legacyNickname}
+                    date={review.createdAt}/>
+        <h1 className="font-bold text-[1.1rem] leading-6">{review.header}</h1>
+        <div className="mb-2 text-[1.0rem] leading-5">{review.body}</div>
+        <Reactions type={"review"} id={review.id} likes={review.likes} dislikes={review.dislikes} comments={review.comment_count}/>
         <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
         <Comments/>
     </div>);
@@ -26,17 +27,22 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const {review: reviewId} = router.query;
 
     async function fetchReviews(cursor: any) {
-        return await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
+        const result = await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
+        // parse dates to Date objects
+        return result;
     }
 
     async function fetchReview() {
-        return await (await fetch(`/api/v1/reviews/${reviewId}`, {
+        const result = await (await fetch(`/api/v1/reviews/${reviewId}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
+        // parse dates to Date objects
+        result.createdAt = new Date(result.createdAt);
+        return result;
     }
 
     const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
@@ -58,16 +64,27 @@ export default function Reviews({tutorId}: { tutorId: string }) {
                 return getCursor(lastPage);
             },
             refetchOnWindowFocus: false,
+            enabled: true
         }
     )
     const reviews = useMemo(() => {
         const added = new Set();
-        return data?.pages.flatMap(page => page.reviews.filter((review: any) => {
+        const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
             if (added.has(review.id)) return false;
             added.add(review.id);
-            return page.reviews;
-        })) ?? [];
-    }, [data]);
+            return true;
+        })).map((review: any) => {
+            review.createdAt = new Date(review.createdAt);
+            return review;
+        }) ?? [];
+        
+        if (data1) {
+            result.unshift(data1);
+        }
+
+        return result;
+
+    }, [data, data1]);
     useEffect(() => {
         if (reviewId) {
             refetch();
@@ -88,17 +105,17 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             document.removeEventListener('scroll', handleScroll)
         }
     }, [fetchNextPage, hasNextPage]);
-    const isLoading = isFetchingNextPage || reviewId && (isFetching);
+    const isLoading = hasNextPage === undefined || isFetchingNextPage || (reviewId !== undefined && isFetching);
 
     return (
         <>
-            {reviewId && !isLoading && <Review review={data1}/>}
+            {/* {reviewId && !isLoading && <Review review={data1}/>} */}
             {reviews.length > 0 ?
                 toChildArray(reviews.map((review, index) => (review.id != reviewId ?
                     <Review key={index} review={review}/>
                     : null)))
                 : !isLoading && <div>Отзывов пока нет</div>}
-            {isLoading ?
+            {isLoading && reviews.length === 0 ?
                 <>
                     <LoadingBlock/>
                     <LoadingBlock/>
@@ -106,6 +123,12 @@ export default function Reviews({tutorId}: { tutorId: string }) {
                 </>
                 : null
             }
+            {isLoading && reviews.length > 0 &&
+                <div className="mx-auto w-fit pt-12">
+                    {/* mui spinning circle */}
+                    <CircularProgress color={"inherit"}/>
+                </div>}
+
 
         </>
     );

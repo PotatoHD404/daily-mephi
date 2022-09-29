@@ -1,4 +1,5 @@
 import prisma from "lib/database/prisma";
+import { UUID_REGEX } from "lib/uuidRegex";
 import {NextApiRequest, NextApiResponse} from "next";
 import {getToken} from "next-auth/jwt";
 
@@ -11,13 +12,14 @@ export default async function handler(
         res.status(405).json({status: "method not allowed"});
         return;
     }
-    if (req.query.type !== "like" &&
-        req.query.type !== "dislike" &&
-        req.query.type !== "unlike" ||
-        req.body.type !== "quote" &&
-        req.body.type !== "review" &&
-        req.body.type !== "material" &&
-        req.body.type !== "comment" || req.body.id === undefined) {
+    const {id, reaction, type} = req.body;
+    if (reaction !== "like" &&
+        reaction !== "dislike" &&
+        reaction !== "unlike" ||
+        type !== "quote" &&
+        type !== "review" &&
+        type !== "material" &&
+        type !== "comment" || !id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -26,7 +28,6 @@ export default async function handler(
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
-    const {type, id} = req.body;
 
     await prisma.$transaction(async (prisma) => {
             const typeMap: Record<string, any> = {
@@ -55,10 +56,10 @@ export default async function handler(
                     like: true
                 }
             });
-            if (!likeExists && req.query.type === "unlike") {
+            if (!likeExists && reaction === "unlike") {
                 return;
             }
-            if (likeExists && req.query.type === "unlike") {
+            if (likeExists && reaction === "unlike") {
                 await like.delete({
                     where: {
                         userId_commentId: {
@@ -78,7 +79,7 @@ export default async function handler(
                 });
             }
             if (likeExists) {
-                if (likeExists.like === (req.query.type === "like") || !likeExists.like === (req.query.type === "dislike")) {
+                if (likeExists.like === (reaction === "like") || !likeExists.like === (reaction === "dislike")) {
                     return;
                 }
                 await like.update({
@@ -89,7 +90,7 @@ export default async function handler(
                         }
                     },
                     data: {
-                        like: req.query.type === "like"
+                        like: reaction === "like"
                     }
                 });
                 return await typeMap2[type].update({
@@ -116,13 +117,13 @@ export default async function handler(
                                 id
                             }
                         },
-                        like: req.query.type === "like"
+                        like: reaction === "like"
                     }
                 });
                 return typeMap2[type].update({
                     where: {id},
                     data: {
-                        [req.query.type === "like" ? "likes" : "dislikes"]: {
+                        [reaction === "like" ? "likes" : "dislikes"]: {
                             increment: 1
                         }
                     }

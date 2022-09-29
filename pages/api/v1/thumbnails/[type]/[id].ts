@@ -10,8 +10,8 @@ import {getWrappedText, italic, regular} from "lib/textSize";
 import {getTutorName} from "lib/react/getTutorName";
 import {UUID_REGEX} from "lib/uuidRegex";
 // import ejs template from file
-
-
+import DeadCat from "images/dead_cat.svg";
+// get base64 from dead cat
 // export const config = {
 //     runtime: 'experimental-edge',
 // }
@@ -211,6 +211,7 @@ export default async function handler(
             returnNotFound(res);
             return;
         }
+        // TODO: add dead cat
         let avatarString: string = "";
         if (user.image) {
             avatarString = await fetch(user.image.url)

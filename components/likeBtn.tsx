@@ -6,26 +6,25 @@ import addPrefixes from "lib/react/addPrefixes";
 import {Button} from '@mui/material';
 
 
-export default function LikeBtn() {
+export default function LikeBtn({count, pressed, onClick}: { count: number, pressed?: boolean | null, onClick?: () => void }) {
     const prefixes = ['hover:', 'focus:', 'active:', ""];
     // use state liked
-    const [liked, setLiked] = React.useState(false);
     return (
         <Button variant="contained"
                 className={`flex px-3 rounded-3xl  h-[1.8rem]
                     items-center font-[Montserrat] font-semibold justify-evenly min-w-0
                     ${addPrefixes(prefixes, "shadow-none")}
-                    ${liked ? addPrefixes(prefixes, "bg-gradient-to-b from-[#FEB7BC] to-[#F591C7]") :
+                    ${pressed ? addPrefixes(prefixes, "bg-gradient-to-b from-[#FEB7BC] to-[#F591C7]") :
                     addPrefixes(prefixes, "bg-black bg-opacity-10")} `}
-                onClick={() => setLiked(!liked)}
+                onClick={onClick}
         >
             <div className="h-[1.2rem] w-[1.2rem] flex mr-2">
                 <Image
-                    src={liked ? PressedLikeIco : LikeIco}
+                    src={pressed ? PressedLikeIco : LikeIco}
                     alt="Like ico"
                 />
             </div>
-            <div className="text-[0.9rem]">11</div>
+            <div className="text-[0.9rem]">{count}</div>
         </Button>
     );
 }

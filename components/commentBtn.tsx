@@ -3,7 +3,7 @@ import CommentIco from "../images/comment.svg";
 import React from "react";
 import {Button} from '@mui/material';
 
-export default function CommentBtn() {
+export default function CommentBtn({count}: { count: number }) {
     return (
         <Button variant="contained"
                 className="flex px-3 shadow-none focus:shadow-none focus:bg-black focus:bg-opacity-10 active:shadow-none active:bg-black active:bg-opacity-10 rounded-3xl bg-black bg-opacity-10 h-[1.8rem]
@@ -15,6 +15,6 @@ export default function CommentBtn() {
                     alt="Comment"
                 />
             </div>
-            <div className="text-[0.9rem]">11</div>
+            <div className="text-[0.9rem]">{count}</div>
         </Button>);
 }

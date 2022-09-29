@@ -89,7 +89,7 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
 
 export const getServerSideProps: GetServerSideProps = async (props) => {
     const {req, query} = props;
-    console.log(props);
+    // console.log(props);
     const {id} = query;
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
         return {
