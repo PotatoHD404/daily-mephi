@@ -1,5 +1,5 @@
 import prisma from "lib/database/prisma";
-import { UUID_REGEX } from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/uuidRegex";
 import {NextApiRequest, NextApiResponse} from "next";
 import {getToken} from "next-auth/jwt";
 
@@ -24,36 +24,32 @@ export default async function handler(
         return;
     }
     const session = await getToken({req});
-    if (!session?.sub) {
+    const userId = session?.sub;
+    if (!userId) {
         res.status(401).json({status: 'You are not authenticated'});
         return;
     }
 
     const result = await prisma.$transaction(async (prisma) => {
-            const typeMap: Record<string, any> = {
-                "quote": prisma.quoteLike,
-                "review": prisma.reviewLike,
-                "material": prisma.materialLike,
-                "comment": prisma.commentLike
-            };
             const typeMap2: Record<string, any> = {
                 "quote": prisma.quote,
                 "review": prisma.review,
                 "material": prisma.material,
                 "comment": prisma.comment
             }
-            const like = typeMap[type];
+            const fkId = `${type}Id`;
             const table = typeMap2[type];
-            const likeExists = await like.findFirst({
+            const likeExists = await prisma.reaction.findFirst({
                 where: {
                     user: {
-                        id: session.sub
+                        id: userId
                     },
-                    [type]: {
+                    [fkId]: {
                         id
                     }
                 },
                 select: {
+                    id: true,
                     like: true
                 }
             });
@@ -61,12 +57,9 @@ export default async function handler(
                 return {};
             }
             if (likeExists && reaction === "unlike") {
-                await like.delete({
+                await prisma.reaction.delete({
                     where: {
-                        userId_commentId: {
-                            userId: session.sub,
-                            [`${type}Id`]: id
-                        }
+                        id: likeExists.id
                     }
                 });
                 await table.update({
@@ -76,18 +69,15 @@ export default async function handler(
                             decrement: 1
                         }
                     }
-                });                
+                });
             }
             if (likeExists) {
                 if (likeExists.like === (reaction === "like") || !likeExists.like === (reaction === "dislike")) {
                     return {};
                 }
-                await like.update({
+                await prisma.reaction.update({
                     where: {
-                        userId_commentId: {
-                            userId: session.sub,
-                            [`${type}Id`]: id
-                        }
+                        id: likeExists.id
                     },
                     data: {
                         like: reaction === "like"
@@ -105,11 +95,11 @@ export default async function handler(
                     }
                 });
             } else {
-                await like.create({
+                await prisma.reaction.create({
                     data: {
                         user: {
                             connect: {
-                                id: session.sub
+                                id: userId
                             }
                         },
                         [type]: {
@@ -134,7 +124,8 @@ export default async function handler(
                 select: {
                     likes: true,
                     dislikes: true
-                }});
+                }
+            });
         },
         {
             isolationLevel: "Serializable"

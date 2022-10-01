@@ -43,48 +43,27 @@ model Session {
   @@index([userId])
 }
 
-enum Course {
-  B1
-  B2
-  B3
-  B4
-  S1
-  S2
-  S3
-  S4
-  S5
-  M1
-  M2
-  A1
-  A2
-  A3
-  A4
-}
-
 model User {
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?   @unique @db.String(100)
-  imageId       String?   @unique @db.Uuid
-  role          String    @default("default")
-  email         String?   @unique
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?    @unique @db.String(50)
+  imageId       String?    @unique @db.Uuid
+  role          String     @default("default")
+  email         String?    @unique
   emailVerified DateTime?
-  createdAt     DateTime  @default(now())
-  rating         Float    @default(0) @db.Float8
-  userCourse    Course?
-
-  image               File?          @relation("userImage", fields: [imageId], references: [id])
-  accounts            Account[]
-  sessions            Session[]
-  comments            Comment[]
-  reviews             Review[]
-  rates               Rate[]
-  materials_reactions MaterialLike[]
-  quotes_reactions    QuoteLike[]
-  reviews_reactions   ReviewLike[]
-  comments_reactions  CommentLike[]
-  files               File[]
-  materials           Material[]
-  quotes              Quote[]
+  createdAt     DateTime   @default(now())
+  rating        Float      @default(0) @db.Float8
+  bio           String?    @db.String(150)
+  image         File?      @relation("userImage", fields: [imageId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  comments      Comment[]
+  reviews       Review[]
+  rates         Rate[]
+  reactions     Reaction[]
+  files         File[]
+  materials     Material[]
+  quotes        Quote[]
+  Document      Document[]
 
   @@index([rating(sort: "Desc")])
 }
@@ -111,13 +90,13 @@ model Comment {
   dislikes Int   @default(0)
   score    Float @default(0) @db.Float8
 
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  review    Review?       @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
-  material  Material?     @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
-  news      News?         @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
-  parent    Comment?      @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  comments  Comment[]     @relation(name: "comment_parents")
-  reactions CommentLike[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review?    @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
+  material  Material?  @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
+  news      News?      @relation(map: "news_comments", fields: [newsId], references: [id], onDelete: Cascade)
+  parent    Comment?   @relation(name: "comment_parents", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comments  Comment[]  @relation(name: "comment_parents")
+  reactions Reaction[]
 
   @@index([score(sort: "Desc")])
   @@index([createdAt])
@@ -144,13 +123,15 @@ model Faculty {
 
 model File {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  url        String   @db.String(1400)
+  url        String   @db.String(2000)
+  altUrl     String?  @db.String(2000)
   createdAt  DateTime @default(now())
-  filename   String   @db.String(200)
-  isImage    Boolean  @default(false)
+  filename   String   @db.String(500)
   userId     String?  @db.Uuid
   tutorId    String?  @db.Uuid
   materialId String?  @db.Uuid
+  tag        String?  @db.String(200)
+  size       Int      @default(0)
 
   user       User?     @relation("userImage")
   tutor      Tutor?    @relation(fields: [tutorId], references: [id])
@@ -164,26 +145,27 @@ model File {
 }
 
 model Material {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  description String?
-  header      String    @db.String(280)
-  userId      String?   @db.Uuid
-  tutorId     String?   @db.Uuid
-  createdAt   DateTime? @default(now())
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  text      String?
+  title     String    @db.String(280)
+  userId    String?   @db.Uuid
+  tutorId   String?   @db.Uuid
+  createdAt DateTime? @default(now())
 
-  likes         Int   @default(0)
-  dislikes      Int   @default(0)
-  score         Float @default(0) @db.Float8
-  comment_count Int   @default(0)
+  likes        Int   @default(0)
+  dislikes     Int   @default(0)
+  score        Float @default(0) @db.Float8
+  commentCount Int   @default(0)
 
   files       File[]
-  user        User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor       Tutor?         @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor       Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   faculties   Faculty[]
   disciplines Discipline[]
   comments    Comment[]
-  reactions   MaterialLike[]
+  reactions   Reaction[]
   semesters   Semester[]
+  Document    Document[]
 
   @@index([score(sort: "Desc")])
   @@index([createdAt])
@@ -198,13 +180,17 @@ model Semester {
 }
 
 model News {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  body          String
-  header        String   @db.String(280)
-  createdAt     DateTime @default(now())
-  comment_count Int      @default(0)
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  text         String
+  title        String   @db.String(280)
+  createdAt    DateTime @default(now())
+  likes        Int      @default(0)
+  dislikes     Int      @default(0)
+  commentCount Int      @default(0)
 
-  comments Comment[]
+  comments  Comment[]
+  reactions Reaction[]
+  Document  Document[]
 
   @@index([createdAt])
 }
@@ -218,6 +204,8 @@ model LegacyRating {
   quality          Float
   qualityCount     Int
   tutorId          String @unique @db.Uuid
+  avgRating        Float  @db.Float8
+  ratingCount      Int
 
   tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade)
 
@@ -228,11 +216,33 @@ model LegacyRating {
   @@index([examsCount])
   @@index([quality])
   @@index([qualityCount])
+  @@index([avgRating])
+  @@index([ratingCount])
+}
+
+model Rating {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tutorId     String @unique @db.Uuid
+  punctiality Float
+  personality Float
+  exams       Float
+  quality     Float
+  ratingCount Int    @default(0)
+  avgRating   Float  @db.Float8
+  tutor       Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId])
+  @@index([personality])
+  @@index([exams])
+  @@index([quality])
+  @@index([punctiality])
+  @@index([avgRating])
+  @@index([ratingCount])
 }
 
 model Quote {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  body      String
+  text      String
   tutorId   String    @db.Uuid
   userId    String?   @db.Uuid
   createdAt DateTime? @default(now())
@@ -241,9 +251,10 @@ model Quote {
   dislikes Int   @default(0)
   score    Float @default(0) @db.Float8
 
-  user      User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tutor     Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  reactions QuoteLike[]
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+  Document  Document[]
 
   @@index([score(sort: "Desc")])
   @@index([createdAt])
@@ -270,22 +281,23 @@ model Rate {
 
 model Review {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  header         String   @db.String(280)
-  body           String
+  title          String   @db.String(280)
+  text           String
   createdAt      DateTime @default(now())
   legacyNickname String?  @db.String(200)
   userId         String?  @db.Uuid
   tutorId        String   @db.Uuid
 
-  likes         Int   @default(0)
-  dislikes      Int   @default(0)
-  score         Float @default(0) @db.Float8
-  comment_count Int   @default(0)
+  likes        Int   @default(0)
+  dislikes     Int   @default(0)
+  score        Float @default(0) @db.Float8
+  commentCount Int   @default(0)
 
-  tutor     Tutor        @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
-  reactions ReviewLike[]
+  reactions Reaction[]
+  Document  Document[]
 
   @@unique([userId, tutorId])
   @@index([score(sort: "Desc")])
@@ -294,48 +306,58 @@ model Review {
   @@index([tutorId])
 }
 
-model ReviewLike {
-  userId   String  @db.Uuid
-  reviewId String  @db.Uuid
-  like     Boolean
-
-  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, reviewId])
-}
-
-model CommentLike {
-  userId    String  @db.Uuid
-  commentId String  @db.Uuid
-  like      Boolean
-
-  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, commentId])
-}
-
-model MaterialLike {
-  userId     String  @db.Uuid
-  materialId String  @db.Uuid
+model Reaction {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @db.Uuid
+  quoteId    String?  @db.Uuid
+  materialId String?  @db.Uuid
+  reviewId   String?  @db.Uuid
+  commentId  String?  @db.Uuid
+  newsId     String?  @db.Uuid
+  createdAt  DateTime @default(now())
   like       Boolean
 
-  material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quote    Quote?    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  material Material? @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  review   Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  comment  Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  news     News?     @relation(fields: [newsId], references: [id], onDelete: Cascade)
 
-  @@id([userId, materialId])
+  @@unique([userId, quoteId])
+  @@unique([userId, materialId])
+  @@unique([userId, reviewId])
+  @@unique([userId, commentId])
+  @@unique([userId, newsId])
+  @@index([userId])
+  @@index([quoteId])
+  @@index([materialId])
+  @@index([reviewId])
+  @@index([commentId])
+  @@index([newsId])
 }
 
-model QuoteLike {
-  userId  String  @db.Uuid
-  quoteId String  @db.Uuid
-  like    Boolean
+// full text search model
 
-  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Document {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  words      String[]
+  grams      String[]
+  userId     String?  @unique @db.Uuid
+  tutorId    String?  @unique @db.Uuid
+  materialId String?  @unique @db.Uuid
+  reviewId   String?  @unique @db.Uuid
+  quoteId    String?  @unique @db.Uuid
+  newsId     String?  @unique @db.Uuid
 
-  @@id([userId, quoteId])
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  material Material? @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  review   Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  quote    Quote?    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  news     News?     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@index([words], type: Gin)
 }
 
 model Tutor {
@@ -347,8 +369,7 @@ model Tutor {
   url        String?
   updatedAt  DateTime? @updatedAt
 
-  rating Float @default(0) @db.Float8
-  score  Float @default(0) @db.Float8
+  score Float @default(0) @db.Float8
 
   images       File[]
   rates        Rate[]
@@ -358,6 +379,8 @@ model Tutor {
   materials    Material[]
   legacyRating LegacyRating?
   quotes       Quote[]
+  document     Document[]
+  rating       Rating?
 
   @@index([score])
 }

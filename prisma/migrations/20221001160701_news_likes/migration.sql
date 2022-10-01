@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "News" ADD COLUMN     "dislikes" INT4 NOT NULL DEFAULT 0;
+ALTER TABLE "News" ADD COLUMN     "likes" INT4 NOT NULL DEFAULT 0;
