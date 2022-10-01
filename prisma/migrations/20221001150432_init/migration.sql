@@ -143,7 +143,7 @@ CREATE TABLE "LegacyRating" (
     "qualityCount" INT4 NOT NULL,
     "tutorId" UUID NOT NULL,
     "avgRating" FLOAT8 AS ((personality * "personalityCount"::FLOAT + exams * "examsCount"::FLOAT + quality * "qualityCount"::FLOAT) / ("personalityCount" + "examsCount" + "qualityCount")::FLOAT) STORED NOT NULL,
-    "ratingCount" INT4 AS ("personalityCount" + "examsCount" + "qualityCount") STORED NOT NULL,
+    "ratingCount" INT4 AS (("personalityCount" + "examsCount" + "qualityCount") // 3) STORED NOT NULL,
 
     CONSTRAINT "LegacyRating_pkey" PRIMARY KEY ("id")
 );
@@ -152,13 +152,13 @@ CREATE TABLE "LegacyRating" (
 CREATE TABLE "Rating" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "tutorId" UUID NOT NULL,
-    "punctiality" FLOAT8 NOT NULL,
+    "punctuality" FLOAT8 NOT NULL,
     "personality" FLOAT8 NOT NULL,
     "exams" FLOAT8 NOT NULL,
     "quality" FLOAT8 NOT NULL,
     "ratingCount" INT4 NOT NULL DEFAULT 0,
     "avgRating" FLOAT8 AS ((
-        "punctiality" + "personality" + "exams" + "quality"
+        "punctuality" + "personality" + "exams" + "quality"
     ) / 4) STORED NOT NULL,
 
     CONSTRAINT "Rating_pkey" PRIMARY KEY ("id")
@@ -425,7 +425,7 @@ CREATE INDEX "Rating_exams_idx" ON "Rating"("exams");
 CREATE INDEX "Rating_quality_idx" ON "Rating"("quality");
 
 -- CreateIndex
-CREATE INDEX "Rating_punctiality_idx" ON "Rating"("punctiality");
+CREATE INDEX "Rating_punctuality_idx" ON "Rating"("punctuality");
 
 -- CreateIndex
 CREATE INDEX "Rating_avgRating_idx" ON "Rating"("avgRating");

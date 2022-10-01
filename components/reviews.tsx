@@ -16,7 +16,7 @@ function Review({review}: { review: ReviewType }) {
                     date={review.createdAt}/>
         <h1 className="font-bold text-[1.1rem] leading-6">{review.header}</h1>
         <div className="mb-2 text-[1.0rem] leading-5">{review.body}</div>
-        <Reactions type={"review"} id={review.id} likes={review.likes} dislikes={review.dislikes} comments={review.comment_count}/>
+        <Reactions type={"review"} id={review.id} likes={review.likes} dislikes={review.dislikes} comments={review.commentCount}/>
         <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
         <Comments/>
     </div>);
@@ -77,7 +77,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             review.createdAt = new Date(review.createdAt);
             return review;
         }) ?? [];
-        
+
         if (data1) {
             result.unshift(data1);
         }

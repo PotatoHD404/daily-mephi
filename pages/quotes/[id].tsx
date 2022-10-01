@@ -4,7 +4,6 @@ import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
 import prisma from "lib/database/prisma";
 import {UUID_REGEX} from "lib/uuidRegex";
-import {getTutorName} from "lib/react/getTutorName";
 
 function Quote({quote}: { quote: any }) {
     const router = useRouter();
@@ -37,9 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
             tutor: {
                 select: {
                     id: true,
-                    firstName: true,
-                    lastName: true,
-                    fatherName: true,
+                    shortName: true,
                 }
             }
         }
@@ -51,8 +48,6 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
     }
     // @ts-ignore
     quote.tutorId = quote.tutor.id;
-    // @ts-ignore
-    quote.tutorName = getTutorName(quote.tutor);
 
     // @ts-ignore
     delete quote.tutor;

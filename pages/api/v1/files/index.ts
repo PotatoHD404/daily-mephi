@@ -278,14 +278,17 @@ async function putFile(
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
     // console.log(unsignedUrl)
     // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
-    const res1 = await fetch(unsignedUrl)
-
-    if (!res1.ok) {
+    const res1 = await fetch(unsignedUrl, {
+        method: 'HEAD',
+    })
+    const size = parseInt(res1.headers.get('content-length') || '0');
+    if (!res1.ok || size === 0) {
         console.log('Something went wrong #3')
 
         res.status(500).json({status: 'Something went wrong #3'});
         return;
     }
+    // find file size
 
     const isImage = ext.toLowerCase() === 'png' || ext.toLowerCase() === 'jpg' || ext.toLowerCase() === 'jpeg';
     await notion.blocks.update({
@@ -294,13 +297,16 @@ async function putFile(
         file: {caption: [{text: {content: filename + (ext ? '.' + ext : '')}}], external: {url: unsignedUrl}}
     });
     const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
+
     await prisma.file.create({
         data: {
-            url: createdUrl,
             id: block,
+            url: createdUrl,
+            altUrl: isImage ? unsignedUrl : undefined,
             filename: filename + (ext ? '.' + ext : ''),
-            isImage,
-            user: session.sub ? {connect: {id: session.sub}} : undefined
+            size,
+            user: session.sub ? {connect: {id: session.sub}} : undefined,
+            tag: "material"
         },
     });
     // redirect = isImage ?

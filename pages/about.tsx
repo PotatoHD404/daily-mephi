@@ -30,7 +30,7 @@ export function Post() {
                 dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
                 officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
             </div>
-            <Reactions/>
+            <Reactions likes={0} dislikes={0} comments={0} id={""} type={"news"}/>
             <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
             <Comments/>
         </div>

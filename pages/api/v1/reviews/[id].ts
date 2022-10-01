@@ -13,8 +13,8 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         where: {id},
         select: {
             id: true,
-            header: true,
-            body: true,
+            title: true,
+            text: true,
             createdAt: true,
             legacyNickname: true,
             user: {
@@ -26,7 +26,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             },
             likes: true,
             dislikes: true,
-            comment_count: true,
+            commentCount: true,
         },
     });
     if (!review) {

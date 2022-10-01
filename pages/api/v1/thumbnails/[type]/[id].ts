@@ -2,15 +2,12 @@ import type {NextApiRequest, NextApiResponse} from "next";
 
 import path from 'path'
 
-import {getTutor} from "../../tutors/[id]";
 import ejs from "ejs";
 import sharp from "sharp";
 import prisma from "lib/database/prisma";
 import {getWrappedText, italic, regular} from "lib/textSize";
-import {getTutorName} from "lib/react/getTutorName";
 import {UUID_REGEX} from "lib/uuidRegex";
 // import ejs template from file
-import DeadCat from "images/dead_cat.svg";
 // get base64 from dead cat
 // export const config = {
 //     runtime: 'experimental-edge',
@@ -63,7 +60,35 @@ export default async function handler(
     // sharp.simd(false);
     sharp.concurrency(1);
     if (type == "tutors") {
-        const tutor = await getTutor(id);
+        const tutor = await prisma.tutor.findUnique(
+            {
+                where: {
+                    id
+                },
+                select: {
+                    id: true,
+                    shortName: true,
+                    images: {
+                        select: {
+                            url: true
+                        }
+                    },
+                    reviewsCount: true,
+                    quotesCount: true,
+                    materialsCount: true,
+                    legacyRating: {
+                        select: {
+                            avgRating: true
+                        }
+                    },
+                    rating: {
+                        select: {
+                            avgRating: true
+                        }
+                    }
+                }
+            }
+        );
         if (!tutor) {
             returnNotFound(res);
             return;
@@ -72,7 +97,7 @@ export default async function handler(
         if (tutor.images.length > 0) {
             // const avatarUrl = "https://logos-world.net/wp-content/uploads/2021/08/Among-Us-Logo.png";
             // fetch image from url and convert it to buffer
-            avatarString = await fetch(tutor.images[0])
+            avatarString = await fetch(tutor.images[0].url)
                 .then((res) => res.arrayBuffer())
                 .then((buffer) => Buffer.from(buffer))
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
@@ -81,10 +106,9 @@ export default async function handler(
         // (buffer => buffer.toString('base64'));
 
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'tutor.ejs'), {
-            tutor_name: tutor.lastName + " " + (tutor.firstName ? tutor.firstName[0] + "." : "") +
-                (tutor.fatherName ? tutor.fatherName[0] + "." : ""),
-            mephist_rating: tutor.legacyRating ?? "-",
-            daily_rating: tutor.rating ?? "-",
+            tutor_name: tutor.shortName,
+            mephist_rating: tutor.legacyRating?.avgRating ?? "-",
+            daily_rating: tutor.rating?.avgRating ?? "-",
             reviews: getNoun(tutor.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
             reviews_count: tutor.reviewsCount,
             materials: getNoun(tutor.materialsCount, "Материал", "Материала", "Материалов"),
@@ -115,8 +139,8 @@ export default async function handler(
                         name: true
                     }
                 },
-                header: true,
-                description: true,
+                title: true,
+                text: true,
                 user: {
                     select: {
                         name: true,
@@ -145,8 +169,8 @@ export default async function handler(
 
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.ejs'), {
             nickname: material.user?.name ?? "",
-            header: material.header,
-            description: material.description,
+            header: material.title,
+            description: material.text,
             semester: material.semesters[0]?.name ?? "",
             faculty: material.faculties[0]?.name ?? "",
             discipline: material.disciplines[0]?.name ?? "",
@@ -159,12 +183,10 @@ export default async function handler(
                 id: id
             },
             select: {
-                body: true,
+                text: true,
                 tutor: {
                     select: {
-                        firstName: true,
-                        lastName: true,
-                        fatherName: true,
+                        shortName: true,
                     }
                 }
             }
@@ -174,9 +196,8 @@ export default async function handler(
             returnNotFound(res);
             return;
         }
-        const wrappedBody = getWrappedText(italic, quote.body, 915, 8, 1.0);
-        const tutorName = getTutorName(quote.tutor);
-        const wrappedTutor = getWrappedText(regular, tutorName, 1200, 1, 1.33);
+        const wrappedBody = getWrappedText(italic, quote.text, 915, 8, 1.0);
+        const wrappedTutor = getWrappedText(regular, quote.tutor.shortName, 1200, 1, 1.33);
         // console.log(wrappedBody, quote.body);
         // console.log(wrappedTutor, tutorName);
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'quote.ejs'), {
@@ -198,13 +219,9 @@ export default async function handler(
                 },
                 role: true,
                 rating: true,
-                _count: {
-                    select: {
-                        reviews: true,
-                        materials: true,
-                        quotes: true,
-                    }
-                }
+                reviewsCount: true,
+                materialsCount: true,
+                quotesCount: true,
             }
         });
         if (!user) {
@@ -220,12 +237,12 @@ export default async function handler(
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
         }
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'user.ejs'), {
-            reviews: getNoun(user._count.reviews, "Отзыв", "Отзыва", "Отзывов"),
-            reviews_count: user._count.reviews,
-            materials: getNoun(user._count.materials, "Материал", "Материала", "Материалов"),
-            materials_count: user._count.materials,
-            quotes: getNoun(user._count.quotes, "Цитата", "Цитаты", "Цитат"),
-            quotes_count: user._count.quotes,
+            reviews: getNoun(user.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
+            reviews_count: user.reviewsCount,
+            materials: getNoun(user.materialsCount, "Материал", "Материала", "Материалов"),
+            materials_count: user.materialsCount,
+            quotes: getNoun(user.quotesCount, "Цитата", "Цитаты", "Цитат"),
+            quotes_count: user.quotesCount,
             nickname: user.name,
             user_type: user.role == "tutor" ? "Преподаватель" : "Студент",
             rating: user.rating,
@@ -250,8 +267,8 @@ export default async function handler(
                         }
                     }
                 },
-                header: true,
-                body: true,
+                title: true,
+                text: true,
                 user: {
                     select: {
                         name: true,
@@ -287,8 +304,8 @@ export default async function handler(
         }
         rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'review.ejs'), {
             nickname: review.user?.name ?? "",
-            header: review.header,
-            body: review.body,
+            header: review.title,
+            body: review.text,
             tutor_name: review.tutor.lastName + " " + (review.tutor.firstName ? review.tutor.firstName[0] + "." : "") +
                 (review.tutor.fatherName ? review.tutor.fatherName[0] + "." : ""),
             tutor_image: tutorAvatarString,

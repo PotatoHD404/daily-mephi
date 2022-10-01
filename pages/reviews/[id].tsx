@@ -4,7 +4,6 @@ import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
 import prisma from "lib/database/prisma";
 import {UUID_REGEX} from "lib/uuidRegex";
-import {getTutorName} from "lib/react/getTutorName";
 
 
 function Review({review}: { review: any }) {
@@ -37,12 +36,10 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
             tutor: {
                 select: {
                     id: true,
-                    firstName: true,
-                    lastName: true,
-                    fatherName: true,
+                    shortName: true,
                 }
             },
-            header: true,
+            title: true,
         }
     });
     if (!review) {
@@ -52,8 +49,6 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
     }
     // @ts-ignore
     review.tutorId = review.tutor.id;
-    // @ts-ignore
-    review.tutorName = getTutorName(review.tutor);
     // @ts-ignore
     delete review.tutor;
     // get material from database

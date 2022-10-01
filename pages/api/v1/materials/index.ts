@@ -34,8 +34,8 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
     const materials = await prisma.material.findMany({
         select: {
             id: true,
-            header: true,
-            description: true,
+            title: true,
+            text: true,
             createdAt: true,
             user: {
                 select: {
@@ -46,7 +46,7 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
             },
             likes: true,
             dislikes: true,
-            comment_count: true,
+            commentCount: true,
         },
         take: 10
         // take: req.query.take ? parseInt(req.query.take) : undefined,
@@ -62,8 +62,8 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
     }
 
     const {
-        header,
-        description,
+        header: title,
+        description: text,
         files,
         faculties,
         disciplines,
@@ -78,14 +78,14 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
         disciplines: string[],
         semesters: string[]
     } = req.body;
-    if (!header || !description || !files || !faculties || !disciplines || !semesters) {
+    if (!title || !text || !files || !faculties || !disciplines || !semesters) {
         res.status(400).json({status: "bad request"});
         return;
     }
 
     const data = {
-        header,
-        description,
+        title,
+        text,
         files: files.length > 0 ? {
             connect: files.map(file => ({
                 id: file

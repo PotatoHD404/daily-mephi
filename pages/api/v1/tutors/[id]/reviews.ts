@@ -14,8 +14,8 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         where: {tutorId: id},
         select: {
             id: true,
-            header: true,
-            body: true,
+            title: true,
+            text: true,
             createdAt: true,
             legacyNickname: true,
             user: {
@@ -27,7 +27,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
             },
             likes: true,
             dislikes: true,
-            comment_count: true,
+            commentCount: true,
         },
         take: 10,
         skip: +(cursor ?? 0),
@@ -46,8 +46,8 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         res.status(400).json({status: "bad request"});
         return;
     }
-    const {body, header} = req.body;
-    if (!body || !header) {
+    const {text, title} = req.body;
+    if (!text || !title) {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -59,8 +59,8 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     try {
         const review = await prisma.review.create({
             data: {
-                body,
-                header,
+                text,
+                title,
                 user: {
                     connect: {id: session.sub}
                 },

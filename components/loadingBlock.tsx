@@ -10,6 +10,6 @@ export default function LoadingBlock() {
         <Skeleton className="w-full h-6 mt-2" variant="rounded"/>
         <Skeleton className="w-full h-6 mt-2" variant="rounded"/>
         <Skeleton className="w-full h-6 mt-2 mb-2" variant="rounded"/>
-        <Reactions isLoading={true}/>
+        <Reactions isLoading={true} likes={0} dislikes={0} comments={0} id={""} type={""}/>
     </div>);
 }

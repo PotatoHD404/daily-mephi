@@ -16,8 +16,8 @@ export default async function handler(
         where: {tutorId: id},
         select: {
             id: true,
-            header: true,
-            description: true,
+            title: true,
+            text: true,
             createdAt: true,
             user: {
                 select: {
@@ -28,7 +28,7 @@ export default async function handler(
             },
             likes: true,
             dislikes: true,
-            comment_count: true
+            commentCount: true
         },
         take: 10,
         orderBy: {createdAt: 'desc'}

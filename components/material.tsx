@@ -55,7 +55,7 @@ export default function Material() {
                         />
                     </IconButton>
                 </div>
-                <Reactions/>
+                <Reactions likes={0} dislikes={0} comments={0} id={""} type={"material"}/>
 
             </div>
         </div>

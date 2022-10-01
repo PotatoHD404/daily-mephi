@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "materialsCount" INT4 NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN     "quotesCount" INT4 NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN     "reviewsCount" INT4 NOT NULL DEFAULT 0;

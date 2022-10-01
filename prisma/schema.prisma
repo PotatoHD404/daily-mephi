@@ -44,26 +44,31 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?    @unique @db.String(50)
-  imageId       String?    @unique @db.Uuid
-  role          String     @default("default")
-  email         String?    @unique
-  emailVerified DateTime?
-  createdAt     DateTime   @default(now())
-  rating        Float      @default(0) @db.Float8
-  bio           String?    @db.String(150)
-  image         File?      @relation("userImage", fields: [imageId], references: [id])
-  accounts      Account[]
-  sessions      Session[]
-  comments      Comment[]
-  reviews       Review[]
-  rates         Rate[]
-  reactions     Reaction[]
-  files         File[]
-  materials     Material[]
-  quotes        Quote[]
-  Document      Document[]
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String?   @unique @db.String(50)
+  imageId        String?   @unique @db.Uuid
+  role           String    @default("default")
+  email          String?   @unique
+  emailVerified  DateTime?
+  createdAt      DateTime  @default(now())
+  rating         Float     @default(0) @db.Float8
+  bio            String?   @db.String(150)
+  image          File?     @relation("userImage", fields: [imageId], references: [id])
+  reviewsCount   Int       @default(0)
+  materialsCount Int       @default(0)
+  quotesCount    Int       @default(0)
+  place          BigInt    @default(autoincrement())
+
+  accounts  Account[]
+  sessions  Session[]
+  comments  Comment[]
+  reviews   Review[]
+  rates     Rate[]
+  reactions Reaction[]
+  files     File[]
+  materials Material[]
+  quotes    Quote[]
+  Document  Document[]
 
   @@index([rating(sort: "Desc")])
 }
@@ -223,7 +228,7 @@ model LegacyRating {
 model Rating {
   id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tutorId     String @unique @db.Uuid
-  punctiality Float
+  punctuality Float
   personality Float
   exams       Float
   quality     Float
@@ -235,7 +240,7 @@ model Rating {
   @@index([personality])
   @@index([exams])
   @@index([quality])
-  @@index([punctiality])
+  @@index([punctuality])
   @@index([avgRating])
   @@index([ratingCount])
 }
@@ -361,13 +366,18 @@ model Document {
 }
 
 model Tutor {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName  String?   @db.String(64)
-  lastName   String?   @db.String(64)
-  fatherName String?   @db.String(64)
-  nickName   String?   @unique @db.String(64)
-  url        String?
-  updatedAt  DateTime? @updatedAt
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName      String?   @db.String(64)
+  lastName       String?   @db.String(64)
+  fatherName     String?   @db.String(64)
+  fullName       String    @db.String(256)
+  shortName      String    @db.String(80)
+  nickName       String?   @unique @db.String(64)
+  url            String?
+  updatedAt      DateTime? @updatedAt
+  quotesCount    Int       @default(0)
+  reviewsCount   Int       @default(0)
+  materialsCount Int       @default(0)
 
   score Float @default(0) @db.Float8
 

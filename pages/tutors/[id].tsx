@@ -48,8 +48,8 @@ function Quote() {
         </div>
         <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
         <div className="flex space-x-4 font-semibold">
-            <Like/>
-            <Dislike/>
+            <Like count={0}/>
+            <Dislike count={0}/>
         </div>
     </div>);
 }

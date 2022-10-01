@@ -32,7 +32,7 @@ export type ReviewType = {
     header: string;
     likes: number;
     dislikes: number;
-    comment_count: number;
+    commentCount: number;
     createdAt: Date;
     legacyNickname?: string;
     user?: UserType;

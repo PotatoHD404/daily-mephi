@@ -14,7 +14,7 @@ export default async function handler(
         calculatedPlace = +(place ?? 0);
         calculatedTake = +(take ?? 4);
     }
-    const userCount = (await prisma.user.aggregate({_count: true}))._count;
+    const userCount = await prisma.user.count();
     let skip: number;
     if (calculatedPlace == 1) {
         skip = 0;

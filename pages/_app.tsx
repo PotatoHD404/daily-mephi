@@ -16,7 +16,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../lib/react/useMediaQuery";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
-import NProgress from 'nprogress';
+// import NProgress from 'nprogress';
 
 const queryClient = new QueryClient()
 
@@ -110,7 +110,7 @@ function MyApp(
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
     // useEffect(() => {
     //     router.events.on('routeChangeStart', () =>  NProgress.start());
-    
+
     //     router.events.on('routeChangeComplete', () =>  NProgress.done());
     //     router.events.on('routeChangeError', () =>  NProgress.done());
     //   }, []);

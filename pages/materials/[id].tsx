@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
         },
         select: {
             id: true,
-            header: true,
+            title: true,
             tutorId: true,
         }
     });

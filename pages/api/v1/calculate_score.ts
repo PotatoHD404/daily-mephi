@@ -67,8 +67,8 @@ export default async function handler(
     const result = await prisma.$transaction(async (prisma) => {
             return [await prisma.$executeRaw`
                 WITH c4 as (SELECT id,
-                                   ''                                              as "body",
-                                   ''                                              as "header",
+                                   ''                                              as "text",
+                                   ''                                              as "title",
                                    gen_random_uuid()                               as "tutorId",
                                    (c2."sign" * c2."order" + c2."seconds" / 45000) as score
                             FROM (SELECT id,
@@ -82,7 +82,7 @@ export default async function handler(
                                                (CAST("createdAt" AS INT) - 1661887626) as seconds
                                         FROM "Review") as c1) as c2)
                 INSERT
-                INTO "Review" (id, "body", "header", "tutorId", score)
+                INTO "Review" (id, "text", "title", "tutorId", score)
                 SELECT *
                 FROM c4 ON CONFLICT (id)
 DO
@@ -106,7 +106,7 @@ DO
                     UPDATE SET score = excluded.score;
                 `,
                 await prisma.$executeRaw`WITH c4 as (SELECT id,
-                                                            ''                                              as "header",
+                                                            ''                                              as "title",
                                                             gen_random_uuid()                               as "userId",
                                                             (c2."sign" * c2."order" + c2."seconds" / 45000) as score
                                                      FROM (SELECT id,
@@ -120,14 +120,14 @@ DO
                                                                         (CAST("createdAt" AS INT) - 1661887626) as seconds
                                                                  FROM "Material") as c1) as c2)
                                          INSERT
-                                         INTO "Material" (id, "header", "userId", score)
+                                         INTO "Material" (id, "title", "userId", score)
                 SELECT *
                 FROM c4 ON CONFLICT (id)
 DO
                 UPDATE SET score = excluded.score;`,
                 await prisma.$executeRaw`
                     WITH c4 as (SELECT id,
-                                       ''                                              as "body",
+                                       ''                                              as "text",
                                        gen_random_uuid()                               as "tutorId",
                                        (c2."sign" * c2."order" + c2."seconds" / 45000) as score
                                 FROM (SELECT id,
@@ -141,7 +141,7 @@ DO
                                                    (CAST("createdAt" AS INT) - 1661887626) as seconds
                                             FROM "Quote") as c1) as c2)
                     INSERT
-                    INTO "Quote" (id, "body", "tutorId", score)
+                    INTO "Quote" (id, "text", "tutorId", score)
                     SELECT *
                     FROM c4 ON CONFLICT (id)
     DO
@@ -154,23 +154,19 @@ DO
                                             (5 + quality) * IF("qualityCount" < 10, "qualityCount", 10)::float) / 30 as score
                     FROM "LegacyRating"
                     UNION
-                    SELECT "Rate"."tutorId",
-                           SUM(("Rate".punctuality + "Rate".personality + "Rate".exams + "Rate".quality) / 40) as score
-                    FROM "Rate"
-                    GROUP BY "Rate"."tutorId") as c2
+                    SELECT "Rating"."tutorId",
+                           "Rating"."avgRating" as score
+                    FROM "Rating"
+                    GROUP BY "Rating"."tutorId") as c2
                     GROUP BY c2."tutorId")
                     INSERT
                     INTO "Tutor" (id, "score", "rating")
-                    SELECT "Rate"."tutorId"                                                                   as id,
-                           AVG(("Rate".punctuality + "Rate".personality + "Rate".exams + "Rate".quality) / 4) as rating,
-                           score
-                    FROM "Rate"
-                             INNER JOIN c1
-                                        ON c1."tutorId" = "Rate"."tutorId"
-                    GROUP BY "Rate"."tutorId", score ON CONFLICT (id)
+                    SELECT c1."tutorId"                                                                   as id,
+                           c1.score
+                    FROM c1
+                    GROUP BY c1.score ON CONFLICT (id)
     DO
-                    UPDATE SET score = excluded.score,
-                        rating = excluded.rating;
+                    UPDATE SET score = excluded.score;
                 `
             ];
         },

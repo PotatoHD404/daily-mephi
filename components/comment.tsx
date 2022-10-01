@@ -56,8 +56,8 @@ export default function Comment({
                     {/*</div>*/}
                     {/*<div className="my-auto">Reply</div>*/}
                     <div className="flex space-x-2 font-semibold my-2">
-                        <LikeBtn/>
-                        <DislikeBtn/>
+                        <LikeBtn count={0}/>
+                        <DislikeBtn count={0}/>
                         <ReplyBtn/>
                     </div>
                 </div>

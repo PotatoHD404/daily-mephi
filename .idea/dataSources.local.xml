@@ -17,7 +17,7 @@
       </schema-mapping>
     </data-source>
     <data-source name="defaultdb@localhost" uuid="f30621d2-0ca7-4063-afbf-ea4935c2ad17">
-      <database-info product="PostgreSQL" version="13.0.0" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.5.0" dbms="COCKROACH" exact-version="22.1.8" exact-driver-version="42.5">
+      <database-info product="PostgreSQL" version="13.0.0" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.5.0" dbms="COCKROACH" exact-version="22.2.0" exact-driver-version="42.5">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />

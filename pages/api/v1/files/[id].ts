@@ -19,6 +19,7 @@ export default async function handler(
         select: {
             filename: true,
             url: true,
+            size: true,
         }
     });
 

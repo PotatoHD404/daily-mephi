@@ -8,10 +8,10 @@ export default async function handler(
 ) {
     const news = prisma.news.findMany({
         select: {
-            header: true,
-            body: true,
+            title: true,
+            text: true,
             createdAt: true,
-            comment_count: true
+            commentCount: true
         },
         take: 10,
     });

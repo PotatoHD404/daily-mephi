@@ -13,7 +13,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         where: {id},
         select: {
             id: true,
-            body: true,
+            text: true,
             createdAt: true,
             user: {
                 select: {

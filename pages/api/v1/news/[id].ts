@@ -17,10 +17,10 @@ export default async function handler(
             id
         },
         select: {
-            header: true,
-            body: true,
+            title: true,
+            text: true,
             createdAt: true,
-            comment_count: true
+            commentCount: true
         }
     });
 

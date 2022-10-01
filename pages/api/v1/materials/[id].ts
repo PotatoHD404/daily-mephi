@@ -56,8 +56,8 @@ export default async function handler(
             id
         },
         select: {
-            header: true,
-            description: true,
+            title: true,
+            text: true,
             createdAt: true,
             files: {
                 select: {
@@ -96,7 +96,7 @@ export default async function handler(
             },
             likes: true,
             dislikes: true,
-            comment_count: true,
+            commentCount: true,
         },
     });
 

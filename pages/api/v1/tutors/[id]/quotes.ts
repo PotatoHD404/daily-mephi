@@ -15,7 +15,7 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
         where: {tutorId: id},
         select: {
             id: true,
-            body: true,
+            text: true,
             createdAt: true,
             user: {
                 select: {
@@ -41,8 +41,8 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
         res.status(400).json({status: "bad request"});
         return;
     }
-    const {body} = req.body;
-    if (!body || typeof body !== "string") {
+    const {text} = req.body;
+    if (!text || typeof text !== "string") {
         res.status(400).json({status: "bad request"});
         return;
     }
@@ -54,7 +54,7 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
     try {
         const quote = await prisma.quote.create({
             data: {
-                body,
+                text,
                 user: {
                     connect: {id: session.sub}
                 },
