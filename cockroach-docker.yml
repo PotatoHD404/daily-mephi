@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   crdb:
-    image: cockroachdb/cockroach-unstable:v22.2.0-beta.1
+    image: cockroachdb/cockroach-unstable:latest
     ports:
       - "26257:26257"
       - "8080:8080"

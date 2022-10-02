@@ -9,8 +9,8 @@ if (process.env.NODE_ENV === 'production') {
     if (!global.prisma) {
         // @ts-ignore
 
-        // global.prisma = new PrismaClient({log: ['query']});
-        global.prisma = new PrismaClient();
+        global.prisma = new PrismaClient({log: ['query']});
+        // global.prisma = new PrismaClient();
         // @ts-ignore
         global.prisma.$connect();
 

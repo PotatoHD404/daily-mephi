@@ -57,7 +57,7 @@ model User {
   reviewsCount   Int       @default(0)
   materialsCount Int       @default(0)
   quotesCount    Int       @default(0)
-  place          BigInt    @default(autoincrement())
+  place          Int       @default(sequence(start: 1))
 
   accounts  Account[]
   sessions  Session[]
@@ -91,9 +91,10 @@ model Comment {
   newsId     String?  @db.Uuid
   parentId   String?  @db.Uuid
 
-  likes    Int   @default(0)
-  dislikes Int   @default(0)
-  score    Float @default(0) @db.Float8
+  likes         Int   @default(0)
+  dislikes      Int   @default(0)
+  childrenCount Int   @default(0)
+  score         Float @default(0) @db.Float8
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   review    Review?    @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
@@ -354,6 +355,7 @@ model Document {
   reviewId   String?  @unique @db.Uuid
   quoteId    String?  @unique @db.Uuid
   newsId     String?  @unique @db.Uuid
+  type       String   @default("unknown")
 
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
@@ -363,6 +365,7 @@ model Document {
   news     News?     @relation(fields: [newsId], references: [id], onDelete: Cascade)
 
   @@index([words], type: Gin)
+  @@index([type])
 }
 
 model Tutor {

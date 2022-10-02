@@ -7,6 +7,10 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    if (req.method !== "GET") {
+        res.status(405).json({status: "method not allowed"});
+        return;
+    }
     let calculatedPlace: number = 0;
     let calculatedTake: number = 4;
     if (req.query) {

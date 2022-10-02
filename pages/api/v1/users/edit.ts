@@ -2,6 +2,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
+import {getDocument} from "../../../../lib/database/fullTextSearch";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -48,19 +49,33 @@ export default async function handler(
         return;
     }
     const isNew = session.name == null;
-
-    await prisma.user.update({
-            where: {
-                id: session.sub
-            },
-            data: {
-                name,
-                image: image ? {connect: {id: image}} : undefined,
-                // @ts-ignore
-                userCourse: courses[course as keyof typeof courses] as any
+    const userId = session.sub;
+    await prisma.$transaction(async (prisma) => {
+        await prisma.user.update({
+                where: {
+                    id: userId
+                },
+                data: {
+                    name,
+                    image: image ? {connect: {id: image}} : undefined,
+                    // @ts-ignore
+                    userCourse: courses[course as keyof typeof courses] as any
+                }
             }
-        }
-    )
+        )
+        // update or create document
+        const docContent = getDocument(name);
+        await prisma.document.upsert({
+            where: {
+                userId
+            },
+            create: {
+                userId,
+                ...docContent
+            },
+            update: docContent
+        });
+    });
 
 
     res.status(200).json({status: "ok"});

@@ -302,7 +302,7 @@ async function putFile(
         data: {
             id: block,
             url: createdUrl,
-            altUrl: isImage ? unsignedUrl : undefined,
+            // altUrl: isImage ? unsignedUrl : undefined,
             filename: filename + (ext ? '.' + ext : ''),
             size,
             user: session.sub ? {connect: {id: session.sub}} : undefined,

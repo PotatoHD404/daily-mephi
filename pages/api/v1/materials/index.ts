@@ -62,16 +62,16 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
     }
 
     const {
-        header: title,
-        description: text,
+        title,
+        text,
         files,
         faculties,
         disciplines,
         semesters,
         tutor
     }: {
-        header: string,
-        description: string,
+        title: string,
+        text: string,
         tutor: string,
         files: string[],
         faculties: string[],

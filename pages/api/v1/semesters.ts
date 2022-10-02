@@ -7,6 +7,10 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<object>
 ) {
+    if (req.method !== "GET") {
+        res.status(405).json({status: "method not allowed"});
+        return;
+    }
     const semesters = await prisma.semester.findMany()
 
     res.status(200).json(semesters);
