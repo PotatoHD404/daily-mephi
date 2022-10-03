@@ -1,29 +1,21 @@
-version: '3.7'
+version: '3.5'
 
 services:
-  database:
-    image: cr.yandex/yc/yandex-docker-local-ydb:latest
-    hostname: localhost
-    environment:
-      YDB_CERTS: "/ydb_certs"
-      GRPC_TLS_PORT: 2135
-      GRPC_PORT: 2136
-      MON_PORT: 8765
-    ports: #This is used to map the container’s ports to the host machine.
-      - "2135:2135"
-      - "2136:2136"
-      - "8765:8765"
-    volumes:
-      - ydb_certs:/ydb_certs
-      - ydb_data:/ydb_data
-    restart: unless-stopped
-#    networks:
-#      - app
-#
-#networks:
-#  app:
-#    driver: bridge
 
+  crdb:
+    image: christoofar/cockroachdb-arm64:latest
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    command: start-single-node --insecure
+    platform: linux/arm64
+    volumes:
+      - "cockroach-data:/cockroach/cockroach-data"
 volumes:
-  ydb_data:
-  ydb_certs:
+  cockroach-data:
+#  node:
+#      image: node:12.16.1
+#      volumes:
+#      - "${PWD}/app:/app"
+#      working_dir: /app
+#      command: bash -c "yarn install && yarn build && yarn start"

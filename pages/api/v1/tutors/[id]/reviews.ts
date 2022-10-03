@@ -3,6 +3,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {UUID_REGEX} from "lib/uuidRegex";
+import { getDocument } from 'lib/database/fullTextSearch';
 
 async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id, cursor} = req.query;
@@ -57,6 +58,8 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
         return;
     }
     try {
+        const review = await prisma.$transaction(async (prisma) => {
+
         const review = await prisma.review.create({
             data: {
                 text,
@@ -69,6 +72,31 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                 }
             },
         });
+        await prisma.tutor.update({
+            where: {id},
+            data: {
+                reviewsCount: {
+                    increment: 1
+                }
+            }
+        });
+        await prisma.user.update({
+            where: {id: session.sub},
+            data: {
+                reviewsCount: {
+                    increment: 1
+                }
+            }
+        });
+        await prisma.document.create({
+            data: {
+                type: "review",
+                ...getDocument(text + ' ' + title),
+            }
+        });
+
+        return review;
+    });
 
         res.status(200).json({status: 'ok', id: review.id});
     } catch (e) {

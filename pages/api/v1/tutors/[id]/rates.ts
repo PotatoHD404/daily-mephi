@@ -68,21 +68,48 @@ async function addRate(req: NextApiRequest, res: NextApiResponse<object>) {
         res.status(400).json({status: "You have already rated this tutor"});
         return;
     }
-
-    const rate = await prisma.rate.create({
-        data: {
-            punctuality,
-            personality,
-            exams,
-            quality,
-            user: {
-                connect: {id: session.sub}
-            },
-            tutor: {
-                connect: {id}
+    const rate = await prisma.$transaction(async (prisma) => {
+        const rate = await prisma.rate.create({
+            data: {
+                punctuality,
+                personality,
+                exams,
+                quality,
+                user: {
+                    connect: {id: session.sub}
+                },
+                tutor: {
+                    connect: {id}
+                }
             }
-        }
+        });
+        await prisma.$executeRaw`
+        UPDATE "Rating" SET "punctuality" =
+        (SELECT AVG("punctuality") FROM "Rate" WHERE "tutorId" = ${id}),
+        "personality" = (SELECT AVG("personality") FROM "Rate" WHERE "tutorId" = ${id}),
+        "exams" = (SELECT AVG("exams") FROM "Rate" WHERE "tutorId" = ${id}),
+        "quality" = (SELECT AVG("quality") FROM "Rate" WHERE "tutorId" = ${id}) WHERE "id" = ${id},
+        "ratingCount" = (SELECT COUNT(*) FROM "Rate" WHERE "tutorId" = ${id}) WHERE "id" = ${id};
+
+        WITH c1 as (SELECT c2."tutorId", -1 / (SUM(score) + 1) + 1 as score
+                                FROM (SELECT "LegacyRating"."tutorId",
+                                             ((5 + personality) * IF("personalityCount" < 10, "personalityCount", 10)::float +
+                                            (5 + exams) * IF("examsCount" < 10, "examsCount", 10)::float +
+                                            (5 + quality) * IF("qualityCount" < 10, "qualityCount", 10)::float) / 30 as score
+                    FROM "LegacyRating"
+                    WHERE "LegacyRating"."tutorId" = ${id}
+                    UNION
+                    SELECT "Rating"."tutorId",
+                           "Rating"."avgRating" as score
+                    FROM "Rating"
+                    WHERE "Rating"."tutorId" = ${id}
+                    GROUP BY "Rating"."tutorId") as c2
+                    GROUP BY c2."tutorId")
+                    UPDATE "Tutor" SET "score" = c1.score FROM c1 WHERE "Tutor"."id" = c1."tutorId";`;
+        
+        return rate;
     });
+
     res.status(200).json({status: "ok", id: rate.id});
 }
 

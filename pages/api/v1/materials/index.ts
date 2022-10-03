@@ -82,46 +82,69 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
         res.status(400).json({status: "bad request"});
         return;
     }
-
-    const data = {
-        title,
-        text,
-        files: files.length > 0 ? {
-            connect: files.map(file => ({
-                id: file
-            }))
-        } : undefined,
-        faculties: faculties.length > 0 ? {
-            connect: faculties.map(faculty => ({
-                name: faculty
-            }))
-        } : undefined,
-        disciplines: disciplines.length > 0 ? {
-            connect: disciplines.map(discipline => ({
-                name: discipline
-            }))
-        } : undefined,
-        semesters: semesters.length > 0 ? {
-            connect: semesters.map(semester => ({
-                name: semester
-            }))
-        } : undefined,
-        tutor: {
-            connect: {
-                id: tutor
-            }
-        },
-        user: {
-            connect: {
-                id: session.sub
-            }
-        }
-    };
     // console.log(JSON.stringify(data))
+    const material = await prisma.$transaction(async (prisma) => {
+
     const material = await prisma.material.create({
-            data
+            data: {
+                title,
+                text,
+                files: files.length > 0 ? {
+                    connect: files.map(file => ({
+                        id: file
+                    }))
+                } : undefined,
+                faculties: faculties.length > 0 ? {
+                    connect: faculties.map(faculty => ({
+                        name: faculty
+                    }))
+                } : undefined,
+                disciplines: disciplines.length > 0 ? {
+                    connect: disciplines.map(discipline => ({
+                        name: discipline
+                    }))
+                } : undefined,
+                semesters: semesters.length > 0 ? {
+                    connect: semesters.map(semester => ({
+                        name: semester
+                    }))
+                } : undefined,
+                tutor: {
+                    connect: {
+                        id: tutor
+                    }
+                },
+                user: {
+                    connect: {
+                        id: session.sub
+                    }
+                }
+            }
         }
     );
+    await prisma.user.update({
+        where: {
+            id: session.sub
+        },
+        data: {
+            materialsCount: {
+                increment: 1
+            }
+        }
+    });
+    if(tutor) {
+        await prisma.tutor.update({
+            where: {
+                id: tutor
+            },
+            data: {
+                materialsCount: {
+                    increment: 1
+                }
+            }});
+    }
+    return material;
+});
 
     res.status(200).json({material});
 }

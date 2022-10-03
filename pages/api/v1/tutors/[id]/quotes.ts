@@ -3,6 +3,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {UUID_REGEX} from "lib/uuidRegex";
+import { getDocument } from 'lib/database/fullTextSearch';
 
 
 async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
@@ -52,7 +53,9 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
         return;
     }
     try {
-        const quote = await prisma.quote.create({
+        
+        const quote = await prisma.$transaction(async (prisma) => {
+            const quote = await prisma.quote.create({
             data: {
                 text,
                 user: {
@@ -63,6 +66,30 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
                 }
             },
         });
+        await prisma.tutor.update({
+            where: {id},
+            data: {
+                quotesCount: {
+                    increment: 1
+                }
+            }
+        });
+        await prisma.user.update({
+            where: {id: session.sub},
+            data: {
+                quotesCount: {
+                    increment: 1
+                }
+            }
+        });
+        await prisma.document.create({
+            data: {
+                type: "quote",
+                ...getDocument(text)
+            }
+        });
+        return quote;
+    });
         res.status(200).json({status: 'ok', id: quote.id});
     } catch (e) {
         res.status(500).json({status: 'error'});

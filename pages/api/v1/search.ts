@@ -47,6 +47,7 @@ export default async function handler(
     }
     if (query) {
         const grams = generate3grams(query);
+        console.log(grams);
         query = prepareText(query);
         const mustBe = Array.from(query.matchAll(/"([^ ]+)"/g), (el) => el[1]);
 
@@ -54,16 +55,16 @@ export default async function handler(
         // console.log(query, grams, mustBe, mustNotBe);
         // const searchResult = await prisma.$queryRaw`
         //     SELECT * FROM "Document"`;
-
+        
         let searchResult: any = await prisma.$queryRaw`
-            WITH t as (SELECT ARRAY [UNNEST(CAST(${mustNotBe} AS TEXT[]))] as word),
+            WITH ${mustNotBe.length > 0 ? Prisma.sql`t as (SELECT ARRAY [UNNEST(CAST(${mustNotBe} AS TEXT[]))] as word),` : Prisma.empty}
                  t1 as (SELECT *
                         FROM "Document" ${mustBe.length > 0 || calculatedTypes ? Prisma.sql`WHERE` : Prisma.empty}
                         ${calculatedTypes ? Prisma.sql`type in (${Prisma.join(calculatedTypes)})` : Prisma.empty}
                             ${mustBe.length > 0 ? calculatedTypes && Prisma.sql` AND ` : Prisma.empty}
                             ${mustBe.length > 0 ? Prisma.sql`words @> ${mustBe}`: Prisma.empty}),
                  t2 as (SELECT t1.*
-                        FROM t1 ${mustNotBe.length > 0 ? Prisma.sql`JOIN t ON words @> t.word}` : Prisma.empty}),
+                        FROM t1 ${mustNotBe.length > 0 ? Prisma.sql`INNER JOIN t ON words @> t.word}` : Prisma.sql`WHERE FALSE`}),
                  t3 as (SELECT t1.*
                         FROM t1
                         EXCEPT
