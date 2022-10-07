@@ -346,16 +346,18 @@ model Reaction {
 // full text search model
 
 model Document {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  words      String[]
-  grams      String[]
-  userId     String?  @unique @db.Uuid
-  tutorId    String?  @unique @db.Uuid
-  materialId String?  @unique @db.Uuid
-  reviewId   String?  @unique @db.Uuid
-  quoteId    String?  @unique @db.Uuid
-  newsId     String?  @unique @db.Uuid
-  type       String   @default("unknown")
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  words       String[]
+  grams       String[]
+  userId      String?  @unique @db.Uuid
+  tutorId     String?  @unique @db.Uuid
+  materialId  String?  @unique @db.Uuid
+  reviewId    String?  @unique @db.Uuid
+  quoteId     String?  @unique @db.Uuid
+  newsId      String?  @unique @db.Uuid
+  type        String   @default("unknown")
+  updatedAt   DateTime @default(now()) @updatedAt
+  ratingScore Float    @default(0) @db.Float8
 
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
