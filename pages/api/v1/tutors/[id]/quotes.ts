@@ -25,11 +25,11 @@ async function getQuotes(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: true,
                 }
             },
-            likes: true,
-            dislikes: true
+            // likes: true,
+            // dislikes: true
         },
         take: 10,
-        orderBy: {createdAt: 'desc'}
+        // orderBy: {score: 'desc'}
     });
 
     res.status(200).json(quotes);
@@ -65,22 +65,6 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
                     connect: {id}
                 }
             },
-        });
-        await prisma.tutor.update({
-            where: {id},
-            data: {
-                quotesCount: {
-                    increment: 1
-                }
-            }
-        });
-        await prisma.user.update({
-            where: {id: session.sub},
-            data: {
-                quotesCount: {
-                    increment: 1
-                }
-            }
         });
         await prisma.document.create({
             data: {

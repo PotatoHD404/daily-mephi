@@ -215,14 +215,11 @@ model Quote {
   userId    String?   @db.Uuid
   createdAt DateTime? @default(now())
 
-  score    Float @default(0) @db.Float8
-
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   reactions Reaction[]
   Document  Document[]
 
-  @@index([score(sort: "Desc")])
   @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
@@ -311,7 +308,6 @@ model Document {
   newsId      String?  @unique @db.Uuid
   type        String   @default("unknown")
   updatedAt   DateTime @default(now()) @updatedAt
-  ratingScore Float    @default(0) @db.Float8
 
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
@@ -344,7 +340,6 @@ model Tutor {
   legacyRating LegacyRating?
   quotes       Quote[]
   document     Document[]
-  rating       Rating?
 
 }
 

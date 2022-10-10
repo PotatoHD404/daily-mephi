@@ -46,10 +46,10 @@ export default async function handler(
             image: true,
             rating: true,
             role: true,
-            materialsCount: true,
-            reviewsCount: true,
-            quotesCount: true,
-            place: true,
+            // materialsCount: true,
+            // reviewsCount: true,
+            // quotesCount: true,
+            // place: true,
         }
     });    // console.log(user);
     // Generate sql query from above

@@ -36,7 +36,7 @@ async function newComment(
                 return {status: "parent comment not found"};
             }
         }
-        const comment = await prisma.comment.create({
+        return await prisma.comment.create({
             data: {
                 text,
                 [type]: {
@@ -56,30 +56,6 @@ async function newComment(
                 }
             }
         });
-        if(parentId) {
-            await prisma.comment.update({
-                where: {
-                    id: parentId
-                },
-                data: {
-                    childrenCount: {
-                        increment: 1
-                    }
-                }
-            })
-        }
-        await typeMapping[type].update({
-            where: {
-                id
-            },
-            data: {
-                commentCount: {
-                    increment: 1
-                }
-            }
-        });
-
-        return comment;
     }, {
         isolationLevel: "Serializable"
     });

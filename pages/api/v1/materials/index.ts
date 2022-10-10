@@ -44,11 +44,14 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: true,
                 }
             },
-            likes: true,
-            dislikes: true,
-            commentCount: true,
+            // likes: true,
+            // dislikes: true,
+            // commentCount: true,
         },
-        take: 10
+        take: 10,
+        // order: {
+        //     score: 'desc'
+        // }
         // take: req.query.take ? parseInt(req.query.take) : undefined,
     });
     res.status(200).json({materials});
@@ -85,7 +88,7 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
     // console.log(JSON.stringify(data))
     const material = await prisma.$transaction(async (prisma) => {
 
-    const material = await prisma.material.create({
+    return await prisma.material.create({
             data: {
                 title,
                 text,
@@ -122,28 +125,6 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse<object>) {
             }
         }
     );
-    await prisma.user.update({
-        where: {
-            id: session.sub
-        },
-        data: {
-            materialsCount: {
-                increment: 1
-            }
-        }
-    });
-    if(tutor) {
-        await prisma.tutor.update({
-            where: {
-                id: tutor
-            },
-            data: {
-                materialsCount: {
-                    increment: 1
-                }
-            }});
-    }
-    return material;
 });
 
     res.status(200).json({material});

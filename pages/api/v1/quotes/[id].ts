@@ -22,8 +22,8 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: {select: {url: true}}
                 }
             },
-            likes: true,
-            dislikes: true,
+            // likes: true,
+            // dislikes: true,
         },
     });
     if (!quote) {

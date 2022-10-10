@@ -26,13 +26,12 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                     image: {select: {url: true}}
                 }
             },
-            likes: true,
-            dislikes: true,
-            commentCount: true,
+            // dislikes: true,
+            // commentCount: true,
         },
         take: 10,
         skip: +(cursor ?? 0),
-        orderBy: {score: 'desc'}
+        // orderBy: {score: 'desc'}
 
     });
     const reviews_count = await prisma.review.count()
@@ -71,22 +70,6 @@ async function addReviews(req: NextApiRequest, res: NextApiResponse<object>) {
                     connect: {id}
                 }
             },
-        });
-        await prisma.tutor.update({
-            where: {id},
-            data: {
-                reviewsCount: {
-                    increment: 1
-                }
-            }
-        });
-        await prisma.user.update({
-            where: {id: session.sub},
-            data: {
-                reviewsCount: {
-                    increment: 1
-                }
-            }
         });
         await prisma.document.create({
             data: {

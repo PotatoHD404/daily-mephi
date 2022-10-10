@@ -20,7 +20,7 @@ export default async function handler(
             title: true,
             text: true,
             createdAt: true,
-            commentCount: true
+            // commentCount: true
         }
     });
 

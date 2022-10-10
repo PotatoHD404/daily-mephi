@@ -94,9 +94,9 @@ export default async function handler(
                     name: true,
                 }
             },
-            likes: true,
-            dislikes: true,
-            commentCount: true,
+            // likes: true,
+            // dislikes: true,
+            // commentCount: true,
         },
     });
 

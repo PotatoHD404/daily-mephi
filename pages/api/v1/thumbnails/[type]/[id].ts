@@ -73,19 +73,19 @@ export default async function handler(
                             url: true
                         }
                     },
-                    reviewsCount: true,
-                    quotesCount: true,
-                    materialsCount: true,
+                    // reviewsCount: true,
+                    // quotesCount: true,
+                    // materialsCount: true,
                     legacyRating: {
                         select: {
                             avgRating: true
                         }
                     },
-                    rating: {
-                        select: {
-                            avgRating: true
-                        }
-                    }
+                    // rating: {
+                    //     select: {
+                    //         avgRating: true
+                    //     }
+                    // }
                 }
             }
         );
@@ -105,19 +105,19 @@ export default async function handler(
         // const fontString = await fs.readFile(path.resolve(process.cwd(), 'fonts', 'Roboto-Medium.ttf')).then
         // (buffer => buffer.toString('base64'));
 
-        rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'tutor.ejs'), {
-            tutor_name: tutor.shortName,
-            mephist_rating: tutor.legacyRating?.avgRating ?? "-",
-            daily_rating: tutor.rating?.avgRating ?? "-",
-            reviews: getNoun(tutor.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
-            reviews_count: tutor.reviewsCount,
-            materials: getNoun(tutor.materialsCount, "Материал", "Материала", "Материалов"),
-            materials_count: tutor.materialsCount,
-            quotes: getNoun(tutor.quotesCount, "Цитата", "Цитаты", "Цитат"),
-            quotes_count: tutor.quotesCount,
-            image: avatarString,
-            font_path: fontPath,
-        }).then((html) => Buffer.from(html));
+        // rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'tutor.ejs'), {
+        //     tutor_name: tutor.shortName,
+        //     mephist_rating: tutor.legacyRating?.avgRating ?? "-",
+        //     daily_rating: tutor.rating?.avgRating ?? "-",
+        //     reviews: getNoun(tutor.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
+        //     reviews_count: tutor.reviewsCount,
+        //     materials: getNoun(tutor.materialsCount, "Материал", "Материала", "Материалов"),
+        //     materials_count: tutor.materialsCount,
+        //     quotes: getNoun(tutor.quotesCount, "Цитата", "Цитаты", "Цитат"),
+        //     quotes_count: tutor.quotesCount,
+        //     image: avatarString,
+        //     font_path: fontPath,
+        // }).then((html) => Buffer.from(html));
     } else if (type == "materials") {
         const material = await prisma.material.findUnique({
             where: {
@@ -219,9 +219,9 @@ export default async function handler(
                 },
                 role: true,
                 rating: true,
-                reviewsCount: true,
-                materialsCount: true,
-                quotesCount: true,
+                // reviewsCount: true,
+                // materialsCount: true,
+                // quotesCount: true,
             }
         });
         if (!user) {
@@ -236,19 +236,19 @@ export default async function handler(
                 .then((buffer) => Buffer.from(buffer))
                 .then((buffer) => "data:image/png;base64," + buffer.toString('base64'));
         }
-        rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'user.ejs'), {
-            reviews: getNoun(user.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
-            reviews_count: user.reviewsCount,
-            materials: getNoun(user.materialsCount, "Материал", "Материала", "Материалов"),
-            materials_count: user.materialsCount,
-            quotes: getNoun(user.quotesCount, "Цитата", "Цитаты", "Цитат"),
-            quotes_count: user.quotesCount,
-            nickname: user.name,
-            user_type: user.role == "tutor" ? "Преподаватель" : "Студент",
-            rating: user.rating,
-            image: avatarString,
-            font_path: fontPath,
-        }).then((html) => Buffer.from(html));
+        // rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'user.ejs'), {
+        //     reviews: getNoun(user.reviewsCount, "Отзыв", "Отзыва", "Отзывов"),
+        //     reviews_count: user.reviewsCount,
+        //     materials: getNoun(user.materialsCount, "Материал", "Материала", "Материалов"),
+        //     materials_count: user.materialsCount,
+        //     quotes: getNoun(user.quotesCount, "Цитата", "Цитаты", "Цитат"),
+        //     quotes_count: user.quotesCount,
+        //     nickname: user.name,
+        //     user_type: user.role == "tutor" ? "Преподаватель" : "Студент",
+        //     rating: user.rating,
+        //     image: avatarString,
+        //     font_path: fontPath,
+        // }).then((html) => Buffer.from(html));
     } else if (type == "reviews") {
         const review = await prisma.review.findUnique({
             where: {
@@ -317,6 +317,7 @@ export default async function handler(
         return;
     }
 
+    // @ts-ignore
     const image = sharp(rendered).png();
 
     image.cork();

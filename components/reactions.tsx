@@ -4,7 +4,13 @@ import Comment from "./commentBtn";
 import {Skeleton} from "@mui/material";
 import React from "react";
 
-async function apply_result(result: Response, setLike: (value: (((prevState: (boolean | null)) => (boolean | null)) | boolean | null)) => void, prevState, setLikes: (value: (((prevState: number) => number) | number)) => void, setDislikes: (value: (((prevState: number) => number) | number)) => void, setPrevState: (value: any) => void, like: boolean | null, likes: number, dislikes: number) {
+async function apply_result(result: Response,
+                            setLike: (value: (((prevState: (boolean | null)) => (boolean | null)) | boolean | null)) => void,
+                            prevState: any, setLikes: (value: (((prevState: number) => number) | number)) => void,
+                            setDislikes: (value: (((prevState: number) => number) | number)) => void,
+                            setPrevState: (value: any) => void, like: boolean | null,
+                            likes: number,
+                            dislikes: number) {
     if (result.status !== 200) {
         setLike(prevState.like);
         setLikes(prevState.likes);
