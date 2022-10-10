@@ -54,9 +54,6 @@ model User {
   rating         Float     @default(0) @db.Float8
   bio            String?   @db.String(150)
   image          File?     @relation("userImage", fields: [imageId], references: [id])
-  reviewsCount   Int       @default(0)
-  materialsCount Int       @default(0)
-  quotesCount    Int       @default(0)
   place          Int       @default(sequence(start: 1))
 
   accounts  Account[]
@@ -91,11 +88,6 @@ model Comment {
   newsId     String?  @db.Uuid
   parentId   String?  @db.Uuid
 
-  likes         Int   @default(0)
-  dislikes      Int   @default(0)
-  childrenCount Int   @default(0)
-  score         Float @default(0) @db.Float8
-
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   review    Review?    @relation(map: "reviews_comments", fields: [reviewId], references: [id], onDelete: Cascade)
   material  Material?  @relation(map: "materials_comments", fields: [materialId], references: [id], onDelete: Cascade)
@@ -104,7 +96,6 @@ model Comment {
   comments  Comment[]  @relation(name: "comment_parents")
   reactions Reaction[]
 
-  @@index([score(sort: "Desc")])
   @@index([createdAt])
   @@index([userId])
   @@index([reviewId])
@@ -158,11 +149,6 @@ model Material {
   tutorId   String?   @db.Uuid
   createdAt DateTime? @default(now())
 
-  likes        Int   @default(0)
-  dislikes     Int   @default(0)
-  score        Float @default(0) @db.Float8
-  commentCount Int   @default(0)
-
   files       File[]
   user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
   tutor       Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
@@ -173,7 +159,6 @@ model Material {
   semesters   Semester[]
   Document    Document[]
 
-  @@index([score(sort: "Desc")])
   @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
@@ -190,9 +175,6 @@ model News {
   text         String
   title        String   @db.String(280)
   createdAt    DateTime @default(now())
-  likes        Int      @default(0)
-  dislikes     Int      @default(0)
-  commentCount Int      @default(0)
 
   comments  Comment[]
   reactions Reaction[]
@@ -226,26 +208,6 @@ model LegacyRating {
   @@index([ratingCount])
 }
 
-model Rating {
-  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tutorId     String @unique @db.Uuid
-  punctuality Float
-  personality Float
-  exams       Float
-  quality     Float
-  ratingCount Int    @default(0)
-  avgRating   Float  @db.Float8
-  tutor       Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-
-  @@index([tutorId])
-  @@index([personality])
-  @@index([exams])
-  @@index([quality])
-  @@index([punctuality])
-  @@index([avgRating])
-  @@index([ratingCount])
-}
-
 model Quote {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   text      String
@@ -253,8 +215,6 @@ model Quote {
   userId    String?   @db.Uuid
   createdAt DateTime? @default(now())
 
-  likes    Int   @default(0)
-  dislikes Int   @default(0)
   score    Float @default(0) @db.Float8
 
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -294,11 +254,6 @@ model Review {
   userId         String?  @db.Uuid
   tutorId        String   @db.Uuid
 
-  likes        Int   @default(0)
-  dislikes     Int   @default(0)
-  score        Float @default(0) @db.Float8
-  commentCount Int   @default(0)
-
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
@@ -306,7 +261,6 @@ model Review {
   Document  Document[]
 
   @@unique([userId, tutorId])
-  @@index([score(sort: "Desc")])
   @@index([createdAt])
   @@index([userId])
   @@index([tutorId])
@@ -380,11 +334,6 @@ model Tutor {
   nickName       String?   @unique @db.String(64)
   url            String?
   updatedAt      DateTime? @updatedAt
-  quotesCount    Int       @default(0)
-  reviewsCount   Int       @default(0)
-  materialsCount Int       @default(0)
-
-  score Float @default(0) @db.Float8
 
   images       File[]
   rates        Rate[]
@@ -397,7 +346,6 @@ model Tutor {
   document     Document[]
   rating       Rating?
 
-  @@index([score])
 }
 
 model Internal {
