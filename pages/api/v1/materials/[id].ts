@@ -1,7 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 // Request: GET /api/v1/news/[id]
 

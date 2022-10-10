@@ -17,6 +17,5 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     }
     // Get a custom cookie value from the request
     // const someCookie = req.cookies["some-custom-cookie"]
-
-    return await NextAuth(req, res, nextAuthOptions)
+    return await NextAuth(req, res, nextAuthOptions);
 }

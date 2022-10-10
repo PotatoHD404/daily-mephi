@@ -6,7 +6,7 @@ import ejs from "ejs";
 import sharp from "sharp";
 import prisma from "lib/database/prisma";
 import {getWrappedText, italic, regular} from "lib/textSize";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 // import ejs template from file
 // get base64 from dead cat
 // export const config = {

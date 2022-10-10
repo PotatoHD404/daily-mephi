@@ -3,7 +3,7 @@ import SEO from "components/seo";
 import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
 import prisma from "lib/database/prisma";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 
 function Review({review}: { review: any }) {

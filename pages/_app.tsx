@@ -2,7 +2,7 @@ import 'styles/globals.css'
 import {SessionProvider} from "next-auth/react"
 import {NextComponentType} from "next";
 import {Session} from "next-auth";
-import React, {ReactNode, useEffect, useState} from "react";
+import React, {ReactNode, useState} from "react";
 import Footer from "components/footer";
 import Image from "next/future/image";
 import Image1 from "next/image";

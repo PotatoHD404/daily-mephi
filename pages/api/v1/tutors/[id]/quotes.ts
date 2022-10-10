@@ -2,7 +2,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 import { getDocument } from 'lib/database/fullTextSearch';
 
 
@@ -53,7 +53,7 @@ async function addQuote(req: NextApiRequest, res: NextApiResponse<object>) {
         return;
     }
     try {
-        
+
         const quote = await prisma.$transaction(async (prisma) => {
             const quote = await prisma.quote.create({
             data: {

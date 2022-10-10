@@ -1,5 +1,5 @@
 import prisma from "lib/database/prisma";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {NextApiRequest, NextApiResponse} from "next";
 import {getToken} from "next-auth/jwt";
 
@@ -13,6 +13,7 @@ export default async function handler(
         return;
     }
     const {id, reaction, type} = req.body;
+    console.log(id, reaction, type);
     if (reaction !== "like" &&
         reaction !== "dislike" &&
         reaction !== "unlike" ||
@@ -44,9 +45,8 @@ export default async function handler(
                     user: {
                         id: userId
                     },
-                    [fkId]: {
-                        id
-                    }
+                    [fkId]: id
+
                 },
                 select: {
                     id: true,
@@ -54,7 +54,13 @@ export default async function handler(
                 }
             });
             if (!likeExists && reaction === "unlike") {
-                return {};
+                return await table.findUnique({
+                    where: {id},
+                    select: {
+                        likes: true,
+                        dislikes: true
+                    }
+                });
             }
             if (likeExists && reaction === "unlike") {
                 await prisma.reaction.delete({
@@ -73,7 +79,13 @@ export default async function handler(
             }
             if (likeExists) {
                 if (likeExists.like === (reaction === "like") || !likeExists.like === (reaction === "dislike")) {
-                    return {};
+                    return await table.findUnique({
+                        where: {id},
+                        select: {
+                            likes: true,
+                            dislikes: true
+                        }
+                    });
                 }
                 await prisma.reaction.update({
                     where: {

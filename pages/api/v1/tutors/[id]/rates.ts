@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
-import {UUID_REGEX} from "lib/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 async function getRates(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
@@ -106,7 +106,7 @@ async function addRate(req: NextApiRequest, res: NextApiResponse<object>) {
                     GROUP BY "Rating"."tutorId") as c2
                     GROUP BY c2."tutorId")
                     UPDATE "Tutor" SET "score" = c1.score FROM c1 WHERE "Tutor"."id" = c1."tutorId";`;
-        
+
         return rate;
     });
 

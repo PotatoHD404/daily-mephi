@@ -3,13 +3,26 @@ import Dislike from "./dislikeBtn";
 import Comment from "./commentBtn";
 import {Skeleton} from "@mui/material";
 import React from "react";
-import { setConfig } from "next/config";
+
+async function apply_result(result: Response, setLike: (value: (((prevState: (boolean | null)) => (boolean | null)) | boolean | null)) => void, prevState, setLikes: (value: (((prevState: number) => number) | number)) => void, setDislikes: (value: (((prevState: number) => number) | number)) => void, setPrevState: (value: any) => void, like: boolean | null, likes: number, dislikes: number) {
+    if (result.status !== 200) {
+        setLike(prevState.like);
+        setLikes(prevState.likes);
+        setDislikes(prevState.dislikes);
+        return;
+    }
+    setPrevState({like: like, likes: likes, dislikes: dislikes});
+    const data = await result.json();
+    setLikes(data.likes);
+    setDislikes(data.dislikes);
+}
 
 export default function Reactions(props: { isLoading?: boolean, type: string, id: string, likes: number, dislikes: number, comments: number }) {
     const [like, setLike] = React.useState<true | false | null>(null);
     const [likes, setLikes] = React.useState(props.likes);
     const [dislikes, setDislikes] = React.useState(props.dislikes);
     const [prevState, setPrevState] = React.useState<any>({like: null, likes: props.likes, dislikes: props.dislikes});
+
     async function onClick(type: string) {
         if (type === 'like' && like !== true) {
             if (like === false) {
@@ -17,28 +30,62 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
             }
             setLike(true);
             setLikes(likes + 1);
-            const result = await fetch(`/api/v1/likes/${props.type}/${props.id}/like`,
-             {method: 'POST', credentials: 'same-origin'});
-            if (result.status !== 200) {
-                setLike(prevState.like);
-                setLikes(prevState.likes);
-                setDislikes(prevState.dislikes);
-                return;
-            }
-            setPrevState({like: like, likes: likes, dislikes: dislikes});
-            const data = await result.json();
-            setLikes(data.likes);
-            setDislikes(data.dislikes);
+            const result = await fetch(`/api/v1/reactions`,
+                {
+                    // TODO: add csrf token
+                    method: 'PUT',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        reaction: 'like',
+                        type: props.type,
+                        id: props.id
+                    })
+                });
+            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
 
         } else if (type === 'dislike' && like !== false) {
             if (like === true) {
                 setLikes(likes - 1);
             }
-            setLike(false);
             setDislikes(dislikes + 1);
+            const result = await fetch(`/api/v1/reactions`,
+                {
+                    // TODO: add csrf token
+                    method: 'PUT',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        reaction: 'dislike',
+                        type: props.type,
+                        id: props.id
+                    })
+                });
+            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
+        } else if (type === 'dislike' && like === false) {
+            setDislikes(dislikes - 1);
+            const result = await fetch(`/api/v1/reactions`,
+                {
 
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        reaction: 'unlike',
+                        type: props.type,
+                        id: props.id
+                    })
+                });
         }
+
     }
+
     return (
         props.isLoading ?
             <Skeleton className="w-32 h-6 my-auto" variant="rounded"/> :

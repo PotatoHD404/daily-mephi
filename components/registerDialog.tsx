@@ -5,8 +5,10 @@ import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 
 import {CircularProgress, FormControl, NativeSelect, SelectChangeEvent, TextField,} from '@mui/material';
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useCallback, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
+import {getCsrfToken} from "next-auth/react";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -25,12 +27,18 @@ export default function RegisterDialog(props: DialogProps) {
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value);
     };
+
+    const { executeRecaptcha } = useGoogleReCaptcha();
     const [name, setName] = useState<string | null>(null);
     // nickname error
     const [nicknameError, setNicknameError] = useState<boolean>(false);
     const [option, setOption] = useState<string>("Не указано");
 
     async function handleRegister() {
+        if (!executeRecaptcha) {
+            return;
+        }
+        const recaptchaToken = await executeRecaptcha('register');
         const res = await fetch('/api/v1/users/edit', {
             method: 'PUT',
             headers: {
@@ -38,7 +46,9 @@ export default function RegisterDialog(props: DialogProps) {
             },
             credentials: 'same-origin',
             body: JSON.stringify({
+                csrfToken: await getCsrfToken(),
                 name,
+                recaptchaToken,
                 course: option != "Не указано" ? option : undefined,
             })
         });
@@ -61,6 +71,10 @@ export default function RegisterDialog(props: DialogProps) {
     });
 
     const register = async () => {
+        if (!executeRecaptcha) {
+            return;
+        }
+
         // Nickname regex with russian letters
         const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
         if (name != null && nicknameRegex.test(name)) {

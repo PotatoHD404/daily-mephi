@@ -9,7 +9,7 @@ import {GetServerSideProps} from "next";
 import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
-import {UUID_REGEX} from "../../lib/uuidRegex";
+import {UUID_REGEX} from "../../lib/constants/uuidRegex";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
     const {status} = useSession();
@@ -34,7 +34,13 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
         return await (await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }))?.json().then((data) => {
+            if (data?.error) {
+                changeNeedsAuth(true);
+            }
+            data.image = data.image?.url;
+            return data;
+        });
     }
 
     const {data, isFetching, refetch, isError, error} = useQuery([`user-${user.id}`], getUser, {
@@ -72,7 +78,7 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
             <SEO title={`Пользователь ${user.name}`}
                  thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${user.id}.png`}/> :
                   <SEO title={`Пользователь ${data.name || '...'}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/> 
+                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/>
         }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">

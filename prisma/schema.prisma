@@ -375,8 +375,8 @@ model Tutor {
   firstName      String?   @db.String(64)
   lastName       String?   @db.String(64)
   fatherName     String?   @db.String(64)
-  fullName       String    @db.String(256)
-  shortName      String    @db.String(80)
+  fullName       String    @db.String(256) @default(dbgenerated())
+  shortName      String    @db.String(80) @default(dbgenerated())
   nickName       String?   @unique @db.String(64)
   url            String?
   updatedAt      DateTime? @updatedAt
