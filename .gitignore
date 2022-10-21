@@ -96,3 +96,7 @@ public/service-worker.js.map
 /tmp/
 
 .next-tf/config.json
+
+.fleet/
+
+.idea/
