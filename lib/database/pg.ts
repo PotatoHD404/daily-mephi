@@ -8,6 +8,7 @@ if (process.env.NODE_ENV === 'production') {
         connectionString: process.env.POSTGRESQL_ADDON_URI,
         application_name: "$ daily_mephi",
     });
+    // @ts-ignore
     pg = await pool.connect();
 } else {
     // @ts-ignore
