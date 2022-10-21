@@ -1,23 +1,24 @@
 import {PrismaClient} from '@prisma/client';
 
-let prisma: PrismaClient;
+let prisma: PrismaClient = new PrismaClient();
 
-if (process.env.NODE_ENV === 'production') {
-    prisma = new PrismaClient();
-} else {
-    // @ts-ignore
-    if (!global.prisma) {
-        // @ts-ignore
+// if (process.env.NODE_ENV === 'production') {
+//     prisma = new PrismaClient();
+// } else {
+//     // @ts-ignore
+//     if (!global.prisma) {
+//         // @ts-ignore
+//
+//         global.prisma = new PrismaClient({log: ['query']});
+//         // global.prisma = new PrismaClient();
+//         // @ts-ignore
+//         global.prisma.$connect();
+//
+//     }
+//     // @ts-ignore
+//
+//     prisma = global.prisma;
+// }
 
-        global.prisma = new PrismaClient({log: ['query']});
-        // global.prisma = new PrismaClient();
-        // @ts-ignore
-        global.prisma.$connect();
-
-    }
-    // @ts-ignore
-
-    prisma = global.prisma;
-}
-
+// @ts-ignore
 export default prisma;

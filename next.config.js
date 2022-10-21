@@ -66,6 +66,7 @@ const nextConfig = withPWA(
                 test: /\.node$/,
                 loader: "node-loader"
             })
+            config.resolve.alias = {...config.resolve.alias, 'pg-native': 'aliases/pg-native.js'}
             // config.externals = {...config.externals, sharp};
 
             return config;
