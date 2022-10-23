@@ -116,38 +116,38 @@ interface ImagesJson {
 
 interface Tutor {
     id: string,
-    firstName: string,
-    lastName: string,
-    fatherName: string,
-    nickName: string,
-    url: string,
+    firstName: string | null,
+    lastName: string | null,
+    fatherName: string | null,
+    nickName: string | null,
+    url: string | null,
     updatedAt: Date,
-    fullName: string,
-    shortName: string,
+    fullName: string | null,
+    shortName: string | null,
 }
 
 interface User {
     id: string,
-    name: string,
-    imageId: string,
+    name: string | null,
+    imageId: string | null,
     role: string,
-    email: string,
-    emailVerified: Date,
+    email: string | null,
+    emailVerified: Date | null,
     createdAt: Date,
     rating: number,
-    bio: string,
+    bio: string | null,
 }
 
 interface File {
     id: string,
     url: string,
-    altUrl: string,
+    altUrl: string | null,
     createdAt: Date,
     filename: string,
-    userId: string,
-    tutorId: string,
-    materialId: string,
-    tag: string,
+    userId: string | null,
+    tutorId: string | null,
+    materialId: string | null,
+    tag: string | null,
     size: number,
 }
 
@@ -173,15 +173,15 @@ interface VerificationToken {
 interface Internal {
     name: string,
     value: string,
-    expires: Date,
+    expires: Date | null,
 }
 
 interface Quote {
     id: string,
     text: string,
     tutorId: string,
-    userId: string,
-    createdAt: Date,
+    userId: string | null,
+    createdAt: Date | null,
 }
 
 interface News {
@@ -196,8 +196,8 @@ interface Review {
     title: string,
     text: string,
     createdAt: Date,
-    legacyNickname: string,
-    userId: string,
+    legacyNickname: string | null,
+    userId: string | null,
     tutorId: string,
 }
 
@@ -207,13 +207,13 @@ interface Account {
     type: string,
     provider: string,
     providerAccountId: string,
-    refresh_token: string,
-    access_token: string,
-    expires_at: Date,
-    token_type: string,
-    scope: string,
-    id_token: string,
-    session_state: string,
+    refresh_token: string | null,
+    access_token: string | null,
+    expires_at: number | null,
+    token_type: string | null,
+    scope: string | null,
+    id_token: string | null,
+    session_state: string | null,
 }
 
 interface Session {
@@ -225,11 +225,11 @@ interface Session {
 
 interface Material {
     id: string,
-    text: string,
+    text: string | null,
     title: string,
-    userId: string,
-    tutorId: string,
-    createdAt: Date,
+    userId: string | null,
+    tutorId: string | null,
+    createdAt: Date | null,
 }
 
 interface Rate {
@@ -260,12 +260,12 @@ interface Faculty {
 interface Document {
     id: string,
     data: string,
-    userId: string,
-    tutorId: string,
-    materialId: string,
-    reviewId: string,
-    quoteId: string,
-    newsId: string,
+    userId: string | null,
+    tutorId: string | null,
+    materialId: string | null,
+    reviewId: string | null,
+    quoteId: string | null,
+    newsId: string | null,
     type: string,
     createdAt: Date,
 }
@@ -275,10 +275,10 @@ interface Comment {
     text: string,
     createdAt: Date,
     userId: string,
-    reviewId: string,
-    materialId: string,
-    newsId: string,
-    parentId: string,
+    reviewId: string | null,
+    materialId: string | null,
+    newsId: string | null,
+    parentId: string | null,
 }
 
 interface MaterialSemester {
@@ -314,11 +314,11 @@ interface FacultyTutor {
 interface Reaction {
     id: string,
     userId: string,
-    quoteId: string,
-    materialId: string,
-    reviewId: string,
-    commentId: string,
-    newsId: string,
+    quoteId: string | null,
+    materialId: string | null,
+    reviewId: string | null,
+    commentId: string | null,
+    newsId: string | null,
     createdAt: Date,
     like: boolean,
 }
@@ -668,12 +668,12 @@ export default async function handler(
 
 
     await Promise.all([
-        knex("discipline").del(),
-        knex("faculty").del(),
-        knex("semester").del(),
-        knex("material").del(),
-        knex("tutor").del(),
-        knex("quote").del(),
+        knex("Discipline").del(),
+        knex("Faculty").del(),
+        knex("Semester").del(),
+        knex("Material").del(),
+        knex("Tutor").del(),
+        knex("Quote").del(),
     ]);
 
     // await prisma.discipline.createMany({
@@ -683,14 +683,131 @@ export default async function handler(
     //     skipDuplicates: true
     // })
     // rewrite code above to use knex instead of prisma
-    const [disciplineModels, facultyModels] = await Promise.all([
-        knex("discipline").insert(Array.from(disciplines).map(el => {
+    const [disciplinesMap, facultiesMap, semestersMap] = await Promise.all([
+        knex<Discipline>("Discipline").insert(Array.from(disciplines).map(el => {
             return {name: el}
-        })).onConflict('name').ignore().returning('*'),
-        knex("faculty").insert(Array.from(faculties).map(el => {
+        })).onConflict('name').ignore().returning('*').
+        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+            acc[el.name] = el.id;
+            return acc;
+        }, {})),
+        knex<Faculty>("Faculty").insert(Array.from(faculties).map(el => {
             return {name: el}
-        })).onConflict('name').ignore().returning('*'),
+        })).onConflict('name').ignore().returning('*').
+        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+            acc[el.name] = el.id;
+            return acc;
+        }, {})),
+        knex<Semester>("Semester").insert(Object.keys(semestersMapping).map(el => {
+            return {name: el}
+        })).onConflict('name').ignore().returning('*').
+        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+            acc[el.name] = el.id;
+            return acc;
+        }, {})),
     ]);
+    // interface JsonTutor {
+    //     "url": string | null;
+    //     "skypeLink": string | null;
+    //     "cafedras": string[];
+    //     "directions": string[];
+    //     "name": string;
+    //     "lastName": string | null;
+    //     "nickName": string | null;
+    //     "fatherName": string | null;
+    //     "reviews": JsonReview[];
+    //     "mailReviews": {
+    //         [name: string]: string
+    //     };
+    //     "mailNames": string[];
+    //     "quotes": JsonQuote[];
+    //     "mailMark": {
+    //         "value": string,
+    //         "count": string
+    //     };
+    //     "personality": {
+    //         "value": string,
+    //         "count": string
+    //     };
+    //     "quality": {
+    //         "value": string,
+    //         "count": string
+    //     };
+    //     "tests": {
+    //         "value": string,
+    //         "count": string
+    //     };
+    //     "photo": string[];
+    //     "materials": string[];
+    // }
+
+        //     const tutor: TutorDTO = {
+        //     firstName: jsonTutor.name,
+        //     lastName: jsonTutor.lastName,
+        //     fatherName: jsonTutor.fatherName,
+        //     nickName: jsonTutor.nickName,
+        //     url: jsonTutor.url,
+        //     legacyRating: {
+        //         create: {
+        //             personality: Number(jsonTutor.personality.value),
+        //             personalityCount: Number(jsonTutor.personality.count),
+        //             exams: Number(jsonTutor.tests.value),
+        //             examsCount: Number(jsonTutor.tests.count),
+        //             quality: Number(jsonTutor.quality.value),
+        //             qualityCount: Number(jsonTutor.quality.count)
+        //         }
+        //     },
+        //     quotes: {create: []},
+        //     materials: {create: []},
+        //     reviews: {create: []},
+        //     faculties: {connect: []},
+        //     disciplines: {connect: []},
+        //     images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []}
+        // }
+
+    Object.entries(data.tutors).map(([id, tutor]) => {
+        const jsonTutor = tutor as unknown as JsonTutor;
+        const newTutor: Omit<Tutor, "fullName" | "shortName" | "id"> = {
+            firstName: jsonTutor.name,
+            lastName: jsonTutor.lastName,
+            fatherName: jsonTutor.fatherName,
+            nickName: jsonTutor.nickName,
+            url: jsonTutor.url,
+            updatedAt: new Date(),
+        };
+
+        async function createTutor() {
+            const tutor = await knex<Tutor>("Tutor").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
+            // add legacyRating
+            await knex<LegacyRating>("LegacyRating").insert({
+                personality: Number(jsonTutor.personality.value),
+                personalityCount: Number(jsonTutor.personality.count),
+                exams: Number(jsonTutor.tests.value),
+                examsCount: Number(jsonTutor.tests.count),
+                quality: Number(jsonTutor.quality.value),
+                qualityCount: Number(jsonTutor.quality.count),
+                tutorId: tutor.id
+            }).onConflict('tutorId').ignore().then(el => el[0]);
+
+            const images = tutor_images["fileMap"][`${id}.jpg`] ? [{id: tutor_images["fileMap"][`${id}.jpg`]}] : [];
+            // add mephist_images to images
+            images.push(...(Object.entries(mephist_images.fileMap).filter(
+                ([key]) => key.startsWith(`${id}-`)).map(([, value]) => ({id: value}))));
+            // add images
+            await knex<File>("TutorImage").insert(images.map(el => ({tutorId: tutor.id, imageId: el.id}))).onConflict('tutorId').ignore();
+
+
+            return tutor;
+        }
+        return createTutor;
+
+    });
+
+
+    // await knex<Tutor>("Tutor").insert(Object.entries(data.tutors));
+
+
+
 
 
 
