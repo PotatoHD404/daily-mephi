@@ -53,6 +53,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE INDEX "User_rating_idx" ON "User"("rating");
 
 CREATE TABLE "VerificationToken" (
+  "id" UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   "identifier" TEXT NOT NULL,
   "token" TEXT NOT NULL,
   "expires" TIMESTAMP(3) NOT NULL
@@ -321,6 +322,7 @@ CREATE TABLE "Tutor" (
 CREATE UNIQUE INDEX "Tutor_nickName_key" ON "Tutor"("nickName");
 
 CREATE TABLE "Internal" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
     "name" VARCHAR(200) NOT NULL,
     "value" TEXT NOT NULL,
     "expires" TIMESTAMP(3)
@@ -448,9 +450,9 @@ ALTER TABLE "DisciplineMaterial" ADD CONSTRAINT "DisciplineMaterial_disciplineId
 
 ALTER TABLE "DisciplineMaterial" ADD CONSTRAINT "DisciplineMaterial_materialId_fkey" FOREIGN KEY ("materialId") REFERENCES "Material"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "FacultyTutor" ADD CONSTRAINT "FacultyTutor_facultyId_fkey" FOREIGN KEY ("tutorId") REFERENCES "Faculty"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "FacultyTutor" ADD CONSTRAINT "FacultyTutor_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "FacultyTutor" ADD CONSTRAINT "FacultyTutor_tutorId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Tutor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "FacultyTutor" ADD CONSTRAINT "FacultyTutor_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "Tutor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "FacultyMaterial" ADD CONSTRAINT "FacultyMaterial_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
