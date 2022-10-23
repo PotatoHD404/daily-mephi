@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import pg from "lib/database/pg";
+import fs from "fs/promises";
 
 export default async function handler(
     req: NextApiRequest,
@@ -11,7 +12,9 @@ export default async function handler(
         return;
     }
     const client = await pg;
-    const result = await client.query('SELECT $1::text as message', ['Hello world!'])
+    const down = await fs.readFile("lib/database/migrations/1.down.sql", "utf-8");
+
+    const result = await client.query(down);
     // const access_token: string = await hash("kmv026");
     // res.status(200).json({name: access_token})
     // 123

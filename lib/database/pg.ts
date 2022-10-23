@@ -5,7 +5,7 @@ let pg: Promise<PoolClient>;
 
 if (process.env.NODE_ENV === 'production') {
     pool = new Pool({
-        connectionString: process.env.POSTGRESQL_ADDON_URI,
+        connectionString: process.env.POSTGRESQL_URL,
         application_name: "$ daily_mephi",
     });
     // @ts-ignore
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'production') {
         // @ts-ignore
 
         global.pool = new Pool({
-            connectionString: process.env.POSTGRESQL_ADDON_URI,
+            connectionString: process.env.POSTGRESQL_URL,
             application_name: "$ daily_mephi",
             max: 1,
         });

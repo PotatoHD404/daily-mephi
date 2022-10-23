@@ -86,12 +86,10 @@ const nextConfig = withPWA(
         // module: {
         //     rules: [
         //         {
-        //             test: /\.*$/,
-        //             exclude: [
-        //                 './parsing/'
-        //             ]
+        //             test: /\.sql$/i,
+        //             use: 'raw-loader'
         //         }
-        //     ],
+        //     ]
         // },
         images: {
             unoptimized: true,
