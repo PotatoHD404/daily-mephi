@@ -1,10 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import kn from "knex";
+// @ts-ignore
 import json from "parsing/combined/data.json"
+// @ts-ignore
 import tutor_imgs from "parsing/tutor_imgs.json"
+// @ts-ignore
 import mephist_imgs from "parsing/mephist_imgs.json"
+// @ts-ignore
 import mephist_fils from "parsing/mephist_files.json"
+import { not } from 'ajv/dist/compile/codegen';
 // import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 // import prisma from "../../../../lib/database/prisma";
 
@@ -107,7 +112,7 @@ interface JsonType {
     }[]
 }
 
-interface ImagesJson {
+interface FilesJson {
     status: string;
     fileMap: {
         [name: string]: string
@@ -226,7 +231,7 @@ interface Session {
 interface Material {
     id: string,
     text: string | null,
-    title: string,
+    title: string | null,
     userId: string | null,
     tutorId: string | null,
     createdAt: Date | null,
@@ -622,16 +627,16 @@ export default async function handler(
     });
     knex.initialize();
     const data: JsonType = json as JsonType;
-    const tutor_images: ImagesJson = tutor_imgs as ImagesJson;
-    const mephist_images: ImagesJson = mephist_imgs as ImagesJson;
-    const mephist_files: ImagesJson = mephist_fils as ImagesJson;
+    const tutor_images: FilesJson = tutor_imgs as FilesJson;
+    const mephist_images: FilesJson = mephist_imgs as FilesJson;
+    const mephist_files: FilesJson = mephist_fils as FilesJson;
 
 
     const newTutors = new Set<string>();
     const disciplines = new Set<string>();
     const faculties = new Set<string>();
     const addedMaterials = new Set<string>();
-    const semestersMapping: { [id: string]: string } = {
+    const semestersMap: { [id: string]: string } = {
         "Б1": "01",
         "Б2": "02",
         "Б3": "03",
@@ -674,6 +679,7 @@ export default async function handler(
         knex("Material").del(),
         knex("Tutor").del(),
         knex("Quote").del(),
+        knex("File").del()
     ]);
 
     // await prisma.discipline.createMany({
@@ -683,7 +689,7 @@ export default async function handler(
     //     skipDuplicates: true
     // })
     // rewrite code above to use knex instead of prisma
-    const [disciplinesMap, facultiesMap, semestersMap] = await Promise.all([
+    const [disciplinesMapping, facultiesMapping, semestersMapping, filesMapping] = await Promise.all([
         knex<Discipline>("Discipline").insert(Array.from(disciplines).map(el => {
             return {name: el}
         })).onConflict('name').ignore().returning('*').
@@ -698,74 +704,19 @@ export default async function handler(
             acc[el.name] = el.id;
             return acc;
         }, {})),
-        knex<Semester>("Semester").insert(Object.keys(semestersMapping).map(el => {
+        knex<Semester>("Semester").insert(Object.keys(semestersMap).map(el => {
             return {name: el}
         })).onConflict('name').ignore().returning('*').
         then(el => el.reduce((acc: {[name: string] : string}, el) => {
             acc[el.name] = el.id;
             return acc;
         }, {})),
+        knex<File>("File").insert(Object.entries({...mephist_files.fileMap, ...tutor_images.fileMap, ...mephist_images.fileMap}).map(([id, name]) => {
+            return {id, name}
+        })).onConflict('id').ignore().returning('*')
     ]);
-    // interface JsonTutor {
-    //     "url": string | null;
-    //     "skypeLink": string | null;
-    //     "cafedras": string[];
-    //     "directions": string[];
-    //     "name": string;
-    //     "lastName": string | null;
-    //     "nickName": string | null;
-    //     "fatherName": string | null;
-    //     "reviews": JsonReview[];
-    //     "mailReviews": {
-    //         [name: string]: string
-    //     };
-    //     "mailNames": string[];
-    //     "quotes": JsonQuote[];
-    //     "mailMark": {
-    //         "value": string,
-    //         "count": string
-    //     };
-    //     "personality": {
-    //         "value": string,
-    //         "count": string
-    //     };
-    //     "quality": {
-    //         "value": string,
-    //         "count": string
-    //     };
-    //     "tests": {
-    //         "value": string,
-    //         "count": string
-    //     };
-    //     "photo": string[];
-    //     "materials": string[];
-    // }
 
-        //     const tutor: TutorDTO = {
-        //     firstName: jsonTutor.name,
-        //     lastName: jsonTutor.lastName,
-        //     fatherName: jsonTutor.fatherName,
-        //     nickName: jsonTutor.nickName,
-        //     url: jsonTutor.url,
-        //     legacyRating: {
-        //         create: {
-        //             personality: Number(jsonTutor.personality.value),
-        //             personalityCount: Number(jsonTutor.personality.count),
-        //             exams: Number(jsonTutor.tests.value),
-        //             examsCount: Number(jsonTutor.tests.count),
-        //             quality: Number(jsonTutor.quality.value),
-        //             qualityCount: Number(jsonTutor.quality.count)
-        //         }
-        //     },
-        //     quotes: {create: []},
-        //     materials: {create: []},
-        //     reviews: {create: []},
-        //     faculties: {connect: []},
-        //     disciplines: {connect: []},
-        //     images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []}
-        // }
-
-    Object.entries(data.tutors).map(([id, tutor]) => {
+    const promises = Object.entries(data.tutors).map(([id, tutor]) => {
         const jsonTutor = tutor as unknown as JsonTutor;
         const newTutor: Omit<Tutor, "fullName" | "shortName" | "id"> = {
             firstName: jsonTutor.name,
@@ -777,9 +728,29 @@ export default async function handler(
         };
 
         async function createTutor() {
+            // add disciplines
+            if(!newTutors.has(id)) {
+                await knex<Discipline>("Discipline").insert(jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
+                    return {name: el}
+                })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
+            }
+            else {
+                await knex<Faculty>("Faculty").insert(jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
+                    return {name: el}
+                })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
+            }
+            await knex<Tutor>("Tutor").insert({...newTutor, id}).onConflict('id').ignore();
+
+
             const tutor = await knex<Tutor>("Tutor").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
+
+            const images = tutor_images["fileMap"][`${id}.jpg`] ? [{id: tutor_images["fileMap"][`${id}.jpg`]}] : [];
+            // add mephist_images to images
+            images.push(...(Object.entries(mephist_images.fileMap).filter(
+                ([key]) => key.startsWith(`${id}-`)).map(([, value]) => ({id: value}))));
+            await Promise.all([
             // add legacyRating
-            await knex<LegacyRating>("LegacyRating").insert({
+            knex<LegacyRating>("LegacyRating").insert({
                 personality: Number(jsonTutor.personality.value),
                 personalityCount: Number(jsonTutor.personality.count),
                 exams: Number(jsonTutor.tests.value),
@@ -787,24 +758,95 @@ export default async function handler(
                 quality: Number(jsonTutor.quality.value),
                 qualityCount: Number(jsonTutor.quality.count),
                 tutorId: tutor.id
-            }).onConflict('tutorId').ignore().then(el => el[0]);
-
-            const images = tutor_images["fileMap"][`${id}.jpg`] ? [{id: tutor_images["fileMap"][`${id}.jpg`]}] : [];
-            // add mephist_images to images
-            images.push(...(Object.entries(mephist_images.fileMap).filter(
-                ([key]) => key.startsWith(`${id}-`)).map(([, value]) => ({id: value}))));
+            }).onConflict('tutorId').ignore(),
             // add images
-            await knex<File>("TutorImage").insert(images.map(el => ({tutorId: tutor.id, imageId: el.id}))).onConflict('tutorId').ignore();
+            knex<File>("TutorImage").insert(images.map(el => ({tutorId: tutor.id, imageId: el.id}))),
+            // add quotes
+            knex<Quote>("Quote").insert(jsonTutor.quotes.map(el => ({text: el.Текст, createdAt: strToDateTime(el["Ник и дата"].split(' ').slice(-2).join(' ')), tutorId: tutor.id})))
+            ]);
+            // add materials and their files
+            const materials = jsonTutor.materials.map(el => ({...data.materials[el as any] as unknown as JsonMaterial, materialId : el}));
+            const materialsModel = await knex<Material>("Material").insert(materials.map(el => ({
+                title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
+                text: el.Описание,
+                createdAt: new Date(el["Дата добавления"]),
+                tutorId: tutor.id
+            }))).returning(["id"]);
+            // get array of files for material, then add them to db using materialsModel
+            const materialFiles = materials.flatMap((el, i) => {
+            const files: { id: string, materialNum: number }[] = [];
+            for (const [key, value] of Object.entries(mephist_files.fileMap)) {
+                if (key.startsWith(el.materialId + "-")) {
+                    files.push({id: value, materialNum: i});
+                }
+            }
+            return files;
+            });
+            // add disciplines to materials
+            const materialDisciplines = materials.flatMap((el, i) => {
+            const disciplines: { id: string, materialNum: number }[] = [];
+            for (const [key, value] of Object.entries(disciplinesMapping)) {
+                if (key.startsWith(el.materialId + "-")) {
+                    disciplines.push({id: value, materialNum: i});
+                }
+            }
+            return disciplines;
+            });
+            // add faculties to materials
+            const materialFaculties = materials.flatMap((el, i) => {
+            const faculties: { id: string, materialNum: number }[] = [];
+            for (const [key, value] of Object.entries(facultiesMapping)) {
+                if (key.startsWith(el.materialId + "-")) {
+                    faculties.push({id: value, materialNum: i});
+                }
+            }
+            return faculties;
+            });
+            // add semesters to materials
+            const materialSemesters = materials.flatMap((el, i) => {
+            const semesters: { id: string, materialNum: number }[] = [];
+            for (const [key, value] of Object.entries(semestersMapping)) {
+                if (key.startsWith(el.materialId + "-")) {
+                    semesters.push({id: value, materialNum: i});
+                }
+            }
+            return semesters;
+            });
+            await Promise.all([
+                ...materialFiles.map(el => knex<File>("MaterialFile").update({materialId: materialsModel[el.materialNum].id}).where({id: el.id})),
+                ...materialDisciplines.map(el => knex<DisciplineMaterial>("MaterialDiscipline").insert({materialId: materialsModel[el.materialNum].id, disciplineId: el.id})),
+                ...materialFaculties.map(el => knex<FacultyMaterial>("MaterialFaculty").insert({materialId: materialsModel[el.materialNum].id, facultyId: el.id})),
+                ...materialSemesters.map(el => knex<MaterialSemester>("MaterialSemester").insert({materialId: materialsModel[el.materialNum].id, semesterId: el.id}))
+            ]);
 
-
+            // add reviews
+            await knex<Review>("Review").insert(
+                jsonTutor.reviews.map(el =>
+                     ({title: el.Название === null || el.Название === "" ? "Без названия" : el.Название, text: el.Текст,
+                      createdAt: strToDate(el.Дата),
+                       legacyNickname: el.Ник,
+                        tutorId : tutor.id})).concat(
+                            Object.entries(jsonTutor.mailReviews).map(([name, review]) => ({
+                                                text: review,
+                title: "Отзыв с мифиста",
+                legacyNickname: name,
+                createdAt: new Date("01/01/2005"),
+                tutorId: tutor.id
+                            })
+                            )));            
             return tutor;
         }
         return createTutor;
-
     });
-
-
-    // await knex<Tutor>("Tutor").insert(Object.entries(data.tutors));
+    // split promises into chunks of 10
+    const chunks = [];
+    for (let i = 0; i < promises.length; i += 10) {
+        chunks.push(promises.slice(i, i + 10));
+    }
+    // execute chunks
+    for (const chunk of chunks) {
+        await Promise.all(chunk);
+    }
 
 
 

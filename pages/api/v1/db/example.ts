@@ -11,6 +11,7 @@ export default async function handler(
         return;
     }
     const client = await pg;
+    // await client.query("INSERT INTO example (name) VALUES ($1), ($2)", ["test", "test2"]);
     const result = await client.query('SELECT $1::text as message', ['Hello world!'])
     // const access_token: string = await hash("kmv026");
     // res.status(200).json({name: access_token})
