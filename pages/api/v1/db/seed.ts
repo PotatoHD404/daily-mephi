@@ -9,7 +9,6 @@ import tutor_imgs from "parsing/tutor_imgs.json"
 import mephist_imgs from "parsing/mephist_imgs.json"
 // @ts-ignore
 import mephist_fils from "parsing/mephist_files.json"
-import { not } from 'ajv/dist/compile/codegen';
 // import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 // import prisma from "../../../../lib/database/prisma";
 
@@ -126,7 +125,9 @@ interface Tutor {
     father_name: string | null,
     nick_name: string | null,
     url: string | null,
+    created_at: Date,
     updated_at: Date,
+    deleted_at: Date | null,
     full_name: string | null,
     short_name: string | null,
 }
@@ -139,6 +140,11 @@ interface User {
     email: string | null,
     email_verified: Date | null,
     created_at: Date,
+    updated_at: Date,
+    banned: boolean,
+    banned_reason: string | null,
+    banned_until: Date | null,
+    banned_at: Date | null,
     rating: number,
     bio: string | null,
 }
@@ -146,12 +152,14 @@ interface User {
 interface File {
     id: string,
     url: string,
-    altUrl: string | null,
-    createdAt: Date,
+    alt_url: string | null,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
     filename: string,
-    userId: string | null,
-    tutorId: string | null,
-    materialId: string | null,
+    user_id: string | null,
+    tutor_id: string | null,
+    material_id: string | null,
     tag: string | null,
     size: number,
 }
@@ -159,59 +167,69 @@ interface File {
 interface LegacyRating {
     id: string,
     personality: number,
-    personalityCount: number,
+    personality_count: number,
     exams: number,
-    examsCount: number,
+    exams_count: number,
     quality: number,
-    qualityCount: number,
-    tutorId: string,
-    avgRating: number,
-    ratingCount: number,
+    quality_count: number,
+    tutor_id: string,
+    avg_rating: number,
+    rating_count: number,
 }
 
 interface VerificationToken {
     identifier: string,
     token: string,
     expires: Date,
+    created_at: Date,
+    updated_at: Date,
 }
 
 interface Internal {
     name: string,
     value: string,
     expires: Date | null,
+    created_at: Date,
+    updated_at: Date,
 }
 
 interface Quote {
     id: string,
     text: string,
-    tutorId: string,
-    userId: string | null,
-    createdAt: Date | null,
+    tutor_id: string,
+    user_id: string | null,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
 }
 
 interface News {
     id: string,
     text: string,
     title: string,
-    createdAt: Date,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
 }
 
 interface Review {
     id: string,
     title: string,
     text: string,
-    createdAt: Date,
-    legacyNickname: string | null,
-    userId: string | null,
-    tutorId: string,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
+    legacy_nickname: string | null,
+    user_id: string | null,
+    tutor_id: string,
 }
 
 interface Account {
     id: string,
-    userId: string,
+    user_id: string,
     type: string,
     provider: string,
-    providerAccountId: string,
+    provider_account_id: string,
     refresh_token: string | null,
     access_token: string | null,
     expires_at: number | null,
@@ -219,22 +237,28 @@ interface Account {
     scope: string | null,
     id_token: string | null,
     session_state: string | null,
+    created_at: Date,
+    updated_at: Date,
 }
 
 interface Session {
     id: string,
-    sessionToken: string,
-    userId: string,
+    session_token: string,
+    user_id: string,
     expires: Date,
+    created_at: Date,
+    updated_at: Date,
 }
 
 interface Material {
     id: string,
     text: string | null,
     title: string | null,
-    userId: string | null,
-    tutorId: string | null,
-    createdAt: Date | null,
+    user_id: string | null,
+    tutor_id: string | null,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
 }
 
 interface Rate {
@@ -243,8 +267,11 @@ interface Rate {
     personality: number,
     exams: number,
     quality: number,
-    tutorId: string,
-    userId: string,
+    tutor_id: string,
+    user_id: string,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
 }
 
 interface Semester {
@@ -265,67 +292,71 @@ interface Faculty {
 interface Document {
     id: string,
     data: string,
-    userId: string | null,
-    tutorId: string | null,
-    materialId: string | null,
-    reviewId: string | null,
-    quoteId: string | null,
-    newsId: string | null,
+    user_id: string | null,
+    tutor_id: string | null,
+    material_id: string | null,
+    review_id: string | null,
+    quote_id: string | null,
+    news_id: string | null,
     type: string,
-    createdAt: Date,
+    created_at: Date,
+    updated_at: Date,
 }
 
 interface Comment {
     id: string,
     text: string,
-    createdAt: Date,
-    userId: string,
-    reviewId: string | null,
-    materialId: string | null,
-    newsId: string | null,
-    parentId: string | null,
+    created_at: Date,
+    updated_at: Date,
+    deleted_at: Date | null,
+    user_id: string,
+    review_id: string | null,
+    material_id: string | null,
+    news_id: string | null,
+    parent_id: string | null,
 }
 
 interface MaterialSemester {
     id: string,
-    materialId: string,
-    semesterId: string,
+    material_id: string,
+    semester_id: string,
 }
 
-interface DisciplineMaterial {
+interface MaterialDiscipline {
+    id: string,
+    discipline_id: string,
+    material_id: string,
+}
+
+interface MaterialFaculty {
+    id: string,
+    faculty_id: string,
+    material_id: string,
+}
+
+interface TutorDiscipline {
     id: string,
     disciplineId: string,
-    materialId: string,
+    tutor_id: string,
 }
 
-interface FacultyMaterial {
+interface TutorFaculty {
     id: string,
-    facultyId: string,
-    materialId: string,
-}
-
-interface DisciplineTutor {
-    id: string,
-    disciplineId: string,
-    tutorId: string,
-}
-
-interface FacultyTutor {
-    id: string,
-    tutorId: string,
-    facultyId: string,
+    tutor_id: string,
+    faculty_id: string,
 }
 
 interface Reaction {
     id: string,
-    userId: string,
-    quoteId: string | null,
-    materialId: string | null,
-    reviewId: string | null,
-    commentId: string | null,
-    newsId: string | null,
-    createdAt: Date,
-    like: boolean,
+    user_id: string,
+    quote_id: string | null,
+    material_id: string | null,
+    review_id: string | null,
+    comment_id: string | null,
+    news_id: string | null,
+    created_at: Date,
+    updated_at: Date,
+    liked: boolean,
 }
 
 // type LegacyRatingDTO = Omit<LegacyRating, "id" | "tutorId">;
@@ -626,7 +657,7 @@ export default async function handler(
         connection: process.env.POSTGRESQL_URL
     });
     knex.initialize();
-    const data: JsonType = json as JsonType;
+    const data: JsonType = json as unknown as JsonType;
     const tutor_images: FilesJson = tutor_imgs as FilesJson;
     const mephist_images: FilesJson = mephist_imgs as FilesJson;
     const mephist_files: FilesJson = mephist_fils as FilesJson;
@@ -673,13 +704,13 @@ export default async function handler(
 
 
     await Promise.all([
-        knex("Discipline").del(),
-        knex("Faculty").del(),
-        knex("Semester").del(),
-        knex("Material").del(),
-        knex("Tutor").del(),
-        knex("Quote").del(),
-        knex("File").del()
+        knex("disciplines").del(),
+        knex("faculties").del(),
+        knex("semesters").del(),
+        knex("materials").del(),
+        knex("tutors").del(),
+        knex("quotes").del(),
+        knex("files").del()
     ]);
 
     // await prisma.discipline.createMany({
@@ -690,83 +721,85 @@ export default async function handler(
     // })
     // rewrite code above to use knex instead of prisma
     const [disciplinesMapping, facultiesMapping, semestersMapping, filesMapping] = await Promise.all([
-        knex<Discipline>("Discipline").insert(Array.from(disciplines).map(el => {
+        knex<Discipline>("disciplines").insert(Array.from(disciplines).map(el => {
             return {name: el}
-        })).onConflict('name').ignore().returning('*').
-        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+        })).onConflict('name').ignore().returning('*').then(el => el.reduce((acc: { [name: string]: string }, el) => {
             acc[el.name] = el.id;
             return acc;
         }, {})),
-        knex<Faculty>("Faculty").insert(Array.from(faculties).map(el => {
+        knex<Faculty>("faculties").insert(Array.from(faculties).map(el => {
             return {name: el}
-        })).onConflict('name').ignore().returning('*').
-        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+        })).onConflict('name').ignore().returning('*').then(el => el.reduce((acc: { [name: string]: string }, el) => {
             acc[el.name] = el.id;
             return acc;
         }, {})),
-        knex<Semester>("Semester").insert(Object.keys(semestersMap).map(el => {
+        knex<Semester>("semesters").insert(Object.keys(semestersMap).map(el => {
             return {name: el}
-        })).onConflict('name').ignore().returning('*').
-        then(el => el.reduce((acc: {[name: string] : string}, el) => {
+        })).onConflict('name').ignore().returning('*').then(el => el.reduce((acc: { [name: string]: string }, el) => {
             acc[el.name] = el.id;
             return acc;
         }, {})),
-        knex<File>("File").insert(Object.entries({...mephist_files.fileMap, ...tutor_images.fileMap, ...mephist_images.fileMap}).map(([id, name]) => {
-            return {id, name}
+        knex<File>("files").insert(Object.entries({...mephist_files.fileMap, ...tutor_images.fileMap, ...mephist_images.fileMap}).map(([id, name]) => {
+            return {filename: id}
         })).onConflict('id').ignore().returning('*')
     ]);
 
     const promises = Object.entries(data.tutors).map(([id, tutor]) => {
         const jsonTutor = tutor as unknown as JsonTutor;
-        const newTutor: Omit<Tutor, "fullName" | "shortName" | "id"> = {
-            firstName: jsonTutor.name,
-            lastName: jsonTutor.lastName,
-            fatherName: jsonTutor.fatherName,
-            nickName: jsonTutor.nickName,
+        const newTutor: Omit<Tutor, "full_name" | "short_name" | "id" | "created_at" | "updated_at" | "deleted_at"> = {
+            first_name: jsonTutor.name,
+            last_name: jsonTutor.lastName,
+            father_name: jsonTutor.fatherName,
+            nick_name: jsonTutor.nickName,
             url: jsonTutor.url,
-            updatedAt: new Date(),
         };
 
         async function createTutor() {
             // add disciplines
-            if(!newTutors.has(id)) {
-                await knex<Discipline>("Discipline").insert(jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
+            if (!newTutors.has(id)) {
+                await knex<Discipline>("disciplines").insert(jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
                     return {name: el}
                 })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
-            }
-            else {
-                await knex<Faculty>("Faculty").insert(jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
+            } else {
+                await knex<Faculty>("faculties").insert(jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
                     return {name: el}
                 })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
             }
-            await knex<Tutor>("Tutor").insert({...newTutor, id}).onConflict('id').ignore();
+            await knex<Tutor>("tutors").insert({...newTutor, id}).onConflict('id').ignore();
 
 
-            const tutor = await knex<Tutor>("Tutor").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
+            const tutor = await knex<Tutor>("tutors").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
 
             const images = tutor_images["fileMap"][`${id}.jpg`] ? [{id: tutor_images["fileMap"][`${id}.jpg`]}] : [];
             // add mephist_images to images
             images.push(...(Object.entries(mephist_images.fileMap).filter(
                 ([key]) => key.startsWith(`${id}-`)).map(([, value]) => ({id: value}))));
             await Promise.all([
-            // add legacyRating
-            knex<LegacyRating>("LegacyRating").insert({
-                personality: Number(jsonTutor.personality.value),
-                personalityCount: Number(jsonTutor.personality.count),
-                exams: Number(jsonTutor.tests.value),
-                examsCount: Number(jsonTutor.tests.count),
-                quality: Number(jsonTutor.quality.value),
-                qualityCount: Number(jsonTutor.quality.count),
-                tutorId: tutor.id
-            }).onConflict('tutorId').ignore(),
-            // add images
-            knex<File>("TutorImage").insert(images.map(el => ({tutorId: tutor.id, imageId: el.id}))),
-            // add quotes
-            knex<Quote>("Quote").insert(jsonTutor.quotes.map(el => ({text: el.Текст, createdAt: strToDateTime(el["Ник и дата"].split(' ').slice(-2).join(' ')), tutorId: tutor.id})))
+                // add legacyRating
+                knex<LegacyRating>("legacy_ratings").insert({
+                    personality: Number(jsonTutor.personality.value),
+                    personality_count: Number(jsonTutor.personality.count),
+                    exams: Number(jsonTutor.tests.value),
+                    exams_count: Number(jsonTutor.tests.count),
+                    quality: Number(jsonTutor.quality.value),
+                    quality_count: Number(jsonTutor.quality.count),
+                    tutor_id: tutor.id
+                }).onConflict('tutor_id').ignore(),
+                // add images
+                knex<File>("files").update({tutor_id: tutor.id}).whereIn('id', images.map(el => el.id)),
+                // add quotes
+                knex<Quote>("quotes").insert(jsonTutor.quotes.map(el => ({
+                    text: el.Текст,
+                    createdAt: strToDateTime(el["Ник и дата"].split(' ').slice(-2).join(' ')),
+                    tutorId: tutor.id
+                })))
             ]);
             // add materials and their files
-            const materials = jsonTutor.materials.map(el => ({...data.materials[el as any] as unknown as JsonMaterial, materialId : el}));
-            const materialsModel = await knex<Material>("Material").insert(materials.map(el => ({
+            const materials = jsonTutor.materials.map(el => ({
+                ...data.materials[el as any] as unknown as JsonMaterial,
+                materialId: el
+            }));
+            const materialsModel = await knex<Material>("materials").insert(materials.map(el => ({
                 title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
                 text: el.Описание,
                 createdAt: new Date(el["Дата добавления"]),
@@ -774,68 +807,81 @@ export default async function handler(
             }))).returning(["id"]);
             // get array of files for material, then add them to db using materialsModel
             const materialFiles = materials.flatMap((el, i) => {
-            const files: { id: string, materialNum: number }[] = [];
-            for (const [key, value] of Object.entries(mephist_files.fileMap)) {
-                if (key.startsWith(el.materialId + "-")) {
-                    files.push({id: value, materialNum: i});
+                const files: { id: string, materialNum: number }[] = [];
+                for (const [key, value] of Object.entries(mephist_files.fileMap)) {
+                    if (key.startsWith(el.materialId + "-")) {
+                        files.push({id: value, materialNum: i});
+                    }
                 }
-            }
-            return files;
+                return files;
             });
             // add disciplines to materials
             const materialDisciplines = materials.flatMap((el, i) => {
-            const disciplines: { id: string, materialNum: number }[] = [];
-            for (const [key, value] of Object.entries(disciplinesMapping)) {
-                if (key.startsWith(el.materialId + "-")) {
-                    disciplines.push({id: value, materialNum: i});
+                const disciplines: { id: string, materialNum: number }[] = [];
+                for (const [key, value] of Object.entries(disciplinesMapping)) {
+                    if (key.startsWith(el.materialId + "-")) {
+                        disciplines.push({id: value, materialNum: i});
+                    }
                 }
-            }
-            return disciplines;
+                return disciplines;
             });
             // add faculties to materials
             const materialFaculties = materials.flatMap((el, i) => {
-            const faculties: { id: string, materialNum: number }[] = [];
-            for (const [key, value] of Object.entries(facultiesMapping)) {
-                if (key.startsWith(el.materialId + "-")) {
-                    faculties.push({id: value, materialNum: i});
+                const faculties: { id: string, materialNum: number }[] = [];
+                for (const [key, value] of Object.entries(facultiesMapping)) {
+                    if (key.startsWith(el.materialId + "-")) {
+                        faculties.push({id: value, materialNum: i});
+                    }
                 }
-            }
-            return faculties;
+                return faculties;
             });
             // add semesters to materials
             const materialSemesters = materials.flatMap((el, i) => {
-            const semesters: { id: string, materialNum: number }[] = [];
-            for (const [key, value] of Object.entries(semestersMapping)) {
-                if (key.startsWith(el.materialId + "-")) {
-                    semesters.push({id: value, materialNum: i});
+                const semesters: { id: string, materialNum: number }[] = [];
+                for (const [key, value] of Object.entries(semestersMapping)) {
+                    if (key.startsWith(el.materialId + "-")) {
+                        semesters.push({id: value, materialNum: i});
+                    }
                 }
-            }
-            return semesters;
+                return semesters;
             });
             await Promise.all([
-                ...materialFiles.map(el => knex<File>("MaterialFile").update({materialId: materialsModel[el.materialNum].id}).where({id: el.id})),
-                ...materialDisciplines.map(el => knex<DisciplineMaterial>("MaterialDiscipline").insert({materialId: materialsModel[el.materialNum].id, disciplineId: el.id})),
-                ...materialFaculties.map(el => knex<FacultyMaterial>("MaterialFaculty").insert({materialId: materialsModel[el.materialNum].id, facultyId: el.id})),
-                ...materialSemesters.map(el => knex<MaterialSemester>("MaterialSemester").insert({materialId: materialsModel[el.materialNum].id, semesterId: el.id}))
+                ...materialFiles.map(el => knex<File>("files").update({material_id: materialsModel[el.materialNum].id}).where({id: el.id})),
+                ...materialDisciplines.map(el => knex<MaterialDiscipline>("materials_disciplines").insert({
+                    material_id: materialsModel[el.materialNum].id,
+                    discipline_id: el.id
+                })),
+                ...materialFaculties.map(el => knex<MaterialFaculty>("materials_faculties").insert({
+                    material_id: materialsModel[el.materialNum].id,
+                    faculty_id: el.id
+                })),
+                ...materialSemesters.map(el => knex<MaterialSemester>("materials_semesters").insert({
+                    material_id: materialsModel[el.materialNum].id,
+                    semester_id: el.id
+                }))
             ]);
 
             // add reviews
-            await knex<Review>("Review").insert(
+            await knex<Review>("reviews").insert(
                 jsonTutor.reviews.map(el =>
-                     ({title: el.Название === null || el.Название === "" ? "Без названия" : el.Название, text: el.Текст,
-                      createdAt: strToDate(el.Дата),
-                       legacyNickname: el.Ник,
-                        tutorId : tutor.id})).concat(
-                            Object.entries(jsonTutor.mailReviews).map(([name, review]) => ({
-                                                text: review,
-                title: "Отзыв с мифиста",
-                legacyNickname: name,
-                createdAt: new Date("01/01/2005"),
-                tutorId: tutor.id
-                            })
-                            )));            
+                    ({
+                        title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
+                        text: el.Текст,
+                        createdAt: strToDate(el.Дата),
+                        legacyNickname: el.Ник,
+                        tutorId: tutor.id
+                    })).concat(
+                    Object.entries(jsonTutor.mailReviews).map(([name, review]) => ({
+                            text: review,
+                            title: "Отзыв с мифиста",
+                            legacyNickname: name,
+                            createdAt: new Date("01/01/2005"),
+                            tutorId: tutor.id
+                        })
+                    )));
             return tutor;
         }
+
         return createTutor;
     });
     // split promises into chunks of 10
@@ -847,10 +893,6 @@ export default async function handler(
     for (const chunk of chunks) {
         await Promise.all(chunk);
     }
-
-
-
-
 
 
     // res.status(200).json({rows: result.rows})

@@ -14,12 +14,19 @@ export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
     adapter: SequelizeAdapter(sequelize, {
         models: {
-            User: sequelize.define("User", {
+            User: sequelize.define("users", {
                 ...models.User,
                 role: DataTypes.STRING,
                 rating: DataTypes.FLOAT,
                 bio: DataTypes.STRING,
+                banned: DataTypes.BOOLEAN,
+                banned_reason: DataTypes.STRING,
+                banned_until: DataTypes.DATE,
+                banned_at: DataTypes.DATE
               }),
+            Account: sequelize.define("accounts", {...models.Account}),
+            Session: sequelize.define("sessions", {...models.Session}),
+            VerificationToken: sequelize.define("verification_tokens", {...models.VerificationToken})
         }
     }),
     session: {
