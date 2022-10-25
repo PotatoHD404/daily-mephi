@@ -1,9 +1,10 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
-import {PrismaAdapter} from "@next-auth/prisma-adapter"
-import {PrismaClient} from "@prisma/client"
+import SequelizeAdapter, { models } from "@next-auth/sequelize-adapter"
+import { DataTypes } from "sequelize"
 import {NextAuthOptions, SessionStrategy} from "next-auth";
+import sequelize from "lib/database/sequilize";
 
-const prisma = new PrismaClient()
+
 // const host = getHost() + "/api/auth/callback/home";
 //
 // const query = new URLSearchParams({service: host});
@@ -11,7 +12,17 @@ const prisma = new PrismaClient()
 
 export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
-    adapter: PrismaAdapter(prisma),
+    adapter: SequelizeAdapter(sequelize, {
+        models: {
+            User: sequelize.define("User", {
+                ...models.User,
+                role: DataTypes.STRING,
+                createdAt: DataTypes.DATE,
+                rating: DataTypes.FLOAT,
+                bio: DataTypes.STRING,
+              }),
+        }
+    }),
     session: {
         strategy: "jwt" as SessionStrategy,
         maxAge: 30 * 24 * 60 * 60, // 30 days

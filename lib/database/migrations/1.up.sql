@@ -36,6 +36,7 @@ CREATE TABLE "User" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   "name" VARCHAR(50),
   "imageId" UUID,
+  "image" UUID GENERATED ALWAYS AS ("imageId") STORED,
   "role" VARCHAR(255) NOT NULL DEFAULT 'default',
   "email" VARCHAR(255),
   "emailVerified" TIMESTAMP(3),

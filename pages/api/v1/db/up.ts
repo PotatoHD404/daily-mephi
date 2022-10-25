@@ -19,6 +19,6 @@ export default async function handler(
     // const access_token: string = await hash("kmv026");
     // res.status(200).json({name: access_token})
     // 123
-    res.status(200).json({rows: result.rows})
+    res.status(200).json({status: "ok"})
 
 }
