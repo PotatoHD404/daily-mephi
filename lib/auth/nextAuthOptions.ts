@@ -17,7 +17,6 @@ export const nextAuthOptions: NextAuthOptions = {
             User: sequelize.define("User", {
                 ...models.User,
                 role: DataTypes.STRING,
-                createdAt: DataTypes.DATE,
                 rating: DataTypes.FLOAT,
                 bio: DataTypes.STRING,
               }),

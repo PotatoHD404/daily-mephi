@@ -21,10 +21,17 @@ if (process.env.NODE_ENV === 'production') {
             max: 1,
         });
 
+         // @ts-ignore
+        global.pool.on('error', e => {
+            console.error('Database error', e);
+            // @ts-ignore
+            global.pool = null;
+          });
+
         // @ts-ignore
         global.pg = global.pool.connect();
         console.log("created new pool and pg");
-
+        
     }
     // @ts-ignore
 

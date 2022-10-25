@@ -121,24 +121,24 @@ interface FilesJson {
 
 interface Tutor {
     id: string,
-    firstName: string | null,
-    lastName: string | null,
-    fatherName: string | null,
-    nickName: string | null,
+    first_name: string | null,
+    last_name: string | null,
+    father_name: string | null,
+    nick_name: string | null,
     url: string | null,
-    updatedAt: Date,
-    fullName: string | null,
-    shortName: string | null,
+    updated_at: Date,
+    full_name: string | null,
+    short_name: string | null,
 }
 
 interface User {
     id: string,
     name: string | null,
-    imageId: string | null,
+    image_id: string | null,
     role: string,
     email: string | null,
-    emailVerified: Date | null,
-    createdAt: Date,
+    email_verified: Date | null,
+    created_at: Date,
     rating: number,
     bio: string | null,
 }
