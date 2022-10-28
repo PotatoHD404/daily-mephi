@@ -4,15 +4,71 @@ import * as fs2 from 'fs'
 import {promises as fs} from 'fs'
 import path from 'path'
 import {createHash} from "crypto";
-import NextAuth, {SessionStrategy} from "next-auth";
-import {nextAuthOptions} from "./auth/nextAuthOptions";
 import {NextApiRequest} from "next";
-import {init} from "next-auth/core/init";
-import {PrismaAdapter} from "@next-auth/prisma-adapter";
-import HomeMEPhiOauth from "./auth/mephiOauthConfig";
-import prisma from "./database/prisma";
-import {defaultCookies} from "next-auth/core/lib/cookie";
 
+
+export function defaultCookies(useSecureCookies: boolean) {
+    const cookiePrefix = useSecureCookies ? "__Secure-" : ""
+    return {
+        // default cookie options
+        sessionToken: {
+            name: `${cookiePrefix}next-auth.session-token`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+        callbackUrl: {
+            name: `${cookiePrefix}next-auth.callback-url`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+        csrfToken: {
+            // Default to __Host- for CSRF token for additional protection if using useSecureCookies
+            // NB: The `__Host-` prefix is stricter than the `__Secure-` prefix.
+            name: `${useSecureCookies ? "__Host-" : ""}next-auth.csrf-token`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+        pkceCodeVerifier: {
+            name: `${cookiePrefix}next-auth.pkce.code_verifier`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+        state: {
+            name: `${cookiePrefix}next-auth.state`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+        nonce: {
+            name: `${cookiePrefix}next-auth.nonce`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        }
+    }
+}
 
 export function checkStatus(options: https.RequestOptions, data?: any): Promise<{ code: number | undefined, redirect: string | undefined }> {
     return new Promise((resolve, reject) => {
