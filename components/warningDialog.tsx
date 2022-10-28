@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Image from "next/future/image";
+import Image from "next/image";
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";

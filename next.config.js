@@ -1,5 +1,4 @@
 const runtimeCaching = require('next-pwa/cache');
-const withPreact = require('next-plugin-preact')
 const withPWA = require('next-pwa')({
     dest: 'public',
     // disable: process.env.NODE_ENV === 'development',
@@ -55,7 +54,7 @@ const securityHeaders = [
 
 const nextConfig = withPWA(
     {
-        target: 'serverless',
+        // target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
         webpack: (config) => {
@@ -105,5 +104,5 @@ const nextConfig = withPWA(
     });
 //https://www.npmjs.com/package/next-pwa
 
-module.exports = withPreact(nextConfig);
+module.exports = nextConfig;
 // module.exports = nextConfig

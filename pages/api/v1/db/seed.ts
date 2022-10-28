@@ -1,14 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import kn from "knex";
-// @ts-ignore
+
 import json from "parsing/combined/data.json"
-// @ts-ignore
+
 import tutor_imgs from "parsing/tutor_imgs.json"
-// @ts-ignore
+
 import mephist_imgs from "parsing/mephist_imgs.json"
-// @ts-ignore
+
 import mephist_fils from "parsing/mephist_files.json"
+
+import filesJ from "parsing/File.json"
 // import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 // import prisma from "../../../../lib/database/prisma";
 
@@ -116,6 +118,17 @@ interface FilesJson {
     fileMap: {
         [name: string]: string
     }
+}
+
+interface JsonFile {
+    "id": string,
+    "url": string,
+    "createdAt": string,
+    "filename": string,
+    "isImage": boolean,
+    "userId": string | null,
+    "tutorId": string | null,
+    "materialId": string | null
 }
 
 interface Tutor {
@@ -661,6 +674,7 @@ export default async function handler(
     const tutor_images: FilesJson = tutor_imgs as FilesJson;
     const mephist_images: FilesJson = mephist_imgs as FilesJson;
     const mephist_files: FilesJson = mephist_fils as FilesJson;
+    const files_file: JsonFile[] = filesJ as JsonFile[];
 
 
     const newTutors = new Set<string>();
@@ -739,10 +753,19 @@ export default async function handler(
             acc[el.name] = el.id;
             return acc;
         }, {})),
-        knex<File>("files").insert(Object.entries({...mephist_files.fileMap, ...tutor_images.fileMap, ...mephist_images.fileMap}).map(([id, name]) => {
-            return {filename: id}
-        })).onConflict('id').ignore().returning('*')
+        ...(() => {
+            const arr = files_file.map(({id, url, createdAt, filename, isImage}) => {
+                return {id, url, created_at: new Date(createdAt), filename, alt_url: isImage.toString()}
+            });
+            const chunks = [];
+            while (arr.length) {
+                chunks.push(arr.splice(0, 65535 / 5));
+            }
+            return chunks.map(el => knex<File>("files").insert(el).onConflict('id').ignore().returning('*'));
+        })()
+        // knex<File>("files").insert().onConflict('id').ignore().returning('*')
     ]);
+    // split array of files into chunks of 65535 elements
 
     const promises = Object.entries(data.tutors).map(([id, tutor]) => {
         const jsonTutor = tutor as unknown as JsonTutor;
@@ -757,15 +780,20 @@ export default async function handler(
         async function createTutor() {
             // add disciplines
             if (!newTutors.has(id)) {
-                await knex<Discipline>("disciplines").insert(jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
+                const arr = jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
                     return {name: el}
-                })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
+                });
+                if(arr.length) {
+                    await knex<Discipline>("disciplines").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
+                }
             } else {
-                await knex<Faculty>("faculties").insert(jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
+                const arr = jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
                     return {name: el}
-                })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
+                })
+                if(arr.length) {
+                    await knex<Faculty>("faculties").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
+                }
             }
-            await knex<Tutor>("tutors").insert({...newTutor, id}).onConflict('id').ignore();
 
 
             const tutor = await knex<Tutor>("tutors").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
@@ -882,18 +910,18 @@ export default async function handler(
             return tutor;
         }
 
-        return createTutor;
+        return createTutor();
     });
     // split promises into chunks of 10
-    const chunks = [];
-    for (let i = 0; i < promises.length; i += 10) {
-        chunks.push(promises.slice(i, i + 10));
-    }
-    // execute chunks
-    for (const chunk of chunks) {
-        await Promise.all(chunk);
-    }
-
+    // const chunks = [];
+    // for (let i = 0; i < promises.length; i += 10) {
+    //     chunks.push(promises.slice(i, i + 10));
+    // }
+    // // execute chunks
+    // for (const chunk of chunks) {
+    //     await Promise.all(chunk);
+    // }
+    await Promise.all([promises[0]]);
 
     // res.status(200).json({rows: result.rows})
     res.status(200).json({status: "ok"});
