@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
-import pg from "lib/database/pg";
+import {getClient} from "lib/database/pg";
 import fs from "fs/promises";
 
 export default async function handler(
@@ -12,7 +12,7 @@ export default async function handler(
         return;
     }
 
-    const client = await pg;
+    const client = await getClient();
     const up = await fs.readFile("lib/database/migrations/1.up.sql", "utf-8");
 
     const result = await client.query(up);

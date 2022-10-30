@@ -195,7 +195,7 @@ CREATE TABLE legacy_ratings
     tutor_id          UUID                                                                                                   NOT NULL,
     avg_rating        FLOAT8 GENERATED ALWAYS AS ((personality * personality_count::FLOAT8 +
                                                    exams * exams_count::FLOAT8 + quality * quality_count::FLOAT8) /
-                                                  (personality_count + exams_count + quality_count)::FLOAT8) STORED          NOT NULL,
+                                                  NULLIF((personality_count + exams_count + quality_count)::FLOAT8, 0)) STORED,
     rating_count      INT4 GENERATED ALWAYS AS (ceil((personality_count + exams_count + quality_count)::DECIMAL / 3)) STORED NOT NULL,
     created_at        TIMESTAMP(0)     DEFAULT NOW()                                                                         NOT NULL,
     updated_at        TIMESTAMP(0)     DEFAULT NOW()                                                                         NOT NULL

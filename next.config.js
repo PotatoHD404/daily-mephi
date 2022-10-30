@@ -66,7 +66,20 @@ const nextConfig = withPWA(
                 test: /\.node$/,
                 loader: "node-loader"
             })
-            config.resolve.alias = {...config.resolve.alias, 'pg-native': 'aliases/pg-native.js'}
+            config.resolve.alias = {
+                ...config.resolve.alias,
+                'better-sqlite3': 'aliases/null-alias.js',
+                'tedious': 'aliases/null-alias.js',
+                'mysql': 'aliases/null-alias.js',
+                'mysql2': 'aliases/null-alias.js',
+                'oracledb': 'aliases/null-alias.js',
+                'pg-query-stream': 'aliases/null-alias.js',
+                'sqlite3': 'aliases/null-alias.js',
+                'pg-native': 'aliases/null-alias.js',
+                'pg-hstore': 'aliases/null-alias.js',
+
+
+            }
             // config.externals = {...config.externals, sharp};
 
             return config;

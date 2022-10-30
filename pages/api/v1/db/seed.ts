@@ -1,15 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import kn from "knex";
+import {knexSnakeCaseMappers} from "lib/database/objection"
 
 import json from "parsing/combined/data.json"
-
 import tutor_imgs from "parsing/tutor_imgs.json"
-
 import mephist_imgs from "parsing/mephist_imgs.json"
-
 import mephist_fils from "parsing/mephist_files.json"
-
 import filesJ from "parsing/File.json"
 // import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 // import prisma from "../../../../lib/database/prisma";
@@ -667,7 +664,9 @@ export default async function handler(
 
     const knex = kn({
         client: "pg",
-        connection: process.env.POSTGRESQL_URL
+        connection: process.env.POSTGRESQL_URL,
+
+        ...knexSnakeCaseMappers()
     });
     knex.initialize();
     const data: JsonType = json as unknown as JsonType;
@@ -779,30 +778,49 @@ export default async function handler(
 
         async function createTutor() {
             // add disciplines
-            if (!newTutors.has(id)) {
-                const arr = jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
-                    return {name: el}
-                });
-                if(arr.length) {
-                    await knex<Discipline>("disciplines").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
-                }
-            } else {
-                const arr = jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
-                    return {name: el}
-                })
-                if(arr.length) {
-                    await knex<Faculty>("faculties").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
-                }
-            }
 
 
             const tutor = await knex<Tutor>("tutors").insert(newTutor).onConflict('id').ignore().returning(["id"]).then(el => el[0]);
+
 
             const images = tutor_images["fileMap"][`${id}.jpg`] ? [{id: tutor_images["fileMap"][`${id}.jpg`]}] : [];
             // add mephist_images to images
             images.push(...(Object.entries(mephist_images.fileMap).filter(
                 ([key]) => key.startsWith(`${id}-`)).map(([, value]) => ({id: value}))));
             await Promise.all([
+                (async () => {
+                    if (!newTutors.has(id)) {
+                        const arr = jsonTutor.directions.filter(el => !(el in disciplinesMapping)).map(el => {
+                            return {name: el}
+                        });
+
+                        if (arr.length) {
+                            await knex<Discipline>("disciplines").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => disciplinesMapping[el.name] = el.id));
+                            await knex<TutorDiscipline>("tutors_disciplines").insert(arr.map(el => {
+                                return {tutor_id: tutor.id, discipline_id: disciplinesMapping[el.name]}
+                            }));
+                        }
+                    } else {
+                        const arr = jsonTutor.directions.filter(el => !(el in facultiesMapping)).map(el => {
+                            return {name: el}
+                        })
+                        if (arr.length) {
+                            await knex<Faculty>("faculties").insert(arr).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
+                            await knex<TutorFaculty>("tutors_faculties").insert(arr.map(el => {
+                                return {tutor_id: tutor.id, faculty_id: facultiesMapping[el.name]}
+                            }));
+                        }
+                    }
+                })(),
+                (async () => {
+                    // add cafedras
+                    await knex<Faculty>("faculties").insert(jsonTutor.cafedras.map(el => {
+                        return {name: el}
+                    })).onConflict('name').ignore().returning('*').then(el => el.forEach(el => facultiesMapping[el.name] = el.id));
+                    jsonTutor.cafedras.length > 0 ? await knex<TutorFaculty>("tutors_faculties").insert(jsonTutor.cafedras.map(el => {
+                        return {tutor_id: tutor.id, faculty_id: facultiesMapping[el]}
+                    })) : [];
+                })(),
                 // add legacyRating
                 knex<LegacyRating>("legacy_ratings").insert({
                     personality: Number(jsonTutor.personality.value),
@@ -816,23 +834,23 @@ export default async function handler(
                 // add images
                 knex<File>("files").update({tutor_id: tutor.id}).whereIn('id', images.map(el => el.id)),
                 // add quotes
-                knex<Quote>("quotes").insert(jsonTutor.quotes.map(el => ({
+                jsonTutor.quotes.length > 0 ? knex<Quote>("quotes").insert(jsonTutor.quotes.map(el => ({
                     text: el.Текст,
                     createdAt: strToDateTime(el["Ник и дата"].split(' ').slice(-2).join(' ')),
                     tutorId: tutor.id
-                })))
+                }))) : Promise.resolve([]),
             ]);
             // add materials and their files
             const materials = jsonTutor.materials.map(el => ({
                 ...data.materials[el as any] as unknown as JsonMaterial,
                 materialId: el
             }));
-            const materialsModel = await knex<Material>("materials").insert(materials.map(el => ({
+            const materialsModel = materials.length > 0 ? await knex<Material>("materials").insert(materials.map(el => ({
                 title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
                 text: el.Описание,
                 createdAt: new Date(el["Дата добавления"]),
                 tutorId: tutor.id
-            }))).returning(["id"]);
+            }))).returning(["id"]) : [];
             // get array of files for material, then add them to db using materialsModel
             const materialFiles = materials.flatMap((el, i) => {
                 const files: { id: string, materialNum: number }[] = [];
@@ -847,7 +865,7 @@ export default async function handler(
             const materialDisciplines = materials.flatMap((el, i) => {
                 const disciplines: { id: string, materialNum: number }[] = [];
                 for (const [key, value] of Object.entries(disciplinesMapping)) {
-                    if (key.startsWith(el.materialId + "-")) {
+                    if (key == el.Предмет) {
                         disciplines.push({id: value, materialNum: i});
                     }
                 }
@@ -857,7 +875,7 @@ export default async function handler(
             const materialFaculties = materials.flatMap((el, i) => {
                 const faculties: { id: string, materialNum: number }[] = [];
                 for (const [key, value] of Object.entries(facultiesMapping)) {
-                    if (key.startsWith(el.materialId + "-")) {
+                    if (key == el.Факультет) {
                         faculties.push({id: value, materialNum: i});
                     }
                 }
@@ -867,62 +885,64 @@ export default async function handler(
             const materialSemesters = materials.flatMap((el, i) => {
                 const semesters: { id: string, materialNum: number }[] = [];
                 for (const [key, value] of Object.entries(semestersMapping)) {
-                    if (key.startsWith(el.materialId + "-")) {
+                    if (el.Семестр?.split("; ").includes(semestersMap[key.trim()])) {
                         semesters.push({id: value, materialNum: i});
                     }
+                    // console.log(el.Семестр?.split("; "), semestersMap[key.trim()], key, semestersMap);
                 }
                 return semesters;
             });
             await Promise.all([
                 ...materialFiles.map(el => knex<File>("files").update({material_id: materialsModel[el.materialNum].id}).where({id: el.id})),
-                ...materialDisciplines.map(el => knex<MaterialDiscipline>("materials_disciplines").insert({
+                materialDisciplines.length > 0 ? knex<MaterialDiscipline>("materials_disciplines").insert(materialDisciplines.map(el => ({
                     material_id: materialsModel[el.materialNum].id,
                     discipline_id: el.id
-                })),
-                ...materialFaculties.map(el => knex<MaterialFaculty>("materials_faculties").insert({
+                }))) : Promise.resolve([]),
+                materialFaculties.length > 0 ? knex<MaterialFaculty>("materials_faculties").insert(materialFaculties.map(el => ({
                     material_id: materialsModel[el.materialNum].id,
                     faculty_id: el.id
-                })),
-                ...materialSemesters.map(el => knex<MaterialSemester>("materials_semesters").insert({
+                }))) : Promise.resolve([]),
+                materialSemesters.length > 0 ? knex<MaterialSemester>("materials_semesters").insert(materialSemesters.map(el => ({
                     material_id: materialsModel[el.materialNum].id,
                     semester_id: el.id
-                }))
+                }))) : Promise.resolve([]),
             ]);
 
             // add reviews
-            await knex<Review>("reviews").insert(
-                jsonTutor.reviews.map(el =>
-                    ({
-                        title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
-                        text: el.Текст,
-                        createdAt: strToDate(el.Дата),
-                        legacyNickname: el.Ник,
+            const reviews = jsonTutor.reviews.map(el =>
+                ({
+                    title: el.Название === null || el.Название === "" ? "Без названия" : el.Название,
+                    text: el.Текст,
+                    createdAt: strToDate(el.Дата),
+                    legacyNickname: el.Ник,
+                    tutorId: tutor.id
+                })).concat(
+                Object.entries(jsonTutor.mailReviews).map(([name, review]) => ({
+                        text: review,
+                        title: "Отзыв с мифиста",
+                        legacyNickname: name,
+                        createdAt: new Date("01/01/2005"),
                         tutorId: tutor.id
-                    })).concat(
-                    Object.entries(jsonTutor.mailReviews).map(([name, review]) => ({
-                            text: review,
-                            title: "Отзыв с мифиста",
-                            legacyNickname: name,
-                            createdAt: new Date("01/01/2005"),
-                            tutorId: tutor.id
-                        })
-                    )));
+                    })
+                ));
+            reviews.length > 0 ? await knex<Review>("reviews").insert(reviews) : [];
             return tutor;
         }
 
-        return createTutor();
+        return createTutor;
     });
-    // split promises into chunks of 10
-    // const chunks = [];
-    // for (let i = 0; i < promises.length; i += 10) {
-    //     chunks.push(promises.slice(i, i + 10));
-    // }
-    // // execute chunks
-    // for (const chunk of chunks) {
-    //     await Promise.all(chunk);
-    // }
-    await Promise.all([promises[0]]);
+// split promises into chunks of 10
+// const chunks = [];
+// for (let i = 0; i < promises.length; i += 10) {
+//     chunks.push(promises.slice(i, i + 10));
+// }
+// // execute chunks
+// for (const chunk of chunks) {
+//     await Promise.all(chunk);
+// }
+// execute first 10
+    await Promise.all(promises.slice(0, 10).map(el => el()));
 
-    // res.status(200).json({rows: result.rows})
+// res.status(200).json({rows: result.rows})
     res.status(200).json({status: "ok"});
 }
