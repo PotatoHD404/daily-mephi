@@ -6,7 +6,7 @@ import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/tutors.svg";
 import UsersIcon from "images/users.svg";
 import {useRouter} from "next/router";
-import Image from "next/image";
+import Image from "next/future/image";
 import burger from 'images/burger.svg'
 import {useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";

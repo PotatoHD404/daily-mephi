@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import Image from "next/future/image";
 import DeadCat from "images/dead_cat.svg";
 import RippledButton from "./rippledButton";
 import QuestionIco from "images/question.svg";

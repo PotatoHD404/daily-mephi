@@ -4,7 +4,8 @@ import {NextComponentType} from "next";
 import {Session} from "next-auth";
 import React, {ReactNode, useState} from "react";
 import Footer from "components/footer";
-import Image from "next/image";
+import Image from "next/future/image";
+import Image1 from "next/image";
 import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
@@ -75,10 +76,12 @@ function BackgroundComp(props: { home: boolean, isMobile: boolean }) {
             }
             {
                 !props.home || !props.isMobile ? <div className={styles.bgWrap}>
-                    <div><Image
+                    <div><Image1
                         src={Background1}
                         alt="background gradient"
                         quality={100}
+                        objectFit="cover"
+                        layout="fill"
                         priority
                     /></div>
                 </div> : null

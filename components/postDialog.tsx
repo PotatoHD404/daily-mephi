@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import Image from "next/future/image";
 import FileUpload from "images/file_upload.svg";
 import TabsBox from "./tabsBox";
 import CloseButton from "./closeButton";

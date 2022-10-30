@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/future/image";
 import CloseIcon from "../images/close_icon.svg";
 import {IconButton} from '@mui/material';
 
