@@ -476,7 +476,7 @@ ALTER TABLE comments
     ADD CONSTRAINT news_comments FOREIGN KEY (news_id) REFERENCES news (id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE comments
-    ADD CONSTRAINT comments_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES comments (id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ADD CONSTRAINT comments_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES comments (id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE files
     ADD CONSTRAINT files_tutor_id_fkey FOREIGN KEY (tutor_id) REFERENCES tutors (id) ON DELETE SET NULL ON UPDATE CASCADE;

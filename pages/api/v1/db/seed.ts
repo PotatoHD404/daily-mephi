@@ -9,6 +9,9 @@ import mephist_imgs from "parsing/mephist_imgs.json"
 import mephist_fils from "parsing/mephist_files.json"
 import filesJ from "parsing/File.json"
 import { arrayBuffer } from 'stream/consumers';
+import Tutor from 'components/tutor';
+import { faker } from "@faker-js/faker"
+
 // import {LegacyRating, Material, Tutor, Quote, Review, PrismaClient, Prisma} from '@prisma/client';
 // import prisma from "../../../../lib/database/prisma";
 
@@ -142,6 +145,14 @@ interface Tutor {
     full_name: string | null,
     short_name: string | null,
 }
+
+type a = Pick<Tutor, "id">
+
+type b = Omit<Tutor, "id">
+
+type c = string[]
+
+type d = {[a: string]: string}
 
 interface User {
     id: string,
@@ -282,7 +293,6 @@ interface Rate {
     user_id: string,
     created_at: Date,
     updated_at: Date,
-    deleted_at: Date | null,
 }
 
 interface Semester {
@@ -488,7 +498,7 @@ export default async function handler(
     ]);
     // split array of files into chunks of 65535 elements
 
-    const promises = Object.entries(data.tutors).map(([id, tutor]) => {
+    let promises: (() => Promise<any>)[] = Object.entries(data.tutors).map(([id, tutor]) => {
         const jsonTutor = tutor as unknown as JsonTutor;
         const newTutor: Omit<Tutor, "full_name" | "short_name" | "id" | "created_at" | "updated_at" | "deleted_at"> = {
             first_name: jsonTutor.name,
@@ -675,10 +685,323 @@ export default async function handler(
 // execute first 10
     // await Promise.all(promises.slice(0, 10).map(el => el()));
 // execute all by 10
+
+
 const num = 10;
-    for (let i = 0; i < promises.length; i += num) {
-        await Promise.all(promises.slice(i, i + num).map(el => el()));
-    }
+for (let i = 0; i < promises.length; i += num) {
+    await Promise.all(promises.slice(i, i + num).map(el => el()));
+}
+
+promises = []
+
+// add users and their accounts
+
+// generate two users using faker js
+
+const users: User[] = [];
+// id: string,
+// name: string | null,
+// image_id: string | null,
+// role: string,
+// email: string | null,
+// email_verified: Date | null,
+// created_at: Date,
+// updated_at: Date,
+// banned: boolean,
+// banned_reason: string | null,
+// banned_until: Date | null,
+// banned_at: Date | null,
+// rating: number,
+// bio: string | null,
+for (let i = 0; i < 20; i++) {
+    const user = {
+        id: faker.datatype.uuid(),
+        email: faker.internet.email(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        role: "default",
+        image_id: null,
+        name: faker.internet.userName(),
+        email_verified: null,
+        bio: faker.lorem.paragraph(2).slice(0, 150),
+        banned: false,
+        banned_reason: null,
+        banned_until: null,
+        banned_at: null,
+        rating: faker.datatype.number({min: 0, max: 1000}),
+    };
+    users.push(user);
+}
+await knex<User>("users").insert(users);
+
+// add accounts
+const accounts: Account[] = [];
+
+for (const user of users) {
+    const account = {
+        id: faker.datatype.uuid(),
+        user_id: user.id,
+        provider: "home",
+        refresh_token: null,
+        access_token: null,
+        expires_at: null,
+        token_type: null,
+        type: "oauth",
+        provider_account_id: faker.datatype.uuid(),
+        scope: null,
+        id_token: null,
+        session_state: null,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+    };
+    accounts.push(account);
+}
+
+await knex<Account>("accounts").insert(accounts);
+
+// add news
+
+const news: News[] = [];
+
+for (let i = 0; i < 20; i++) {
+    const newsItem = {
+        id: faker.datatype.uuid(),
+        title: faker.lorem.sentence(),
+        text: faker.lorem.paragraphs(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        deleted_at: null,
+    };
+    news.push(newsItem);
+}
+
+await knex<News>("news").insert(news);
+
+// get reviews
+
+const [ reviews, materials, quotes, tutors ] = await Promise.all([
+    knex<Review>("reviews").select("*").limit(10),
+    knex<Material>("materials").select("*").limit(10),
+    knex<Quote>("quotes").select("*").limit(10),
+    knex<Tutor>("tutors").select("*").limit(10),
+]);
+
+// add comments to news
+
+const comments: Comment[] = [];
+
+for (let i = 0; i < 20; i++) {
+    const comment = {
+        id: faker.datatype.uuid(),
+        text: faker.lorem.paragraph(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        deleted_at: null,
+        user_id: faker.helpers.arrayElement(users).id,
+        news_id: faker.helpers.arrayElement(news).id,
+        parent_id: null,
+        review_id: null,
+        material_id: null,
+    };
+    comments.push(comment);
+}
+
+// add comments to reviews
+
+for (let i = 0; i < 20; i++) {
+    const comment = {
+        id: faker.datatype.uuid(),
+        text: faker.lorem.paragraph(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        deleted_at: null,
+        user_id: faker.helpers.arrayElement(users).id,
+        news_id: null,
+        parent_id: null,
+        review_id: faker.helpers.arrayElement(reviews).id,
+        material_id: null,
+    };
+    comments.push(comment);
+}
+
+// add comments to materials
+
+for (let i = 0; i < 20; i++) {
+    const comment = {
+        id: faker.datatype.uuid(),
+        text: faker.lorem.paragraph(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        deleted_at: null,
+        user_id: faker.helpers.arrayElement(users).id,
+        news_id: null,
+        parent_id: null,
+        review_id: null,
+        material_id: faker.helpers.arrayElement(materials).id,
+    };
+    comments.push(comment);
+}
+
+// add comments to comments
+
+for (let i = 0; i < 300; i++) {
+    const comment = {
+        id: faker.datatype.uuid(),
+        text: faker.lorem.paragraph(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        deleted_at: null,
+        user_id: faker.helpers.arrayElement(users).id,
+        news_id: null,
+        parent_id: faker.helpers.arrayElement(comments).id,
+        review_id: null,
+        material_id: null,
+    };
+    comments.push(comment);
+}
+
+
+await knex<Comment>("comments").insert(comments);
+
+// add reactions to comments
+
+const reactions: Reaction[] = [];
+
+for (let i = 0; i < 20; i++) {
+    const reaction = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        comment_id: faker.helpers.arrayElement(comments).id,
+        review_id: null,
+        material_id: null,
+        news_id: null,
+        quote_id: null,
+        liked: faker.helpers.arrayElement([true, false]),
+    };
+    reactions.push(reaction);
+}
+
+// add reactions to reviews
+
+for (let i = 0; i < 20; i++) {
+    const reaction = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        comment_id: null,
+        review_id: faker.helpers.arrayElement(reviews).id,
+        material_id: null,
+        news_id: null,
+        quote_id: null,
+        liked: faker.helpers.arrayElement([true, false]),
+    };
+    reactions.push(reaction);
+}
+
+// add reactions to materials
+
+for (let i = 0; i < 20; i++) {
+    const reaction = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        comment_id: null,
+        review_id: null,
+        material_id: faker.helpers.arrayElement(materials).id,
+        news_id: null,
+        quote_id: null,
+        liked: faker.helpers.arrayElement([true, false]),
+    };
+    reactions.push(reaction);
+}
+
+// add reactions to news
+
+for (let i = 0; i < 20; i++) {
+    const reaction = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        comment_id: null,
+        review_id: null,
+        material_id: null,
+        news_id: faker.helpers.arrayElement(news).id,
+        quote_id: null,
+        liked: faker.helpers.arrayElement([true, false]),
+    };
+    reactions.push(reaction);
+}
+
+// add reactions to quotes
+
+for (let i = 0; i < 20; i++) {
+    const reaction = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        comment_id: null,
+        review_id: null,
+        material_id: null,
+        news_id: null,
+        quote_id: faker.helpers.arrayElement(quotes).id,
+        liked: faker.helpers.arrayElement([true, false]),
+    };
+    reactions.push(reaction);
+}
+
+// remove duplicates
+
+const uniqueReactions = reactions.filter(
+    (reaction, index, self) =>
+        index === self.findIndex((r) => r.user_id === reaction.user_id && 
+        (r.comment_id === reaction.comment_id ||
+        r.review_id === reaction.review_id ||
+        r.material_id === reaction.material_id ||
+        r.news_id === reaction.news_id ||
+        r.quote_id === reaction.quote_id))
+);
+
+await knex<Reaction>("reactions").insert(uniqueReactions);
+
+// add rates to tutors
+
+const rates: Rate[] = [];
+
+for (let i = 0; i < 20; i++) {
+    const rate = {
+        id: faker.datatype.uuid(),
+        user_id: faker.helpers.arrayElement(users).id,
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+        tutor_id: faker.helpers.arrayElement(tutors).id,
+        punctuality: faker.datatype.number({ min: 1, max: 10 }),
+        personality: faker.datatype.number({ min: 1, max: 10 }),
+        exams: faker.datatype.number({ min: 1, max: 10 }),
+        quality: faker.datatype.number({ min: 1, max: 10 }),
+    };
+    rates.push(rate);
+}
+
+// remove duplicates
+
+const uniqueRates = rates.filter(
+    (rate, index, self) =>
+        index === self.findIndex((r) => r.user_id === rate.user_id && r.tutor_id === rate.tutor_id)
+);
+
+await knex<Rate>("rates").insert(uniqueRates);
+
+// await promises[0]();
+
+// for (let i = 0; i < promises.length; i += num) {
+//     await Promise.all(promises.slice(i, i + num).map(el => el()));
+// }
 
 // res.status(200).json({rows: result.rows})
     res.status(200).json({status: "ok"});
