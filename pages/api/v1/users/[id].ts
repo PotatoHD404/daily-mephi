@@ -112,7 +112,7 @@ async function ChangeUser(req: NextApiRequest, res: NextApiResponse<object>) {
         }
         await client.query('UPDATE users SET name = $1, image = $2, bio = $3 WHERE id = $4', [name, image, bio, userId]);
         // update or create document
-        const docContent = getDocument(name + ' ' + bio);
+        const docContent = name + ' ' + bio;
         await client.query('INSERT INTO documents (user_id, data) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET data = $2', [userId, docContent]);
         await client.query('COMMIT');
         res.status(200).json({status: "ok"});

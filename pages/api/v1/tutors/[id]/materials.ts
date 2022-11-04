@@ -2,7 +2,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {getToken} from 'next-auth/jwt';
-import {getDocument} from 'lib/database/fullTextSearch';
 import {getClient} from "lib/database/pg";
 
 async function getMaterials(req: NextApiRequest, res: NextApiResponse) {
@@ -44,15 +43,21 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse) {
                 materials.user_id,
                 users.name,
                 users.image,
-                (SELECT COUNT(*)
+                (SELECT COUNT(*)::INT
                  FROM reactions
                  WHERE reactions.material_id = materials.id
-                   AND reactions.liked = true)                                            AS likes,
-                (SELECT COUNT(*)
+                   AND reactions.liked = true)                                                 AS likes,
+                (SELECT COUNT(*)::INT
                  FROM reactions
                  WHERE reactions.material_id = materials.id
-                   AND reactions.liked = false)                                           AS dislikes,
-                (SELECT COUNT(*) FROM comments WHERE comments.material_id = materials.id) AS comment_count
+                   AND reactions.liked = false)                                                AS dislikes,
+                (SELECT COUNT(*)::INT FROM comments WHERE comments.material_id = materials.id) AS comment_count,
+                (SELECT json_agg(json_build_object(
+                        'url', url,
+                        'alt_url', alt_url
+                    ))
+                 FROM files
+                 WHERE files.material_id = materials.id)                                       AS images
          FROM materials
                   LEFT JOIN users ON users.id = materials.user_id
          WHERE materials.tutor_id = $1
@@ -144,22 +149,34 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse) {
     //
     //     return material;
     // });
-
+    // const document = title + ' ' + text;
     const {rows: [material]} = await client.query(`
 
         WITH material AS (
             INSERT INTO materials (title, text, tutor_id, user_id)
                 VALUES ($1, $2, $3, $4)
-                RETURNING *)
-
-        INSERT
-        INTO documents (type, data)
-        VALUES ('material', $5)
-
-
-    `, [title, text, tutor, session.sub, getDocument(title + ' ' + text)]);
-
+                RETURNING *),
+             documents AS (INSERT INTO documents (type, data)
+                 VALUES ('material', to_tsvector(material.title || ' ' || material.text)))
+            ${disciplines.length > 0 ? `,m1 AS (INSERT INTO materials_disciplines (material_id, discipline_id) 
+            SELECT material.id, disciplines.id
+            FROM material, disciplines
+            WHERE disciplines.name IN (${disciplines.map((_, i) => `$${i + 5}`).join(',')}))` : ''}
+            ${faculties.length > 0 ? `,m2 AS (INSERT INTO materials_faculties (material_id, faculty_id)
+            SELECT material.id, faculties.id
+            FROM material, faculties
+            WHERE faculties.name IN (${faculties.map((_, i) => `$${i + 5 + disciplines.length}`).join(',')}))` : ''}
+            ${semesters.length > 0 ? `,m3 AS (INSERT INTO materials_semesters (material_id, semester_id)
+            SELECT material.id, semesters.id
+            FROM material, semesters
+            WHERE semesters.name IN (${semesters.map((_, i) => `$${i + 5 + disciplines.length + faculties.length}`).join(',')}))` : ''}
+            ${files.length > 0 ? `,m4 AS (UPDATE files
+            SET material_id = material.id
+            FROM material
+            WHERE files.id IN (${files.map((_, i) => `$${i + 5 + disciplines.length + faculties.length + semesters.length}`).join(',')}))` : ''}
+    `, [title, text, tutor, session.sub, ...disciplines, ...faculties, ...semesters, ...files]);
     res.status(200).json({material});
+
 }
 
 
