@@ -12,10 +12,11 @@ export default async function handler(
     }
     const client = await getClient();
     // await client.query("INSERT INTO example (name) VALUES ($1), ($2)", ["test", "test2"]);
-    const result = await client.query('SELECT $1::text as message', ['Hello world!'])
+    const {rows: result} = await client.query('SELECT $1::text as message', ['Hello world!'])
+    const {rows: [message]} = await client.query('SELECT $1::text as message', ['Hello world!'])
     // const access_token: string = await hash("kmv026");
     // res.status(200).json({name: access_token})
     // 123
-    res.status(200).json({rows: result.rows})
+    res.status(200).json({result, message})
 
 }

@@ -65,59 +65,54 @@ export default async function handler(
 
     // rewrite this to use pg
 
-    const tutor = (await client.query(`
+    const {rows: [tutor]} = await client.query(`
         SELECT tutors.id,
                tutors.short_name,
                tutors.full_name,
-               lr.personality             AS legacy_personality,
-               lr.exams                   AS legacy_exams,
-               lr.quality                 AS legacy_quality,
-               lr.personality_count       AS legacy_personality_count,
-               lr.exams_count             AS legacy_exams_count,
-               lr.quality_count           AS legacy_quality_count,
-               lr.rating_count            AS legacy_rating_count,
-               lr.avg_rating              AS legacy_avg_rating,
-               reviews_count.count::INT   AS reviews_count,
-               quotes_count.count::INT    AS quotes_count,
-               materials_count.count::INT AS materials_count,
-               r.punctuality::FLOAT       as punctuality,
-               r.exams::FLOAT             as exams,
-               r.quality::FLOAT           as quality,
-               r.personality::FLOAT       as personality,
-               r.rating_count::INT        as rating_count,
-               r.avg_rating::FLOAT        as avg_rating,
-               images.urls                AS images,
-               images.alt_urls            AS alt_images
+               lr.personality               AS legacy_personality,
+               lr.exams                     AS legacy_exams,
+               lr.quality                   AS legacy_quality,
+               lr.personality_count         AS legacy_personality_count,
+               lr.exams_count               AS legacy_exams_count,
+               lr.quality_count             AS legacy_quality_count,
+               lr.rating_count              AS legacy_rating_count,
+               lr.avg_rating                AS legacy_avg_rating,
+               (SELECT COUNT(*)::INT
+                FROM reviews
+                WHERE tutor_id = tutors.id) AS reviews_count,
+               (SELECT COUNT(*)::INT
+                FROM quotes
+                WHERE tutor_id = tutors.id) AS quotes_count,
+               (SELECT COUNT(*)::INT
+                FROM materials
+                WHERE tutor_id = tutors.id) AS materials_count,
+               (SELECT json_agg(json_build_object(
+                       'url', url,
+                       'alt_url', alt_url
+                   ))
+                FROM files
+                WHERE tutor_id = tutors.id) AS images,
+               r.punctuality::FLOAT         as punctuality,
+               r.exams::FLOAT               as exams,
+               r.quality::FLOAT             as quality,
+               r.personality::FLOAT         as personality,
+               r.rating_count::INT          as rating_count,
+               r.avg_rating::FLOAT          as avg_rating
         FROM tutors
-                 INNER JOIN (SELECT array_agg(url) AS urls, array_agg(alt_url) AS alt_urls
-                             FROM files
-                             WHERE tutor_id = $1) AS images
-                            ON true
                  INNER JOIN legacy_ratings lr
-                            ON lr.tutor_id = $1
-                 INNER JOIN (SELECT COUNT(*) AS count
-                             FROM reviews
-                             WHERE tutor_id = $1) AS reviews_count
-                            ON true
-                 INNER JOIN (SELECT COUNT(*) AS count
-                             FROM quotes
-                             WHERE tutor_id = $1) AS quotes_count
-                            ON true
-                 INNER JOIN (SELECT COUNT(*) AS count
-                             FROM materials
-                             WHERE tutor_id = $1) AS materials_count
-                            ON true
-                 INNER JOIN (SELECT AVG(punctuality)                                       as punctuality,
-                                    AVG(exams)                                             AS exams,
-                                    AVG(quality)                                           AS quality,
-                                    AVG(personality)                                       AS personality,
-                                    COUNT(*)                                               AS rating_count,
-                                    AVG((punctuality + exams + quality + personality) / 4) AS avg_rating
+                            ON lr.tutor_id = tutors.id
+                 INNER JOIN LATERAL (SELECT AVG(punctuality)::FLOAT                                       as punctuality,
+                                    AVG(exams)::FLOAT                                             AS exams,
+                                    AVG(quality)::FLOAT                                           AS quality,
+                                    AVG(personality)::FLOAT                                       AS personality,
+                                    COUNT(*)::INT                                                 AS rating_count,
+                                    AVG((punctuality + exams + quality + personality) / 4)::FLOAT AS avg_rating,
+                                    tutor_id
                              FROM rates
-                             WHERE tutor_id = $1) AS r
-                            ON true
+                             GROUP BY tutor_id) as r
+                            ON r.tutor_id = tutors.id
         WHERE tutors.id = $1
-    `, [id])).rows[0];
+    `, [id]);
 
 
     if (!tutor) {
