@@ -18,5 +18,5 @@ export default async function handler(
     SELECT * FROM faculties
     `)
 
-    res.status(200).json(faculties);
+    res.status(200).json({faculties});
 }

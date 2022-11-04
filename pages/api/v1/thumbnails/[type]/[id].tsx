@@ -1,46 +1,102 @@
-import type {NextApiRequest, NextApiResponse} from "next";
-
-import prisma from "lib/database/prisma";
-import { ImageResponse } from '@vercel/og';
-import {getWrappedText, italic, regular} from "lib/textSize";
-import {UUID_REGEX} from "lib/constants/uuidRegex";
-import { NextRequest } from "next/server";
 // import ejs template from file
 // get base64 from dead cat
 // export const config = {
 //     runtime: 'experimental-edge',
 // }
+import core from 'puppeteer-core';
+import chrome from 'chrome-aws-lambda';
+import {NextApiRequest, NextApiResponse} from "next";
+import sharp from "sharp";
+import ejs from 'ejs';
+import path from "path";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<object>) {
-  
-      return new ImageResponse(
-        (
-          <div>
-            
-          </div>
-        ),
-        {
-          width: 1200,
-          height: 630,
-        },
-      )
-    }
-      
-function getNoun(number: number, one: string, two: string, five: string) {
-    let n = Math.abs(number);
-    n %= 100;
-    if (n >= 5 && n <= 20) {
-        return five;
-    }
-    n %= 10;
-    if (n === 1) {
-        return one;
-    }
-    if (n >= 2 && n <= 4) {
-        return two;
-    }
-    return five;
+let _page: core.Page | null;
+interface Options {
+    args: string[];
+    executablePath: string;
+    headless: boolean;
 }
+
+const exePath = process.platform === 'win32'
+    // ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    ? 'C:\\Program Files\\Google\\Chrome Beta\\Application\\chrome.exe'
+    : process.platform === 'linux'
+        ? '/usr/bin/google-chrome'
+        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+
+async function getPage(isDev: boolean) {
+    if (_page) {
+        return _page;
+    }
+    let options: Options;
+    if (isDev) {
+        options = {
+            args: [],
+            executablePath: exePath,
+            headless: true
+        };
+    } else {
+        options = {
+            args: chrome.args,
+            executablePath: await chrome.executablePath,
+            headless: chrome.headless,
+        };
+    }
+    const browser = await core.launch(options);
+    _page = await browser.newPage();
+    return _page;
+}
+
+export type FileType = 'png' | 'jpeg';
+
+
+export async function getScreenshot(html: string, type: FileType, isDev: boolean) {
+    const page = await getPage(isDev);
+    await page.setViewport({width: 1200, height: 600});
+    await page.setContent(html);
+    return await page.screenshot({type});
+}
+
+export default async function (
+        req: NextApiRequest,
+        res: NextApiResponse<object>
+) {
+    // const screenshot = await getScreenshot("dead cat", "png", process.env.NODE_ENV === "development");
+    // res.setHeader('Content-Type', 'image/png');
+    // res.end(screenshot);
+
+    // render sharp blank image width 2048x1170
+        let rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.svg'), {
+            nickname: "",
+            header: "",
+            description: "",
+            semester: "",
+            faculty: "",
+            discipline: "",
+            image: "",
+            font_path: "",
+        }).then((html) => Buffer.from(html));
+
+    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
+    res.setHeader('Content-Type', 'image/png');
+    res.end(image);
+}
+
+// function getNoun(number: number, one: string, two: string, five: string) {
+//     let n = Math.abs(number);
+//     n %= 100;
+//     if (n >= 5 && n <= 20) {
+//         return five;
+//     }
+//     n %= 10;
+//     if (n === 1) {
+//         return one;
+//     }
+//     if (n >= 2 && n <= 4) {
+//         return two;
+//     }
+//     return five;
+// }
 
 // function returnNotFound(res: NextApiResponse) {
 //     const image = sharp(path.resolve(process.cwd(), 'images', '404.png'));
