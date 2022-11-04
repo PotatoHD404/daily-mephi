@@ -17,7 +17,7 @@ export async function verifyRecaptcha(req: NextApiRequest) {
     return data.success && data.score >= 0.5;
 }
 
-async function ChangeUser(req: NextApiRequest, res: NextApiResponse<object>) {
+async function changeUser(req: NextApiRequest, res: NextApiResponse<object>) {
     let {name, image, bio} = req.body;
     const nicknameRegex = /^[a-zA-Z0-9_]{3,30}$/;
     if (!verifyCSRFToken(req) ||
@@ -122,7 +122,7 @@ async function ChangeUser(req: NextApiRequest, res: NextApiResponse<object>) {
     }
 }
 
-async function GetUser(req: NextApiRequest, res: NextApiResponse<object>) {
+async function getUser(req: NextApiRequest, res: NextApiResponse<object>) {
     let {id} = req.query;
     if (!id || typeof id != "string" || !id.match(UUID_REGEX)) {
         res.status(400).json({status: "bad request"});
@@ -175,10 +175,10 @@ export default async function handler(
     res: NextApiResponse<object>
 ) {
     if (req.method == "GET") {
-        await GetUser(req, res);
+        await getUser(req, res);
     }
     else if (req.method == "PUT") {
-        await ChangeUser(req, res);
+        await changeUser(req, res);
     }
     else {
         res.status(405).json({status: "method not allowed"});

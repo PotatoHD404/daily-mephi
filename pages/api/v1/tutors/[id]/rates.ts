@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import prisma from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
+import {getClient} from "../../../../../lib/database/pg";
 
 async function getRates(req: NextApiRequest, res: NextApiResponse<object>) {
     const {id} = req.query;
@@ -9,21 +9,32 @@ async function getRates(req: NextApiRequest, res: NextApiResponse<object>) {
         res.status(400).json({status: "bad request"});
         return;
     }
-    const rates = await prisma.rate.findMany({
-        where: {tutorId: id},
-        select: {
-            id: true,
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                }
-            }
-        }
-    });
+    const client = await getClient();
 
-    res.status(200).json({status: "ok", rates});
+    // const rates = await prisma.rate.findMany({
+    //     where: {tutorId: id},
+    //     select: {
+    //         id: true,
+    //         user: {
+    //             select: {
+    //                 id: true,
+    //                 name: true,
+    //                 image: true,
+    //             }
+    //         }
+    //     }
+    // });
+    const {rows: rates} = await client.query(`
+        SELECT rates.id,
+               rates.user_id,
+               users.name,
+               users.image
+        FROM rates
+                 LEFT JOIN users ON users.id = rates.user_id
+        WHERE rates.tutor_id = $1
+    `, [id]);
+
+    res.status(200).json({rates});
 }
 
 async function addRate(req: NextApiRequest, res: NextApiResponse<object>) {
@@ -50,67 +61,72 @@ async function addRate(req: NextApiRequest, res: NextApiResponse<object>) {
     }
 
     const session = await getToken({req})
-    if (!session?.sub) {
+    let userId = session?.sub;
+    const client = await getClient();
+    if (!userId && process.env.LOCAL !== "true") {
         res.status(401).json({status: 'You are not authenticated'});
         return;
+    } else {
+
+        // select first user from database
+        const {rows: [user]} = await client.query(
+            `SELECT id
+             FROM users
+             LIMIT 1;`);
+        userId = user.id;
     }
 
 
-    const rateExists = await prisma.rate.findUnique({
-        where: {
-            userId_tutorId: {
-                userId: session.sub,
-                tutorId: id
-            }
-        }
-    });
+    // const rateExists = await prisma.rate.findUnique({
+    //     where: {
+    //         userId_tutorId: {
+    //             userId: session.sub,
+    //             tutorId: id
+    //         }
+    //     }
+    // });
+    // if (rateExists) {
+    //     res.status(400).json({status: "You have already rated this tutor"});
+    //     return;
+    // }
+    // const rate = await prisma.$transaction(async (prisma) => {
+    //     const rate = await prisma.rate.create({
+    //         data: {
+    //             punctuality,
+    //             personality,
+    //             exams,
+    //             quality,
+    //             user: {
+    //                 connect: {id: session.sub}
+    //             },
+    //             tutor: {
+    //                 connect: {id}
+    //             }
+    //         }
+    //     });
+    // });
+    // check if user has already rated this tutor
+
+    const {rows: [rateExists]} = await client.query(`
+        SELECT id
+        FROM rates
+        WHERE user_id = $1 AND tutor_id = $2
+        LIMIT 1;
+    `, [userId, id]);
     if (rateExists) {
         res.status(400).json({status: "You have already rated this tutor"});
         return;
     }
-    const rate = await prisma.$transaction(async (prisma) => {
-        const rate = await prisma.rate.create({
-            data: {
-                punctuality,
-                personality,
-                exams,
-                quality,
-                user: {
-                    connect: {id: session.sub}
-                },
-                tutor: {
-                    connect: {id}
-                }
-            }
-        });
-        await prisma.$executeRaw`
-        UPDATE "Rating" SET "punctuality" =
-        (SELECT AVG("punctuality") FROM "Rate" WHERE "tutorId" = ${id}),
-        "personality" = (SELECT AVG("personality") FROM "Rate" WHERE "tutorId" = ${id}),
-        "exams" = (SELECT AVG("exams") FROM "Rate" WHERE "tutorId" = ${id}),
-        "quality" = (SELECT AVG("quality") FROM "Rate" WHERE "tutorId" = ${id}) WHERE "id" = ${id},
-        "ratingCount" = (SELECT COUNT(*) FROM "Rate" WHERE "tutorId" = ${id}) WHERE "id" = ${id};
+    const {rows: [rate]} = await client.query(`
+        BEGIN;
+        INSERT INTO rates (punctuality, personality, exams, quality, user_id, tutor_id)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id;
+        COMMIT;
+    `, [punctuality, personality, exams, quality, userId, id]);
 
-        WITH c1 as (SELECT c2."tutorId", -1 / (SUM(score) + 1) + 1 as score
-                                FROM (SELECT "LegacyRating"."tutorId",
-                                             ((5 + personality) * IF("personalityCount" < 10, "personalityCount", 10)::float +
-                                            (5 + exams) * IF("examsCount" < 10, "examsCount", 10)::float +
-                                            (5 + quality) * IF("qualityCount" < 10, "qualityCount", 10)::float) / 30 as score
-                    FROM "LegacyRating"
-                    WHERE "LegacyRating"."tutorId" = ${id}
-                    UNION
-                    SELECT "Rating"."tutorId",
-                           "Rating"."avgRating" as score
-                    FROM "Rating"
-                    WHERE "Rating"."tutorId" = ${id}
-                    GROUP BY "Rating"."tutorId") as c2
-                    GROUP BY c2."tutorId")
-                    UPDATE "Tutor" SET "score" = c1.score FROM c1 WHERE "Tutor"."id" = c1."tutorId";`;
 
-        return rate;
-    });
-
-    res.status(200).json({status: "ok", id: rate.id});
+    res.status(200).json({id: rate.id});
 }
 
 export default async function handler(

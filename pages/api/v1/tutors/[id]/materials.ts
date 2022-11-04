@@ -69,10 +69,22 @@ async function getMaterials(req: NextApiRequest, res: NextApiResponse) {
 
 async function newMaterial(req: NextApiRequest, res: NextApiResponse) {
     const session = await getToken({req})
-    if (!session?.sub) {
+    let userId = session?.sub;
+    const client = await getClient();
+    if (!userId && process.env.LOCAL !== "true") {
         res.status(401).json({status: 'You are not authenticated'});
         return;
+    } else {
+
+        // select first user from database
+        const {rows: [user]} = await client.query(
+            `SELECT id
+             FROM users
+             LIMIT 1;`);
+        userId = user.id;
     }
+
+
     const {id: tutor} = req.query;
     const {
         title,
@@ -89,17 +101,17 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse) {
         disciplines: string[],
         semesters: string[]
     } = req.body;
+    console.log(tutor)
     if (!title || !text || !files || !faculties || !disciplines ||
-        !semesters || !tutor || typeof tutor !== "string" || !tutor.match(UUID_REGEX) || !files.every(
-            (file) => file.match(UUID_REGEX)) ||
-        !faculties.every((faculty) => faculty.match(UUID_REGEX)) ||
-        !disciplines.every((discipline) => discipline.match(UUID_REGEX)) ||
-        !semesters.every((semester) => semester.match(UUID_REGEX))) {
+        !semesters || !tutor || typeof tutor !== "string" || !tutor.match(UUID_REGEX) ||
+        files.some((file) => !file.match(UUID_REGEX)) ||
+        disciplines.some((discipline) => !discipline.match(UUID_REGEX)) ||
+        semesters.some((semester) => !semester.match(UUID_REGEX))) {
         res.status(400).json({status: "bad request"});
         return;
     }
 
-    const client = await getClient();
+
     // console.log(JSON.stringify(data))
     // const material = await prisma.$transaction(async (prisma) => {
     //
@@ -150,14 +162,14 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse) {
     //     return material;
     // });
     // const document = title + ' ' + text;
-    const {rows: [material]} = await client.query(`
-
+    const query = `
+        BEGIN;
         WITH material AS (
             INSERT INTO materials (title, text, tutor_id, user_id)
                 VALUES ($1, $2, $3, $4)
                 RETURNING *),
-             documents AS (INSERT INTO documents (type, data)
-                 VALUES ('material', to_tsvector(material.title || ' ' || material.text)))
+             documents AS (INSERT INTO documents (type, data, material_id)
+                 SELECT 'material', material.title || ' ' || material.text, material.id FROM material)
             ${disciplines.length > 0 ? `,m1 AS (INSERT INTO materials_disciplines (material_id, discipline_id) 
             SELECT material.id, disciplines.id
             FROM material, disciplines
@@ -174,8 +186,11 @@ async function newMaterial(req: NextApiRequest, res: NextApiResponse) {
             SET material_id = material.id
             FROM material
             WHERE files.id IN (${files.map((_, i) => `$${i + 5 + disciplines.length + faculties.length + semesters.length}`).join(',')}))` : ''}
-    `, [title, text, tutor, session.sub, ...disciplines, ...faculties, ...semesters, ...files]);
-    res.status(200).json({material});
+        SELECT * FROM material LIMIT 0;
+        COMMIT;
+    `
+    const {rows: [materials]} = await client.query(query, [title, text, tutor, userId, ...disciplines, ...faculties, ...semesters, ...files]);
+    res.status(200).json({status: "ok"});
 
 }
 
