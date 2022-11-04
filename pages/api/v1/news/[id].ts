@@ -25,7 +25,7 @@ export default async function handler(
     //     }
     // });
     const client = await getClient();
-    const {rows: news} = await client.query(`
+    const {rows: [news]} = await client.query(`
     SELECT news.title,
              news.text,
              news.created_at,

@@ -28,7 +28,7 @@ async function getReviews(req: NextApiRequest, res: NextApiResponse<object>) {
     //     },
     // });
     const client = await getClient();
-    const {rows: quote} = await client.query(`
+    const {rows: [quote]} = await client.query(`
     SELECT quotes.id,
            quotes.text,
            quotes.created_at,
