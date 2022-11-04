@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import prisma from "lib/database/prisma";
+import {getClient} from "../../../lib/database/pg";
 
 
 export default async function handler(
@@ -11,7 +12,11 @@ export default async function handler(
         res.status(405).json({status: "method not allowed"});
         return;
     }
-    const semesters = await prisma.semester.findMany()
+    // const semesters = await prisma.semester.findMany()
+    const client = await getClient();
+    const {rows: semesters} = await client.query(`
+    SELECT * FROM semesters 
+    `)
 
-    res.status(200).json(semesters);
+    res.status(200).json({semesters});
 }
