@@ -53,7 +53,6 @@ CREATE TABLE users
     banned_reason  VARCHAR(255),
     banned_at      TIMESTAMP(0),
     banned_until   TIMESTAMP(0),
-    rating         FLOAT8                                     NOT NULL DEFAULT 0,
     bio            VARCHAR(150)
 );
 
@@ -62,8 +61,6 @@ CREATE UNIQUE INDEX users_name_key ON users (name);
 CREATE UNIQUE INDEX users_image_id_key ON users (image_id);
 
 CREATE UNIQUE INDEX users_email_key ON users (email);
-
-CREATE INDEX users_rating_idx ON users (rating);
 
 CREATE TABLE verification_tokens
 (
@@ -381,7 +378,7 @@ CREATE TABLE tutors
                                                                                           ELSE ' ' || LEFT(first_name, 1) || '.'
                                                                 END || CASE
                                                                            WHEN father_name IS NULL THEN ''
-                                                                           ELSE ' ' || father_name || '.' END) END) STORED,
+                                                                           ELSE ' ' || LEFT(father_name, 1) || '.' END) END) STORED,
     created_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
     updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
     deleted_at  TIMESTAMP(0)

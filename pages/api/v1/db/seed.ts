@@ -167,7 +167,6 @@ interface User {
     banned_reason: string | null,
     banned_until: Date | null,
     banned_at: Date | null,
-    rating: number,
     bio: string | null,
 }
 
@@ -531,7 +530,7 @@ export default async function handler(
                             disciplinesMapping[el.name] = el.id;
                         }));
                     }
-                    
+
                     if (arr.length) {
                         while (arr.map(el => el.name).some(el => !Object.keys(disciplinesMapping).includes(el))) {
                             await new Promise(resolve => setTimeout(resolve, 10));
@@ -540,7 +539,7 @@ export default async function handler(
                             return {tutor_id: tutor.id, discipline_id: disciplinesMapping[el.name]}
                         }));
                     }
-                    
+
                 })(),
                 (async () => {
                     // add cafedras
@@ -553,7 +552,7 @@ export default async function handler(
                             facultiesMapping[el.name] = el.id;
                         }));
                     }
-                    
+
                     if (arr.length) {
                         while (arr.map(el => el.name).some(el => !Object.keys(facultiesMapping).includes(el))) {
                             await new Promise(resolve => setTimeout(resolve, 10));
@@ -713,7 +712,7 @@ const users: User[] = [];
 // banned_at: Date | null,
 // rating: number,
 // bio: string | null,
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 300; i++) {
     const user = {
         id: faker.datatype.uuid(),
         email: faker.internet.email(),
@@ -728,7 +727,6 @@ for (let i = 0; i < 20; i++) {
         banned_reason: null,
         banned_until: null,
         banned_at: null,
-        rating: faker.datatype.number({min: 0, max: 1000}),
     };
     users.push(user);
 }
@@ -763,7 +761,7 @@ await knex<Account>("accounts").insert(accounts);
 
 const news: News[] = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const newsItem = {
         id: faker.datatype.uuid(),
         title: faker.lorem.sentence(),
@@ -780,17 +778,17 @@ await knex<News>("news").insert(news);
 // get reviews
 
 const [ reviews, materials, quotes, tutors ] = await Promise.all([
-    knex<Review>("reviews").select("*").limit(10),
-    knex<Material>("materials").select("*").limit(10),
-    knex<Quote>("quotes").select("*").limit(10),
-    knex<Tutor>("tutors").select("*").limit(10),
+    knex<Review>("reviews").select("*").limit(30),
+    knex<Material>("materials").select("*").limit(30),
+    knex<Quote>("quotes").select("*").limit(30),
+    knex<Tutor>("tutors").select("*").limit(30),
 ]);
 
 // add comments to news
 
 const comments: Comment[] = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const comment = {
         id: faker.datatype.uuid(),
         text: faker.lorem.paragraph(),
@@ -808,7 +806,7 @@ for (let i = 0; i < 20; i++) {
 
 // add comments to reviews
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const comment = {
         id: faker.datatype.uuid(),
         text: faker.lorem.paragraph(),
@@ -826,7 +824,7 @@ for (let i = 0; i < 20; i++) {
 
 // add comments to materials
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const comment = {
         id: faker.datatype.uuid(),
         text: faker.lorem.paragraph(),
@@ -844,7 +842,7 @@ for (let i = 0; i < 20; i++) {
 
 // add comments to comments
 
-for (let i = 0; i < 300; i++) {
+for (let i = 0; i < 2000; i++) {
     const comment = {
         id: faker.datatype.uuid(),
         text: faker.lorem.paragraph(),
@@ -867,7 +865,7 @@ await knex<Comment>("comments").insert(comments);
 
 const reactions: Reaction[] = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 2000; i++) {
     const reaction = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
@@ -885,7 +883,7 @@ for (let i = 0; i < 20; i++) {
 
 // add reactions to reviews
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const reaction = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
@@ -903,7 +901,7 @@ for (let i = 0; i < 20; i++) {
 
 // add reactions to materials
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const reaction = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
@@ -921,7 +919,7 @@ for (let i = 0; i < 20; i++) {
 
 // add reactions to news
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const reaction = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
@@ -939,7 +937,7 @@ for (let i = 0; i < 20; i++) {
 
 // add reactions to quotes
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const reaction = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
@@ -959,21 +957,21 @@ for (let i = 0; i < 20; i++) {
 
 const uniqueReactions = reactions.filter(
     (reaction, index, self) =>
-        index === self.findIndex((r) => r.user_id === reaction.user_id && 
+        index === self.findIndex((r) => r.user_id === reaction.user_id &&
         (r.comment_id === reaction.comment_id ||
         r.review_id === reaction.review_id ||
         r.material_id === reaction.material_id ||
         r.news_id === reaction.news_id ||
         r.quote_id === reaction.quote_id))
 );
-
+// TODO: fix bug, reactions that are unique are not inserted
 await knex<Reaction>("reactions").insert(uniqueReactions);
 
 // add rates to tutors
 
 const rates: Rate[] = [];
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100; i++) {
     const rate = {
         id: faker.datatype.uuid(),
         user_id: faker.helpers.arrayElement(users).id,
