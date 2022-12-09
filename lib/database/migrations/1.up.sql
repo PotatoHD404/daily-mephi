@@ -11,6 +11,7 @@ CREATE TABLE accounts
     access_token        VARCHAR(255),
     created_at          TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
     updated_at          TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
     expires_at          TIMESTAMP(0),
     token_type          VARCHAR(255),
     scope               VARCHAR(255),
@@ -31,7 +32,8 @@ CREATE TABLE sessions
     user_id       UUID                                                  NOT NULL,
     expires       TIMESTAMP(0)                                          NOT NULL,
     created_at    TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
-    updated_at    TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL
+    updated_at    TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
 );
 
 CREATE UNIQUE INDEX sessions_session_token_key ON sessions (session_token);
@@ -49,6 +51,7 @@ CREATE TABLE users
     email_verified TIMESTAMP(0),
     created_at     TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
     updated_at     TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
     banned         BOOLEAN          DEFAULT FALSE             NOT NULL,
     banned_reason  VARCHAR(255),
     banned_at      TIMESTAMP(0),
@@ -69,7 +72,8 @@ CREATE TABLE verification_tokens
     token      TEXT                                                  NOT NULL,
     expires    TIMESTAMP(0)                                          NOT NULL,
     created_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
-    updated_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL
+    updated_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
 );
 
 CREATE UNIQUE INDEX verification_tokens_token_key ON verification_tokens (token);
@@ -195,7 +199,8 @@ CREATE TABLE legacy_ratings
                                                   NULLIF((personality_count + exams_count + quality_count)::FLOAT8, 0)) STORED,
     rating_count      INT4 GENERATED ALWAYS AS (ceil((personality_count + exams_count + quality_count)::DECIMAL / 3)) STORED NOT NULL,
     created_at        TIMESTAMP(0)     DEFAULT NOW()                                                                         NOT NULL,
-    updated_at        TIMESTAMP(0)     DEFAULT NOW()                                                                         NOT NULL
+    updated_at        TIMESTAMP(0)     DEFAULT NOW()                                                                         NOT NULL,
+    deleted_at  TIMESTAMP(0),
 );
 
 CREATE UNIQUE INDEX legacy_ratings_tutor_id_key ON legacy_ratings (tutor_id);
@@ -245,7 +250,8 @@ CREATE TABLE rates
     tutor_id    UUID                                       NOT NULL,
     user_id     UUID                                       NOT NULL,
     created_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
-    updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL
+    updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
 );
 
 CREATE INDEX rates_user_id_idx ON rates (user_id);
@@ -286,7 +292,8 @@ CREATE TABLE reactions
     news_id     UUID,
     created_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
     updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
-    liked       BOOL                                       NOT NULL
+    deleted_at  TIMESTAMP(0),
+    liked       BOOL                                       NOT NULL,
 );
 
 CREATE INDEX reactions_user_id_idx ON reactions (user_id);
@@ -323,7 +330,8 @@ CREATE TABLE documents
     news_id     UUID,
     type        VARCHAR(20)                                NOT NULL,
     created_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
-    updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL
+    updated_at  TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
 );
 
 CREATE UNIQUE INDEX documents_user_id_key ON documents (user_id);
@@ -393,6 +401,7 @@ CREATE TABLE internals
     value      TEXT                                       NOT NULL,
     created_at TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
     updated_at TIMESTAMP(0)     DEFAULT NOW()             NOT NULL,
+    deleted_at  TIMESTAMP(0),
     expires    TIMESTAMP(0)
 );
 
