@@ -64,7 +64,7 @@ model User {
   files     File[]     @relation(name: "users_files")
   materials Material[] @relation(name: "users_materials")
   quotes    Quote[]    @relation(name: "users_quotes")
-  Document  Document[] @relation(name: "users_documents") @ignore
+  Document  Document[] @relation(name: "users_documents")
 
   @@index([rating(sort: Desc)])
   @@map("users")
@@ -164,7 +164,7 @@ model Material {
   comments    Comment[]    @relation(name: "materials_comments")
   reactions   Reaction[]   @relation(name: "materials_reactions")
   semesters   Semester[]   @relation(name: "materials_semesters")
-  Document    Document[]   @relation(name: "materials_documents") @ignore
+  Document    Document[]   @relation(name: "materials_documents")
 
   @@index([createdAt])
   @@index([userId])
@@ -188,7 +188,7 @@ model News {
 
   comments  Comment[]  @relation(name: "news_comments")
   reactions Reaction[] @relation(name: "news_reactions")
-  Document  Document[] @relation(name: "news_documents") @ignore
+  Document  Document[] @relation(name: "news_documents")
 
   @@index([createdAt])
   @@map("news")
@@ -230,7 +230,7 @@ model Quote {
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_quotes")
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_quotes")
   reactions Reaction[] @relation(name: "quotes_reactions")
-  Document  Document[] @relation(name: "quotes_documents") @ignore
+  Document  Document[] @relation(name: "quotes_documents")
 
   @@index([createdAt])
   @@index([userId])
@@ -269,7 +269,7 @@ model Review {
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_reviews")
   comments  Comment[]  @relation(name: "reviews_comments")
   reactions Reaction[] @relation(name: "reviews_reactions")
-  Document  Document[] @relation(name: "reviews_documents") @ignore
+  Document  Document[] @relation(name: "reviews_documents")
 
   @@unique([userId, tutorId])
   @@index([createdAt])
@@ -335,7 +335,7 @@ model Document {
   @@index([words], type: Gin)
   @@index([type])
   @@map("documents")
-  @@ignore
+
 }
 
 model Tutor {
@@ -357,7 +357,7 @@ model Tutor {
   materials    Material[]    @relation(name: "tutors_materials")
   legacyRating LegacyRating? @relation(name: "tutors_legacy_ratings")
   quotes       Quote[]       @relation(name: "tutors_quotes")
-  document     Document[]    @relation(name: "tutors_documents") @ignore
+  document     Document[]    @relation(name: "tutors_documents")
 
   @@index([fullName])
   @@index([shortName])
