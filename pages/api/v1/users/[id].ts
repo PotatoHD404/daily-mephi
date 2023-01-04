@@ -4,7 +4,7 @@ import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {verifyCSRFToken} from "lib/utils";
 import {getClient} from "lib/database/pg";
 import {getToken} from "next-auth/jwt";
-import {isToxic} from "lib/isToxic";
+import {isToxic} from "lib/toxicity";
 import {getDocument} from "lib/database/fullTextSearch";
 
 

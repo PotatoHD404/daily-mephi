@@ -1,10 +1,9 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
-import SequelizeAdapter, { models } from "@next-auth/sequelize-adapter"
-import { DataTypes } from "sequelize"
+import {PrismaAdapter} from "@next-auth/prisma-adapter"
+import {PrismaClient} from "@prisma/client"
 import {NextAuthOptions, SessionStrategy} from "next-auth";
-import sequelize from "lib/database/sequilize";
 
-
+const prisma = new PrismaClient()
 // const host = getHost() + "/api/auth/callback/home";
 //
 // const query = new URLSearchParams({service: host});
@@ -12,23 +11,7 @@ import sequelize from "lib/database/sequilize";
 
 export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
-    adapter: SequelizeAdapter(sequelize, {
-        models: {
-            User: sequelize.define("users", {
-                ...models.User,
-                role: DataTypes.STRING,
-                rating: DataTypes.FLOAT,
-                bio: DataTypes.STRING,
-                banned: DataTypes.BOOLEAN,
-                banned_reason: DataTypes.STRING,
-                banned_until: DataTypes.DATE,
-                banned_at: DataTypes.DATE
-              }),
-            Account: sequelize.define("accounts", {...models.Account}),
-            Session: sequelize.define("sessions", {...models.Session}),
-            VerificationToken: sequelize.define("verification_tokens", {...models.VerificationToken})
-        }
-    }),
+    adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt" as SessionStrategy,
         maxAge: 30 * 24 * 60 * 60, // 30 days

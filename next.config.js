@@ -77,6 +77,7 @@ const nextConfig = withPWA(
                 'sqlite3': 'aliases/null-alias.js',
                 'pg-native': 'aliases/null-alias.js',
                 'pg-hstore': 'aliases/null-alias.js',
+                'react-ssr-prepass': 'preact-ssr-prepass',
 
 
             }

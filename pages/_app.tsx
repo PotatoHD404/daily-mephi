@@ -11,6 +11,8 @@ import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
+import type { AppType } from 'next/app';
+import { utils } from 'lib/trpc/utils';
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../lib/react/useMediaQuery";
@@ -153,4 +155,4 @@ function MyApp(
 }
 
 
-export default MyApp
+export default utils.withTRPC(MyApp)
