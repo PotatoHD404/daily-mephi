@@ -3,6 +3,18 @@ import { t } from 'lib/trpc';
 
 // https://github.com/jlalmes/trpc-openapi
 
+// updateUser: protectedProcedure
+//     .meta({
+//         openapi: {
+//             method: 'PUT',
+//             path: '/',
+//             summary: 'Update user',
+//             description: 'Update user',
+//             protect: true,
+//             tags: ['users'],
+//         },
+//     })
+
 export const todoRouter = t.router({
     test: t.procedure.meta({openapi: { method: 'GET', path: '/test' } }).input(z.void()).output(z.string()).query(() => {
         return "Hello from trpc";
