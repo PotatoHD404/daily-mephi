@@ -4,6 +4,7 @@ import jwt, {JwtPayload} from 'jsonwebtoken';
 import prisma from "lib/database/prisma";
 import notion from "lib/database/notion";
 import {getToken} from "next-auth/jwt";
+import {getClient} from "../../../../lib/database/pg";
 
 export function timeout(ms: number | undefined) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -269,7 +270,12 @@ async function putFile(
         ext,
         filename
     } = data as { signedPutUrl: string, block: string, ext: string, filename: string };
-    const dbFile = await prisma.file.findFirst({where: {id: block}})
+    // const dbFile = await prisma.file.findFirst({where: {id: block}})
+    const client = await getClient();
+    const dbFile = await client.query(`
+        SELECT * FROM files WHERE id = $1
+        LIMIT 1
+        `, [block]);
     if (dbFile) {
         res.status(409).json({status: 'File already exists'});
         return;
@@ -298,17 +304,22 @@ async function putFile(
     });
     const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
 
-    await prisma.file.create({
-        data: {
-            id: block,
-            url: createdUrl,
-            // altUrl: isImage ? unsignedUrl : undefined,
-            filename: filename + (ext ? '.' + ext : ''),
-            size,
-            user: session.sub ? {connect: {id: session.sub}} : undefined,
-            tag: "material"
-        },
-    });
+    // await prisma.file.create({
+    //     data: {
+    //         id: block,
+    //         url: createdUrl,
+    //         // altUrl: isImage ? unsignedUrl : undefined,
+    //         filename: filename + (ext ? '.' + ext : ''),
+    //         size,
+    //         user: session.sub ? {connect: {id: session.sub}} : undefined,
+    //         tag: "material"
+    //     },
+    // });
+    await client.query(`
+        INSERT INTO files (id, url, filename, size, user_id, tag)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        `, [block, createdUrl, filename + (ext ? '.' + ext : ''), size, session.sub, "material"]);
+
     // redirect = isImage ?
     res.status(200).json({
         status: 'ok',

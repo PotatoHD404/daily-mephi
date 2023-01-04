@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Tutor" ADD COLUMN     "materialsCount" INT4 NOT NULL DEFAULT 0;
-ALTER TABLE "Tutor" ADD COLUMN     "quotesCount" INT4 NOT NULL DEFAULT 0;
-ALTER TABLE "Tutor" ADD COLUMN     "reviewsCount" INT4 NOT NULL DEFAULT 0;
