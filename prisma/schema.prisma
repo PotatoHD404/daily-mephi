@@ -78,6 +78,7 @@ model User {
   materials Material[] @relation(name: "users_materials")
   quotes    Quote[]    @relation(name: "users_quotes")
   Document  Document[] @relation(name: "users_documents")
+  score     Float      @default(0) @map("score")
 
   @@index([rating(sort: Desc)])
   @@map("users")
@@ -106,11 +107,11 @@ model Comment {
   materialId    String?   @map("material_id") @db.Uuid
   newsId        String?   @map("news_id") @db.Uuid
   parentId      String?   @map("parent_id") @db.Uuid
-  // parent path
   path          String[]  @map("path")
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
+  score         Float     @default(0) @map("score")
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments")
   review    Review?    @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_comments")
@@ -193,6 +194,7 @@ model Material {
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
+  score         Float     @default(0) @map("score")
 
   files       File[]       @relation(name: "materials_files")
   user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_materials")
@@ -240,35 +242,6 @@ model News {
   @@map("news")
 }
 
-model LegacyRating {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  personality      Float     @map("personality")
-  personalityCount Int       @map("personality_count")
-  exams            Float     @map("exams")
-  examsCount       Int       @map("exams_count")
-  quality          Float     @map("quality")
-  qualityCount     Int       @map("quality_count")
-  tutorId          String    @unique @map("tutor_id") @db.Uuid
-  avgRating        Float     @map("avg_rating") @db.Float8
-  ratingCount      Int       @map("rating_count")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
-  deletedAt        DateTime? @map("deleted_at")
-
-  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_legacy_ratings")
-
-  @@index([tutorId])
-  @@index([personality])
-  @@index([personalityCount])
-  @@index([exams])
-  @@index([examsCount])
-  @@index([quality])
-  @@index([qualityCount])
-  @@index([avgRating])
-  @@index([ratingCount])
-  @@map("legacy_ratings")
-}
-
 model Quote {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
   text          String    @map("text")
@@ -279,6 +252,7 @@ model Quote {
   deletedAt     DateTime? @map("deleted_at")
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
+  score         Float     @default(0) @map("score")
 
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_quotes")
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_quotes")
@@ -289,27 +263,6 @@ model Quote {
   @@index([userId])
   @@index([tutorId])
   @@map("quotes")
-}
-
-model Rate {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  punctuality Int       @map("punctuality")
-  personality Int       @map("personality")
-  exams       Int       @map("exams")
-  quality     Int       @map("quality")
-  tutorId     String    @map("tutor_id") @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-
-  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_rates")
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_rates")
-
-  @@unique([userId, tutorId])
-  @@index([userId])
-  @@index([tutorId])
-  @@map("rates")
 }
 
 model Review {
@@ -325,6 +278,7 @@ model Review {
   likesCount     Int       @default(0) @map("likes_count")
   dislikesCount  Int       @default(0) @map("dislikes_count")
   commentsCount  Int       @default(0) @map("comments_count")
+  score          Float     @default(0) @map("score")
 
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_reviews")
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_reviews")
@@ -389,6 +343,7 @@ model Document {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
+  score      Float     @default(0) @map("score")
 
   user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_documents")
   tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_documents")
@@ -403,17 +358,22 @@ model Document {
 }
 
 model Tutor {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  firstName  String?   @map("first_name") @db.String(64)
-  lastName   String?   @map("last_name") @db.String(64)
-  fatherName String?   @map("father_name") @db.String(64)
-  fullName   String    @default(dbgenerated()) @map("full_name") @db.String(256)
-  shortName  String    @default(dbgenerated()) @map("short_name") @db.String(80)
-  nickname   String?   @unique @map("nickname") @db.String(64)
-  url        String?   @unique @map("url") @db.String(64)
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  firstName      String?   @map("first_name") @db.String(64)
+  lastName       String?   @map("last_name") @db.String(64)
+  fatherName     String?   @map("father_name") @db.String(64)
+  fullName       String    @default(dbgenerated()) @map("full_name") @db.String(256)
+  shortName      String    @default(dbgenerated()) @map("short_name") @db.String(80)
+  nickname       String?   @unique @map("nickname") @db.String(64)
+  url            String?   @unique @map("url") @db.String(64)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  reviewsCount   Int       @default(0) @map("reviews_count")
+  materialsCount Int       @default(0) @map("materials_count")
+  quotesCount    Int       @default(0) @map("quotes_count")
+  ratesCount     Int       @default(0) @map("rates_count")
+  score          Float     @default(0) @map("score")
 
   images       File[]        @relation(name: "tutors_images")
   rates        Rate[]        @relation(name: "tutors_rates")
@@ -422,12 +382,103 @@ model Tutor {
   faculties    Faculty[]     @relation(name: "tutors_faculties")
   materials    Material[]    @relation(name: "tutors_materials")
   legacyRating LegacyRating? @relation(name: "tutors_legacy_ratings")
+  rating       Rating?       @relation(name: "tutors_ratings")
   quotes       Quote[]       @relation(name: "tutors_quotes")
   document     Document[]    @relation(name: "tutors_documents")
 
   @@index([fullName])
   @@index([shortName])
   @@map("tutors")
+}
+
+model Rate {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  punctuality Int       @map("punctuality")
+  personality Int       @map("personality")
+  exams       Int       @map("exams")
+  quality     Int       @map("quality")
+  tutorId     String    @map("tutor_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_rates")
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_rates")
+
+  @@unique([userId, tutorId])
+  @@index([userId])
+  @@index([tutorId])
+  @@map("rates")
+}
+
+model LegacyRating {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  personality      Float     @map("personality")
+  personalityCount Int       @map("personality_count")
+  exams            Float     @map("exams")
+  examsCount       Int       @map("exams_count")
+  quality          Float     @map("quality")
+  qualityCount     Int       @map("quality_count")
+  tutorId          String    @unique @map("tutor_id") @db.Uuid
+  avgRating        Float     @map("avg_rating") @db.Float8
+  avgQuality       Float     @map("avg_quality") @db.Float8
+  avgPersonality   Float     @map("avg_personality") @db.Float8
+  avgExams         Float     @map("avg_exams") @db.Float8
+  ratingCount      Int       @map("rating_count")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_legacy_ratings")
+
+  @@index([tutorId])
+  @@index([personality])
+  @@index([personalityCount])
+  @@index([exams])
+  @@index([examsCount])
+  @@index([quality])
+  @@index([qualityCount])
+  @@index([avgRating])
+  @@index([ratingCount])
+  @@map("legacy_ratings")
+}
+
+model Rating {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  punctuality      Float     @map("punctuality")
+  punctualityCount Int       @map("punctuality_count")
+  personality      Float     @map("personality")
+  personalityCount Int       @map("personality_count")
+  exams            Float     @map("exams")
+  examsCount       Int       @map("exams_count")
+  quality          Float     @map("quality")
+  qualityCount     Int       @map("quality_count")
+  tutorId          String    @unique @map("tutor_id") @db.Uuid
+  avgRating        Float     @map("avg_rating") @db.Float8
+  avgQuality       Float     @map("avg_quality") @db.Float8
+  avgPersonality   Float     @map("avg_personality") @db.Float8
+  avgPunctuality   Float     @map("avg_punctuality") @db.Float8
+  avgExams         Float     @map("avg_exams") @db.Float8
+  ratingCount      Int       @map("rating_count")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_ratings")
+
+  @@index([tutorId])
+  @@index([personality])
+  @@index([personalityCount])
+  @@index([punctuality])
+  @@index([punctualityCount])
+  @@index([exams])
+  @@index([examsCount])
+  @@index([quality])
+  @@index([qualityCount])
+  @@index([avgRating])
+  @@index([ratingCount])
+  @@map("ratings")
 }
 
 model Internal {
@@ -442,3 +493,5 @@ model Internal {
   @@index([name])
   @@map("internals")
 }
+
+// CREATE INDEX "documents_text_idx" ON "documents" USING GIN("text" gin_trgm_ops);

@@ -51,6 +51,7 @@ CREATE TABLE "users" (
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "materials_count" INT4 NOT NULL DEFAULT 0,
     "reviews_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -81,6 +82,7 @@ CREATE TABLE "comments" (
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
 );
@@ -138,6 +140,7 @@ CREATE TABLE "materials" (
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "materials_pkey" PRIMARY KEY ("id")
 );
@@ -169,25 +172,6 @@ CREATE TABLE "news" (
 );
 
 -- CreateTable
-CREATE TABLE "legacy_ratings" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "personality" FLOAT8 NOT NULL,
-    "personality_count" INT4 NOT NULL,
-    "exams" FLOAT8 NOT NULL,
-    "exams_count" INT4 NOT NULL,
-    "quality" FLOAT8 NOT NULL,
-    "quality_count" INT4 NOT NULL,
-    "tutor_id" UUID NOT NULL,
-    "avg_rating" FLOAT8 NOT NULL,
-    "rating_count" INT4 NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-    "deleted_at" TIMESTAMP(3),
-
-    CONSTRAINT "legacy_ratings_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "quotes" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "text" STRING NOT NULL,
@@ -198,24 +182,9 @@ CREATE TABLE "quotes" (
     "deleted_at" TIMESTAMP(3),
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "quotes_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "rates" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "punctuality" INT4 NOT NULL,
-    "personality" INT4 NOT NULL,
-    "exams" INT4 NOT NULL,
-    "quality" INT4 NOT NULL,
-    "tutor_id" UUID NOT NULL,
-    "user_id" UUID NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-    "deleted_at" TIMESTAMP(3),
-
-    CONSTRAINT "rates_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -232,6 +201,7 @@ CREATE TABLE "reviews" (
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
@@ -268,6 +238,7 @@ CREATE TABLE "documents" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
 );
@@ -285,8 +256,76 @@ CREATE TABLE "tutors" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
+    "reviews_count" INT4 NOT NULL DEFAULT 0,
+    "materials_count" INT4 NOT NULL DEFAULT 0,
+    "quotes_count" INT4 NOT NULL DEFAULT 0,
+    "rates_count" INT4 NOT NULL DEFAULT 0,
+    "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "tutors_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "rates" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "punctuality" INT4 NOT NULL,
+    "personality" INT4 NOT NULL,
+    "exams" INT4 NOT NULL,
+    "quality" INT4 NOT NULL,
+    "tutor_id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+
+    CONSTRAINT "rates_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "legacy_ratings" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "personality" FLOAT8 NOT NULL,
+    "personality_count" INT4 NOT NULL,
+    "exams" FLOAT8 NOT NULL,
+    "exams_count" INT4 NOT NULL,
+    "quality" FLOAT8 NOT NULL,
+    "quality_count" INT4 NOT NULL,
+    "tutor_id" UUID NOT NULL,
+    "avg_rating" FLOAT8 NOT NULL,
+    "avg_quality" FLOAT8 NOT NULL,
+    "avg_personality" FLOAT8 NOT NULL,
+    "avg_exams" FLOAT8 NOT NULL,
+    "rating_count" INT4 NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+
+    CONSTRAINT "legacy_ratings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ratings" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "punctuality" FLOAT8 NOT NULL,
+    "punctuality_count" INT4 NOT NULL,
+    "personality" FLOAT8 NOT NULL,
+    "personality_count" INT4 NOT NULL,
+    "exams" FLOAT8 NOT NULL,
+    "exams_count" INT4 NOT NULL,
+    "quality" FLOAT8 NOT NULL,
+    "quality_count" INT4 NOT NULL,
+    "tutor_id" UUID NOT NULL,
+    "avg_rating" FLOAT8 NOT NULL,
+    "avg_quality" FLOAT8 NOT NULL,
+    "avg_personality" FLOAT8 NOT NULL,
+    "avg_punctuality" FLOAT8 NOT NULL,
+    "avg_exams" FLOAT8 NOT NULL,
+    "rating_count" INT4 NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+
+    CONSTRAINT "ratings_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -420,36 +459,6 @@ CREATE UNIQUE INDEX "semesters_name_key" ON "semesters"("name");
 CREATE INDEX "news_created_at_idx" ON "news"("created_at");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "legacy_ratings_tutor_id_key" ON "legacy_ratings"("tutor_id");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_tutor_id_idx" ON "legacy_ratings"("tutor_id");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_personality_idx" ON "legacy_ratings"("personality");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_personality_count_idx" ON "legacy_ratings"("personality_count");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_exams_idx" ON "legacy_ratings"("exams");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_exams_count_idx" ON "legacy_ratings"("exams_count");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_quality_idx" ON "legacy_ratings"("quality");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_quality_count_idx" ON "legacy_ratings"("quality_count");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_avg_rating_idx" ON "legacy_ratings"("avg_rating");
-
--- CreateIndex
-CREATE INDEX "legacy_ratings_rating_count_idx" ON "legacy_ratings"("rating_count");
-
--- CreateIndex
 CREATE INDEX "quotes_created_at_idx" ON "quotes"("created_at");
 
 -- CreateIndex
@@ -457,15 +466,6 @@ CREATE INDEX "quotes_user_id_idx" ON "quotes"("user_id");
 
 -- CreateIndex
 CREATE INDEX "quotes_tutor_id_idx" ON "quotes"("tutor_id");
-
--- CreateIndex
-CREATE INDEX "rates_user_id_idx" ON "rates"("user_id");
-
--- CreateIndex
-CREATE INDEX "rates_tutor_id_idx" ON "rates"("tutor_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "rates_user_id_tutor_id_key" ON "rates"("user_id", "tutor_id");
 
 -- CreateIndex
 CREATE INDEX "reviews_created_at_idx" ON "reviews"("created_at");
@@ -549,6 +549,81 @@ CREATE INDEX "tutors_full_name_idx" ON "tutors"("full_name");
 CREATE INDEX "tutors_short_name_idx" ON "tutors"("short_name");
 
 -- CreateIndex
+CREATE INDEX "rates_user_id_idx" ON "rates"("user_id");
+
+-- CreateIndex
+CREATE INDEX "rates_tutor_id_idx" ON "rates"("tutor_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "rates_user_id_tutor_id_key" ON "rates"("user_id", "tutor_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "legacy_ratings_tutor_id_key" ON "legacy_ratings"("tutor_id");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_tutor_id_idx" ON "legacy_ratings"("tutor_id");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_personality_idx" ON "legacy_ratings"("personality");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_personality_count_idx" ON "legacy_ratings"("personality_count");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_exams_idx" ON "legacy_ratings"("exams");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_exams_count_idx" ON "legacy_ratings"("exams_count");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_quality_idx" ON "legacy_ratings"("quality");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_quality_count_idx" ON "legacy_ratings"("quality_count");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_avg_rating_idx" ON "legacy_ratings"("avg_rating");
+
+-- CreateIndex
+CREATE INDEX "legacy_ratings_rating_count_idx" ON "legacy_ratings"("rating_count");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ratings_tutor_id_key" ON "ratings"("tutor_id");
+
+-- CreateIndex
+CREATE INDEX "ratings_tutor_id_idx" ON "ratings"("tutor_id");
+
+-- CreateIndex
+CREATE INDEX "ratings_personality_idx" ON "ratings"("personality");
+
+-- CreateIndex
+CREATE INDEX "ratings_personality_count_idx" ON "ratings"("personality_count");
+
+-- CreateIndex
+CREATE INDEX "ratings_punctuality_idx" ON "ratings"("punctuality");
+
+-- CreateIndex
+CREATE INDEX "ratings_punctuality_count_idx" ON "ratings"("punctuality_count");
+
+-- CreateIndex
+CREATE INDEX "ratings_exams_idx" ON "ratings"("exams");
+
+-- CreateIndex
+CREATE INDEX "ratings_exams_count_idx" ON "ratings"("exams_count");
+
+-- CreateIndex
+CREATE INDEX "ratings_quality_idx" ON "ratings"("quality");
+
+-- CreateIndex
+CREATE INDEX "ratings_quality_count_idx" ON "ratings"("quality_count");
+
+-- CreateIndex
+CREATE INDEX "ratings_avg_rating_idx" ON "ratings"("avg_rating");
+
+-- CreateIndex
+CREATE INDEX "ratings_rating_count_idx" ON "ratings"("rating_count");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "internals_name_key" ON "internals"("name");
 
 -- CreateIndex
@@ -624,19 +699,10 @@ ALTER TABLE "materials" ADD CONSTRAINT "materials_user_id_fkey" FOREIGN KEY ("us
 ALTER TABLE "materials" ADD CONSTRAINT "materials_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "legacy_ratings" ADD CONSTRAINT "legacy_ratings_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "quotes" ADD CONSTRAINT "quotes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "quotes" ADD CONSTRAINT "quotes_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "rates" ADD CONSTRAINT "rates_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "rates" ADD CONSTRAINT "rates_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -679,6 +745,18 @@ ALTER TABLE "documents" ADD CONSTRAINT "documents_quote_id_fkey" FOREIGN KEY ("q
 
 -- AddForeignKey
 ALTER TABLE "documents" ADD CONSTRAINT "documents_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "rates" ADD CONSTRAINT "rates_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "rates" ADD CONSTRAINT "rates_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "legacy_ratings" ADD CONSTRAINT "legacy_ratings_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ratings" ADD CONSTRAINT "ratings_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_tutors_disciplines" ADD CONSTRAINT "_tutors_disciplines_A_fkey" FOREIGN KEY ("A") REFERENCES "disciplines"("id") ON DELETE CASCADE ON UPDATE CASCADE;
