@@ -1,423 +1,375 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions", "fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
   binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRESQL_URL")
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
 }
 
-model accounts {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id           String    @db.Uuid
-  type              String    @db.VarChar(255)
-  provider          String    @db.VarChar(255)
-  providerAccountId String    @map("provider_account_id") @db.VarChar(255)
-  refresh_token     String?   @db.VarChar(255)
-  access_token      String?   @db.VarChar(255)
-  created_at        DateTime  @default(now()) @db.Timestamptz(0)
-  updated_at        DateTime  @default(now()) @db.Timestamptz(0)
-  expires_at        DateTime? @db.Timestamp(0)
-  token_type        String?   @db.VarChar(255)
-  scope             String?   @db.VarChar(255)
-  id_token          String?   @db.VarChar(255)
-  session_state     String?   @db.VarChar(255)
-  users             users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model Account {
+  id                String  @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  userId            String  @map("user_id") @db.Uuid
+  type              String  @map("type")
+  provider          String  @map("provider_type")
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @map("refresh_token")
+  access_token      String? @map("access_token")
+  expires_at        Int?    @map("expires_at")
+  token_type        String? @map("token_type")
+  scope             String? @map("scope")
+  id_token          String? @map("id_token")
+  session_state     String? @map("session_state")
 
-  @@unique([provider, providerAccountId], map: "accounts_provider_provider_accounts_id_key")
-  @@index([type, provider, providerAccountId], map: "accounts_type_provider_provider_accounts_id_idx")
-  @@index([user_id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_accounts")
+
+  @@unique([provider, providerAccountId])
+  @@index([type, provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
 }
 
-model comments {
-  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text           String
-  created_at     DateTime    @default(now()) @db.Timestamp(0)
-  updated_at     DateTime    @default(now()) @db.Timestamp(0)
-  deleted_at     DateTime?   @db.Timestamp(0)
-  user_id        String      @db.Uuid
-  review_id      String?     @db.Uuid
-  material_id    String?     @db.Uuid
-  news_id        String?     @db.Uuid
-  parent_id      String?     @db.Uuid
-  comments       comments?   @relation("commentsTocomments", fields: [parent_id], references: [id], onDelete: Cascade)
-  users          users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  materials      materials?  @relation(fields: [material_id], references: [id], onDelete: Cascade, map: "materials_comments")
-  news           news?       @relation(fields: [news_id], references: [id], onDelete: Cascade, map: "news_comments")
-  reviews        reviews?    @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "reviews_comments")
-  other_comments comments[]  @relation("commentsTocomments")
-  reactions      reactions[]
+model Session {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.Uuid
+  expires      DateTime @map("expires")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_sessions")
 
-  @@index([created_at])
-  @@index([material_id])
-  @@index([news_id])
-  @@index([parent_id])
-  @@index([review_id])
-  @@index([user_id])
+  @@index([userId])
+  @@map("sessions")
 }
 
-model disciplines {
-  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                  String                  @unique @db.VarChar(400)
-  materials_disciplines materials_disciplines[]
-  tutors_disciplines    tutors_disciplines[]
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name          String?   @unique @map("name") @db.String(50)
+  imageId       String?   @unique @map("image_id") @db.Uuid
+  role          String    @default("default") @map("role")
+  email         String?   @unique @map("email")
+  emailVerified DateTime? @map("email_verified")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  rating        Float     @default(0) @map("rating") @db.Float8
+  bio           String?   @map("bio") @db.String(150)
+  image         File?     @relation(fields: [imageId], references: [id], name: "users_images")
+  place         Int       @default(sequence(start: 1)) @map("place")
+
+  accounts  Account[]  @relation(name: "users_accounts")
+  sessions  Session[]  @relation(name: "users_sessions")
+  comments  Comment[]  @relation(name: "users_comments")
+  reviews   Review[]   @relation(name: "users_reviews")
+  rates     Rate[]     @relation(name: "users_rates")
+  reactions Reaction[] @relation(name: "users_reactions")
+  files     File[]     @relation(name: "users_files")
+  materials Material[] @relation(name: "users_materials")
+  quotes    Quote[]    @relation(name: "users_quotes")
+  Document  Document[] @relation(name: "users_documents") @ignore
+
+  @@index([rating(sort: Desc)])
+  @@map("users")
 }
 
-model documents {
-  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  data        String?
-  user_id     String?    @unique @db.Uuid
-  tutor_id    String?    @unique @db.Uuid
-  material_id String?    @unique @db.Uuid
-  review_id   String?    @unique @db.Uuid
-  quote_id    String?    @unique @db.Uuid
-  news_id     String?    @unique @db.Uuid
-  type        String     @db.VarChar(20)
-  created_at  DateTime   @default(now()) @db.Timestamp(0)
-  updated_at  DateTime   @default(now()) @db.Timestamp(0)
-  materials   materials? @relation(fields: [material_id], references: [id], onDelete: Cascade)
-  news        news?      @relation(fields: [news_id], references: [id], onDelete: Cascade)
-  quotes      quotes?    @relation(fields: [quote_id], references: [id], onDelete: Cascade)
-  reviews     reviews?   @relation(fields: [review_id], references: [id], onDelete: Cascade)
-  tutors      tutors?    @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-  users       users?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model VerificationToken {
+  identifier String   @map("identifier")
+  token      String   @unique @map("token")
+  expires    DateTime @map("expires")
 
-  @@index([created_at], map: "documents_created_at_key")
-  @@index([data(ops: raw("gin_trgm_ops"))], map: "documents_data_idx2", type: Gin)
-  @@index([type], map: "documents_type_key")
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
-model faculties {
-  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                String                @unique @db.VarChar(200)
-  materials_faculties materials_faculties[]
-  tutors_faculties    tutors_faculties[]
+model Comment {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text       String   @map("text")
+  createdAt  DateTime @default(now()) @map("created_at")
+  userId     String   @map("user_id") @db.Uuid
+  reviewId   String?  @map("review_id") @db.Uuid
+  materialId String?  @map("material_id") @db.Uuid
+  newsId     String?  @map("news_id") @db.Uuid
+  parentId   String?  @map("parent_id") @db.Uuid
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments")
+  review    Review?    @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_comments")
+  material  Material?  @relation(fields: [materialId], references: [id], onDelete: Cascade, name: "materials_comments")
+  news      News?      @relation(fields: [newsId], references: [id], onDelete: Cascade, name: "news_comments")
+  parent    Comment?   @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, name: "comments_parents")
+  comments  Comment[]  @relation(name: "comments_parents")
+  reactions Reaction[] @relation(name: "comments_reactions")
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([reviewId])
+  @@index([materialId])
+  @@index([newsId])
+  @@index([parentId])
+  @@map("comments")
 }
 
-model files {
-  id                          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  url                         String     @db.VarChar(2000)
-  alt_url                     String?    @db.VarChar(2000)
-  created_at                  DateTime   @default(now()) @db.Timestamp(0)
-  updated_at                  DateTime   @default(now()) @db.Timestamp(0)
-  deleted_at                  DateTime?  @db.Timestamp(0)
-  filename                    String     @db.VarChar(500)
-  user_id                     String?    @db.Uuid
-  tutor_id                    String?    @db.Uuid
-  material_id                 String?    @db.Uuid
-  tag                         String?    @db.VarChar(200)
-  size                        Int        @default(0)
-  materials                   materials? @relation(fields: [material_id], references: [id])
-  tutors                      tutors?    @relation(fields: [tutor_id], references: [id])
-  users_files_user_idTousers  users?     @relation("files_user_idTousers", fields: [user_id], references: [id])
-  users_filesTousers_image_id users?     @relation("filesTousers_image_id")
+model Discipline {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name      String     @unique @map("name") @db.String(400)
+  tutors    Tutor[]    @relation(name: "tutors_disciplines")
+  materials Material[] @relation(name: "materials_disciplines")
 
-  @@index([created_at])
-  @@index([material_id])
-  @@index([tutor_id])
-  @@index([user_id])
+  @@map("disciplines")
 }
 
-model internals {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name       String    @db.VarChar(200)
-  value      String
-  created_at DateTime  @default(now()) @db.Timestamp(0)
-  updated_at DateTime  @default(now()) @db.Timestamp(0)
-  expires    DateTime? @db.Timestamp(0)
+model Faculty {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name      String     @unique @map("name") @db.String(200)
+  tutors    Tutor[]    @relation(name: "tutors_faculties")
+  materials Material[] @relation(name: "materials_faculties")
+
+  @@map("faculties")
 }
 
-model legacy_ratings {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  personality       Float
-  personality_count Int
-  exams             Float
-  exams_count       Int
-  quality           Float
-  quality_count     Int
-  tutor_id          String   @unique @db.Uuid
-  avg_rating        Float?   @default(dbgenerated("((((personality * (personality_count)::double precision) + (exams * (exams_count)::double precision)) + (quality * (quality_count)::double precision)) / NULLIF((((personality_count + exams_count) + quality_count))::double precision, (0)::double precision))"))
-  rating_count      Int      @default(dbgenerated("ceil(((((personality_count + exams_count) + quality_count))::numeric / (3)::numeric))"))
-  created_at        DateTime @default(now()) @db.Timestamp(0)
-  updated_at        DateTime @default(now()) @db.Timestamp(0)
-  tutors            tutors   @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
+model File {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  url        String   @map("url") @db.String(2000)
+  altUrl     String?  @map("alt_url") @db.String(2000)
+  createdAt  DateTime @default(now()) @map("created_at")
+  filename   String   @map("filename") @db.String(500)
+  userId     String?  @map("user_id") @db.Uuid
+  tutorId    String?  @map("tutor_id") @db.Uuid
+  materialId String?  @map("material_id") @db.Uuid
+  tag        String?  @map("tag") @db.String(200)
+  size       Int      @default(0) @map("size")
 
-  @@index([avg_rating])
-  @@index([exams_count])
-  @@index([exams])
-  @@index([personality_count])
+  user       User?     @relation(name: "users_images")
+  tutor      Tutor?    @relation(fields: [tutorId], references: [id], name: "tutors_images")
+  uploadedBy User?     @relation(fields: [userId], references: [id], name: "users_files", map: "files_uploaded_by_id_fkey")
+  material   Material? @relation(fields: [materialId], references: [id], name: "materials_files")
+
+  @@index([userId])
+  @@index([tutorId])
+  @@index([materialId])
+  @@index([createdAt])
+  @@map("files")
+}
+
+model Material {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text      String?   @map("text")
+  title     String    @map("title") @db.String(280)
+  userId    String?   @map("user_id") @db.Uuid
+  tutorId   String?   @map("tutor_id") @db.Uuid
+  createdAt DateTime? @default(now()) @map("created_at")
+
+  files       File[]       @relation(name: "materials_files")
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_materials")
+  tutor       Tutor?       @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_materials")
+  faculties   Faculty[]    @relation(name: "materials_faculties")
+  disciplines Discipline[] @relation(name: "materials_disciplines")
+  comments    Comment[]    @relation(name: "materials_comments")
+  reactions   Reaction[]   @relation(name: "materials_reactions")
+  semesters   Semester[]   @relation(name: "materials_semesters")
+  Document    Document[]   @relation(name: "materials_documents") @ignore
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([tutorId])
+  @@map("materials")
+}
+
+model Semester {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name      String     @unique @map("name") @db.Char(3)
+  materials Material[] @relation(name: "materials_semesters")
+
+  @@map("semesters")
+}
+
+model News {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text      String   @map("text")
+  title     String   @map("title") @db.String(280)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  comments  Comment[]  @relation(name: "news_comments")
+  reactions Reaction[] @relation(name: "news_reactions")
+  Document  Document[] @relation(name: "news_documents") @ignore
+
+  @@index([createdAt])
+  @@map("news")
+}
+
+model LegacyRating {
+  id               String @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  personality      Float  @map("personality")
+  personalityCount Int    @map("personality_count")
+  exams            Float  @map("exams")
+  examsCount       Int    @map("exams_count")
+  quality          Float  @map("quality")
+  qualityCount     Int    @map("quality_count")
+  tutorId          String @unique @map("tutor_id") @db.Uuid
+  avgRating        Float  @map("avg_rating") @db.Float8
+  ratingCount      Int    @map("rating_count")
+
+  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_legacy_ratings")
+
+  @@index([tutorId])
   @@index([personality])
-  @@index([quality_count])
+  @@index([personalityCount])
+  @@index([exams])
+  @@index([examsCount])
   @@index([quality])
-  @@index([rating_count])
-  @@index([tutor_id])
+  @@index([qualityCount])
+  @@index([avgRating])
+  @@index([ratingCount])
+  @@map("legacy_ratings")
 }
 
-model materials {
-  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text                  String?
-  title                 String                  @db.VarChar(280)
-  user_id               String?                 @db.Uuid
-  tutor_id              String?                 @db.Uuid
-  created_at            DateTime                @default(now()) @db.Timestamp(0)
-  updated_at            DateTime                @default(now()) @db.Timestamp(0)
-  deleted_at            DateTime?               @db.Timestamp(0)
-  tutors                tutors?                 @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-  users                 users?                  @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  comments              comments[]
-  documents             documents?
-  files                 files[]
-  materials_disciplines materials_disciplines[]
-  materials_faculties   materials_faculties[]
-  materials_semesters   materials_semesters[]
-  reactions             reactions[]
+model Quote {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text      String    @map("text")
+  tutorId   String    @map("tutor_id") @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  createdAt DateTime? @default(now()) @map("created_at")
 
-  @@index([created_at])
-  @@index([tutor_id])
-  @@index([user_id])
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_quotes")
+  tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_quotes")
+  reactions Reaction[] @relation(name: "quotes_reactions")
+  Document  Document[] @relation(name: "quotes_documents") @ignore
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([tutorId])
+  @@map("quotes")
 }
 
-model materials_disciplines {
-  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  discipline_id String      @db.Uuid
-  material_id   String      @db.Uuid
-  disciplines   disciplines @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
-  materials     materials   @relation(fields: [material_id], references: [id], onDelete: Cascade)
+model Rate {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  punctuality Int    @map("punctuality")
+  personality Int    @map("personality")
+  exams       Int    @map("exams")
+  quality     Int    @map("quality")
+  tutorId     String @map("tutor_id") @db.Uuid
+  userId      String @map("user_id") @db.Uuid
 
-  @@unique([discipline_id, material_id], map: "materials_disciplines_discipline_id_material_id_unique")
-  @@index([material_id], map: "materials_disciplines_material_id_index")
+  tutor Tutor @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_rates")
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_rates")
+
+  @@unique([userId, tutorId])
+  @@index([userId])
+  @@index([tutorId])
+  @@map("rates")
 }
 
-model materials_faculties {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  faculty_id  String    @db.Uuid
-  material_id String    @db.Uuid
-  faculties   faculties @relation(fields: [faculty_id], references: [id], onDelete: Cascade)
-  materials   materials @relation(fields: [material_id], references: [id], onDelete: Cascade)
+model Review {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  title          String   @map("title") @db.String(280)
+  text           String   @map("text")
+  createdAt      DateTime @default(now()) @map("created_at")
+  legacyNickname String?  @map("legacy_nickname") @db.String(200)
+  userId         String?  @map("user_id") @db.Uuid
+  tutorId        String   @map("tutor_id") @db.Uuid
 
-  @@unique([faculty_id, material_id], map: "materials_faculties_faculty_id_material_id_unique")
-  @@index([material_id], map: "materials_faculties_material_id_index")
+  tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_reviews")
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_reviews")
+  comments  Comment[]  @relation(name: "reviews_comments")
+  reactions Reaction[] @relation(name: "reviews_reactions")
+  Document  Document[] @relation(name: "reviews_documents") @ignore
+
+  @@unique([userId, tutorId])
+  @@index([createdAt])
+  @@index([userId])
+  @@index([tutorId])
+  @@map("reviews")
 }
 
-model materials_semesters {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  material_id String    @db.Uuid
-  semester_id String    @db.Uuid
-  materials   materials @relation(fields: [material_id], references: [id], onDelete: Cascade)
-  semesters   semesters @relation(fields: [semester_id], references: [id], onDelete: Cascade)
+model Reaction {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  quoteId    String?  @map("quote_id") @db.Uuid
+  materialId String?  @map("material_id") @db.Uuid
+  reviewId   String?  @map("review_id") @db.Uuid
+  commentId  String?  @map("comment_id") @db.Uuid
+  newsId     String?  @map("news_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+  like       Boolean  @map("like")
 
-  @@unique([material_id, semester_id], map: "materials_semesters_material_id_semester_id_unique")
-  @@index([semester_id], map: "materials_semesters_semester_id_index")
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_reactions")
+  quote    Quote?    @relation(fields: [quoteId], references: [id], onDelete: Cascade, name: "quotes_reactions")
+  material Material? @relation(fields: [materialId], references: [id], onDelete: Cascade, name: "materials_reactions")
+  review   Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_reactions")
+  comment  Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade, name: "comments_reactions")
+  news     News?     @relation(fields: [newsId], references: [id], onDelete: Cascade, name: "news_reactions")
+
+  @@unique([userId, quoteId])
+  @@unique([userId, materialId])
+  @@unique([userId, reviewId])
+  @@unique([userId, commentId])
+  @@unique([userId, newsId])
+  @@index([userId])
+  @@index([quoteId])
+  @@index([materialId])
+  @@index([reviewId])
+  @@index([commentId])
+  @@index([newsId])
+  @@map("reactions")
 }
 
-model news {
-  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text       String
-  title      String      @db.VarChar(280)
-  created_at DateTime    @default(now()) @db.Timestamp(0)
-  updated_at DateTime    @default(now()) @db.Timestamp(0)
-  deleted_at DateTime?   @db.Timestamp(0)
-  comments   comments[]
-  documents  documents?
-  reactions  reactions[]
+// full text search model
 
-  @@index([created_at])
-}
+model Document {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  words      String[] @map("words")
+  text       String   @map("text")
+  userId     String?  @unique @map("user_id") @db.Uuid
+  tutorId    String?  @unique @map("tutor_id") @db.Uuid
+  materialId String?  @unique @map("material_id") @db.Uuid
+  reviewId   String?  @unique @map("review_id") @db.Uuid
+  quoteId    String?  @unique @map("quote_id") @db.Uuid
+  newsId     String?  @unique @map("news_id") @db.Uuid
+  type       String   @default("unknown") @map("type")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-model quotes {
-  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  text       String
-  tutor_id   String      @db.Uuid
-  user_id    String?     @db.Uuid
-  created_at DateTime    @default(now()) @db.Timestamp(0)
-  updated_at DateTime    @default(now()) @db.Timestamp(0)
-  deleted_at DateTime?   @db.Timestamp(0)
-  tutors     tutors      @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-  users      users?      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  documents  documents?
-  reactions  reactions[]
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_documents")
+  tutor    Tutor?    @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_documents")
+  material Material? @relation(fields: [materialId], references: [id], onDelete: Cascade, name: "materials_documents")
+  review   Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_documents")
+  quote    Quote?    @relation(fields: [quoteId], references: [id], onDelete: Cascade, name: "quotes_documents")
+  news     News?     @relation(fields: [newsId], references: [id], onDelete: Cascade, name: "news_documents")
 
-  @@index([created_at])
-  @@index([tutor_id])
-  @@index([user_id])
-}
-
-model rates {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  punctuality Int
-  personality Int
-  exams       Int
-  quality     Int
-  tutor_id    String   @db.Uuid
-  user_id     String   @db.Uuid
-  created_at  DateTime @default(now()) @db.Timestamp(0)
-  updated_at  DateTime @default(now()) @db.Timestamp(0)
-  tutors      tutors   @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([user_id, tutor_id])
-  @@index([tutor_id])
-  @@index([user_id])
-}
-
-model reactions {
-  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id     String     @db.Uuid
-  quote_id    String?    @db.Uuid
-  material_id String?    @db.Uuid
-  review_id   String?    @db.Uuid
-  comment_id  String?    @db.Uuid
-  news_id     String?    @db.Uuid
-  created_at  DateTime   @default(now()) @db.Timestamp(0)
-  updated_at  DateTime   @default(now()) @db.Timestamp(0)
-  liked       Boolean
-  comments    comments?  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
-  materials   materials? @relation(fields: [material_id], references: [id], onDelete: Cascade)
-  news        news?      @relation(fields: [news_id], references: [id], onDelete: Cascade)
-  quotes      quotes?    @relation(fields: [quote_id], references: [id], onDelete: Cascade)
-  reviews     reviews?   @relation(fields: [review_id], references: [id], onDelete: Cascade)
-  users       users      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([user_id, comment_id])
-  @@unique([user_id, material_id])
-  @@unique([user_id, news_id])
-  @@unique([user_id, quote_id])
-  @@unique([user_id, review_id])
-  @@index([comment_id])
-  @@index([material_id])
-  @@index([news_id])
-  @@index([quote_id])
-  @@index([review_id])
-  @@index([user_id])
-}
-
-model reviews {
-  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title           String      @db.VarChar(280)
-  text            String
-  created_at      DateTime    @default(now()) @db.Timestamp(0)
-  updated_at      DateTime    @default(now()) @db.Timestamp(0)
-  deleted_at      DateTime?   @db.Timestamp(0)
-  legacy_nickname String?     @db.VarChar(200)
-  user_id         String?     @db.Uuid
-  tutor_id        String      @db.Uuid
-  tutors          tutors      @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-  users           users?      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  comments        comments[]
-  documents       documents?
-  reactions       reactions[]
-
-  @@unique([user_id, tutor_id])
-  @@index([created_at])
-  @@index([tutor_id])
-  @@index([user_id])
-}
-
-model semesters {
-  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                String                @unique @db.Char(3)
-  materials_semesters materials_semesters[]
-}
-
-model sessions {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  session_token String   @unique @db.VarChar(255)
-  user_id       String   @db.Uuid
-  expires       DateTime @db.Timestamp(0)
-  created_at    DateTime @default(now()) @db.Timestamptz(0)
-  updated_at    DateTime @default(now()) @db.Timestamptz(0)
-  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
+  @@index([words], type: Gin)
+  @@index([type])
+  @@map("documents")
+  @@ignore
 }
 
 model Tutor {
-  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  first_name         String?              @db.VarChar(64)
-  last_name          String?              @db.VarChar(64)
-  father_name        String?              @db.VarChar(64)
-  nick_name          String?              @unique @db.VarChar(64)
-  url                String?
-  full_name          String?              @default(dbgenerated("\nCASE\n    WHEN ((first_name IS NULL) AND (last_name IS NULL) AND (father_name IS NULL)) THEN NULL::text\n    ELSE (((\n    CASE\n        WHEN (last_name IS NULL) THEN ''::character varying\n        ELSE last_name\n    END)::text ||\n    CASE\n        WHEN (first_name IS NULL) THEN ''::text\n        ELSE (' '::text || (first_name)::text)\n    END) ||\n    CASE\n        WHEN (father_name IS NULL) THEN ''::text\n        ELSE (' '::text || (father_name)::text)\n    END)\nEND")) @db.VarChar(255)
-  short_name         String?              @default(dbgenerated("\nCASE\n    WHEN ((first_name IS NULL) AND (last_name IS NULL) AND (father_name IS NULL)) THEN NULL::text\n    ELSE (((\n    CASE\n        WHEN (last_name IS NULL) THEN ''::character varying\n        ELSE last_name\n    END)::text ||\n    CASE\n        WHEN (first_name IS NULL) THEN ''::text\n        ELSE ((' '::text || \"left\"((first_name)::text, 1)) || '.'::text)\n    END) ||\n    CASE\n        WHEN (father_name IS NULL) THEN ''::text\n        ELSE ((' '::text || (father_name)::text) || '.'::text)\n    END)\nEND")) @db.VarChar(128)
-  created_at         DateTime             @default(now()) @db.Timestamp(0)
-  updated_at         DateTime             @default(now()) @db.Timestamp(0)
-  deleted_at         DateTime?            @db.Timestamp(0)
-  documents          documents?
-  files              files[]
-  legacy_ratings     legacy_ratings?
-  materials          materials[]
-  quotes             quotes[]
-  rates              rates[]
-  reviews            reviews[]
-  tutors_disciplines tutors_disciplines[]
-  tutors_faculties   tutors_faculties[]
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  firstName  String?   @map("first_name") @db.String(64)
+  lastName   String?   @map("last_name") @db.String(64)
+  fatherName String?   @map("father_name") @db.String(64)
+  fullName   String    @default(dbgenerated()) @map("full_name") @db.String(256)
+  shortName  String    @default(dbgenerated()) @map("short_name") @db.String(80)
+  nickName   String?   @unique @map("nick_name") @db.String(64)
+  url        String?   @unique @map("url") @db.String(64)
+  updatedAt  DateTime? @updatedAt @map("updated_at")
 
+  images       File[]        @relation(name: "tutors_images")
+  rates        Rate[]        @relation(name: "tutors_rates")
+  reviews      Review[]      @relation(name: "tutors_reviews")
+  disciplines  Discipline[]  @relation(name: "tutors_disciplines")
+  faculties    Faculty[]     @relation(name: "tutors_faculties")
+  materials    Material[]    @relation(name: "tutors_materials")
+  legacyRating LegacyRating? @relation(name: "tutors_legacy_ratings")
+  quotes       Quote[]       @relation(name: "tutors_quotes")
+  document     Document[]    @relation(name: "tutors_documents") @ignore
+
+  @@index([fullName])
+  @@index([shortName])
   @@map("tutors")
 }
 
-model tutors_disciplines {
-  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  discipline_id String      @db.Uuid
-  tutor_id      String      @db.Uuid
-  disciplines   disciplines @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
-  tutors        tutors      @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
+model Internal {
+  id      String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  name    String    @unique @map("name")
+  value   String    @map("value")
+  expires DateTime? @map("expires")
 
-  @@unique([discipline_id, tutor_id], map: "tutors_disciplines_discipline_id_tutor_id_unique")
-  @@index([tutor_id], map: "tutors_disciplines_tutor_id_index")
-}
-
-model tutors_faculties {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tutor_id   String    @db.Uuid
-  faculty_id String    @db.Uuid
-  faculties  faculties @relation(fields: [faculty_id], references: [id], onDelete: Cascade)
-  tutors     tutors    @relation(fields: [tutor_id], references: [id], onDelete: Cascade)
-
-  @@unique([tutor_id, faculty_id], map: "tutors_faculties_tutor_id_faculty_id_unique")
-  @@index([faculty_id], map: "tutors_faculties_faculty_id_index")
-}
-
-model users {
-  id                          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                        String?     @unique @db.VarChar(50)
-  image_id                    String?     @unique @db.Uuid
-  image                       String?     @default(dbgenerated("image_id")) @db.Uuid
-  role                        String      @default("default") @db.VarChar(255)
-  email                       String?     @unique @db.VarChar(255)
-  email_verified              DateTime?   @db.Timestamp(0)
-  created_at                  DateTime    @default(now()) @db.Timestamp(0)
-  updated_at                  DateTime    @default(now()) @db.Timestamp(0)
-  banned                      Boolean     @default(false)
-  banned_reason               String?     @db.VarChar(255)
-  banned_at                   DateTime?   @db.Timestamp(0)
-  banned_until                DateTime?   @db.Timestamp(0)
-  rating                      Float       @default(0)
-  bio                         String?     @db.VarChar(150)
-  files_filesTousers_image_id files?      @relation("filesTousers_image_id", fields: [image_id], references: [id])
-  accounts                    accounts[]
-  comments                    comments[]
-  documents                   documents?
-  files_files_user_idTousers  files[]     @relation("files_user_idTousers")
-  materials                   materials[]
-  quotes                      quotes[]
-  rates                       rates[]
-  reactions                   reactions[]
-  reviews                     reviews[]
-  sessions                    sessions[]
-
-  @@index([rating])
-}
-
-model verification_tokens {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  identifier String
-  token      String   @unique
-  expires    DateTime @db.Timestamp(0)
-  created_at DateTime @default(now()) @db.Timestamptz(0)
-  updated_at DateTime @default(now()) @db.Timestamptz(0)
-
-  @@unique([identifier, token])
+  @@index([name])
+  @@map("internals")
 }
