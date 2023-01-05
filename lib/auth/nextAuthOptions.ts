@@ -1,7 +1,7 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
 import {PrismaClient} from "@prisma/client"
-import {NextAuthOptions, SessionStrategy} from "next-auth";
+import {NextAuthOptions, Session, SessionStrategy} from "next-auth";
 
 const prisma = new PrismaClient()
 // const host = getHost() + "/api/auth/callback/home";
@@ -30,20 +30,22 @@ export const nextAuthOptions: NextAuthOptions = {
             }
             return token;
         },
-        session: async ({session, token, user}) => {
-            // console.log("session");
-            // console.log(session)
-            // console.log(user)
-            // console.log(token)
-            if (session.user || token) {
-                // @ts-ignore
-                session.user.id = user?.id ?? token?.sub;
-                // @ts-ignore
-                session.user.role = user?.role ?? token?.role;
-            }
-            // console.log("session1");
-            return session;
-        }
+        // session: async ({session, token, user}) => {
+        //     // console.log("session");
+        //     // console.log(session)
+        //     // console.log(user)
+        //     // console.log(token)
+        //     type MySession = Session & {user: {id: string | null, role: string}}
+        //     let newSession = session as MySession;
+        //     if (session.user || token) {
+        //
+        //         newSession.user.id = user?.id ?? token?.sub ?? null;
+        //         // @ts-ignore
+        //         newSession.user.role = user?.role ?? token?.role ?? "default";
+        //     }
+        //     // console.log("session1");
+        //     return newSession;
+        // }
     },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,

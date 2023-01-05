@@ -1,4 +1,6 @@
-import {PrismaClient} from '@prisma/client';
+import {Prisma, PrismaClient} from '@prisma/client';
+import {createPrismaRedisCache} from "prisma-redis-middleware";
+import {redis} from "./redis";
 
 let notInitialized = (global as any).prisma === undefined;
 export const prisma: PrismaClient =
@@ -31,6 +33,28 @@ if (notInitialized) {
         }
         return next(params)
     })
+
+    const cacheMiddleware: Prisma.Middleware = createPrismaRedisCache({
+        models: [
+            // { model: "User", excludeMethods: ["findMany"] },
+            // { model: "Post", cacheTime: 180, cacheKey: "article" },
+        ],
+        storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
+        cacheTime: 300,
+        excludeModels: ["Product", "Cart"],
+        excludeMethods: ["count", "groupBy"],
+        // onHit: (key) => {
+        //     console.log("hit", key);
+        // },
+        // onMiss: (key) => {
+        //     console.log("miss", key);
+        // },
+        // onError: (key) => {
+        //     console.log("error", key);
+        // },
+    });
+
+    prisma.$use(cacheMiddleware);
 }
 
 // if (process.env.NODE_ENV === 'production') {

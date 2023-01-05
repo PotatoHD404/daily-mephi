@@ -1,8 +1,10 @@
 import { createOpenApiNextHandler } from "trpc-openapi";
 import {appRouter} from "server";
 import {createContext} from "lib/trpc/context";
+import {NextApiRequest, NextApiResponse} from "next";
+import {redis} from "lib/database/redis";
 
-export default createOpenApiNextHandler({
+const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
     createContext,
     onError({ error }) {
@@ -12,3 +14,36 @@ export default createOpenApiNextHandler({
         }
     },
 });
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse,
+) {
+    // Modify `req` and `res` objects here
+    // In this case, we are enabling CORS
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    // res.setHeader('Access-Control-Request-Method', '*');
+    // res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    // res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        return res.end();
+    }
+
+    // rate limiting with redis
+    // use user ip and user agent as key
+    // @ts-ignore
+    let key: string = `${req.headers['x-forwarded-for']}_${req.headers['user-agent']}`;
+    key = key.replace(/\./g, '_');
+    key = `rate_limit_${key}`;
+    const current = await redis.get(key);
+    // limit is 60 requests per minute
+    if (current && parseInt(current) > 60) {
+        return res.status(429).send('Too many requests, please try again later.');
+    }
+    await redis.incr(key);
+    await redis.expire(key, 60);
+
+    // pass the (modified) req/res to the handler
+    return nextApiHandler(req, res);
+}

@@ -4,7 +4,12 @@ import {t} from 'lib/trpc';
 // https://github.com/jlalmes/trpc-openapi
 
 export const utilsRouter = t.router({
-    search: t.procedure.meta({openapi: {method: 'GET', path: '/search'}}).input(z.void()).output(z.any()).query(() => {
+    search: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/search'
+        }
+    }).input(z.void()).output(z.any()).query(() => {
         return "search";
     }),
     disciplines: t.procedure.meta({
