@@ -11,6 +11,7 @@ import {reviewsRouter} from "./routers/reviews";
 import {thumbnailsRouter} from "./routers/thumbnails";
 import {tutorsRouter} from "./routers/tutors";
 import {usersRouter} from "./routers/users";
+import {searchRouter} from "./routers/search";
 
 export const appRouter = t.router({
     comments: commentsRouter,
@@ -22,7 +23,7 @@ export const appRouter = t.router({
     thumbnails: thumbnailsRouter,
     tutors: tutorsRouter,
     users: usersRouter,
-    utils: utilsRouter,
+    utils: t.mergeRouters(utilsRouter, searchRouter),
 });
 
 export type AppRouter = typeof appRouter;

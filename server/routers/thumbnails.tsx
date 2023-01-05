@@ -3,11 +3,11 @@ import {t} from 'lib/trpc';
 import core from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import {NextApiResponse} from "next";
-import MaterialThumbnail from 'components/thumbnails/material';
-import QuoteThumbnail from 'components/thumbnails/quote';
-import ReviewThumbnail from 'components/thumbnails/review';
-import TutorThumbnail from 'components/thumbnails/tutor';
-import UserThumbnail from 'components/thumbnails/user';
+import MaterialThumbnail from 'server/thumbnails/material';
+import QuoteThumbnail from 'server/thumbnails/quote';
+import ReviewThumbnail from 'server/thumbnails/review';
+import TutorThumbnail from 'server/thumbnails/tutor';
+import UserThumbnail from 'server/thumbnails/user';
 import ReactDOMServer from 'react-dom/server';
 
 let _page: core.Page | null;

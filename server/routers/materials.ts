@@ -13,7 +13,7 @@ export const materialsRouter = t.router({
         openapi: {
             method: 'GET',
             path: '/materials/{id}',
-            // protect: true,
+            protect: true,
             // TODO: check if auth is needed or not
         }
     })
@@ -21,7 +21,7 @@ export const materialsRouter = t.router({
             id: z.string().uuid(),
         }))
         .output(z.any())
-        // .use(isAuthorized)
+        .use(isAuthorized)
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const material = await prisma.material.findUnique({
                 where: {
@@ -83,13 +83,13 @@ export const materialsRouter = t.router({
         openapi: {
             method: 'GET',
             path: '/materials',
-            // protect: true,
+            protect: true,
             // TODO: check if auth is needed or not
         }
     })
         .input(z.void())
         .output(z.any())
-        // .use(isAuthorized)
+        .use(isAuthorized)
         .query(async ({ctx: {prisma}}) => {
             return await prisma.material.findMany({
                 select: {

@@ -80,25 +80,28 @@ export const usersRouter = t.router({
                 });
             }
             await prisma.$transaction(async (prisma) => {
-                // TODO: parallelize
-                if (nickname) {
-                    const user = await prisma.user.findUnique({where: {nickname}});
-                    if (user && user.id !== user.id) {
-                        throw new TRPCError({
-                            code: 'BAD_REQUEST',
-                            message: 'Nickname is already taken'
-                        });
-                    }
-                }
-                if (imageId) {
-                    const user = await prisma.user.findFirst({where: {imageId: imageId}});
-                    if (user && user.id !== user.id) {
-                        throw new TRPCError({
-                            code: 'BAD_REQUEST',
-                            message: 'Image already taken'
-                        });
-                    }
-                }
+                await Promise.all([
+                    async () => {
+                        if (nickname) {
+                            const user = await prisma.user.findUnique({where: {nickname}});
+                            if (user && user.id !== user.id) {
+                                throw new TRPCError({
+                                    code: 'BAD_REQUEST',
+                                    message: 'Nickname is already taken'
+                                });
+                            }
+                        }
+                    }, async () => {
+                        if (imageId) {
+                            const user = await prisma.user.findFirst({where: {imageId: imageId}});
+                            if (user && user.id !== user.id) {
+                                throw new TRPCError({
+                                    code: 'BAD_REQUEST',
+                                    message: 'Image already taken'
+                                });
+                            }
+                        }
+                    }]);
                 await prisma.user.update({
                         where: {
                             id: user.id
@@ -122,12 +125,11 @@ export const usersRouter = t.router({
                         text,
                         ...docContent
                     },
-                    update: docContent
+                    update: {text, ...docContent}
                 });
-                // update search index
-                // TODO
+                // TODO: update search index
 
-                // return ok
+
                 return {ok: true};
             });
         })

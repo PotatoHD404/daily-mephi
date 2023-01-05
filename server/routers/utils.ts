@@ -48,17 +48,6 @@ function confidence(likes: number, dislikes: number): number {
 }
 
 export const utilsRouter = t.router({
-    search: t.procedure.meta({
-        openapi: {
-            method: 'GET',
-            path: '/search'
-        }
-    })
-        .input(z.void())
-        .output(z.any())
-        .query(async ({ctx: {prisma}}) => {
-            return "search";
-        }),
     disciplines: t.procedure.meta({
         openapi: {
             method: 'GET',
@@ -68,7 +57,7 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return await prisma.discipline.findMany();
+            return prisma.discipline.findMany();
         }),
     facilities: t.procedure.meta({
         openapi: {
@@ -79,7 +68,7 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return await prisma.faculty.findMany();
+            return prisma.faculty.findMany();
         }),
     semesters: t.procedure.meta({
         openapi: {
@@ -90,7 +79,7 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return await prisma.semester.findMany();
+            return prisma.semester.findMany();
         }),
     getAvatars: t.procedure.meta({
         openapi: {

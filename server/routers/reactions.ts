@@ -125,6 +125,7 @@ export const reactionsRouter = t.router({
                                 }
                             }
                         });
+                        // TODO: increment user's rating
                     }
                     return await table.findUnique({
                         where: {id: targetId},

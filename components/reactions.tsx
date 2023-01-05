@@ -38,7 +38,6 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
             setLikes(likes + 1);
             const result = await fetch(`/api/v1/reactions`,
                 {
-                    // TODO: add csrf token
                     method: 'PUT',
                     credentials: 'same-origin',
                     headers: {
@@ -59,7 +58,6 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
             setDislikes(dislikes + 1);
             const result = await fetch(`/api/v1/reactions`,
                 {
-                    // TODO: add csrf token
                     method: 'PUT',
                     credentials: 'same-origin',
                     headers: {
