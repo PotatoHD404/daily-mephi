@@ -53,7 +53,59 @@ export async function getScreenshot(html: string, type: FileType, isDev: boolean
     await page.setContent(html);
     return await page.screenshot({type});
 }
+
+async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
+    const html = ReactDOMServer.renderToString(element);
+    const rendered = Buffer.from(html);
+
+    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
+    res.setHeader('Content-Type', 'image/png');
+    res.end(image)
+}
+
 export const thumbnailsRouter = t.router({
+    getMaterial: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/materials/{id}/thumbnail',
+        }
+    })
+        .input(z.object({
+            id: z.string().uuid(),
+        }))
+        .output(z.any())
+        .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
+            const element = <MaterialThumbnail/>
+            await renderAndSend(element, res);
+        }),
+    getQuote: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/quotes/{id}/thumbnail',
+        }
+    })
+        .input(z.object({
+            id: z.string().uuid(),
+        }))
+        .output(z.any())
+        .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
+            const element = <MaterialThumbnail/>
+            await renderAndSend(element, res);
+        }),
+    getReview: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/reviews/{id}/thumbnail',
+        }
+    })
+        .input(z.object({
+            id: z.string().uuid(),
+        }))
+        .output(z.any())
+        .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
+            const element = <MaterialThumbnail/>
+            await renderAndSend(element, res);
+        }),
     getTutor: t.procedure.meta({
         openapi: {
             method: 'GET',
@@ -64,15 +116,23 @@ export const thumbnailsRouter = t.router({
             id: z.string().uuid(),
         }))
         .output(z.any())
-        .query(async ({ctx: {prisma, res}, ctx, input: {id}}) => {
+        .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
             const element = <MaterialThumbnail/>
-            const html = ReactDOMServer.renderToString(element);
-            const rendered = Buffer.from(html);
-
-            const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
-            res.setHeader('Content-Type', 'image/png');
-            res.end(image)
-            // "data:image/png;base64," + image.toString('base64');
+            await renderAndSend(element, res);
+        }),
+    getUser: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/users/{id}/thumbnail',
+        }
+    })
+        .input(z.object({
+            id: z.string().uuid(),
+        }))
+        .output(z.any())
+        .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
+            const element = <MaterialThumbnail/>
+            await renderAndSend(element, res);
         }),
 
 });
