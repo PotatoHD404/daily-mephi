@@ -140,6 +140,7 @@ export const reviewsRouter = t.router({
                     await prisma.document.create({
                         data: {
                             type: "review",
+                            text,
                             ...getDocument(text + ' ' + title),
                         }
                     });

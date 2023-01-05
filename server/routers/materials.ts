@@ -319,6 +319,7 @@ export const materialsRouter = t.router({
                 await prisma.document.create({
                     data: {
                         type: "material",
+                        text,
                         ...getDocument(title + ' ' + text)
                     }
                 });

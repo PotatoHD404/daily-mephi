@@ -126,6 +126,7 @@ export const quotesRouter = t.router({
                     await prisma.document.create({
                         data: {
                             type: "quote",
+                            text,
                             ...getDocument(text)
                         }
                     });

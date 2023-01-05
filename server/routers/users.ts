@@ -1,13 +1,11 @@
-import { z } from 'zod';
-import { t } from 'lib/trpc';
+import {z} from 'zod';
+import {t} from 'lib/trpc';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 import {isToxic} from "../../lib/toxicity";
 import {getDocument} from "../../lib/database/fullTextSearch";
-
-
 
 
 export const usersRouter = t.router({
@@ -47,7 +45,7 @@ export const usersRouter = t.router({
                 });
             }
             return user;
-    }),
+        }),
     edit: t.procedure.meta({
         openapi: {
             method: 'PUT',
@@ -66,16 +64,16 @@ export const usersRouter = t.router({
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
-        .mutation(async ({ctx: {prisma, user: {id: userId}}, input: {nickname, image: imageId, bio}}) => {
+        .mutation(async ({ctx: {prisma, user}, input: {nickname, image: imageId, bio}}) => {
             // check if nickname is toxic
-            if(nickname && await isToxic(nickname)) {
+            if (nickname && await isToxic(nickname)) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'Nickname is toxic'
                 });
             }
             // check if bio is toxic
-            if(bio && await isToxic(bio)) {
+            if (bio && await isToxic(bio)) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'Bio is toxic'
@@ -85,7 +83,7 @@ export const usersRouter = t.router({
                 // TODO: parallelize
                 if (nickname) {
                     const user = await prisma.user.findUnique({where: {nickname}});
-                    if (user && user.id !== userId) {
+                    if (user && user.id !== user.id) {
                         throw new TRPCError({
                             code: 'BAD_REQUEST',
                             message: 'Nickname is already taken'
@@ -94,7 +92,7 @@ export const usersRouter = t.router({
                 }
                 if (imageId) {
                     const user = await prisma.user.findFirst({where: {imageId: imageId}});
-                    if (user && user.id !== userId) {
+                    if (user && user.id !== user.id) {
                         throw new TRPCError({
                             code: 'BAD_REQUEST',
                             message: 'Image already taken'
@@ -103,7 +101,7 @@ export const usersRouter = t.router({
                 }
                 await prisma.user.update({
                         where: {
-                            id: userId
+                            id: user.id
                         },
                         data: {
                             nickname,
@@ -113,13 +111,15 @@ export const usersRouter = t.router({
                     }
                 )
                 // update or create document
-                const docContent = getDocument(nickname + ' ' + bio);
+                let text = nickname + ' ' + bio;
+                const docContent = getDocument(text);
                 await prisma.document.upsert({
                     where: {
-                        userId
+                        userId: user.id
                     },
                     create: {
-                        userId,
+                        userId: user.id,
+                        text,
                         ...docContent
                     },
                     update: docContent
@@ -130,5 +130,5 @@ export const usersRouter = t.router({
                 // return ok
                 return {ok: true};
             });
-    })
+        })
 });
