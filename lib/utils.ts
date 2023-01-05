@@ -163,3 +163,7 @@ export async function verifyRecaptcha(req: NextApiRequest) {
     const data = await response.json();
     return data.success && data.score >= 0.5;
 }
+
+export function timeout(ms: number | undefined) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

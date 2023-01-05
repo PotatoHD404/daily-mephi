@@ -53,13 +53,6 @@ export async function getScreenshot(html: string, type: FileType, isDev: boolean
     await page.setContent(html);
     return await page.screenshot({type});
 }
-
-export default async function (
-    req: NextApiRequest,
-    res: NextApiResponse<object>
-) {
-
-}
 export const thumbnailsRouter = t.router({
     getTutor: t.procedure.meta({
         openapi: {
@@ -71,19 +64,15 @@ export const thumbnailsRouter = t.router({
             id: z.string().uuid(),
         }))
         .output(z.any())
-        .query(async ({ctx: {prisma, res}, input: {id}}) => {
-            // const screenshot = await getScreenshot("dead cat", "png", process.env.NODE_ENV === "development");
-            // res.setHeader('Content-Type', 'image/png');
-            // res.end(screenshot);
-
-            // render sharp blank image width 2048x1170
+        .query(async ({ctx: {prisma, res}, ctx, input: {id}}) => {
             const element = <MaterialThumbnail/>
             const html = ReactDOMServer.renderToString(element);
             const rendered = Buffer.from(html);
 
             const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
             res.setHeader('Content-Type', 'image/png');
-            res.end(image);
+            res.end(image)
+            // "data:image/png;base64," + image.toString('base64');
         }),
 
 });

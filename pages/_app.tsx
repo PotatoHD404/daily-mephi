@@ -18,6 +18,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../lib/react/useMediaQuery";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
+import {AppRouter} from "../server";
 // import NProgress from 'nprogress';
 
 const queryClient = new QueryClient()

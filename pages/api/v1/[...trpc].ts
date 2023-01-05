@@ -3,11 +3,17 @@ import {appRouter} from "server";
 import {createContext} from "lib/trpc/context";
 import {NextApiRequest, NextApiResponse} from "next";
 import {redis} from "lib/database/redis";
+import {TRPCError} from "@trpc/server";
 
 const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
     createContext,
     onError({ error }) {
+        // @ts-ignore
+        if(error.code === 'INTERNAL_SERVER_ERROR' && error.cause?.code === 'ERR_HTTP_HEADERS_SENT') {
+            // Ignore this error, it's not really an error
+            return;
+        }
         if (error.code === 'INTERNAL_SERVER_ERROR') {
             // send to bug reporting
             console.error('Something went wrong', error);
@@ -45,5 +51,13 @@ export default async function handler(
     await redis.expire(key, 60);
 
     // pass the (modified) req/res to the handler
-    return nextApiHandler(req, res);
+    try {
+        await nextApiHandler(req, res);
+    }
+    catch (e: any) {
+        if (e?.code === 'ERR_HTTP_HEADERS_SENT') {
+            return;
+        }
+        throw e
+    }
 }

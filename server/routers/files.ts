@@ -2,12 +2,12 @@ import {z} from 'zod';
 import {t} from 'lib/trpc';
 import {extToMimes} from "lib/constants/extToMimes";
 import jwt, {JwtPayload} from "jsonwebtoken";
-import {timeout} from "pages/api/v1/files";
 import {func_ids} from "../../lib/constants/notionFuncIds";
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
+import {timeout} from "../../lib/utils";
 
 
 
