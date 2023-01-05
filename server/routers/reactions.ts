@@ -66,9 +66,16 @@ export const reactionsRouter = t.router({
                         await table.update({
                             where: {id: targetId},
                             data: {
-                                [likeExists.like ? "likes" : "dislikes"]: {
+                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
                                     decrement: 1
                                 }
+                            }
+                        });
+
+                        await prisma.user.update({
+                            where: {id: user.id},
+                            data: {
+                                [likeExists.like ? "likesCount" : "dislikesCount"]: {}
                             }
                         });
                     }
@@ -93,10 +100,25 @@ export const reactionsRouter = t.router({
                         await table.update({
                             where: {id: targetId},
                             data: {
-                                [likeExists.like ? "likes" : "dislikes"]: {
+                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
                                     decrement: 1
                                 },
-                                [likeExists.like ? "dislikes" : "likes"]: {
+                                [likeExists.like ? "dislikesCount" : "likesCount"]: {
+                                    increment: 1
+                                }
+                            }
+                        });
+
+                        // update likes and dislikes
+                        await prisma.user.update({
+                            where: {
+                                id: user.id
+                            },
+                            data: {
+                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
+                                    decrement: 1
+                                },
+                                [likeExists.like ? "dislikesCount" : "likesCount"]: {
                                     increment: 1
                                 }
                             }
@@ -120,12 +142,23 @@ export const reactionsRouter = t.router({
                         await table.update({
                             where: {id: targetId},
                             data: {
-                                [type === "like" ? "likes" : "dislikes"]: {
+                                [type === "like" ? "likesCount" : "dislikesCount"]: {
                                     increment: 1
                                 }
                             }
                         });
-                        // TODO: increment user's rating
+                        // increment user's likes and dislikes
+                        await prisma.user.update({
+                            where: {
+                                id: user.id
+                            },
+                            data: {
+                                [type === "like" ? "likesCount" : "dislikesCount"]: {
+                                    increment: 1
+                                }
+                            }
+                        });
+
                     }
                     return await table.findUnique({
                         where: {id: targetId},

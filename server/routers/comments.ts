@@ -4,7 +4,7 @@ import {isAuthorized} from "../middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
-
+import {Comment} from "@prisma/client";
 
 
 export const commentsRouter = t.router({
@@ -152,15 +152,42 @@ export const commentsRouter = t.router({
 
 
             return await prisma.$transaction(async (prisma) => {
+                let parentComment: Comment | null;
+                let path: string[] = [];
                 if (parentId) {
-                    const parentComment = await prisma.comment.findFirst({where: {id: parentId}});
+                    parentComment = await prisma.comment.findFirst({where: {id: parentId}});
                     if (!parentComment) {
                         throw new TRPCError({
                             code: 'NOT_FOUND',
                             message: 'Parent comment not found'
                         });
                     }
+
+                    await prisma.comment.updateMany({
+                        where: {
+                            // path contains parent comment id
+                            path: {
+                                has: parentId
+                            }
+                        },
+                        data: {
+                            commentsCount: {
+                                increment: 1
+                            }
+                        }
+                    })
+                    path = parentComment.path;
                 }
+                await typeMapping[type].update({
+                    where: {
+                        id
+                    },
+                    data: {
+                        commentsCount: {
+                            increment: 1
+                        }
+                    }
+                });
                 const comment = await prisma.comment.create({
                     data: {
                         text,
@@ -178,33 +205,18 @@ export const commentsRouter = t.router({
                             connect: {
                                 id: user.id
                             }
-                        }
+                        },
                     }
                 });
-                if (parentId) {
-                    await prisma.comment.update({
-                        where: {
-                            id: parentId
-                        },
-                        data: {
-                            commentsCount: {
-                                increment: 1
-                            }
-                        }
-                    })
-                }
-                await typeMapping[type].update({
+                path.push(comment.id);
+                await prisma.comment.update({
                     where: {
-                        id
+                        id: comment.id
                     },
                     data: {
-                        commentsCount: {
-                            increment: 1
-                        }
+                        path
                     }
                 });
-
-                return comment;
             }, {
                 isolationLevel: "Serializable"
             });

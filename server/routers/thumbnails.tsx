@@ -71,7 +71,7 @@ export const thumbnailsRouter = t.router({
     getMaterial: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/materials/{id}/thumbnail',
+            path: '/materials/{id}/thumbnail.png',
         }
     })
         .input(z.object({
@@ -85,7 +85,7 @@ export const thumbnailsRouter = t.router({
     getQuote: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/quotes/{id}/thumbnail',
+            path: '/quotes/{id}/thumbnail.png',
         }
     })
         .input(z.object({
@@ -99,7 +99,7 @@ export const thumbnailsRouter = t.router({
     getReview: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/reviews/{id}/thumbnail',
+            path: '/reviews/{id}/thumbnail.png',
         }
     })
         .input(z.object({
@@ -113,7 +113,7 @@ export const thumbnailsRouter = t.router({
     getTutor: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/tutors/{id}/thumbnail',
+            path: '/tutors/{id}/thumbnail.png',
         }
     })
         .input(z.object({
@@ -127,7 +127,7 @@ export const thumbnailsRouter = t.router({
     getUser: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/users/{id}/thumbnail',
+            path: '/users/{id}/thumbnail.png',
         }
     })
         .input(z.object({

@@ -70,7 +70,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             return {
                 id: profile.id,
                 role: profile.role,
-                name: null,
+                nickname: null,
                 imageId: image
             };
         },

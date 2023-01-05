@@ -3,7 +3,6 @@ import {t} from 'lib/trpc';
 import {TRPCError} from "@trpc/server";
 
 
-
 export const newsRouter = t.router({
     getOne: t.procedure.meta({
         openapi: {

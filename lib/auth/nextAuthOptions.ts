@@ -28,6 +28,8 @@ export const nextAuthOptions: NextAuthOptions = {
                 token.id = user?.id ?? profile?.id;
                 token.role = user?.role ?? profile?.role;
             }
+            token.nickname = token.name;
+            delete token.name;
             return token;
         },
         // session: async ({session, token, user}) => {

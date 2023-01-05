@@ -75,10 +75,10 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     return (
         <>
         {user ?
-            <SEO title={`Пользователь ${user.name}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${user.id}.png`}/> :
+            <SEO title={`Пользователь ${user.nickname}`}
+                 thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
                   <SEO title={`Пользователь ${data.name || '...'}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/users/${id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v1/users/${id}/thumbnail.png`}/>
         }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
@@ -109,7 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         },
         select: {
             id: true,
-            name: true,
+            nickname: true,
             image: {
                 select: {
                     url: true

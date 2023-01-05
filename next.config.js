@@ -66,20 +66,30 @@ const nextConfig = withPWA(
                 test: /\.node$/,
                 loader: "node-loader"
             })
+
+            // use source-map-loader to load .js and cjs files
+            config.module.rules.push({
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+            });
+
+            config.module.rules.push({
+                test: /\.cjs$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+            });
+
+            config.module.rules.push({
+                test: /\.ts/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+            });
+
+
             config.resolve.alias = {
                 ...config.resolve.alias,
-                'better-sqlite3': 'aliases/null-alias.js',
-                'tedious': 'aliases/null-alias.js',
-                'mysql': 'aliases/null-alias.js',
-                'mysql2': 'aliases/null-alias.js',
-                'oracledb': 'aliases/null-alias.js',
-                'pg-query-stream': 'aliases/null-alias.js',
-                'sqlite3': 'aliases/null-alias.js',
-                'pg-native': 'aliases/null-alias.js',
-                'pg-hstore': 'aliases/null-alias.js',
                 'react-ssr-prepass': 'preact-ssr-prepass',
-
-
             }
             // config.externals = {...config.externals, sharp};
 

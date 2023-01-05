@@ -156,7 +156,7 @@ export default async function handler(
                 id
             },
             select: {
-                name: true,
+                nickname: true,
                 email: true,
                 image: {
                     select: {
@@ -174,7 +174,7 @@ export default async function handler(
     }
 
     session = {
-        name: user.name,
+        nickname: user.nickname,
         email: user.email,
         picture: user.image?.url || null,
         sub: user.id,

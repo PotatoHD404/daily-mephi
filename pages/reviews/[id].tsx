@@ -14,7 +14,7 @@ function Review({review}: { review: any }) {
     return (
         <>
             <SEO title={`${review.header}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/reviews/${review.id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v1/reviews/${review.id}/thumbnail.png`}/>
         </>
     );
 
