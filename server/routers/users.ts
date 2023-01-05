@@ -66,7 +66,7 @@ export const usersRouter = t.router({
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
-        .mutation(async ({ctx: {prisma, user: {id: userId}}, input: {nickname, image, bio}}) => {
+        .mutation(async ({ctx: {prisma, user: {id: userId}}, input: {nickname, image: imageId, bio}}) => {
             // check if nickname is toxic
             if(nickname && await isToxic(nickname)) {
                 throw new TRPCError({
@@ -92,8 +92,8 @@ export const usersRouter = t.router({
                         });
                     }
                 }
-                if (image) {
-                    const user = await prisma.user.findFirst({where: {image}});
+                if (imageId) {
+                    const user = await prisma.user.findFirst({where: {imageId: imageId}});
                     if (user && user.id !== userId) {
                         throw new TRPCError({
                             code: 'BAD_REQUEST',
@@ -107,7 +107,7 @@ export const usersRouter = t.router({
                         },
                         data: {
                             nickname,
-                            image: image ? {connect: {id: image}} : undefined,
+                            image: imageId ? {connect: {id: imageId}} : undefined,
                             bio,
                         }
                     }

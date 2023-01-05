@@ -219,13 +219,13 @@ export const materialsRouter = t.router({
                     user: {
                         select: {
                             id: true,
-                            name: true,
+                            nickname: true,
                             image: true,
                         }
                     },
-                    likes: true,
-                    dislikes: true,
-                    commentCount: true
+                    likesCount: true,
+                    dislikesCount: true,
+                    commentsCount: true
                 },
                 take: 10,
                 orderBy: {createdAt: 'desc'}

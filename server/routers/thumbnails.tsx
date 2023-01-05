@@ -1,15 +1,13 @@
-import { z } from 'zod';
-import { t } from 'lib/trpc';
-
-
+import {z} from 'zod';
+import {t} from 'lib/trpc';
 import core from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import {NextApiRequest, NextApiResponse} from "next";
-
-import ejs from 'ejs';
-import path from "path";
+import MaterialThumbnail from 'components/thumbnails/material';
+import ReactDOMServer from 'react-dom/server';
 
 let _page: core.Page | null;
+
 interface Options {
     args: string[];
     executablePath: string;
@@ -79,16 +77,9 @@ export const thumbnailsRouter = t.router({
             // res.end(screenshot);
 
             // render sharp blank image width 2048x1170
-            let rendered = await ejs.renderFile(path.resolve(process.cwd(), 'thumbnails', 'material.svg'), {
-                nickname: "",
-                header: "",
-                description: "",
-                semester: "",
-                faculty: "",
-                discipline: "",
-                image: "",
-                font_path: "",
-            }).then((html: string) => Buffer.from(html));
+            const element = <MaterialThumbnail/>
+            const html = ReactDOMServer.renderToString(element);
+            const rendered = Buffer.from(html);
 
             const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
             res.setHeader('Content-Type', 'image/png');

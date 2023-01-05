@@ -65,12 +65,12 @@ export const quotesRouter = t.router({
                     user: {
                         select: {
                             id: true,
-                            name: true,
+                            nickname: true,
                             image: true,
                         }
                     },
-                    likes: true,
-                    dislikes: true
+                    likesCount: true,
+                    dislikesCount: true
                 },
                 take: 10,
                 orderBy: {createdAt: 'desc'}

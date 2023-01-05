@@ -29,6 +29,6 @@ export type AppRouter = typeof appRouter;
 
 export const openApiDocument = generateOpenApiDocument(appRouter, {
     title: 'DailyMEPhI OpenAPI',
-    version: '2.0.0',
-    baseUrl: getBaseUrl() + "/api/v2",
+    version: '1.0.0',
+    baseUrl: getBaseUrl() + "/api/v1",
 })
