@@ -67,24 +67,16 @@ const nextConfig = withPWA(
                 loader: "node-loader"
             })
 
-            // use source-map-loader to load .js and cjs files
-            config.module.rules.push({
-                test: /\.js$/,
-                use: ["source-map-loader"],
-                enforce: "pre"
-            });
+            // webpack exclude files from node_modules cjs and .js.map
 
-            config.module.rules.push({
-                test: /\.cjs$/,
-                use: ["source-map-loader"],
-                enforce: "pre"
-            });
-
-            config.module.rules.push({
-                test: /\.ts/,
-                use: ["source-map-loader"],
-                enforce: "pre"
-            });
+            // config.module.rules.push({
+            //     test: /\.js$/,
+            //     exclude: /node_modules\/(?!(puppeteer|puppeteer-core|chrome-aws-lambda)\/).*/,
+            //     use: {
+            //         loader: 'babel-loader',
+            //
+            //     }
+            // });
 
 
             config.resolve.alias = {
@@ -96,8 +88,9 @@ const nextConfig = withPWA(
             return config;
         },
         experimental: {
-            esmExternals: false
+            esmExternals: true
         },
+
         async headers() {
             return [
                 {
