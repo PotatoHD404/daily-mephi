@@ -2,8 +2,10 @@ import {z} from 'zod';
 import {t} from 'lib/trpc';
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
+import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 
-// https://github.com/jlalmes/trpc-openapi
+
 
 export const commentsRouter = t.router({
     getOne: t.procedure.meta({
@@ -132,10 +134,14 @@ export const commentsRouter = t.router({
             type: z.enum(["news", "material", "review"]),
             id: z.string().uuid(),
             text: z.string(),
-            parentId: z.string().uuid().optional()
+            parentId: z.string().uuid().optional(),
+            csrfToken: z.string(),
+            recaptchaToken: z.string()
         }))
         .output(z.any())
         .use(isAuthorized)
+        .use(verifyCSRFToken)
+        .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {id, type, text, parentId}}) => {
 
             let typeMapping: Record<string, any> = {

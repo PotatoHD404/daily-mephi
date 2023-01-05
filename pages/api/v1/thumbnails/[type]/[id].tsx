@@ -6,7 +6,7 @@
 import core from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import {NextApiRequest, NextApiResponse} from "next";
-import sharp from "sharp";
+
 import ejs from 'ejs';
 import path from "path";
 
@@ -75,7 +75,7 @@ export default async function (
             discipline: "",
             image: "",
             font_path: "",
-        }).then((html) => Buffer.from(html));
+        }).then((html: string) => Buffer.from(html));
 
     const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
     res.setHeader('Content-Type', 'image/png');

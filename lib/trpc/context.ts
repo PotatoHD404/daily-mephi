@@ -4,6 +4,7 @@ import {prisma} from 'lib/database/prisma';
 import {notion} from "../database/notion";
 import {unstable_getServerSession, User} from "next-auth";
 import {nextAuthOptions} from "../auth/nextAuthOptions";
+import {TRPCError} from "@trpc/server";
 
 // create context based of incoming request
 // set as optional here, so it can also be re-used for `getStaticProps()`
@@ -13,27 +14,22 @@ export const createContext = async (
     // get session from request
     const req = opts?.req;
     const res = opts?.res;
-    const session = req && res && (await unstable_getServerSession(req, res, nextAuthOptions));
-    // type of user
-    type MyUser = {
-        id: string,
-        nickname: string,
-        image: string | null,
-    };
-    const sessionUser = session?.user as (User & MyUser);
-    let user: MyUser | null = null;
-    if (sessionUser.id) {
-        user = {
-            id: sessionUser.id,
-            // @ts-ignore
-            nickname: sessionUser.name,
-            image: sessionUser?.image || null,
-        };
+
+    if (!req) {
+        throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'No request found'
+        })
+    }
+    if(!res) {
+        throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'No response found'
+        })
     }
     return {
         req,
         res,
-        user,
         prisma,
         notion
     };

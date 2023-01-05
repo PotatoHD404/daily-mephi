@@ -1,8 +1,134 @@
 import { z } from 'zod';
 import { t } from 'lib/trpc';
+import {TRPCError} from "@trpc/server";
+import {isAuthorized} from "../middlewares/isAuthorized";
+import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
+import {isToxic} from "../../lib/toxicity";
+import {getDocument} from "../../lib/database/fullTextSearch";
 
-// https://github.com/jlalmes/trpc-openapi
+
+
 
 export const usersRouter = t.router({
+    getOne: t.procedure.meta({
+        openapi: {
+            method: 'GET',
+            path: '/users/{id}',
+        }
+    })
+        .input(z.object({
+            id: z.string().uuid(),
+        }))
+        .output(z.any())
+        .query(async ({ctx: {prisma}, input: {id}}) => {
+            const user = await prisma.user.findUnique({
+                where: {
+                    id
+                },
+                select: {
+                    nickname: true,
+                    id: true,
+                    image: true,
+                    rating: true,
+                    role: true,
+                    likesCount: true,
+                    dislikesCount: true,
+                    materialsCount: true,
+                    reviewsCount: true,
+                    quotesCount: true,
+                    place: true,
+                }
+            });
+            if (!user) {
+                throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'User not found'
+                });
+            }
+            return user;
+    }),
+    edit: t.procedure.meta({
+        openapi: {
+            method: 'PUT',
+            path: '/users',
+            protect: true,
+        }
+    })
+        .input(z.object({
+            nickname: z.string().regex(/^[a-zA-Z0-9_]{3,30}$/, {message: 'Nickname must be 3-30 characters long and contain only letters, numbers and underscores'}).optional(),
+            image: z.string().url().optional(),
+            bio: z.string().max(150, {message: 'Bio must be 150 characters or less'}).optional(),
+            csrfToken: z.string().uuid(),
+            recaptchaToken: z.string(),
+        }))
+        .output(z.any())
+        .use(isAuthorized)
+        .use(verifyCSRFToken)
+        .use(verifyRecaptcha)
+        .mutation(async ({ctx: {prisma, user: {id: userId}}, input: {nickname, image, bio}}) => {
+            // check if nickname is toxic
+            if(nickname && await isToxic(nickname)) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Nickname is toxic'
+                });
+            }
+            // check if bio is toxic
+            if(bio && await isToxic(bio)) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Bio is toxic'
+                });
+            }
+            await prisma.$transaction(async (prisma) => {
+                // TODO: parallelize
+                if (nickname) {
+                    const user = await prisma.user.findUnique({where: {nickname}});
+                    if (user && user.id !== userId) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: 'Nickname is already taken'
+                        });
+                    }
+                }
+                if (image) {
+                    const user = await prisma.user.findFirst({where: {image}});
+                    if (user && user.id !== userId) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: 'Image already taken'
+                        });
+                    }
+                }
+                await prisma.user.update({
+                        where: {
+                            id: userId
+                        },
+                        data: {
+                            nickname,
+                            image: image ? {connect: {id: image}} : undefined,
+                            bio,
+                        }
+                    }
+                )
+                // update or create document
+                const docContent = getDocument(nickname + ' ' + bio);
+                await prisma.document.upsert({
+                    where: {
+                        userId
+                    },
+                    create: {
+                        userId,
+                        ...docContent
+                    },
+                    update: docContent
+                });
+                // update search index
+                // TODO
 
+                // return ok
+                return {ok: true};
+            });
+    })
 });

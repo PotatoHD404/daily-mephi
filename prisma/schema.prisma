@@ -49,24 +49,25 @@ model Session {
 }
 
 model User {
-  id              String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  nickname        String?   @unique @map("nickname") @db.String(50)
-  imageId         String?   @unique @map("image_id") @db.Uuid
-  role            String    @default("default") @map("role")
-  email           String?   @unique @map("email")
-  emailVerified   DateTime? @map("email_verified")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
-  rating          Float     @default(0) @map("rating") @db.Float8
-  bio             String?   @map("bio") @db.String(150)
-  image           File?     @relation(fields: [imageId], references: [id], name: "users_images")
-  place           Int       @default(sequence(start: 1)) @map("place")
-  likes_count     Int       @default(0) @map("likes_count")
-  dislikes_count  Int       @default(0) @map("dislikes_count")
-  comments_count  Int       @default(0) @map("comments_count")
-  materials_count Int       @default(0) @map("materials_count")
-  reviews_count   Int       @default(0) @map("reviews_count")
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  nickname       String?   @unique @map("nickname") @db.String(50)
+  imageId        String?   @unique @map("image_id") @db.Uuid
+  role           String    @default("default") @map("role")
+  email          String?   @unique @map("email")
+  emailVerified  DateTime? @map("email_verified")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  rating         Float     @default(0) @map("rating") @db.Float8
+  bio            String?   @map("bio") @db.String(150)
+  image          File?     @relation(fields: [imageId], references: [id], name: "users_images")
+  place          Int       @default(sequence(start: 1)) @map("place")
+  likesCount     Int       @default(0) @map("likes_count")
+  dislikesCount  Int       @default(0) @map("dislikes_count")
+  commentsCount  Int       @default(0) @map("comments_count")
+  materialsCount Int       @default(0) @map("materials_count")
+  reviewsCount   Int       @default(0) @map("reviews_count")
+  quotesCount    Int       @default(0) @map("quotes_count")
 
   accounts  Account[]  @relation(name: "users_accounts")
   sessions  Session[]  @relation(name: "users_sessions")

@@ -6,8 +6,10 @@ import {timeout} from "pages/api/v1/files";
 import {func_ids} from "../../lib/constants/notionFuncIds";
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
+import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 
-// https://github.com/jlalmes/trpc-openapi
+
 
 async function getNotionToken() {
     return process.env.NOTION_TOKEN_V2 ?? ""
@@ -92,13 +94,18 @@ export const filesRouter = t.router({
         openapi: {
             method: 'POST',
             path: '/files',
+            protect: true
         }
     })
         .input(z.object({
-            filename: z.string()
+            filename: z.string(),
+            csrfToken: z.string(),
+            recaptchaToken: z.string(),
         }))
         .output(z.any())
         .use(isAuthorized)
+        .use(verifyCSRFToken)
+        .use(verifyRecaptcha)
         .mutation(async ({input: {filename}, ctx: {prisma, notion}}) => {
             const tmp = filename.split('.');
             let ext = tmp.pop();
@@ -193,13 +200,18 @@ export const filesRouter = t.router({
             openapi: {
                 method: 'PUT',
                 path: '/files',
+                protect: true
             }
         })
             .input(z.object({
-                token: z.string()
+                token: z.string(),
+                csrfToken: z.string(),
+                recaptchaToken: z.string(),
             }))
             .output(z.any())
             .use(isAuthorized)
+            .use(verifyCSRFToken)
+            .use(verifyRecaptcha)
             .mutation(async ({input: {token}, ctx: {prisma, notion, user}}) => {
                 if (!process.env.JWT_PRIVATE)
                     throw new Error('Jwt key is undefined');

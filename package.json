@@ -25,6 +25,7 @@
     "@trpc/next": "^10.7.0",
     "@trpc/react-query": "^10.7.0",
     "@trpc/server": "^10.7.0",
+    "@vercel/og": "^0.0.21",
     "argon2": "^0.29.1",
     "autoprefixer": "^10.4.8",
     "chrome-aws-lambda": "^10.1.0",

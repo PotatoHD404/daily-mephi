@@ -51,6 +51,7 @@ CREATE TABLE "users" (
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "materials_count" INT4 NOT NULL DEFAULT 0,
     "reviews_count" INT4 NOT NULL DEFAULT 0,
+    "quotes_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")

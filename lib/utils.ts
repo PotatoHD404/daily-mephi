@@ -150,3 +150,16 @@ export function verifyCSRFToken(req: NextApiRequest) {
     }
     return false;
 }
+
+export async function verifyRecaptcha(req: NextApiRequest) {
+    const {recaptchaToken: token} = req.body;
+    if(!process.env.RECAPTCHA_SECRET) {
+        throw new Error('RECAPTCHA_SECRET is not defined')
+    }
+
+    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${token}`, {
+        method: 'POST',
+    });
+    const data = await response.json();
+    return data.success && data.score >= 0.5;
+}
