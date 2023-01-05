@@ -1,5 +1,5 @@
 import { createOpenApiNextHandler } from "trpc-openapi";
-import {appRouter} from "server/_app";
+import {appRouter} from "server";
 import {createContext} from "lib/trpc/context";
 
 export default createOpenApiNextHandler({

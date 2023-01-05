@@ -1,16 +1,16 @@
 import {t} from 'lib/trpc';
 import {generateOpenApiDocument} from "trpc-openapi";
 import {getBaseUrl} from "lib/trpc/utils";
-import {utilsRouter} from "./utils";
-import {commentsRouter} from "./comments";
-import {filesRouter} from "./files";
-import {materialsRouter} from "./materials";
-import {newsRouter} from "./news";
-import {quotesRouter} from "./quotes";
-import {reviewsRouter} from "./reviews";
-import {thumbnailsRouter} from "./thumbnails";
-import {tutorsRouter} from "./tutors";
-import {usersRouter} from "./users";
+import {utilsRouter} from "./routers/utils";
+import {commentsRouter} from "./routers/comments";
+import {filesRouter} from "./routers/files";
+import {materialsRouter} from "./routers/materials";
+import {newsRouter} from "./routers/news";
+import {quotesRouter} from "./routers/quotes";
+import {reviewsRouter} from "./routers/reviews";
+import {thumbnailsRouter} from "./routers/thumbnails";
+import {tutorsRouter} from "./routers/tutors";
+import {usersRouter} from "./routers/users";
 
 export const appRouter = t.router({
     comments: commentsRouter,
