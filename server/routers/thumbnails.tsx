@@ -2,8 +2,12 @@ import {z} from 'zod';
 import {t} from 'lib/trpc';
 import core from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import MaterialThumbnail from 'components/thumbnails/material';
+import QuoteThumbnail from 'components/thumbnails/quote';
+import ReviewThumbnail from 'components/thumbnails/review';
+import TutorThumbnail from 'components/thumbnails/tutor';
+import UserThumbnail from 'components/thumbnails/user';
 import ReactDOMServer from 'react-dom/server';
 
 let _page: core.Page | null;
@@ -89,7 +93,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
-            const element = <MaterialThumbnail/>
+            const element = <QuoteThumbnail/>
             await renderAndSend(element, res);
         }),
     getReview: t.procedure.meta({
@@ -103,7 +107,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
-            const element = <MaterialThumbnail/>
+            const element = <ReviewThumbnail/>
             await renderAndSend(element, res);
         }),
     getTutor: t.procedure.meta({
@@ -117,7 +121,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
-            const element = <MaterialThumbnail/>
+            const element = <TutorThumbnail/>
             await renderAndSend(element, res);
         }),
     getUser: t.procedure.meta({
@@ -131,7 +135,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
-            const element = <MaterialThumbnail/>
+            const element = <UserThumbnail/>
             await renderAndSend(element, res);
         }),
 

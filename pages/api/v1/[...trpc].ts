@@ -56,6 +56,7 @@ export default async function handler(
     }
     catch (e: any) {
         if (e?.code === 'ERR_HTTP_HEADERS_SENT') {
+            // Ignore this error, it's not really an error
             return;
         }
         throw e
