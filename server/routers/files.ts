@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'lib/trpc';
+import {t} from 'server/trpc';
 import {extToMimes} from "lib/constants/extToMimes";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import {func_ids} from "../../lib/constants/notionFuncIds";

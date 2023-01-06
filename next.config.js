@@ -89,7 +89,7 @@ const nextConfig = withPWA(
             return config;
         },
         experimental: {
-            esmExternals: true
+            esmExternals: false
         },
 
         async headers() {

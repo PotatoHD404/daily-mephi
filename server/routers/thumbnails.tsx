@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'lib/trpc';
+import {t} from 'server/trpc';
 import core from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import {NextApiResponse} from "next";

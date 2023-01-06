@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'lib/trpc';
+import {t} from 'server/trpc';
 
 let epoch = new Date(1970, 1, 1);
 

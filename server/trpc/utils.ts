@@ -2,7 +2,7 @@ import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 
 import superjson from 'superjson';
-import {AppRouter} from "server";
+import {AppRouter} from "server/index";
 
 export function getBaseUrl() {
     if (typeof window !== 'undefined') {
@@ -60,5 +60,5 @@ export const utils = createTRPCNext<AppRouter>({
     /**
      * @link https://trpc.io/docs/ssr
      */
-    ssr: false,
+    ssr: true,
 });

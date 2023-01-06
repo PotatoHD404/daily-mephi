@@ -1,9 +1,9 @@
 import * as trpc from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import {prisma} from 'lib/database/prisma';
-import {notion} from "../database/notion";
+import {notion} from "../../lib/database/notion";
 import {unstable_getServerSession, User} from "next-auth";
-import {nextAuthOptions} from "../auth/nextAuthOptions";
+import {nextAuthOptions} from "../../lib/auth/nextAuthOptions";
 import {TRPCError} from "@trpc/server";
 
 // create context based of incoming request
