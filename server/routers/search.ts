@@ -1,4 +1,4 @@
-import {t} from "lib/trpc";
+import {t} from "server/trpc";
 import {z} from "zod";
 import {generate3grams, prepareText} from "lib/database/fullTextSearch";
 import {Prisma} from ".prisma/client";

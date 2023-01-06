@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'lib/trpc';
+import {t} from 'server/trpc';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
