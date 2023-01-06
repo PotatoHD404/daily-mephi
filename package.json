@@ -7,8 +7,6 @@
     "start": "next start",
     "lint": "next lint",
     "postbuild": "next-sitemap",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
     "build-api": "node cloud-functions/main/gen_api_config.js",
     "test": "jest --detectOpenHandles"
   },
@@ -58,14 +56,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
-    "@storybook/addon-actions": "^6.5.9",
-    "@storybook/addon-essentials": "^6.5.12",
-    "@storybook/addon-interactions": "^6.5.12",
-    "@storybook/addon-links": "^6.5.9",
-    "@storybook/builder-webpack5": "^6.5.9",
-    "@storybook/manager-webpack5": "^6.5.9",
-    "@storybook/react": "^6.5.9",
-    "@storybook/testing-library": "^0.0.13",
     "@types/cookie": "^0.5.1",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/luxon": "^3.0.1",
@@ -76,10 +66,7 @@
     "chromatic": "^6.9.0",
     "eslint": "8.23.1",
     "eslint-config-next": "12.3.0",
-    "eslint-plugin-storybook": "^0.6.8",
     "prisma": "^4.8.0",
-    "storybook-addon-mock": "^2.4.1",
-    "storybook-addon-next": "^1.7.1",
     "supertest": "^6.2.4",
     "typescript": "^4.8.3"
   }
