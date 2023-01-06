@@ -43,20 +43,6 @@ public/workbox-*.js
 public/service-worker.js
 /ydb_certs/
 
-parsing/home/parsed.json
-/parsing/home/parsed1.json
-
-parsing/home/new1.json
-/parsing/mephist/materials/
-/parsing/mephist/old data/
-
-parsing/mephist/old_data/
-
-parsing/home/tutor_imgs/
-
-parsing/home/new1.zip
-
-/parsing/mephist/photos/
 /.env
 /parsing/
 /storybook-static/
