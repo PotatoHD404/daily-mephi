@@ -8,7 +8,7 @@ import QuoteThumbnail from 'server/thumbnails/quote';
 import ReviewThumbnail from 'server/thumbnails/review';
 import TutorThumbnail from 'server/thumbnails/tutor';
 import UserThumbnail from 'server/thumbnails/user';
-import ReactDOMServer from 'react-dom/server';
+import render from 'preact-render-to-string';
 
 let _page: core.Page | null;
 
@@ -59,7 +59,7 @@ export async function getScreenshot(html: string, type: FileType, isDev: boolean
 }
 
 async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
-    const html = ReactDOMServer.renderToString(element);
+    const html = render(element);
     const rendered = Buffer.from(html);
 
     const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
