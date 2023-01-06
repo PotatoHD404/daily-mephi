@@ -4615,17 +4615,10 @@ postcss@^8.4.14, postcss@^8.4.16:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-preact-render-to-string@^5.1.19:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.2.1.tgz#71f3e8cda65f33dbc8ad8d904ff58e3f532e59f3"
-  integrity sha512-Wp3ner1aIVBpKg02C4AoLdBiw4kNaiFSYHr4wUF+fR7FWKAQzNri+iPfPp31sEhAtBfWoJrSxiEFzd5wp5zCgQ==
-  dependencies:
-    pretty-format "^3.8.0"
-
-preact-render-to-string@^5.2.4:
-  version "5.2.4"
-  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.2.4.tgz#7d6a3f76e13fa9df8e81ccdef2f2b02489e5a3fd"
-  integrity sha512-iIPHb3BXUQ3Za6KNhkjN/waq11Oh+QWWtAgN3id3LrL+cszH3DYh8TxJPNQ6Aogsbu4JsqdJLBZltwPFpG6N6w==
+preact-render-to-string@^5.1.19, preact-render-to-string@^5.2.6:
+  version "5.2.6"
+  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz#0ff0c86cd118d30affb825193f18e92bd59d0604"
+  integrity sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==
   dependencies:
     pretty-format "^3.8.0"
 
