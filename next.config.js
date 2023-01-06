@@ -66,6 +66,7 @@ const nextConfig = withPWA(
                 test: /\.node$/,
                 loader: "node-loader"
             })
+            config.externals.push('chrome-aws-lambda');
 
             // webpack exclude files from node_modules cjs and .js.map
 
