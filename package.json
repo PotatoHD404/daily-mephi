@@ -63,7 +63,7 @@
     "@types/react": "^18.0.15",
     "@types/string-similarity": "^4.0.0",
     "@types/supertest": "^2.0.12",
-    "chromatic": "^6.9.0",
+    "chromatic": "^6.15.0",
     "eslint": "8.23.1",
     "eslint-config-next": "12.3.0",
     "prisma": "^4.8.0",
