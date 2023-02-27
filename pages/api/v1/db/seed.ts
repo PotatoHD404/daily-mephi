@@ -778,10 +778,10 @@ await knex<News>("news").insert(news);
 // get reviews
 
 const [ reviews, materials, quotes, tutors ] = await Promise.all([
-    knex<Review>("reviews").select("*").limit(30),
-    knex<Material>("materials").select("*").limit(30),
-    knex<Quote>("quotes").select("*").limit(30),
-    knex<Tutor>("tutors").select("*").limit(30),
+    knex<Review>("reviews").select("*").limit(2000),
+    knex<Material>("materials").select("*").limit(2000),
+    knex<Quote>("quotes").select("*").limit(2000),
+    knex<Tutor>("tutors").select("*").limit(2000),
 ]);
 
 // add comments to news
@@ -958,11 +958,11 @@ for (let i = 0; i < 100; i++) {
 const uniqueReactions = reactions.filter(
     (reaction, index, self) =>
         index === self.findIndex((r) => r.user_id === reaction.user_id &&
-        (r.comment_id === reaction.comment_id ||
-        r.review_id === reaction.review_id ||
-        r.material_id === reaction.material_id ||
-        r.news_id === reaction.news_id ||
-        r.quote_id === reaction.quote_id))
+        ((r.comment_id === reaction.comment_id && r.comment_id !== null) ||
+        (r.review_id === reaction.review_id && r.review_id !== null) ||
+        (r.material_id === reaction.material_id && r.material_id !== null) ||
+        (r.news_id === reaction.news_id && r.news_id !== null) ||
+        (r.quote_id === reaction.quote_id && r.quote_id !== null))),
 );
 // TODO: fix bug, reactions that are unique are not inserted
 await knex<Reaction>("reactions").insert(uniqueReactions);
