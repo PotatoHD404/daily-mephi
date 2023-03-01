@@ -73,7 +73,7 @@ jobs:
           yc config set token ${{ secrets.YC_TOKEN }}
       - name: Install tf-next
         run: |
-          npm i -g tf-next@canary
+          npm i -g @potatohd/tf-next
       - name: Create .env file
         run: |
           echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
