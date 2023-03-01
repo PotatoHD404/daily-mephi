@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
-import core from 'puppeteer-core';
+import core, { Page } from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 import {NextApiResponse} from "next";
 import MaterialThumbnail from 'server/thumbnails/material';
@@ -10,7 +10,7 @@ import TutorThumbnail from 'server/thumbnails/tutor';
 import UserThumbnail from 'server/thumbnails/user';
 import render from 'preact-render-to-string';
 
-let _page: core.Page | null;
+let _page: Page | null;
 
 interface Options {
     args: string[];
