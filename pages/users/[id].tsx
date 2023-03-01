@@ -6,7 +6,7 @@ import User from "components/user"
 import {useQuery} from "@tanstack/react-query";
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
-import prisma from "lib/database/prisma";
+import { prisma } from "lib/database/prisma";
 import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "../../lib/constants/uuidRegex";

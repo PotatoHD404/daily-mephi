@@ -4,7 +4,7 @@ import {PrismaClient} from '@prisma/client';
 // import {redis} from "./redis";
 
 let notInitialized = (global as any).prisma === undefined;
-export const prisma: PrismaClient =
+const prisma: PrismaClient =
     (global as any).prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
@@ -77,4 +77,4 @@ if (notInitialized) {
 // }
 
 // @ts-ignore
-export default prisma;
+export { prisma };

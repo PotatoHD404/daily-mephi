@@ -5,7 +5,7 @@ import supertest from 'supertest';
 
 import {apiResolver} from "next/dist/server/api-utils/node";
 import debugHandler from 'pages/api/v1/top';
-import prisma from "../../lib/database/prisma";
+import { prisma } from "../../lib/database/prisma";
 
 jest.setTimeout(5 * 10e2);
 describe('[GET] /api/v1/top', () => {

@@ -24,7 +24,7 @@ services:
      - "26257:26257"
      - "8080:8080"
    command: start-single-node --insecure
-#   platform: linux/arm64
+  #  platform: linux/arm64
    volumes:
      - "cockroach-data:/cockroach/cockroach-data"
    restart: unless-stopped

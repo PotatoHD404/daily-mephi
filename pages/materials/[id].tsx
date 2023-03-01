@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
 import {GetServerSideProps} from "next";
-import prisma from "lib/database/prisma";
+import { prisma } from "lib/database/prisma";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {useRouter} from "next/router";
 
