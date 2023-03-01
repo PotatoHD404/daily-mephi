@@ -25,7 +25,9 @@ export const nextAuthOptions: NextAuthOptions = {
     callbacks: {
         async jwt({token, user, account, profile, isNewUser}) {
             if (user || profile) {
+                // @ts-ignore
                 token.id = user?.id ?? profile?.id;
+                // @ts-ignore
                 token.role = user?.role ?? profile?.role;
             }
             token.nickname = token.name;

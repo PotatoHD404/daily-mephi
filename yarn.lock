@@ -5168,7 +5168,7 @@ preact-ssr-prepass@^1.2.0:
   resolved "https://registry.yarnpkg.com/preact-ssr-prepass/-/preact-ssr-prepass-1.2.0.tgz#f9c0545f18117971dcc6a09dbc3014067acce583"
   integrity sha512-UKz6FB2+KepjHQ6aGqiTUMZfGgdoTunxtByczdUNho9UvSRTJw31Np9J+wUSAlJ1kALJGX1BpcBLvO3iohQUSA==
 
-preact@^10.11.0, preact@^10.6.3:
+preact@^10.13.0, preact@^10.6.3:
   version "10.13.0"
   resolved "https://registry.yarnpkg.com/preact/-/preact-10.13.0.tgz#f8bd3cf257a4dbe41da71a52131b79916d4ca89d"
   integrity sha512-ERdIdUpR6doqdaSIh80hvzebHB7O6JxycOhyzAeLEchqOq/4yueslQbfnPwXaNhAYacFTyCclhwkEbOumT0tHw==
