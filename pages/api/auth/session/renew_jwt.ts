@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
-import prisma from "lib/database/prisma";
+import { prisma } from "lib/database/prisma";
 import jwt, {encode, getToken} from "next-auth/jwt";
 import { serialize } from "cookie"
 

@@ -2,7 +2,6 @@ import {t} from "server/trpc";
 import {z} from "zod";
 import {generate3grams, prepareText} from "lib/database/fullTextSearch";
 import {Prisma} from ".prisma/client";
-import flatten from "fork-ts-checker-webpack-plugin/lib/utils/array/flatten";
 import {TRPCError} from "@trpc/server";
 import Sql = Prisma.Sql;
 
@@ -132,7 +131,7 @@ export const searchRouter = t.router({
                     results[el.type].push(el);
                 }
             });
-            return flatten(await Promise.all(Object.entries(results).map(async ([key, value]: any) => {
+            return (await Promise.all(Object.entries(results).map(async ([key, value]: any) => {
                 let ids = value.map((el: any) => el.docId);
                 // @ts-ignore
                 const table = prismaMapping[key];
@@ -143,6 +142,6 @@ export const searchRouter = t.router({
                         }
                     }
                 });
-            })));
+            }))).flat();
         }),
 });
