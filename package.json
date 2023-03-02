@@ -19,6 +19,7 @@
     "@next/bundle-analyzer": "^13.2.3",
     "@notionhq/client": "^2.2.0",
     "@prisma/client": "^4.11.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^4.11.0",
     "@tanstack/react-query": "^4.3.4",
     "@trpc/client": "^10.7.0",
     "@trpc/next": "^10.7.0",

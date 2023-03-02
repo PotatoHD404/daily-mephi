@@ -1448,6 +1448,11 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.11.0.tgz#c99749bfe20f58e8f4d2b5e04fee0785eba440e1"
   integrity sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==
 
+"@prisma/nextjs-monorepo-workaround-plugin@^4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@prisma/nextjs-monorepo-workaround-plugin/-/nextjs-monorepo-workaround-plugin-4.11.0.tgz#7dc9f0c754bd71835dad4a11153eafbe63f08451"
+  integrity sha512-h9Y6Q2fbxsyBbquqdmZpLTVgOaVKbrTfk7V5FUQGtPTeaqGa+jA/DR7ABkunGGgbnKsGrkSijmISrFBPaSh1Yg==
+
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.3.1.tgz#04bc0608f4aa4b2e4b1aebf284344d0f68fda283"
