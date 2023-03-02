@@ -59,7 +59,7 @@
     "@types/cookie": "^0.5.1",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/luxon": "^3.0.1",
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.14.4",
     "@types/react": "^18.0.15",
     "@types/string-similarity": "^4.0.0",
     "@types/supertest": "^2.0.12",
