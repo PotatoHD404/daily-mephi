@@ -29,8 +29,8 @@ variable "DOMAIN_ID" {
 }
 
 variable "CERTIFICATE_ID" {
-  type = string
-  nullable = false
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
@@ -440,13 +440,13 @@ data "template_file" "api_gateway" {
     hash               = data.external.pages_hash.result.pages_hash
   }
 }
- 
+
 resource "yandex_api_gateway" "daily-mephi-gateway" {
-  name        = "daily-mephi"
-  description = "Daily mephi gateway"
-  spec        = data.template_file.api_gateway.rendered
+  name           = "daily-mephi"
+  description    = "Daily mephi gateway"
+  spec           = data.template_file.api_gateway.rendered
   custom_domains {
-    fqdn = "daily-mephi.ru"
+    fqdn           = "daily-mephi.ru"
     certificate_id = var.CERTIFICATE_ID
   }
 }
