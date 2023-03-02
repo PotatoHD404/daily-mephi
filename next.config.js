@@ -1,5 +1,10 @@
 const runtimeCaching = require('next-pwa/cache');
 const withPreact = require('next-plugin-preact');
+const withPlugins = require('next-compose-plugins')
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+    openAnalyzer: true,
+})
 const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
@@ -49,47 +54,37 @@ const securityHeaders = [
 //     });
 // }
 
-// const sharp = "commonjs sharp";
+// const sharp = 'commonjs sharp';
 
 /** @type {import('next').NextConfig} */
-
-
-const nextConfig = withPWA(
+let nextConfig =
     {
-        target: 'server',
+        target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
-        webpack: (config) => {
+        webpack: (config, options) => {
             config.experiments = {layers: true, topLevelAwait: true};
-            // add sharp to externals
 
-            // config.module.rules.push({
-            //     test: /\.node$/,
-            //     loader: "node-loader"
-            // })
-            //
-            // config.module.rules.push({
-            //     test: /\.html$/i,
-            //     loader: "html-loader",
-            // })
-            config.externalsPresets = {
-                node: true
-            }
-            config.node = {
-                global: false
-            }
-            config.externals = [nodeExternals()]
-
-            // webpack exclude files from node_modules cjs and .js.map
-
-            // config.module.rules.push({
-            //     test: /\.js$/,
-            //     exclude: /node_modules\/(?!(puppeteer|puppeteer-core|chrome-aws-lambda)\/).*/,
-            //     use: {
-            //         loader: 'babel-loader',
-            //
-            //     }
-            // });
+            config.externals = [
+                ...config.externals,
+                'argon2',
+                'chrome-aws-lambda',
+                'node-fetch',
+                'natural',
+                'puppeteer-core'
+            ]
+            // if (!options.isServer) {
+            //     config.externals = [nodeExternals()]
+            // } else {
+            //     config.externals = [
+            //         ...config.externals,
+            //         'argon2',
+            //         'chrome-aws-lambda',
+            //         'node-fetch',
+            //         'natural',
+            //         'puppeteer-core'
+            //     ]
+            // }
 
 
             config.resolve.alias = {
@@ -101,7 +96,6 @@ const nextConfig = withPWA(
                 // 'node-gyp': 'aliases/null-alias.js',
                 // 'npm': 'aliases/null-alias.js',
             }
-            // config.externals = {...config.externals, sharp};
 
             return config;
         },
@@ -137,8 +131,14 @@ const nextConfig = withPWA(
             // !! WARN !!
             ignoreBuildErrors: false
         }
-    });
+    };
 //https://www.npmjs.com/package/next-pwa
 
-module.exports = withPreact(nextConfig);
-// module.exports = nextConfig
+// module.exports = withPreact(withPWA(withBundleAnalyzer(nextConfig)));
+
+module.exports = withPlugins([
+    [withBundleAnalyzer],
+    [withPWA],
+    [withPreact],
+    // your other plugins here
+], nextConfig);
