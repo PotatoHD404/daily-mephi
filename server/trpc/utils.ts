@@ -60,5 +60,5 @@ export const utils = createTRPCNext<AppRouter>({
     /**
      * @link https://trpc.io/docs/ssr
      */
-    ssr: true,
+    // ssr: true,
 });
