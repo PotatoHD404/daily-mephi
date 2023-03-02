@@ -1,5 +1,6 @@
 const runtimeCaching = require('next-pwa/cache');
-const withPreact = require('next-plugin-preact')
+const withPreact = require('next-plugin-preact');
+const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
     // disable: process.env.NODE_ENV === 'development',
@@ -55,18 +56,29 @@ const securityHeaders = [
 
 const nextConfig = withPWA(
     {
-        target: 'serverless',
+        target: 'server',
         swcMinify: true,
         reactStrictMode: true,
         webpack: (config) => {
             config.experiments = {layers: true, topLevelAwait: true};
             // add sharp to externals
 
-            config.module.rules.push({
-                test: /\.node$/,
-                loader: "node-loader"
-            })
-            config.externals.push('chrome-aws-lambda');
+            // config.module.rules.push({
+            //     test: /\.node$/,
+            //     loader: "node-loader"
+            // })
+            //
+            // config.module.rules.push({
+            //     test: /\.html$/i,
+            //     loader: "html-loader",
+            // })
+            config.externalsPresets = {
+                node: true
+            }
+            config.node = {
+                global: false
+            }
+            config.externals = [nodeExternals()]
 
             // webpack exclude files from node_modules cjs and .js.map
 
@@ -83,6 +95,11 @@ const nextConfig = withPWA(
             config.resolve.alias = {
                 ...config.resolve.alias,
                 'react-ssr-prepass': 'preact-ssr-prepass',
+                // 'mock-aws-s3': 'aliases/null-alias.js',
+                // 'aws-sdk': 'aliases/null-alias.js',
+                // 'nock': 'aliases/null-alias.js',
+                // 'node-gyp': 'aliases/null-alias.js',
+                // 'npm': 'aliases/null-alias.js',
             }
             // config.externals = {...config.externals, sharp};
 

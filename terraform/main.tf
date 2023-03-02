@@ -28,6 +28,12 @@ variable "DOMAIN_ID" {
   sensitive = true
 }
 
+variable "CERTIFICATE_ID" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
 locals {
   mime_types = jsondecode(file("${path.module}/mimes.json"))
 }
@@ -328,16 +334,6 @@ echo "Uploaded pages-lambda.zip"
 #access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
 #secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
 
-resource "null_resource" "set_domain" {
-  depends_on = [yandex_api_gateway.daily-mephi-gateway]
-  triggers   = {
-    build_number = yandex_api_gateway.daily-mephi-gateway.id
-  }
-  provisioner "local-exec" {
-    command = "yc serverless api-gateway add-domain ${yandex_api_gateway.daily-mephi-gateway.id} --domain-id ${var.DOMAIN_ID}"
-  }
-}
-
 #resource "null_resource" "add_domain" {
 #  depends_on = [yandex_api_gateway.daily-mephi-gateway]
 #  triggers = {
@@ -446,8 +442,12 @@ data "template_file" "api_gateway" {
 }
 
 resource "yandex_api_gateway" "daily-mephi-gateway" {
-  name        = "daily-mephi"
-  description = "Daily mephi gateway"
-  spec        = data.template_file.api_gateway.rendered
+  name           = "daily-mephi"
+  description    = "Daily mephi gateway"
+  spec           = data.template_file.api_gateway.rendered
+  custom_domains {
+    fqdn           = "daily-mephi.ru"
+    certificate_id = var.CERTIFICATE_ID
+  }
 }
 
