@@ -24,7 +24,7 @@
     "@trpc/react-query": "^10.7.0",
     "@trpc/server": "^10.7.0",
     "@vercel/og": "^0.2.0",
-    "argon2": "^0.29.1",
+    "argon2": "^0.30.3",
     "autoprefixer": "^10.4.13",
     "chrome-aws-lambda": "^10.1.0",
     "ioredis": "^5.2.4",
