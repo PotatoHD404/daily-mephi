@@ -37,7 +37,7 @@
     "next-compose-plugins": "^2.2.1",
     "next-plugin-preact": "^3.0.7",
     "next-pwa": "^5.6.0",
-    "next-sitemap": "^3.1.44",
+    "next-sitemap": "^4.0.1",
     "postcss": "^8.4.20",
     "preact": "^10.13.0",
     "preact-render-to-string": "^5.2.6",
