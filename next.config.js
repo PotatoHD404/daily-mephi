@@ -63,6 +63,7 @@ let nextConfig =
         target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
+        staticPageGenerationTimeout: 30,
         webpack: (config, options) => {
             config.experiments = {layers: true, topLevelAwait: true};
 
