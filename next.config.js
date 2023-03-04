@@ -19,13 +19,13 @@ const withPWA = require('next-pwa')({
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.google.com https://www.gstatic.com gc.kis.v2.scr.kaspersky-labs.com ajax.cloudflare.com static.cloudflareinsights.com 'unsafe-inline';
+  script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.google.com https://www.gstatic.com gc.kis.v2.scr.kaspersky-labs.com ajax.cloudflare.com cloudflareinsights.com static.cloudflareinsights.com 'unsafe-inline';
   img-src data: 'self' https://mc.yandex.ru;
-  connect-src 'self' https://mc.yandex.ru https://fonts.googleapis.com https://fonts.gstatic.com https://www.google.com https://www.gstatic.com cloudflareinsights.com;
+  connect-src 'self' https://mc.yandex.ru fonts.googleapis.com fonts.gstatic.com https://www.google.com https://www.gstatic.com cloudflareinsights.com static.cloudflareinsights.com;
   child-src blob: 'self' https://mc.yandex.ru;
   font-src 'self' https://fonts.gstatic.com;
   style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
-  frame-src blob: 'self' https://mc.yandex.ru https://www.google.com/;
+  frame-src blob: 'self' https://mc.yandex.ru https://www.google.com;
 `;
 
 const securityHeaders = [
@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'production') {
         key: 'Content-Security-Policy',
         value: header_value
     });
-    // console.log(header_value)
+    console.log(header_value)
 }
 
 // const sharp = 'commonjs sharp';
