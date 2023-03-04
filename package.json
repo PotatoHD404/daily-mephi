@@ -33,7 +33,7 @@
     "luxon": "^3.2.1",
     "natural": "^6.1.2",
     "next": "^12.3.0",
-    "next-auth": "4.15.1",
+    "next-auth": "4.20.1",
     "next-compose-plugins": "^2.2.1",
     "next-plugin-preact": "^3.0.7",
     "next-pwa": "^5.6.0",
