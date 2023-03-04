@@ -1,11 +1,12 @@
 const runtimeCaching = require('next-pwa/cache');
 const withPreact = require('next-plugin-preact');
 const withPlugins = require('next-compose-plugins')
+const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
     openAnalyzer: true,
 })
-const nodeExternals = require('webpack-node-externals');
+// const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
     // disable: process.env.NODE_ENV === 'development',
@@ -62,6 +63,7 @@ let nextConfig =
         target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
+        staticPageGenerationTimeout: 30,
         webpack: (config, options) => {
             config.experiments = {layers: true, topLevelAwait: true};
 
@@ -95,6 +97,10 @@ let nextConfig =
                 // 'nock': 'aliases/null-alias.js',
                 // 'node-gyp': 'aliases/null-alias.js',
                 // 'npm': 'aliases/null-alias.js',
+            }
+
+            if (options.isServer) {
+                config.plugins = [...config.plugins, new PrismaPlugin()]
             }
 
             return config;
