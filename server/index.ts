@@ -28,8 +28,124 @@ export const appRouter = t.router({
 
 export type AppRouter = typeof appRouter;
 
-export const openApiDocument = generateOpenApiDocument(appRouter, {
+const openapiRouter = t.router({
+    comments: commentsRouter,
+    files: filesRouter,
+    materials: materialsRouter,
+    news: newsRouter,
+    quotes: quotesRouter,
+    reviews: reviewsRouter,
+    thumbnails: thumbnailsRouter,
+    tutors: tutorsRouter,
+    users: usersRouter,
+    utils: utilsRouter,
+    // because it crashes on search router as it has multivalue query params
+});
+
+const openApiDocument = generateOpenApiDocument(openapiRouter, {
     title: 'DailyMEPhI OpenAPI',
     version: '1.0.0',
     baseUrl: getBaseUrl() + "/api/v1",
-})
+});
+
+openApiDocument['paths']["/search"] = {
+    "get": {
+        "operationId": "query.utils.search",
+        "security": [
+            {
+                "Authorization": []
+            }
+        ],
+        "parameters": [
+            {
+                "name": "query",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "sort",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "enum": ["relevance", "time"],
+                    "default": "relevance"
+                }
+            },
+            {
+                "name": "faculty_ids",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "string" // actually array
+                }
+            },
+            {
+                "name": "discipline_ids",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "string" // actually array
+                }
+            },
+            {
+                "name": "rating_from",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            {
+                "name": "rating_to",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            {
+                "name": "types",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "string" // actually array
+                }
+            },
+            {
+                "name": "limit",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            {
+                "name": "offset",
+                "in": "path",
+                "required": false,
+                "schema": {
+                    "type": "integer"
+                }
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "Successful response",
+                "content": {
+                    "application/json": {
+                        "schema": {}
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/error"
+            }
+        }
+    }
+}
+
+export {openApiDocument};
