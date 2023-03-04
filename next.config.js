@@ -19,10 +19,13 @@ const withPWA = require('next-pwa')({
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self';
-  child-src daily-mephi.ru;
-  style-src 'self' daily-mephi.ru;
-  font-src 'self';
+  script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.google.com https://www.gstatic.com gc.kis.v2.scr.kaspersky-labs.com ajax.cloudflare.com static.cloudflareinsights.com 'unsafe-inline';
+  img-src data: 'self' https://mc.yandex.ru;
+  connect-src 'self' https://mc.yandex.ru https://fonts.googleapis.com https://fonts.gstatic.com https://www.google.com https://www.gstatic.com cloudflareinsights.com;
+  child-src blob: 'self' https://mc.yandex.ru;
+  font-src 'self' https://fonts.gstatic.com;
+  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+  frame-src blob: 'self' https://mc.yandex.ru https://www.google.com/;
 `;
 
 const securityHeaders = [
@@ -48,12 +51,14 @@ const securityHeaders = [
     }
 ];
 
-// if (process.env.NODE_ENV === 'production') {
-//     securityHeaders.push({
-//         key: 'Content-Security-Policy',
-//         value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim()
-//     });
-// }
+if (process.env.NODE_ENV === 'production') {
+    const header_value = ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim();
+    securityHeaders.push({
+        key: 'Content-Security-Policy',
+        value: header_value
+    });
+    // console.log(header_value)
+}
 
 // const sharp = 'commonjs sharp';
 

@@ -114,7 +114,7 @@ resource "yandex_storage_bucket" "public" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
     allowed_origins = [
-      "https://login.mephi.ru", "https://daily-mephi.ru", "https://mc.yandex.ru", "https://yastatic.net"
+      "https://login.mephi.ru", "https://daily-mephi.ru"
 #     https://login.mephi.ru, https://daily-mephi.ru, https://mc.yandex.ru, https://yastatic.net, https://*.yandex.net, https://*.yandex.net, https://*.yandex.ru, https://fonts.gstatic.com
     ]
     expose_headers  = ["ETag"]
