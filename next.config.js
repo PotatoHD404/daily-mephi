@@ -106,7 +106,8 @@ let nextConfig =
             return config;
         },
         experimental: {
-            esmExternals: false
+            esmExternals: false,
+            nextScriptWorkers: true,
         },
 
         async headers() {
