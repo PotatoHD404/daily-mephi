@@ -1,9 +1,6 @@
 {
   "name": "daily-mephi",
   "private": true,
-  "engines": {
-    "node" : ">=16.0.0 <17.0.0"
-  },
   "engineStrict": true,
   "scripts": {
     "dev": "next dev",
