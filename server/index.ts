@@ -28,21 +28,7 @@ export const appRouter = t.router({
 
 export type AppRouter = typeof appRouter;
 
-const openapiRouter = t.router({
-    comments: commentsRouter,
-    files: filesRouter,
-    materials: materialsRouter,
-    news: newsRouter,
-    quotes: quotesRouter,
-    reviews: reviewsRouter,
-    thumbnails: thumbnailsRouter,
-    tutors: tutorsRouter,
-    users: usersRouter,
-    utils: utilsRouter,
-    // because it crashes on search router as it has multivalue query params
-});
-
-const openApiDocument = generateOpenApiDocument(openapiRouter, {
+const openApiDocument = generateOpenApiDocument(appRouter, {
     title: 'DailyMEPhI OpenAPI',
     version: '1.0.0',
     baseUrl: getBaseUrl() + "/api/v1",
@@ -138,6 +124,55 @@ openApiDocument['paths']["/search"] = {
                 "content": {
                     "application/json": {
                         "schema": {}
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/error"
+            }
+        }
+    }
+}
+
+openApiDocument['paths']["/openapi.json"] = {
+    "get": {
+        "operationId": "openapi_json",
+        "security": [
+            {
+                "Authorization": []
+            }
+        ],
+        "parameters": [],
+        "responses": {
+            "200": {
+                "description": "Successful response",
+                "content": {
+                    "application/json": {
+                        "schema": {}
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/error"
+            }
+        }
+    }
+}
+
+openApiDocument['paths']["/openapi.yaml"] = {
+    "get": {
+        "operationId": "openapi_yaml",
+        "security": [
+            {
+                "Authorization": []
+            }
+        ],
+        "parameters": [],
+        "responses": {
+            "200": {
+                "description": "Successful response",
+                "content": {
+                    "application/yaml": {
                     }
                 }
             },

@@ -8,12 +8,13 @@ import Sql = Prisma.Sql;
 // sort in ["popularity", "time", "text"] ||
 // (typeof types === "string" && types in ["tutor", "user", "material", "review", "quote", "news"]) ||
 export const searchRouter = t.router({
-    search: t.procedure.meta({
-        openapi: {
-            method: 'GET',
-            path: '/search'
-        }
-    })
+    search: t.procedure
+        // .meta({
+        //     openapi: {
+        //         method: 'GET',
+        //         path: '/search'
+        //     }
+        // })
         .input(z.object({
             query: z.string(),
             sort: z.enum(['relevance', 'time']).default('relevance'),

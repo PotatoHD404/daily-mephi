@@ -27,11 +27,11 @@ export default function Material() {
              bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
                 {
                     [
-                        {label: "Факультет", color: "#DDD9DF"}
-                        , {label: "Семестр", color: "#F9C5D3"}
-                        , {label: "МатАнализ", color: "#FEB3B4"}
-                        , {label: "Препод", color: "#F4BDE6"}
-                        , {label: "Экзамен", color: "#C7A8F3"}
+                        {label: "Факультет", color: "#DDD9DF"},
+                        {label: "Семестр", color: "#F9C5D3"},
+                        {label: "МатАнализ", color: "#FEB3B4"},
+                        {label: "Препод", color: "#F4BDE6"},
+                        {label: "Экзамен", color: "#C7A8F3"}
                     ].map((tag, index) => (
                         <div className={`rounded bg-[${tag.color}] mr-2 mb-1 py-1 px-4 w-fit whitespace-nowrap`}
                              key={index}>
