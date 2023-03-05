@@ -1,7 +1,7 @@
 import type {Discipline} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/mocks/prisma";
-import {trpc} from "tests/mocks/trpc";
+import {prismaMock} from "tests/api/mocks/prisma";
+import {trpc} from "tests/api/mocks/trpc";
 
 jest.setTimeout(5 * 10e2);
 
