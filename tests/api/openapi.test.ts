@@ -1,6 +1,9 @@
 import supertest from 'supertest';
 
-
+import {apiResolver} from "next/dist/server/api-utils/node";
+import * as http from "http";
+import openapiJsonHandler from "pages/api/v1/openapi.json"
+import openapiYamlHandler from "pages/api/v1/openapi.yaml"
 
 jest.setTimeout(5 * 10e2);
 
@@ -24,24 +27,51 @@ jest.setTimeout(5 * 10e2);
 //     reviewsCount: number
 //     quotesCount: number
 //     score: number
+
+function getServer(handler: any) {
+    const requestHandle = (request: http.IncomingMessage, response: http.ServerResponse) =>
+        apiResolver(
+            request,
+            response,
+            undefined,
+            handler,
+            {} as any,
+            true,
+        );
+    return http.createServer(requestHandle);
+}
+
 // }
 describe('[GET] /api/v1/openapi.json', () => {
+    let server: http.Server = getServer(openapiJsonHandler);
 
+    it('Test get', async () => {
 
-
-    it('Test top', async () => {
-
-        // @ts-ignore
-        // prisma.user.findMany = jest.fn().mockResolvedValue(users);
 
         expect(true).toEqual(true)
 
-        // const result = await supertest(server)
-        //     .get('/api/v1/top')
-        //     .expect(200)
-        //     .expect('Content-Type', /json/);
-        // expect(result.body).toBeDefined();
-        // expect(result.body).toEqual(users)
+        const result = await supertest(server)
+            .get('/api/v1/openapi.json')
+            .expect(200)
+            .expect('Content-Type', /json/);
+        expect(result.body).toBeDefined();
+
+
+    });
+});
+
+describe('[GET] /api/v1/openapi.yaml', () => {
+    let server: http.Server = getServer(openapiYamlHandler);
+
+    it('Test get', async () => {
+
+        expect(true).toEqual(true)
+
+        const result = await supertest(server)
+            .get('/api/v1/openapi.yaml')
+            .expect(200)
+            .expect('Content-Type', /yaml/);
+        expect(result.body).toBeDefined();
 
 
     });

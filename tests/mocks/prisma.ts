@@ -3,12 +3,10 @@ import type { DeepMockProxy } from "jest-mock-extended";
 import { mockDeep, mockReset } from 'jest-mock-extended'
 
 import {prisma} from 'lib/database/prisma'
-import {jest} from "@jest/globals";
-import {beforeEach} from "jest-circus";
 
 jest.mock('lib/database/prisma', () => ({
     __esModule: true,
-    prisma: mockDeep<PrismaClient>({ funcPropSupport: true }),
+    prisma: mockDeep<PrismaClient>(),
 }))
 
 beforeEach(() => {

@@ -1,4 +1,4 @@
-import {User} from "@prisma/client";
+import type {User} from "@prisma/client";
 import {faker} from '@faker-js/faker';
 import {prismaMock} from 'tests/mocks/prisma';
 
@@ -83,10 +83,7 @@ describe('[GET] /api/v1/users', () => {
         }
 
         // generate 10 users
-        const users: User[] = [];
-        for (let i = 0; i < 10; i++) {
-            users.push(generateUser());
-        }
+        const users: User[] = Array.from({length: 10}, generateUser);
 
         prismaMock.user.findMany.mockResolvedValue(users);
 

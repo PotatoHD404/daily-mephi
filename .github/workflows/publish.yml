@@ -1,11 +1,24 @@
 name: 'Deploy on YC'
-on:
-  push:
-    branches:
-      - main
+on: push, workflow_dispatch
 
 jobs:
+  jest:
+    name: 'Jest tests'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install modules
+        run: yarn
+      - name: Run tests
+        run: yarn test
   deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    #    needs: [ jest, chromatic ]
+    needs: [ jest ]
     name: 'Deploy on cloud'
     runs-on: ubuntu-latest
     env:
