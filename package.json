@@ -9,7 +9,7 @@
     "lint": "next lint",
     "postbuild": "next-sitemap",
     "build-api": "node cloud-functions/main/gen_api_config.js",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --forceExit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

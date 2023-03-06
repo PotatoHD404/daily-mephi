@@ -3,7 +3,7 @@ import {faker} from '@faker-js/faker';
 import {prismaMock} from 'tests/api/mocks/prisma';
 
 
-jest.setTimeout(5 * 10e2);
+
 
 // export type User = {
 //     id: string

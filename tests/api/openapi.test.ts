@@ -5,7 +5,7 @@ import * as http from "http";
 import openapiJsonHandler from "pages/api/v1/openapi.json"
 import openapiYamlHandler from "pages/api/v1/openapi.yaml"
 
-jest.setTimeout(5 * 10e2);
+
 
 // export type User = {
 //     id: string
