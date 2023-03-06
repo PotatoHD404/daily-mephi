@@ -20,7 +20,7 @@ export class SessionStore {
             cookies?: Partial<Record<string, string> | Map<string, string>>
             headers?: Headers | any | Record<string, string>
         },
-        logger: any | Console
+        logger: any
     ) {
         this.#logger = logger
         this.#option = option
