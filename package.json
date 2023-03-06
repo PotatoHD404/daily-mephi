@@ -33,7 +33,7 @@
     "chrome-aws-lambda": "^10.1.0",
     "ioredis": "^5.2.4",
     "jsonwebtoken": "^9.0.0",
-    "luxon": "^3.2.1",
+    "luxon": "^3.3.0",
     "natural": "^6.1.2",
     "next": "^12.3.2",
     "next-auth": "4.15.2",
