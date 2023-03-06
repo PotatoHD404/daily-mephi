@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
-import core, { Page } from 'puppeteer-core';
-import chrome from 'chrome-aws-lambda';
+import puppeteer, { Page } from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import {NextApiResponse} from "next";
 import MaterialThumbnail from 'server/thumbnails/material';
 import QuoteThumbnail from 'server/thumbnails/quote';
@@ -30,6 +30,7 @@ async function getPage(isDev: boolean) {
         return _page;
     }
     let options: Options;
+    // console.log(`Chrome path ${await chromium.executablePath()}`)
     if (isDev) {
         options = {
             args: [],
@@ -38,12 +39,12 @@ async function getPage(isDev: boolean) {
         };
     } else {
         options = {
-            args: chrome.args,
-            executablePath: await chrome.executablePath,
-            headless: chrome.headless,
+            args: chromium.args,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
         };
     }
-    const browser = await core.launch(options);
+    const browser = await puppeteer.launch(options);
     _page = await browser.newPage();
     return _page;
 }
@@ -62,7 +63,7 @@ async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
     const html = render(element);
     const rendered = Buffer.from(html);
 
-    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
+    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV !== "production");
     res.setHeader('Content-Type', 'image/png');
     res.end(image)
 }
@@ -71,7 +72,7 @@ export const thumbnailsRouter = t.router({
     getMaterial: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/materials/{id}/thumbnail.png',
+            path: '/thumbnails/materials/{id}.png',
         }
     })
         .input(z.object({
@@ -85,7 +86,7 @@ export const thumbnailsRouter = t.router({
     getQuote: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/quotes/{id}/thumbnail.png',
+            path: '/thumbnails/quotes/{id}.png',
         }
     })
         .input(z.object({
@@ -99,7 +100,7 @@ export const thumbnailsRouter = t.router({
     getReview: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/reviews/{id}/thumbnail.png',
+            path: '/thumbnails/reviews/{id}.png',
         }
     })
         .input(z.object({
@@ -113,7 +114,7 @@ export const thumbnailsRouter = t.router({
     getTutor: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/tutors/{id}/thumbnail.png',
+            path: '/thumbnails/tutors/{id}.png',
         }
     })
         .input(z.object({
@@ -127,7 +128,7 @@ export const thumbnailsRouter = t.router({
     getUser: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/users/{id}/thumbnail.png',
+            path: '/thumbnails/users/{id}.png',
         }
     })
         .input(z.object({
