@@ -7,7 +7,7 @@ import {notion} from "lib/database/notion";
 
 const ctx = {
     req: {} as any,
-    res: {} as any,
+    res: {setHeader: jest.fn(), end: jest.fn()} as any,
     prisma,
     notion
 }

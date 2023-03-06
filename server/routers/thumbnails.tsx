@@ -62,7 +62,7 @@ async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
     const html = render(element);
     const rendered = Buffer.from(html);
 
-    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV === "development");
+    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV !== "production");
     res.setHeader('Content-Type', 'image/png');
     res.end(image)
 }
@@ -71,7 +71,7 @@ export const thumbnailsRouter = t.router({
     getMaterial: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/materials/{id}/thumbnail.png',
+            path: '/thumbnails/materials/{id}.png',
         }
     })
         .input(z.object({
@@ -85,7 +85,7 @@ export const thumbnailsRouter = t.router({
     getQuote: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/quotes/{id}/thumbnail.png',
+            path: '/thumbnails/quotes/{id}.png',
         }
     })
         .input(z.object({
@@ -99,7 +99,7 @@ export const thumbnailsRouter = t.router({
     getReview: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/reviews/{id}/thumbnail.png',
+            path: '/thumbnails/reviews/{id}.png',
         }
     })
         .input(z.object({
@@ -113,7 +113,7 @@ export const thumbnailsRouter = t.router({
     getTutor: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/tutors/{id}/thumbnail.png',
+            path: '/thumbnails/tutors/{id}.png',
         }
     })
         .input(z.object({
@@ -127,7 +127,7 @@ export const thumbnailsRouter = t.router({
     getUser: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/users/{id}/thumbnail.png',
+            path: '/thumbnails/users/{id}.png',
         }
     })
         .input(z.object({
