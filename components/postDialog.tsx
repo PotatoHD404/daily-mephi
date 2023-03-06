@@ -287,7 +287,7 @@ function Material(props: { postForm: any }) {
                                     className="md:w-[2.5rem] md:h-[2.5rem] -ml-1 w-[2.5rem] h-[2.5rem]">
                             <input hidden accept="*" type="file"
                                    onChange={(event) =>
-                                       setFile(event.target.value.split(/[\/\\]/).pop() || '')}
+                                       setFile(event.target.value.split(/[/\\]/).pop() || '')}
                             />
                             <Image src={FileUpload} alt="file upload" width={24} height={24}/>
                         </IconButton>

@@ -1,6 +1,7 @@
 {
   "extends": [
-    "plugin:storybook/recommended", // Storybook
+    "plugin:storybook/recommended",
+    // Storybook
     "next",
     "next/core-web-vitals",
     "eslint:recommended"
@@ -11,7 +12,9 @@
   // Storybook
   "overrides": [
     {
-      "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
+      "files": [
+        "*.stories.@(ts|tsx|js|jsx|mjs|cjs)"
+      ],
       "rules": {
         // example of overriding a rule
         "storybook/hierarchy-separator": "error"
@@ -19,6 +22,14 @@
     }
   ],
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "no-unused-vars": [
+      1,
+      {
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    //    disable no-inner-declarations
+    "no-inner-declarations": 0
   }
 }
