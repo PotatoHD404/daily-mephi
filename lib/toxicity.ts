@@ -2,7 +2,7 @@ const googleApiKey = process.env.GOOGLE_API_KEY;
 
 export async function getToxicity(text: string) {
 
-    // https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=AIzaSyBTNWSXTTccxeNus_P5SoN3r6H50NmIbh4
+
     // fetch the link
     if (text === "") {
         return {
