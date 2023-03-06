@@ -1,14 +1,15 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
-import puppeteer, { Page } from 'puppeteer-core';
+import puppeteer, {Page} from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import {NextApiResponse} from "next";
-import MaterialThumbnail from 'server/thumbnails/material';
-import QuoteThumbnail from 'server/thumbnails/quote';
-import ReviewThumbnail from 'server/thumbnails/review';
-import TutorThumbnail from 'server/thumbnails/tutor';
-import UserThumbnail from 'server/thumbnails/user';
+import Material from 'components/thumbnails/material';
+import QuoteThumbnail from 'components/thumbnails/quote';
+import ReviewThumbnail from 'components/thumbnails/review';
+import TutorThumbnail from 'components/thumbnails/tutor';
+import UserThumbnail from 'components/thumbnails/user';
 import render from 'preact-render-to-string';
+import Tutor from "../../images/tutor.png";
 
 let _page: Page | null;
 
@@ -80,7 +81,15 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const element = <MaterialThumbnail/>
+            const element = Material({
+                name: "Трифоненков В.П.",
+                rating: 4.5,
+                legacy_rating: 2.1,
+                reviews: 5,
+                quotes: 3,
+                materials: 3,
+                image_url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png"
+            })
             await renderAndSend(element, res);
         }),
     getQuote: t.procedure.meta({
@@ -94,7 +103,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
-            const element = <QuoteThumbnail/>
+            const element = QuoteThumbnail()
             await renderAndSend(element, res);
         }),
     getReview: t.procedure.meta({
@@ -108,7 +117,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
-            const element = <ReviewThumbnail/>
+            const element = ReviewThumbnail()
             await renderAndSend(element, res);
         }),
     getTutor: t.procedure.meta({
@@ -122,7 +131,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
-            const element = <TutorThumbnail/>
+            const element = TutorThumbnail()
             await renderAndSend(element, res);
         }),
     getUser: t.procedure.meta({
@@ -136,7 +145,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
-            const element = <UserThumbnail/>
+            const element = UserThumbnail()
             await renderAndSend(element, res);
         }),
 
