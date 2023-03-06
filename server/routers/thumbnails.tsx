@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
-import core, { Page } from 'puppeteer-core';
-import chrome from 'chrome-aws-lambda';
+import puppeteer, { Page } from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import {NextApiResponse} from "next";
 import MaterialThumbnail from 'server/thumbnails/material';
 import QuoteThumbnail from 'server/thumbnails/quote';
@@ -30,6 +30,7 @@ async function getPage(isDev: boolean) {
         return _page;
     }
     let options: Options;
+    // console.log(`Chrome path ${await chromium.executablePath()}`)
     if (isDev) {
         options = {
             args: [],
@@ -38,12 +39,12 @@ async function getPage(isDev: boolean) {
         };
     } else {
         options = {
-            args: chrome.args,
-            executablePath: await chrome.executablePath,
-            headless: chrome.headless,
+            args: chromium.args,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
         };
     }
-    const browser = await core.launch(options);
+    const browser = await puppeteer.launch(options);
     _page = await browser.newPage();
     return _page;
 }
