@@ -1,11 +1,6 @@
 const runtimeCaching = require('next-pwa/cache');
 const withPreact = require('next-plugin-preact');
-const withPlugins = require('next-compose-plugins')
-const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin')
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-    enabled: process.env.ANALYZE === 'true',
-    openAnalyzer: true,
-})
+const {PrismaPlugin} = require('@prisma/nextjs-monorepo-workaround-plugin')
 // const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
@@ -65,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
 /** @type {import('next').NextConfig} */
 let nextConfig =
     {
-        target: 'serverless',
+        // target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
         staticPageGenerationTimeout: 30,
@@ -147,10 +142,14 @@ let nextConfig =
 //https://www.npmjs.com/package/next-pwa
 
 // module.exports = withPreact(withPWA(withBundleAnalyzer(nextConfig)));
+function withPlugins(plugins, config) {
+    plugins.forEach(plugin => {
+        config = plugin(config)
+    })
+    return config
+}
 
 module.exports = withPlugins([
-    [withBundleAnalyzer],
-    [withPWA],
-    [withPreact],
-    // your other plugins here
+    withPWA,
+    withPreact
 ], nextConfig);
