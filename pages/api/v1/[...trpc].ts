@@ -2,8 +2,8 @@ import { createOpenApiNextHandler } from "trpc-openapi";
 import {appRouter} from "server";
 import {createContext} from "server/trpc/context";
 import {NextApiRequest, NextApiResponse} from "next";
-import {redis} from "lib/database/redis";
-import {TRPCError} from "@trpc/server";
+// import {redis} from "lib/database/redis";
+
 
 const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
@@ -39,16 +39,16 @@ export default async function handler(
     // rate limiting with redis
     // use user ip and user agent as key
     // @ts-ignore
-    let key: string = `${req.headers['x-forwarded-for']}_${req.headers['user-agent']}`;
-    key = key.replace(/\./g, '_');
-    key = `rate_limit_${key}`;
-    const current = await redis.get(key);
-    // limit is 60 requests per minute
-    if (current && parseInt(current) > 60) {
-        return res.status(429).send('Too many requests, please try again later.');
-    }
-    await redis.incr(key);
-    await redis.expire(key, 60);
+    // let key: string = `${req.headers['x-forwarded-for']}_${req.headers['user-agent']}`;
+    // key = key.replace(/\./g, '_');
+    // key = `rate_limit_${key}`;
+    // const current = await redis.get(key);
+    // // limit is 60 requests per minute
+    // if (current && parseInt(current) > 60) {
+    //     return res.status(429).send('Too many requests, please try again later.');
+    // }
+    // await redis.incr(key);
+    // await redis.expire(key, 60);
 
     // pass the (modified) req/res to the handler
     try {

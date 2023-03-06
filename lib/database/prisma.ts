@@ -1,4 +1,3 @@
-// import {Prisma} from '@prisma/client';
 import {PrismaClient} from '@prisma/client';
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
 // import {redis} from "./redis";
@@ -76,5 +75,5 @@ if (notInitialized) {
 //     prisma = global.prisma;
 // }
 
-// @ts-ignore
+
 export { prisma };

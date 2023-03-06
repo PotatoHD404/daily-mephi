@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'production') {
         key: 'Content-Security-Policy',
         value: header_value
     });
-    console.log(header_value)
+    // console.log(header_value)
 }
 
 // const sharp = 'commonjs sharp';
