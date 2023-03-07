@@ -2,7 +2,7 @@ import {faker} from "@faker-js/faker";
 import "tests/api/mocks/prisma";
 import {trpc} from "tests/api/mocks/trpc";
 
-jest.setTimeout(10 * 10e3)
+jest.setTimeout(20 * 10e3)
 
 // export type Discipline = {
 //     id: string

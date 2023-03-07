@@ -153,7 +153,7 @@ export function verifyCSRFToken(req: NextApiRequest) {
 
 export async function verifyRecaptcha(req: NextApiRequest) {
     const {recaptchaToken: token} = req.body;
-    if(!process.env.RECAPTCHA_SECRET) {
+    if (!process.env.RECAPTCHA_SECRET) {
         throw new Error('RECAPTCHA_SECRET is not defined')
     }
 
