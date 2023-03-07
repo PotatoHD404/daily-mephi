@@ -1,6 +1,6 @@
 // example jsx component
 import React from 'react';
-import Image, {StaticImageData} from "next/image";
+import Image, {StaticImageData} from "next/future/image";
 import DeadCat from "images/dead_cat.svg";
 
 interface MType {
@@ -10,10 +10,12 @@ interface MType {
     reviews: number,
     quotes: number,
     materials: number,
-    image_url: string | StaticImageData | null
+    image_url: string
 }
 
-export default function Material(
+
+
+export default async function Material(
     {
         name,
         rating,
@@ -23,6 +25,7 @@ export default function Material(
         materials,
         image_url
     }: MType) {
+
     return <>
         <h1>{name}</h1>
         <h2>{rating}</h2>
@@ -30,7 +33,6 @@ export default function Material(
         <h2>{reviews}</h2>
         <h2>{quotes}</h2>
         <h2>{materials}</h2>
-        {image_url === null ? <Image src={DeadCat}/> :
-            <Image width={150} height={150} src={image_url}/>}
+        <Image src={image_url}  alt={""} width={150} height={150}/>
     </>;
 }

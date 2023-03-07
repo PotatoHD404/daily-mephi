@@ -70,7 +70,7 @@ let nextConfig =
             config.externals = [
                 ...config.externals,
                 'argon2',
-                'chrome-aws-lambda',
+                '@sparticuz/chromium-min',
                 'node-fetch',
                 'natural',
                 'puppeteer-core'

@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
 import puppeteer, {Page} from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
 import {NextApiResponse} from "next";
 import Material from 'components/thumbnails/material';
 import QuoteThumbnail from 'components/thumbnails/quote';
@@ -9,7 +9,9 @@ import ReviewThumbnail from 'components/thumbnails/review';
 import TutorThumbnail from 'components/thumbnails/tutor';
 import UserThumbnail from 'components/thumbnails/user';
 import render from 'preact-render-to-string';
-import Tutor from "../../images/tutor.png";
+import Tutor from "images/tutor.png";
+import DeadCat from "../../images/dead_cat.svg";
+import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
 
 let _page: Page | null;
 
@@ -81,14 +83,16 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const element = Material({
+            const url = normalizeUrl(Tutor, DeadCat);
+            const image_data = await imageToBase64(url);
+            const element = await Material({
                 name: "Трифоненков В.П.",
                 rating: 4.5,
                 legacy_rating: 2.1,
                 reviews: 5,
                 quotes: 3,
                 materials: 3,
-                image_url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png"
+                image_url: image_data
             })
             await renderAndSend(element, res);
         }),
