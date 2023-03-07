@@ -33,11 +33,17 @@ jobs:
       TF_VAR_folder_id: ${{secrets.TF_VAR_FOLDER_ID}}
       TF_VAR_zone: ${{secrets.TF_VAR_ZONE}}
       TF_VAR_DOMAIN_ID: ${{secrets.TF_VAR_DOMAIN_ID}}
+      TF_VAR_CERTIFICATE_ID: ${{secrets.TF_VAR_CERTIFICATE_ID}}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
       - name: Pull Terraform CLI
         uses: hashicorp/setup-terraform@v2
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
       - name: Add .terraformrc
         run: echo 'provider_installation {
           network_mirror {
@@ -70,7 +76,7 @@ jobs:
           yc config set token ${{ secrets.YC_TOKEN }}
       - name: Install tf-next
         run: |
-          npm i -g tf-next@canary
+          npm i -g @potatohd/tf-next
       - name: Create .env file
         run: |
           echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
@@ -97,6 +103,8 @@ jobs:
           echo DATABASE_KEY=\""$DATABASE_KEY"\" >> .env
           
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
+      - name: Install node dependencies
+        run: yarn install --frozen-lockfile
       - name: Run Terraform init
         run: |
           cd terraform

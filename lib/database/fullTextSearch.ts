@@ -1,4 +1,6 @@
 // generate 3-grams from string
+import {tokenize} from "../nlp";
+
 export function generate3grams(text: string) {
     // prepare text
     text = prepareText(text);
@@ -27,10 +29,10 @@ export function generateWords(text: string) {
     // prepare text
     text = prepareText(text);
     // split text
-    return text.split(" ");
+    return tokenize(text);
 }
 
 export function getDocument(text: string) {
-    return {words: generateWords(text), grams: generate3grams(text)};
+    return {words: generateWords(text)};
 }
 

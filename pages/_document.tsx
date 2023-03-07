@@ -1,4 +1,6 @@
 import {Head, Html, Main, NextScript} from 'next/document'
+import MetricContainer from "../components/yandexMetrika";
+import React from "react";
 
 export default function Document() {
 

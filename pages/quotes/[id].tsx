@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import SEO from "components/seo";
 import {GetServerSideProps} from "next";
 import {useRouter} from "next/router";
-import prisma from "lib/database/prisma";
+import { prisma } from "lib/database/prisma";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 function Quote({quote}: { quote: any }) {
@@ -13,7 +13,7 @@ function Quote({quote}: { quote: any }) {
     return (
         <>
             <SEO title={`Цатата ${quote.tutorName}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/quotes/${quote.id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v1/quotes/${quote.id}/thumbnail.png`}/>
         </>
     );
 

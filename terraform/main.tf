@@ -1,30 +1,36 @@
 variable "token" {
-  type     = string
-  nullable = false
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
 variable "cloud_id" {
-  type     = string
-  nullable = false
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
 variable "folder_id" {
-  type     = string
-  nullable = false
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
 variable "zone" {
-  type     = string
-  nullable = false
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
 variable "DOMAIN_ID" {
-  type     = string
-  nullable = false
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "CERTIFICATE_ID" {
+  type      = string
+  nullable  = false
   sensitive = true
 }
 
@@ -40,11 +46,10 @@ terraform {
   }
   required_version = ">= 0.13"
   backend "s3" {
-    endpoint   = "storage.yandexcloud.net"
-    bucket     = "daily-service-1"
-    region     = "ru-central1"
-    key        = "daily-mephi-terraform/main.tfstate"
-
+    endpoint = "storage.yandexcloud.net"
+    bucket   = "daily-service-1"
+    region   = "ru-central1"
+    key      = "daily-mephi-terraform/main.tfstate"
 
     skip_region_validation      = true
     skip_credentials_validation = true
@@ -103,12 +108,15 @@ resource "yandex_iam_service_account_api_key" "sa-api-key" {
 resource "yandex_storage_bucket" "public" {
   access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
   secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
-  acl    = "public-read"
-#  force_destroy = true
+  acl        = "public-read"
+  #  force_destroy = true
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
-    allowed_origins = ["https://login.mephi.ru", "https://daily-mephi.ru", "https://mc.yandex.ru", "https://yastatic.net"]
+    allowed_origins = [
+      "https://login.mephi.ru", "https://daily-mephi.ru"
+#     https://login.mephi.ru, https://daily-mephi.ru, https://mc.yandex.ru, https://yastatic.net, https://*.yandex.net, https://*.yandex.net, https://*.yandex.ru, https://fonts.gstatic.com
+    ]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
   }
@@ -145,39 +153,38 @@ resource "null_resource" "build_notion" {
 }
 
 data "archive_file" "zip_notion" {
-  depends_on = [null_resource.build_notion]
+  depends_on  = [null_resource.build_notion]
   type        = "zip"
-  source_dir = "../cloud-functions/notion-api/"
+  source_dir  = "../cloud-functions/notion-api/"
   output_path = "notion-api.zip"
-  excludes = []
+  excludes    = []
 }
 
 resource "yandex_function" "notion" {
-  depends_on = [data.archive_file.zip_notion]
-  for_each = toset( [for i in range(1, 6) : tostring(i)] )
-  name               = "notion-api-${each.value}"
-  description        = "notion-api-${each.value}"
-  user_hash          = data.archive_file.zip_notion.output_sha
-  runtime            = "nodejs16"
-  entrypoint         = "index.handler"
-  memory             = "128"
-  execution_timeout  = "3"
+  depends_on        = [data.archive_file.zip_notion]
+  for_each          = toset( [for i in range(1, 6) : tostring(i)] )
+  name              = "notion-api-${each.value}"
+  description       = "notion-api-${each.value}"
+  user_hash         = data.archive_file.zip_notion.output_sha
+  runtime           = "nodejs16"
+  entrypoint        = "index.handler"
+  memory            = "128"
+  execution_timeout = "3"
   content {
-    zip_filename   = data.archive_file.zip_notion.output_path
+    zip_filename = data.archive_file.zip_notion.output_path
   }
 }
 
 locals {
-  notion_ids = sensitive([for k, v in yandex_function.notion: v.id])
+  notion_ids = sensitive([for k, v in yandex_function.notion : v.id])
 }
 
 resource "yandex_function_iam_binding" "notion" {
-  for_each = yandex_function.notion
+  for_each    = yandex_function.notion
   function_id = each.value.id
   role        = "serverless.functions.invoker"
   members     = ["system:allUsers"]
 }
-
 
 
 resource "null_resource" "environment_vars" {
@@ -193,7 +200,7 @@ EOT
 
 resource "null_resource" "build" {
   depends_on = [yandex_storage_bucket.public, null_resource.environment_vars, yandex_function_iam_binding.notion]
-  triggers = {
+  triggers   = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
@@ -216,7 +223,7 @@ cd ./terraform
 
 resource "null_resource" "upload_static" {
   depends_on = [null_resource.build]
-  triggers = {
+  triggers   = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
@@ -282,13 +289,13 @@ echo "Uploaded api-lambda.zip"
 
 
 resource "null_resource" "build_pages" {
-    depends_on = [null_resource.build]
-    triggers   = {
-        build_number = timestamp()
-    }
-    provisioner "local-exec" {
+  depends_on = [null_resource.build]
+  triggers   = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
 
-        command = <<-EOT
+    command = <<-EOT
 cd ${path.root}/../
 
 unzip -o .next-tf/lambdas/__NEXT_PAGE_LAMBDA_0.zip -d .next-tf/pages-lambda >/dev/null 2>&1
@@ -322,21 +329,11 @@ cd ../../../
 aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./terraform/main-lambdas/pages-lambda.zip s3://daily-service-1/main-lambdas/pages-lambda.zip >/dev/null 2>&1
 echo "Uploaded pages-lambda.zip"
         EOT
-    }
+  }
 
 }
 #access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
 #secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
-
-resource "null_resource" "set_domain" {
-  depends_on = [yandex_api_gateway.daily-mephi-gateway]
-    triggers = {
-        build_number = yandex_api_gateway.daily-mephi-gateway.id
-    }
-    provisioner "local-exec" {
-        command = "yc serverless api-gateway add-domain ${yandex_api_gateway.daily-mephi-gateway.id} --domain-id ${var.DOMAIN_ID}"
-    }
-}
 
 #resource "null_resource" "add_domain" {
 #  depends_on = [yandex_api_gateway.daily-mephi-gateway]
@@ -376,12 +373,12 @@ resource "null_resource" "set_domain" {
 
 data "external" "zip_main_pages" {
   depends_on = [null_resource.build_pages]
-  program = ["./hash.sh", "main-lambdas/pages-lambda.zip"]
+  program    = ["./hash.sh", "main-lambdas/pages-lambda.zip"]
 }
 
 data "external" "zip_main_api" {
   depends_on = [null_resource.build_api]
-  program = ["./hash.sh", "main-lambdas/api-lambda.zip"]
+  program    = ["./hash.sh", "main-lambdas/api-lambda.zip"]
 }
 
 resource "yandex_function" "backend_api" {
@@ -398,7 +395,7 @@ resource "yandex_function" "backend_api" {
     bucket_name = "daily-service-1"
     object_name = "main-lambdas/api-lambda.zip"
   }
-  environment = {"FONTCONFIG_PATH" = "/function/code/fonts/"}
+  environment = { "FONTCONFIG_PATH" = "/function/code/fonts/" }
 }
 
 resource "yandex_function" "backend_pages" {
@@ -431,23 +428,27 @@ resource "yandex_function_iam_binding" "backend_pages" {
 
 data "external" "pages_hash" {
   depends_on = [null_resource.build]
-  program = ["./find_hash.sh"]
+  program    = ["./find_hash.sh"]
 }
 
 data "template_file" "api_gateway" {
   template = file("${path.module}/yandex-gateway.yaml")
-  vars = {
+  vars     = {
     service_account_id = yandex_iam_service_account.sa.id
-    api_function_id = yandex_function.backend_api.id
-    pages_function_id = yandex_function.backend_pages.id
-    bucket_name = yandex_storage_bucket.public.bucket
-    hash = data.external.pages_hash.result.pages_hash
+    api_function_id    = yandex_function.backend_api.id
+    pages_function_id  = yandex_function.backend_pages.id
+    bucket_name        = yandex_storage_bucket.public.bucket
+    hash               = data.external.pages_hash.result.pages_hash
   }
 }
 
 resource "yandex_api_gateway" "daily-mephi-gateway" {
-  name = "daily-mephi"
-  description = "Daily mephi gateway"
-  spec = data.template_file.api_gateway.rendered
+  name           = "daily-mephi"
+  description    = "Daily mephi gateway"
+  spec           = data.template_file.api_gateway.rendered
+  custom_domains {
+    fqdn           = "daily-mephi.ru"
+    certificate_id = var.CERTIFICATE_ID
+  }
 }
 

@@ -1,0 +1,3 @@
+[submodule "home-mephi-parser"]
+	path = home-mephi-parser
+	url = https://github.com/MEPhI-Floppas/home-mephi-parser

@@ -1,7 +1,7 @@
 import {OAuthConfig} from "next-auth/providers";
 import {getHost} from "lib/utils";
 import {hash} from "lib/crypto";
-import prisma from "../database/prisma";
+import { prisma } from "../database/prisma";
 import avatars from "../database/jsons/avatars.json";
 
 export interface Profile {
@@ -70,7 +70,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             return {
                 id: profile.id,
                 role: profile.role,
-                name: null,
+                nickname: null,
                 imageId: image
             };
         },

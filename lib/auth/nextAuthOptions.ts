@@ -1,8 +1,8 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
-import SequelizeAdapter, { models } from "@next-auth/sequelize-adapter"
-import { DataTypes } from "sequelize"
-import {NextAuthOptions, SessionStrategy} from "next-auth";
-import sequelize from "lib/database/sequilize";
+import {PrismaAdapter} from "@next-auth/prisma-adapter"
+import {PrismaClient} from "@prisma/client"
+import {NextAuthOptions, Session, SessionStrategy} from "next-auth";
+import {prisma} from "lib/database/prisma";
 
 
 // const host = getHost() + "/api/auth/callback/home";
@@ -12,23 +12,7 @@ import sequelize from "lib/database/sequilize";
 
 export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
-    adapter: SequelizeAdapter(sequelize, {
-        models: {
-            User: sequelize.define("users", {
-                ...models.User,
-                role: DataTypes.STRING,
-                rating: DataTypes.FLOAT,
-                bio: DataTypes.STRING,
-                banned: DataTypes.BOOLEAN,
-                banned_reason: DataTypes.STRING,
-                banned_until: DataTypes.DATE,
-                banned_at: DataTypes.DATE
-              }),
-            Account: sequelize.define("accounts", {...models.Account}),
-            Session: sequelize.define("sessions", {...models.Session}),
-            VerificationToken: sequelize.define("verification_tokens", {...models.VerificationToken})
-        }
-    }),
+    adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt" as SessionStrategy,
         maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -42,25 +26,31 @@ export const nextAuthOptions: NextAuthOptions = {
     callbacks: {
         async jwt({token, user, account, profile, isNewUser}) {
             if (user || profile) {
+                // @ts-ignore
                 token.id = user?.id ?? profile?.id;
+                // @ts-ignore
                 token.role = user?.role ?? profile?.role;
             }
+            token.nickname = token.name;
+            delete token.name;
             return token;
         },
-        session: async ({session, token, user}) => {
-            // console.log("session");
-            // console.log(session)
-            // console.log(user)
-            // console.log(token)
-            if (session.user || token) {
-                // @ts-ignore
-                session.user.id = user?.id ?? token?.sub;
-                // @ts-ignore
-                session.user.role = user?.role ?? token?.role;
-            }
-            // console.log("session1");
-            return session;
-        }
+        // session: async ({session, token, user}) => {
+        //     // console.log("session");
+        //     // console.log(session)
+        //     // console.log(user)
+        //     // console.log(token)
+        //     type MySession = Session & {user: {id: string | null, role: string}}
+        //     let newSession = session as MySession;
+        //     if (session.user || token) {
+        //
+        //         newSession.user.id = user?.id ?? token?.sub ?? null;
+        //         // @ts-ignore
+        //         newSession.user.role = user?.role ?? token?.role ?? "default";
+        //     }
+        //     // console.log("session1");
+        //     return newSession;
+        // }
     },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,

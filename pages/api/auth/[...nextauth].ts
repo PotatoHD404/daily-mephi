@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import {nextAuthOptions} from "lib/auth/nextAuthOptions";
 import {NextApiRequest, NextApiResponse} from "next";
+// import {} from "next/headers"
 
 // if (process.env.GOOGLE_CLIENT_ID === undefined
 //     || process.env.GOOGLE_CLIENT_SECRET === undefined || process.env.AUTH_SECRET === undefined)

@@ -12,7 +12,7 @@ import NewPost from "components/newPost";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
 import {getCache, setCache} from "../../lib/utils";
-import prisma from "../../lib/database/prisma";
+import { prisma } from "../../lib/database/prisma";
 import TutorProfile from "../../components/tutorProfile";
 import Reviews from "../../components/reviews";
 import {useRouter} from "next/router";
@@ -113,7 +113,7 @@ function Tutor({tutor}: { tutor: any }) {
     return (
         <>
             <SEO title={'Трифоненков В.П.'}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/tutors/${tutor.id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v1/tutors/${tutor.id}/thumbnail.png`}/>
             {isMobile == null ? null :
                 <>
                     <div className="flex-wrap w-full">
