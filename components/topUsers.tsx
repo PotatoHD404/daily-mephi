@@ -63,20 +63,18 @@ function TopUserContent(props: TopUserParams) {
     return (<tr>
         <td className="text-center"><Link href={`/users/${props.id || ""}`}>{props.place.toString()}</Link></td>
         <td>
-            <Link href={`/users/${props.id || ""}`}>
-                <a className="flex pl-4 h-[4.5rem]">
-                    <div className="h-14 my-auto w-14 flex">
-                        <Image
-                            src={props.src}
-                            alt="Profile pic"
-                            className="rounded-full"
-                            height={500}
-                            width={500}
-                        />
-                        <Crown place={props.place}/>
-                    </div>
-                    <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
-                </a>
+            <Link href={`/users/${props.id || ""}`} className="flex pl-4 h-[4.5rem]">
+                <div className="h-14 my-auto w-14 flex">
+                    <Image
+                        src={props.src}
+                        alt="Profile pic"
+                        className="rounded-full"
+                        height={500}
+                        width={500}
+                    />
+                    <Crown place={props.place}/>
+                </div>
+                <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
             </Link>
         </td>
         <td className="text-center">{formatter.format(props.rating)}</td>

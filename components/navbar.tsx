@@ -6,7 +6,7 @@ import MaterialsIcon from "images/materials.svg";
 import TutorsIcon from "images/tutors.svg";
 import UsersIcon from "images/users.svg";
 import {useRouter} from "next/router";
-import Image from "next/future/image";
+import Image from "next/image";
 import burger from 'images/burger.svg'
 import {useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
@@ -40,23 +40,21 @@ function DefaultNavbar(props: DefaultNavbarParams) {
             <div className="flex col-start-1 col-end-13 justify-between">
 
 
-                <Link href="/">
-                    <a className="flex h-14 my-auto w-14 mb-2 -mt-2">
-                        <Minicat/>
-                    </a>
+                <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2">
+                    <Minicat/>
                 </Link>
 
 
-                <Link href="/about">
-                    <a className="underlining my-auto"><h3>О нас</h3></a>
+                <Link href="/about" className="underlining my-auto">
+                    <h3>О нас</h3>
                 </Link>
 
-                <Link href="/materials">
-                    <a className="underlining my-auto"><h3>Материалы</h3></a>
+                <Link href="/materials" className="underlining my-auto">
+                    <h3>Материалы</h3>
                 </Link>
 
-                <Link href="/tutors">
-                    <a className="underlining my-auto"><h3>Преподаватели</h3></a>
+                <Link href="/tutors" className="underlining my-auto">
+                    <h3>Преподаватели</h3>
                 </Link>
                 <div className="mt-2">
                     <AuthSection {...props}/>
@@ -187,15 +185,15 @@ function HomeNavbar(props: DefaultNavbarParams) {
                     <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
                         <div className="flex col-start-1 col-end-10 justify-between">
-                            <Link href="/about">
-                                <a className="underlining"><h3>О нас</h3></a>
+                            <Link href="/about" className="underlining">
+                                <h3>О нас</h3>
                             </Link>
-                            <Link href="/materials">
-                                <a className="underlining"><h3>Материалы</h3></a>
+                            <Link href="/materials" className="underlining">
+                                <h3>Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors">
-                                <a className="underlining"><h3>Преподаватели</h3></a>
+                            <Link href="/tutors" className="underlining">
+                                <h3>Преподаватели</h3>
                             </Link>
                         </div>
                         <AuthSection {...props}/>

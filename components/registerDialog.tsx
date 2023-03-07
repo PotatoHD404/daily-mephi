@@ -1,4 +1,4 @@
-import Image from "next/future/image";
+import Image from "next/image";
 import RegisterHalfCat from 'images/register_halfcat.svg'
 import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";

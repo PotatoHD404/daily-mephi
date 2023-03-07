@@ -1,4 +1,4 @@
-import {StaticImageData} from "next/future/image";
+import {StaticImageData} from "next/image";
 
 export function normalizeUrl(url: string | StaticImageData | null, alt: StaticImageData | null): string {
     let res: string | null = null;

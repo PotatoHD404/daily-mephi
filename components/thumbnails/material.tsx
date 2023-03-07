@@ -1,6 +1,6 @@
 // example jsx component
 import React from 'react';
-import Image from "next/future/image";
+import Image from "next/image";
 
 interface MType {
     name: string,
