@@ -19,7 +19,7 @@ export default function ExampleMaterial() {
             quotes: 3,
             materials: 3,
             image_url: data
-        })).then((value: React.SetStateAction<JSX.Element>) => {
+        })).then((value: any) => {
             setComponent(value);
         });
     }, [])
