@@ -1,6 +1,8 @@
 const runtimeCaching = require('next-pwa/cache');
 const withPreact = require('next-plugin-preact');
 const {PrismaPlugin} = require('@prisma/nextjs-monorepo-workaround-plugin')
+
+const cachingStrategies = require('./pwa/cache');
 // const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
@@ -8,7 +10,7 @@ const withPWA = require('next-pwa')({
     register: true,
     // scope: '/app',
     sw: 'service-worker.js',
-    runtimeCaching
+    runtimeCaching: cachingStrategies
     //...
 });
 

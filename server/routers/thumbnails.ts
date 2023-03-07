@@ -1,74 +1,53 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
-import puppeteer, {Page} from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import satori, {SatoriOptions} from 'satori';
+import {Resvg, ResvgRenderOptions} from '@resvg/resvg-js'
 import {NextApiResponse} from "next";
 import Material from 'components/thumbnails/material';
 import QuoteThumbnail from 'components/thumbnails/quote';
 import ReviewThumbnail from 'components/thumbnails/review';
 import TutorThumbnail from 'components/thumbnails/tutor';
 import UserThumbnail from 'components/thumbnails/user';
-import render from 'preact-render-to-string';
 import Tutor from "images/tutor.png";
 import DeadCat from "../../images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
 
-let _page: Page | null;
-
-interface Options {
-    args: string[];
-    executablePath: string;
-    headless: boolean;
-}
-
-const exePath = process.platform === 'win32'
-    // ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-    ? 'C:\\Program Files\\Google\\Chrome Beta\\Application\\chrome.exe'
-    : process.platform === 'linux'
-        ? '/usr/bin/google-chrome'
-        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-
-async function getPage(isDev: boolean) {
-    if (_page) {
-        return _page;
-    }
-    let options: Options;
-    // console.log(`Chrome path ${await chromium.executablePath()}`)
-    if (isDev) {
-        options = {
-            args: [],
-            executablePath: exePath,
-            headless: true
-        };
-    } else {
-        options = {
-            args: chromium.args,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-        };
-    }
-    const browser = await puppeteer.launch(options);
-    _page = await browser.newPage();
-    return _page;
-}
-
-export type FileType = 'png' | 'jpeg';
-
-
-export async function getScreenshot(html: string, type: FileType, isDev: boolean) {
-    const page = await getPage(isDev);
-    await page.setViewport({width: 1200, height: 600});
-    await page.setContent(html);
-    return await page.screenshot({type});
-}
 
 async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
-    const html = render(element);
-    const rendered = Buffer.from(html);
+    // const fontPath = join(process.cwd(), 'public', 'fonts', 'Montserrat.ttf')
+    // let fontData = await fs.readFile(fontPath)
+    let fontData = await fetch("https://themes.googleusercontent.com/static/fonts/montserrat/v3/zhcz-_WihjSQC0oHJ9TCYC3USBnSvpkopQaUR-2r7iU.ttf")
+        .then(r => r.arrayBuffer())
+        .then(r => Buffer.from(r))
 
-    const image = await getScreenshot(rendered.toString(), "png", process.env.NODE_ENV !== "production");
+    const opts1: SatoriOptions = {
+        fonts: [{
+            name: 'Montserrat',
+            data: fontData,
+            weight: 400,
+            style: 'normal',
+        },],
+        width: 1200,
+        height: 600,
+        embedFont: true,
+    }
+    const svg = await satori(element, opts1)
+    console.log(svg)
+    const opts2: ResvgRenderOptions = {
+        fitTo: {
+            mode: "original"
+        },
+        shapeRendering: 2,
+        imageRendering: 1,
+        textRendering: 2,
+    }
+    const resvg = new Resvg(svg, opts2)
+
+    const pngData = resvg.render()
+    const pngBuffer = pngData.asPng()
+
     res.setHeader('Content-Type', 'image/png');
-    res.end(image)
+    res.end(pngBuffer)
 }
 
 export const thumbnailsRouter = t.router({
@@ -94,6 +73,8 @@ export const thumbnailsRouter = t.router({
                 materials: 3,
                 image_url: image_data
             })
+
+
             await renderAndSend(element, res);
         }),
     getQuote: t.procedure.meta({
