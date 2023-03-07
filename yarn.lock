@@ -2104,10 +2104,10 @@
     lodash.union "^4.6.0"
     lodash.values "^4.3.0"
 
-"@sparticuz/chromium-min@^111.0.0":
+"@sparticuz/chromium@^111.0.0":
   version "111.0.0"
-  resolved "https://registry.yarnpkg.com/@sparticuz/chromium-min/-/chromium-min-111.0.0.tgz#f68a5ed6bd3771c4f27185a114e60adc4bb7a519"
-  integrity sha512-mAP+6AAv5ShefuVmWj18eLtz0vRv76dDfqHM3uR+DBwgpuizLORriJbofXnsFUUN9SdmeT7ceeczSZNENONeRw==
+  resolved "https://registry.yarnpkg.com/@sparticuz/chromium/-/chromium-111.0.0.tgz#c8e8e2b84e03a37a04980ed5ac6377e7f12da758"
+  integrity sha512-h68PUvW3tz3vZxYa/XxpHdudZ65p6zejBcBdW6qwsJ3xHR4d6myclK+E3stQd3epnPNVZAf/rDf37njG1VjNWg==
   dependencies:
     follow-redirects "^1.15.2"
     tar-fs "^2.1.1"

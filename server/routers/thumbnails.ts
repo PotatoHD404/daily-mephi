@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/trpc';
 import puppeteer, {Page} from 'puppeteer-core';
-import chromium from '@sparticuz/chromium-min';
+import chromium from '@sparticuz/chromium';
 import {NextApiResponse} from "next";
 import Material from 'components/thumbnails/material';
 import QuoteThumbnail from 'components/thumbnails/quote';
