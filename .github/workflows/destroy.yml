@@ -43,7 +43,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'yarn'
       - name: Add .terraformrc
         run: echo 'provider_installation {
           network_mirror {
@@ -104,7 +103,7 @@ jobs:
           
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
       - name: Install node dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Run Terraform init
         run: |
           cd terraform
