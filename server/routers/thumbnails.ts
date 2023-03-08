@@ -9,24 +9,36 @@ import ReviewThumbnail from 'components/thumbnails/review';
 import TutorThumbnail from 'components/thumbnails/tutor';
 import UserThumbnail from 'components/thumbnails/user';
 import Tutor from "images/tutor.png";
-import DeadCat from "../../images/dead_cat.svg";
+import DeadCat from "images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
 
 
 async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
     // const fontPath = join(process.cwd(), 'public', 'fonts', 'Montserrat.ttf')
     // let fontData = await fs.readFile(fontPath)
-    let fontData = await fetch("https://themes.googleusercontent.com/static/fonts/montserrat/v3/zhcz-_WihjSQC0oHJ9TCYC3USBnSvpkopQaUR-2r7iU.ttf")
+
+    let fontData1 = await fetch(normalizeUrl("/fonts/Montserrat-Medium.ttf", null, true))
         .then(r => r.arrayBuffer())
         .then(r => Buffer.from(r))
+    let fontData2 = await fetch(normalizeUrl("/fonts/Montserrat-SemiBold.ttf", null, true))
+        .then(r => r.arrayBuffer())
+        .then(r => Buffer.from(r))
+    // console.log(fontData)
 
     const opts1: SatoriOptions = {
-        fonts: [{
-            name: 'Montserrat',
-            data: fontData,
-            weight: 400,
-            style: 'normal',
-        },],
+        fonts: [
+            {
+                name: 'Montserrat',
+                data: fontData1,
+                weight: 500,
+                style: 'normal',
+            }, {
+                name: 'Montserrat',
+                data: fontData2,
+                weight: 600,
+                style: 'normal',
+            },
+        ],
         width: 1200,
         height: 630,
         embedFont: true,
@@ -37,7 +49,7 @@ async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
             mode: "original"
         },
         shapeRendering: 2,
-        imageRendering: 1,
+        imageRendering: 0,
         textRendering: 2,
     }
     const resvg = new Resvg(svg, opts2)
