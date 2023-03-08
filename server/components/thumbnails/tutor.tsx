@@ -2,6 +2,7 @@
 import React from 'react';
 import {Div, H1, H2, H3, RoundedImageSvg} from "./svgElements";
 import {Materials, Quotes, Reviews} from "./images";
+import {getNoun} from "lib/getNoun";
 
 interface TType {
     name: string,
@@ -60,7 +61,9 @@ export default function Tutor(
                             <Div tw="flex opacity-50"><Reviews/></Div>
                             <Div tw="flex flex-wrap flex-col ml-4">
                                 <H3 tw="text-[30px] font-semibold -mt-1">{reviews}</H3>
-                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">Отзывов</H3>
+                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">
+                                    {getNoun(reviews, "Отзыв", "Отзыва", "Отзывов")}
+                                </H3>
                             </Div>
 
                         </Div>
@@ -68,7 +71,9 @@ export default function Tutor(
                             <Div tw="flex opacity-50"><Quotes/></Div>
                             <Div tw="flex flex-wrap flex-col ml-4">
                                 <H3 tw="text-[30px] font-semibold -mt-1">{quotes}</H3>
-                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">Цитат</H3>
+                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">
+                                    {getNoun(quotes, "Цитата", "Цитаты", "Цитат")}
+                                </H3>
                             </Div>
 
                         </Div>
@@ -77,7 +82,9 @@ export default function Tutor(
 
                             <Div tw="flex flex-wrap flex-col ml-4">
                                 <H3 tw="text-[30px] bg-opacity-20 -mt-1">{materials}</H3>
-                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">Материалов</H3>
+                                <H3 tw="text-[30px] text-black opacity-50 font-medium -mt-1">
+                                    {getNoun(materials, "Материал", "Материала", "Материалов")}
+                                </H3>
                             </Div>
 
                         </Div>

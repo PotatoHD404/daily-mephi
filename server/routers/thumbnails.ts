@@ -11,34 +11,61 @@ import UserThumbnail from 'server/components/thumbnails/user';
 import TutorImg from "images/tutor.png";
 import DeadCat from "images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
+import UserImage from "images/profile1.png"
 
+
+async function getFontData(url: string) {
+    return await fetch(normalizeUrl(url, null, true))
+        .then(r => r.arrayBuffer())
+        .then(r => Buffer.from(r));
+}
 
 async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
     // const fontPath = join(process.cwd(), 'public', 'fonts', 'Montserrat.ttf')
     // let fontData = await fs.readFile(fontPath)
+    let fontsData = [
+        {
+            name: 'Montserrat',
+            url: "/fonts/Montserrat-Medium.ttf",
+            weight: 500 as const,
+            style: 'normal' as const,
+        },
+        {
+            name: 'Montserrat',
+            url: "/fonts/Montserrat-SemiBold.ttf",
+            weight: 600 as const,
+            style: 'normal' as const,
+        },
+        {
+            name: 'Montserrat',
+            url: "/fonts/Montserrat-Bold.ttf",
+            weight: 700 as const,
+            style: 'normal' as const,
+        },
+        {
+            name: 'Montserrat',
+            url: "/fonts/Montserrat-MediumItalic.ttf",
+            weight: 500 as const,
+            style: 'italic' as const,
+        }
+    ]
 
-    let fontData1 = await fetch(normalizeUrl("/fonts/Montserrat-Medium.ttf", null, true))
-        .then(r => r.arrayBuffer())
-        .then(r => Buffer.from(r))
-    let fontData2 = await fetch(normalizeUrl("/fonts/Montserrat-SemiBold.ttf", null, true))
-        .then(r => r.arrayBuffer())
-        .then(r => Buffer.from(r))
+    let promises = fontsData.map(async (font) => {
+        let data = await getFontData(font.url)
+        let returnData = {
+            ...font,
+            data: data
+        }
+        // @ts-ignore
+        delete returnData.url
+        return returnData
+    })
+    let fonts = await Promise.all(promises)
+
     // console.log(fontData)
 
     const opts1: SatoriOptions = {
-        fonts: [
-            {
-                name: 'Montserrat',
-                data: fontData1,
-                weight: 500,
-                style: 'normal',
-            }, {
-                name: 'Montserrat',
-                data: fontData2,
-                weight: 600,
-                style: 'normal',
-            },
-        ],
+        fonts: fonts,
         width: 1200,
         height: 630,
         embedFont: true,
@@ -73,9 +100,15 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const url = normalizeUrl(TutorImg, DeadCat);
+            const url = normalizeUrl(UserImage, DeadCat);
             const image_data = await imageToBase64(url);
-            const element = MaterialThumbnail()
+            const element = MaterialThumbnail({
+                image_url: image_data,
+                name: "Burunduk",
+                tags: ["Семестр 1", "Экзамен", "МатАнализ"],
+                text: "Описание описание описание описание описание описание описание описание описание описание описание описание...",
+                title: "Название"
+            })
 
 
             await renderAndSend(element, res);
@@ -91,7 +124,10 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
-            const element = QuoteThumbnail()
+            const element = QuoteThumbnail({
+                name: "Трифоненков В.П.",
+                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. "
+            })
             await renderAndSend(element, res);
         }),
     getReview: t.procedure.meta({
@@ -105,7 +141,18 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
-            const element = ReviewThumbnail()
+            const images = [UserImage, TutorImg]
+            const urls = images.map((image) => normalizeUrl(image, DeadCat))
+            const promises = urls.map((url) => imageToBase64(url))
+            const [user_image_data, tutor_image_data] = await Promise.all(promises);
+            const element = ReviewThumbnail({
+                text: "Описание описание описание описание описание описание описание описание описание описание описание описание...",
+                title: "Название",
+                tutor_image_url: tutor_image_data,
+                tutor_name: "Трифоненков В.П.",
+                user_image_url: user_image_data,
+                user_name: "Burunduk"
+            })
             await renderAndSend(element, res);
         }),
     getTutor: t.procedure.meta({
@@ -143,7 +190,18 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
-            const element = UserThumbnail()
+            const url = normalizeUrl(UserImage, DeadCat);
+            const image_data = await imageToBase64(url);
+            const element = UserThumbnail({
+                name: "Burunduk",
+                course: 3,
+                image_url: image_data,
+                materials: 3,
+                quotes: 3,
+                rating: 4.9,
+                reviews: 5
+
+            })
             await renderAndSend(element, res);
         }),
 
