@@ -130,6 +130,7 @@ export const thumbnailsRouter = t.router({
                 materials: 3,
                 image_url: image_data
             })
+            await renderAndSend(element, res);
         }),
     getUser: t.procedure.meta({
         openapi: {
