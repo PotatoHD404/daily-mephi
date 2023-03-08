@@ -8,10 +8,7 @@ import QuoteThumbnail from 'server/components/thumbnails/quote';
 import ReviewThumbnail from 'server/components/thumbnails/review';
 import TutorThumbnail from 'server/components/thumbnails/tutor';
 import UserThumbnail from 'server/components/thumbnails/user';
-import TutorImg from "images/tutor.png";
-import DeadCat from "images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
-import UserImage from "images/profile1.png"
 
 
 async function getFontData(url: string) {
@@ -62,8 +59,6 @@ async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
     })
     let fonts = await Promise.all(promises)
 
-    // console.log(fontData)
-
     const opts1: SatoriOptions = {
         fonts: fonts,
         width: 1200,
@@ -100,7 +95,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const url = normalizeUrl(UserImage, DeadCat);
+            const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = MaterialThumbnail({
                 image_url: image_data,
@@ -141,8 +136,8 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
-            const images = [UserImage, TutorImg]
-            const urls = images.map((image) => normalizeUrl(image, DeadCat))
+            const images = ["/images/profile1.png", "/images/tutor.png"]
+            const urls = images.map((image) => normalizeUrl(image, "/images/dead_cat.svg", true))
             const promises = urls.map((url) => imageToBase64(url))
             const [user_image_data, tutor_image_data] = await Promise.all(promises);
             const element = ReviewThumbnail({
@@ -166,7 +161,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
-            const url = normalizeUrl(TutorImg, DeadCat);
+            const url = normalizeUrl("/images/tutor.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = TutorThumbnail({
                 name: "Трифоненков В.П.",
@@ -190,7 +185,7 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
-            const url = normalizeUrl(UserImage, DeadCat);
+            const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = UserThumbnail({
                 name: "Burunduk",
