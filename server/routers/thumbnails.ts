@@ -3,12 +3,12 @@ import {t} from 'server/trpc';
 import satori, {SatoriOptions} from 'satori';
 import {Resvg, ResvgRenderOptions} from '@resvg/resvg-js'
 import {NextApiResponse} from "next";
-import Material from 'components/thumbnails/material';
+import MaterialThumbnail from 'components/thumbnails/material';
 import QuoteThumbnail from 'components/thumbnails/quote';
 import ReviewThumbnail from 'components/thumbnails/review';
 import TutorThumbnail from 'components/thumbnails/tutor';
 import UserThumbnail from 'components/thumbnails/user';
-import Tutor from "images/tutor.png";
+import TutorImg from "images/tutor.png";
 import DeadCat from "images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
 
@@ -73,17 +73,9 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const url = normalizeUrl(Tutor, DeadCat);
+            const url = normalizeUrl(TutorImg, DeadCat);
             const image_data = await imageToBase64(url);
-            const element = Material({
-                name: "Трифоненков В.П.",
-                rating: 4.5,
-                legacy_rating: 2.1,
-                reviews: 5,
-                quotes: 3,
-                materials: 3,
-                image_url: image_data
-            })
+            const element = MaterialThumbnail()
 
 
             await renderAndSend(element, res);
@@ -127,8 +119,17 @@ export const thumbnailsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
-            const element = TutorThumbnail()
-            await renderAndSend(element, res);
+            const url = normalizeUrl(TutorImg, DeadCat);
+            const image_data = await imageToBase64(url);
+            const element = TutorThumbnail({
+                name: "Трифоненков В.П.",
+                rating: 4.5,
+                legacy_rating: 2.1,
+                reviews: 5,
+                quotes: 3,
+                materials: 3,
+                image_url: image_data
+            })
         }),
     getUser: t.procedure.meta({
         openapi: {

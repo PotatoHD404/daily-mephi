@@ -51,3 +51,30 @@ export function Span({children, tw}: { children?: React.ReactNode, tw?: string }
     // @ts-ignore
     return <span tw={tw}>{children}</span>;
 }
+
+
+function Img({
+                 children,
+                 tw,
+                 src,
+                 alt = "",
+                 width,
+                 height,
+                 style
+             }: {
+    children?: React.ReactNode,
+    tw?: string,
+    src: string,
+    alt?: string,
+    width: number,
+    height: number,
+    style?: any
+}) {
+    // @ts-ignore
+    return <img tw={tw} alt={alt} src={src} width={width} height={height} style={style}>{children}</img>;
+}
+
+function A({children, tw, href}: { children?: React.ReactNode, tw?: string, href?: string }) {
+    // @ts-ignore
+    return <a tw={tw} href={href}>{children}</a>;
+}
