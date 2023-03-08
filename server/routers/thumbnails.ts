@@ -28,11 +28,10 @@ async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
             style: 'normal',
         },],
         width: 1200,
-        height: 600,
+        height: 630,
         embedFont: true,
     }
     const svg = await satori(element, opts1)
-    console.log(svg)
     const opts2: ResvgRenderOptions = {
         fitTo: {
             mode: "original"
@@ -64,7 +63,7 @@ export const thumbnailsRouter = t.router({
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
             const url = normalizeUrl(Tutor, DeadCat);
             const image_data = await imageToBase64(url);
-            const element = await Material({
+            const element = Material({
                 name: "Трифоненков В.П.",
                 rating: 4.5,
                 legacy_rating: 2.1,

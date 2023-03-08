@@ -11,47 +11,47 @@ interface MType {
     image_url: string
 }
 
-function Div({children, tw}: { children: React.ReactNode, tw?: string }) {
+function Div({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <div tw={tw}>{children}</div>;
 }
 
-function H1({children, tw}: { children: React.ReactNode, tw?: string }) {
+function H1({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <h1 tw={tw}>{children}</h1>;
 }
 
-function H2({children, tw}: { children: React.ReactNode, tw?: string }) {
+function H2({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <h2 tw={tw}>{children}</h2>;
 }
 
-function H3({children, tw}: { children: React.ReactNode, tw?: string }) {
+function H3({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <h3 tw={tw}>{children}</h3>;
 }
 
-function H4({children, tw}: { children: React.ReactNode, tw?: string }) {
+function H4({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <h4 tw={tw}>{children}</h4>;
 }
 
-function Span({children, tw}: { children: React.ReactNode, tw?: string }) {
+function Span({children, tw}: { children?: React.ReactNode, tw?: string }) {
     // @ts-ignore
     return <span tw={tw}>{children}</span>;
 }
 
-function Img({children, tw}: { children: React.ReactNode, tw?: string }) {
+function Img({children, tw, src, alt = "", width, height}: { children?: React.ReactNode, tw?: string, src: string, alt?: string, width: number, height: number }) {
     // @ts-ignore
-    return <img tw={tw} alt={""}>{children}</img>;
+    return <img tw={tw} alt={alt} src={src} width={width} height={height}>{children}</img>;
 }
 
-function A({children, tw, href}: { children: React.ReactNode, tw?: string, href?: string }) {
+function A({children, tw, href}: { children?: React.ReactNode, tw?: string, href?: string }) {
     // @ts-ignore
     return <a tw={tw} href={href}>{children}</a>;
 }
 
-export default async function Material(
+export default function Material(
     {
         name,
         rating,
@@ -67,6 +67,7 @@ export default async function Material(
                 <H2 tw="flex flex-col text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 text-left">
                     <Span>Ready to dive in?</Span>
                     <Span tw="text-indigo-600">Start your free trial today.</Span>
+                    <Img src={image_url} width={150} height={150}></Img>
                 </H2>
                 <Div tw="mt-8 flex md:mt-0">
                     <Div tw="flex rounded-md shadow">
