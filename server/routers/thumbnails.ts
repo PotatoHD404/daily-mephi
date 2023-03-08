@@ -3,11 +3,11 @@ import {t} from 'server/trpc';
 import satori, {SatoriOptions} from 'satori';
 import {Resvg, ResvgRenderOptions} from '@resvg/resvg-js'
 import {NextApiResponse} from "next";
-import MaterialThumbnail from 'components/thumbnails/material';
-import QuoteThumbnail from 'components/thumbnails/quote';
-import ReviewThumbnail from 'components/thumbnails/review';
-import TutorThumbnail from 'components/thumbnails/tutor';
-import UserThumbnail from 'components/thumbnails/user';
+import MaterialThumbnail from 'server/components/thumbnails/material';
+import QuoteThumbnail from 'server/components/thumbnails/quote';
+import ReviewThumbnail from 'server/components/thumbnails/review';
+import TutorThumbnail from 'server/components/thumbnails/tutor';
+import UserThumbnail from 'server/components/thumbnails/user';
 import TutorImg from "images/tutor.png";
 import DeadCat from "images/dead_cat.svg";
 import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
