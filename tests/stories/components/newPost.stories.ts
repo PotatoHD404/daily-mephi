@@ -1,14 +1,14 @@
 import type {Meta, StoryObj} from '@storybook/preact';
 
-import BuyMeACoffeeWidget from "components/buyMeCoffee"
+import NewPost from "components/newPost";
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
-const meta: Meta<typeof BuyMeACoffeeWidget> = {
-    title: 'Buy me a coffee widget',
-    component: BuyMeACoffeeWidget,
+const meta: Meta<typeof NewPost> = {
+    title: 'New post',
+    component: NewPost,
 };
 
 export default meta;
-type Story = StoryObj<typeof BuyMeACoffeeWidget>;
+type Story = StoryObj<typeof NewPost>;
 
 export const Primary: Story = {};
