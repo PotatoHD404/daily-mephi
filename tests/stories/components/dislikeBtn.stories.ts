@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/preact';
 
 import BuyMeACoffeeWidget from "components/buyMeCoffee"
 
@@ -6,13 +6,9 @@ import BuyMeACoffeeWidget from "components/buyMeCoffee"
 const meta: Meta<typeof BuyMeACoffeeWidget> = {
     title: 'Buy me a coffee widget',
     component: BuyMeACoffeeWidget,
-    tags: ['autodocs'],
-    argTypes: {
-        backgroundColor: {
-            control: 'color',
-        },
-    },
 };
 
 export default meta;
 type Story = StoryObj<typeof BuyMeACoffeeWidget>;
+
+export const Primary: Story = {};
