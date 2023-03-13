@@ -90,7 +90,10 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return prisma.semester.findMany();
+            return (await prisma.semester.findMany()).map(el => {
+                el['name'] = el['name'][0];
+                return el;
+            });
         }),
     getAvatars: t.procedure.meta({
         openapi: {
@@ -110,7 +113,8 @@ export const utilsRouter = t.router({
                     select: {
                         url: true,
                         altUrl: true,
-                    }
+                    },
+                    distinct: ['url', 'altUrl']
                 }
             );
         }),

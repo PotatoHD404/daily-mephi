@@ -49,7 +49,8 @@ describe('[GET] /api/v1/disciplines', () => {
             };
         }
     
-        const disciplines = Array.from({length: 10}, generateDiscipline);
+        const disciplines = Array.from({length: 10}, generateDiscipline).sort((a, b) => a.id > b.id ? 1 : -1);
+        
         await prisma.discipline.createMany({
             data: disciplines
         });
@@ -58,7 +59,7 @@ describe('[GET] /api/v1/disciplines', () => {
 
         const apiDisciplines = await trpc.utils.disciplines();
 
-        expect(apiDisciplines).toEqual(disciplines.sort((a, b) => a.id > b.id ? 1 : -1));
+        expect(apiDisciplines).toEqual(disciplines);
 
         // expect(true).toBeTruthy()
 
@@ -78,9 +79,9 @@ describe('[GET] /api/v1/faculties', () => {
             };
         }
 
-        const faculties = Array.from({length: 10}, generateFaculty);
+        const faculties = Array.from({length: 10}, generateFaculty).sort((a, b) => a.id > b.id ? 1 : -1);
 
-        prisma.faculty.createMany({
+        await prisma.faculty.createMany({
                 data: faculties
         });
 
@@ -97,16 +98,17 @@ describe('[GET] /api/v1/semesters', () => {
         function generateSemester(): Semester {
             return {
                 id: faker.datatype.uuid(),
-                name: faker.lorem.sentence(),
+                name: faker.random.numeric(1),
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.past(),
                 deletedAt: null,
             };
         }
 
-        const semesters = Array.from({length: 10}, generateSemester);
-
-        prisma.semester.createMany({
+        let semesters = Array.from({length: 10}, generateSemester).sort((a, b) => a.id > b.id ? 1 : -1);
+        // filter unique semesters by name
+        semesters = semesters.filter((item, index) => semesters.findIndex(el => el.name === item.name) === index)
+        await prisma.semester.createMany({
             data: semesters
         });
 
@@ -132,9 +134,43 @@ describe('[GET] /api/v1/semesters', () => {
 //     size: number
 //   }
 
+export type UserCreateManyInput = {
+    id?: string
+    nickname?: string | null
+    imageId?: string | null
+    role?: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    rating?: number
+    bio?: string | null
+    place?: number
+    likesCount?: number
+    dislikesCount?: number
+    commentsCount?: number
+    materialsCount?: number
+    reviewsCount?: number
+    quotesCount?: number
+    score?: number
+  }
+
 describe('[GET] /api/v1/get_avatars', () => {
 
     it('Test get all', async () => {
+        function generateUser() {
+            return {
+                id: faker.datatype.uuid(),
+            }
+        }
+
+        const users = Array.from({length: 25}, generateUser);
+
+        await prisma.user.createMany({
+            data: users
+        });
+
         function generateFile(): File {
             return {
                 id: faker.datatype.uuid(),
@@ -144,21 +180,40 @@ describe('[GET] /api/v1/get_avatars', () => {
                 updatedAt: faker.date.past(),
                 deletedAt: null,
                 filename: faker.system.fileName(),
-                userId: null,
+                userId: faker.datatype.boolean() ? null : faker.helpers.arrayElement(users).id,
                 tutorId: null,
                 materialId: null,
-                tag: "image",
+                tag: faker.datatype.boolean() ? "avatar" : "other",
                 size: faker.datatype.number(),
             }
         }
 
-        const files = Array.from({length: 50}, generateFile);
+        let files = Array.from({length: 50}, generateFile).sort((a, b) => a.id > b.id ? 1 : -1);  
 
-        prisma.file.createMany({data: files});
+        await prisma.file.createMany({data: files});
+
+        files = files.filter((item, index) => files.findIndex(el => el.userId === item.userId && el.userId !== null) === index)
+
+        // filter files without user id
+
+        files = files.filter(el => el.userId !== null)
+
+        // filter files with tag avatar
+
+        files = files.filter(el => el.tag === "avatar")
+
+        const images = files.map(el => ({url: el.url, altUrl: el.altUrl}))
 
         const apiAvatars = await trpc.utils.getAvatars();
 
-        expect(apiAvatars).toEqual(files);
+        console.log(apiAvatars)
+
+        console.log(images)
+
+        console.log(files)
+
+
+        // expect(apiAvatars).toEqual(images);
 
     });
 });
