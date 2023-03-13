@@ -1,6 +1,5 @@
 import type {Discipline} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/api/mocks/prisma";
 import {trpc} from "tests/api/mocks/trpc";
 
 
