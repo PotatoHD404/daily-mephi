@@ -40,7 +40,7 @@ export function CrownComp(props: CrownCompParams) {
     </div>;
 }
 
-function Crown(props: CrownParams) {
+export function Crown(props: CrownParams) {
     switch (props.place) {
         case 1:
             return (

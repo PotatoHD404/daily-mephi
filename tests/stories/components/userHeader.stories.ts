@@ -4,7 +4,7 @@ import UserHeaderComponent from "components/userHeader";
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
 const meta: Meta<typeof UserHeaderComponent> = {
-    title: 'User header',
+    title: 'Components/User header',
     component: UserHeaderComponent,
 };
 
