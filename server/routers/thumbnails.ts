@@ -8,7 +8,7 @@ import QuoteThumbnail from 'server/components/thumbnails/quote';
 import ReviewThumbnail from 'server/components/thumbnails/review';
 import TutorThumbnail from 'server/components/thumbnails/tutor';
 import UserThumbnail from 'server/components/thumbnails/user';
-import {imageToBase64, normalizeUrl} from "../../lib/react/imageToBase64";
+import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
 
 
 async function getFontData(url: string) {

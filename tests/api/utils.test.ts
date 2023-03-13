@@ -1,8 +1,7 @@
 import type {Discipline, Faculty, Semester, File} from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/api/mocks/prisma";
 import {trpc} from "tests/api/mocks/trpc";
-import {prisma} from "lib/database/prisma";
 
 
 
@@ -14,62 +13,24 @@ import {prisma} from "lib/database/prisma";
 //     deletedAt: Date | null
 // }
 
+const prisma = new PrismaClient();
+
 beforeAll(async () => {
-    // create product categories
-    await prisma.category.createMany({
-        data: [{ name: 'Wand' }, { name: 'Broomstick' }],
-    })
-
-    console.log('✨ 2 categories successfully created!')
-
-    // create products
-    await prisma.product.createMany({
-        data: [
-            {
-                name: 'Holly, 11", phoenix feather',
-                description: 'Harry Potters wand',
-                price: 100,
-                sku: 1,
-                categoryId: 1,
-            },
-            {
-                name: 'Nimbus 2000',
-                description: 'Harry Potters broom',
-                price: 500,
-                sku: 2,
-                categoryId: 2,
-            },
-        ],
-    })
-
-    console.log('✨ 2 products successfully created!')
-
-    // create the customer
-    await prisma.customer.create({
-        data: {
-            name: 'Harry Potter',
-            email: 'harry@hogwarts.io',
-            address: '4 Privet Drive',
-        },
-    })
-
-    console.log('✨ 1 customer successfully created!')
+    await prisma.$connect()    
 })
 
 afterAll(async () => {
-    const deleteOrderDetails = prisma.orderDetails.deleteMany()
-    const deleteProduct = prisma.product.deleteMany()
-    const deleteCategory = prisma.category.deleteMany()
-    const deleteCustomerOrder = prisma.customerOrder.deleteMany()
-    const deleteCustomer = prisma.customer.deleteMany()
-
-    await prisma.$transaction([
-        deleteOrderDetails,
-        deleteProduct,
-        deleteCategory,
-        deleteCustomerOrder,
-        deleteCustomer,
-    ])
+    const deleteDisciplines = prisma.discipline.deleteMany()
+    
+    prisma.$connect();
+    const deletes = Object.getOwnPropertyNames(prisma).
+        filter(el => el[0] !== el[0].
+        toUpperCase() && el[0].
+        match(/[a-z]/i)).
+        // @ts-ignore
+        map(el => prisma[el]?.deleteMany).
+        filter(el => el !== undefined).map(el => el())
+    await prisma.$transaction(deletes)
 
     await prisma.$disconnect()
 })
@@ -77,6 +38,7 @@ afterAll(async () => {
 describe('[GET] /api/v1/disciplines', () => {
 
     it('Test get all', async () => {
+
         function generateDiscipline(): Discipline {
             return {
                 id: faker.datatype.uuid(),
@@ -86,14 +48,19 @@ describe('[GET] /api/v1/disciplines', () => {
                 deletedAt: null,
             };
         }
-
+    
         const disciplines = Array.from({length: 10}, generateDiscipline);
+        await prisma.discipline.createMany({
+            data: disciplines
+        });
 
-        prismaMock.discipline.findMany.mockResolvedValue(disciplines);
+        // prismaMock.discipline.findMany.mockResolvedValue(disciplines);
 
         const apiDisciplines = await trpc.utils.disciplines();
 
-        expect(apiDisciplines).toEqual(disciplines);
+        expect(apiDisciplines).toEqual(disciplines.sort((a, b) => a.id > b.id ? 1 : -1));
+
+        // expect(true).toBeTruthy()
 
     });
 });
@@ -113,7 +80,9 @@ describe('[GET] /api/v1/faculties', () => {
 
         const faculties = Array.from({length: 10}, generateFaculty);
 
-        prismaMock.faculty.findMany.mockResolvedValue(faculties);
+        prisma.faculty.createMany({
+                data: faculties
+        });
 
         const apiFaculties = await trpc.utils.facilities();
 
@@ -137,7 +106,9 @@ describe('[GET] /api/v1/semesters', () => {
 
         const semesters = Array.from({length: 10}, generateSemester);
 
-        prismaMock.semester.findMany.mockResolvedValue(semesters);
+        prisma.semester.createMany({
+            data: semesters
+        });
 
         const apiSemesters = await trpc.utils.semesters();
 
@@ -161,7 +132,7 @@ describe('[GET] /api/v1/semesters', () => {
 //     size: number
 //   }
 
-describe('[GET] /api/v1/semesters', () => {
+describe('[GET] /api/v1/get_avatars', () => {
 
     it('Test get all', async () => {
         function generateFile(): File {
@@ -183,69 +154,7 @@ describe('[GET] /api/v1/semesters', () => {
 
         const files = Array.from({length: 50}, generateFile);
 
-        prismaMock.file.findMany.mockResolvedValue(files);
-
-        const apiAvatars = await trpc.utils.getAvatars();
-
-        expect(apiAvatars).toEqual(files);
-
-    });
-});
-
-describe('[GET] /api/v1/semesters', () => {
-
-    it('Test get all', async () => {
-        function generateFile(): File {
-            return {
-                id: faker.datatype.uuid(),
-                url: faker.internet.url(),
-                altUrl: faker.internet.url(),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-                filename: faker.system.fileName(),
-                userId: null,
-                tutorId: null,
-                materialId: null,
-                tag: "image",
-                size: faker.datatype.number(),
-            }
-        }
-
-        const files = Array.from({length: 50}, generateFile);
-
-        prismaMock.file.findMany.mockResolvedValue(files);
-
-        const apiAvatars = await trpc.utils.getAvatars();
-
-        expect(apiAvatars).toEqual(files);
-
-    });
-});
-
-describe('[GET] /api/v1/semesters', () => {
-
-    it('Test get all', async () => {
-        function generateFile(): File {
-            return {
-                id: faker.datatype.uuid(),
-                url: faker.internet.url(),
-                altUrl: faker.internet.url(),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-                filename: faker.system.fileName(),
-                userId: null,
-                tutorId: null,
-                materialId: null,
-                tag: "image",
-                size: faker.datatype.number(),
-            }
-        }
-
-        const files = Array.from({length: 50}, generateFile);
-
-        prismaMock.file.findMany.mockResolvedValue(files);
+        prisma.file.createMany({data: files});
 
         const apiAvatars = await trpc.utils.getAvatars();
 
