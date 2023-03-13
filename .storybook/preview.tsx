@@ -5,9 +5,15 @@ import React from "preact/compat";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {useState} from "react";
-import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
+import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
+import {initialize, mswDecorator} from 'msw-storybook-addon';
+
+initialize({
+    onUnhandledRequest: "bypass",
+});
 export const decorators = [
+    mswDecorator,
     (Story: any, {args}: any) => {
         // console.log(args.session)
         const session: any = args.session === "Not logged in" ? null : {
@@ -53,7 +59,6 @@ const preview: Preview = {
         },
         viewport: {
             viewports: INITIAL_VIEWPORTS,
-            defaultViewport: 'responsive',
         },
     },
 };
