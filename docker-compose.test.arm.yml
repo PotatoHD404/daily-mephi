@@ -17,19 +17,19 @@ services:
 # url to access the database
 # jdbc:postgresql://localhost:5432/postgres
 # postgresql://postgres:postgres@localhost:5432/postgres
-  cockroach:
+  cockroach-test:
 #   image: christoofar/cockroachdb-arm64:latest
    image: cockroachdb/cockroach:latest
    ports:
-     - "26257:26257"
-     - "8080:8080"
+     - "26258:26257"
+     - "8081:8080"
    command: start-single-node --insecure
    platform: linux/arm64
    volumes:
-     - "cockroach-data:/cockroach/cockroach-data"
+     - "cockroach-data-test:/cockroach/cockroach-data"
    restart: unless-stopped
 volumes:
- cockroach-data:
+ cockroach-data-test:
 #  node:
 #      image: node:12.16.1
 #      volumes:
