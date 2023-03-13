@@ -27,7 +27,7 @@ jobs:
     name: 'Jest tests'
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.TF_VAR_DATABASE_URL }}
+      DATABASE_URL: 'postgresql://root@127.0.0.1:26258/defaultdb?sslmode=disable'
       LOCAL: ${{ secrets.TF_VAR_LOCAL }}
       NEXTAUTH_SECRET: ${{secrets.TF_VAR_NEXTAUTH_SECRET}}
       HASH_SECRET: ${{secrets.TF_VAR_HASH_SECRET}}
@@ -58,6 +58,10 @@ jobs:
           node-version: 16
       - name: Install node dependencies
         run: yarn install
+      - name: 'Run docker-compose'
+        uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: "./docker-compose.test.yml"
       - name: Create .env file
         run: |
           echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
@@ -85,6 +89,8 @@ jobs:
 
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
           echo NOTION_YC_IDS=\""NOTION_YC_IDS"\" >> .env
+      - name: Prisma migrate
+        run: yarn prisma migrate dev --name init --preview-feature
       - name: Run tests
         run: yarn test
   chromatic:
@@ -92,7 +98,7 @@ jobs:
     # Operating System
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.TF_VAR_DATABASE_URL }}
+      DATABASE_URL: 'postgresql://root@127.0.0.1:26258/defaultdb?sslmode=disable'
       LOCAL: ${{ secrets.TF_VAR_LOCAL }}
       NEXTAUTH_SECRET: ${{secrets.TF_VAR_NEXTAUTH_SECRET}}
       HASH_SECRET: ${{secrets.TF_VAR_HASH_SECRET}}
@@ -124,6 +130,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: 'Run docker-compose'
+        uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: "./docker-compose.test.yml"
       - name: Install node dependencies
         run: yarn install
       - name: Create .env file
@@ -154,6 +164,8 @@ jobs:
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
           echo NOTION_YC_IDS=\""NOTION_YC_IDS"\" >> .env
         #👇 Adds Chromatic as a step in the workflow
+      - name: Prisma migrate
+        run: yarn prisma migrate dev --name init --preview-feature
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Options required for Chromatic's GitHub Action

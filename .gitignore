@@ -43,14 +43,12 @@ public/workbox-*.js
 public/service-worker.js
 /ydb_certs/
 
-/.env
+/.env*
 /parsing/
 /storybook-static/
 /build-storybook.log
 /functions/notion-api/node_modules/
 /functions/notion-api/notion-api.zip
-
-.env.old
 
 terraform/.tfvars
 

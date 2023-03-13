@@ -1,15 +1,16 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import React from 'react';
+import About from 'pages/about';
+import {Meta, StoryObj} from "@storybook/preact";
+import {rest} from "msw";
 
-import TopUsers from "components/topUsers"
-
-
-import {rest} from 'msw'
-
-
-// More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
-const meta: Meta<typeof TopUsers> = {
-    title: 'Components/Top Users',
-    component: TopUsers,
+const meta: Meta<typeof About> = {
+    title: 'Pages/About page',
+    component: About,
+    argTypes: {
+        needsAuth: {control: 'boolean'},
+        isMobile: {control: 'boolean'},
+        changeNeedsAuth: {action: 'changeNeedsAuth'},
+    },
     parameters: {
         msw: {
             handlers: [
@@ -50,16 +51,13 @@ const meta: Meta<typeof TopUsers> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TopUsers>;
+type Story = StoryObj<typeof About>;
 
 export const Primary: Story = {
     args: {
-        isLoading: false,
-    },
+        changeNeedsAuth: (a: boolean) => {
 
-};
-export const Loading: Story = {
-    args: {
-        isLoading: true,
+        },
+        needsAuth: false,
     }
 };

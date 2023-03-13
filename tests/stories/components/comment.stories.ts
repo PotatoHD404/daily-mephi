@@ -4,7 +4,7 @@ import Comment from "components/comment";
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
 const meta: Meta<typeof Comment> = {
-    title: 'Comment',
+    title: 'Components/Comment',
     component: Comment,
 };
 
