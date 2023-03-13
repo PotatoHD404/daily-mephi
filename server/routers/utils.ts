@@ -108,13 +108,12 @@ export const utilsRouter = t.router({
                 {
                     where: {
                         tag: "avatar",
-                        user: null
+                        userId: null
                     },
                     select: {
                         url: true,
                         altUrl: true,
                     },
-                    distinct: ['url', 'altUrl']
                 }
             );
         }),

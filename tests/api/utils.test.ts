@@ -16,12 +16,12 @@ import {trpc} from "tests/api/mocks/trpc";
 const prisma = new PrismaClient();
 
 beforeAll(async () => {
-    await prisma.$connect()    
+    await prisma.$connect()
 })
 
 afterAll(async () => {
     const deleteDisciplines = prisma.discipline.deleteMany()
-    
+
     prisma.$connect();
     const deletes = Object.getOwnPropertyNames(prisma).
         filter(el => el[0] !== el[0].
@@ -48,9 +48,9 @@ describe('[GET] /api/v1/disciplines', () => {
                 deletedAt: null,
             };
         }
-    
+
         const disciplines = Array.from({length: 10}, generateDiscipline).sort((a, b) => a.id > b.id ? 1 : -1);
-        
+
         await prisma.discipline.createMany({
             data: disciplines
         });
@@ -165,14 +165,18 @@ describe('[GET] /api/v1/get_avatars', () => {
             }
         }
 
-        const users = Array.from({length: 25}, generateUser);
+        const users = Array.from({length: 300}, generateUser);
+
+        const usersCopy = users.map(el => el.id)
 
         await prisma.user.createMany({
             data: users
         });
 
+
+
         function generateFile(): File {
-            return {
+            const res = {
                 id: faker.datatype.uuid(),
                 url: faker.internet.url(),
                 altUrl: faker.internet.url(),
@@ -180,25 +184,24 @@ describe('[GET] /api/v1/get_avatars', () => {
                 updatedAt: faker.date.past(),
                 deletedAt: null,
                 filename: faker.system.fileName(),
-                userId: faker.datatype.boolean() ? null : faker.helpers.arrayElement(users).id,
+                userId: faker.datatype.boolean() || usersCopy.length === 0 ? null : faker.helpers.arrayElement(usersCopy),
                 tutorId: null,
                 materialId: null,
                 tag: faker.datatype.boolean() ? "avatar" : "other",
                 size: faker.datatype.number(),
             }
+            // remove user id from users array
+            if (res.userId !== null && res.tag === "avatar")
+                usersCopy.splice(usersCopy.findIndex(el => el === res.userId), 1)
+            return res;
         }
 
-        let files = Array.from({length: 50}, generateFile).sort((a, b) => a.id > b.id ? 1 : -1);  
+        let files = Array.from({length: 500}, generateFile).sort((a, b) => a.id > b.id ? 1 : -1);
 
         await prisma.file.createMany({data: files});
 
-        files = files.filter((item, index) => files.findIndex(el => el.userId === item.userId && el.userId !== null) === index)
 
-        // filter files without user id
-
-        files = files.filter(el => el.userId !== null)
-
-        // filter files with tag avatar
+        files = files.filter(el => el.userId === null)
 
         files = files.filter(el => el.tag === "avatar")
 
@@ -206,14 +209,8 @@ describe('[GET] /api/v1/get_avatars', () => {
 
         const apiAvatars = await trpc.utils.getAvatars();
 
-        console.log(apiAvatars)
 
-        console.log(images)
-
-        console.log(files)
-
-
-        // expect(apiAvatars).toEqual(images);
+        expect(images).toEqual(apiAvatars);
 
     });
 });
