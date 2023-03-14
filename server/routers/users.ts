@@ -27,7 +27,11 @@ export const usersRouter = t.router({
                 select: {
                     nickname: true,
                     id: true,
-                    image: true,
+                    image: {
+                        select: {
+                            url: true,
+                        }
+                    },
                     rating: true,
                     role: true,
                     likesCount: true,
@@ -35,6 +39,8 @@ export const usersRouter = t.router({
                     materialsCount: true,
                     reviewsCount: true,
                     quotesCount: true,
+                    bio: true,
+                    commentsCount: true,
                     place: true,
                 }
             });
@@ -55,9 +61,9 @@ export const usersRouter = t.router({
     })
         .input(z.object({
             nickname: z.string().regex(/^[a-zA-Z0-9_]{3,30}$/, {message: 'Nickname must be 3-30 characters long and contain only letters, numbers and underscores'}).optional(),
-            image: z.string().url().optional(),
+            image: z.string().uuid().optional(),
             bio: z.string().max(150, {message: 'Bio must be 150 characters or less'}).optional(),
-            csrfToken: z.string().uuid(),
+            csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
         .output(z.any())
@@ -79,7 +85,7 @@ export const usersRouter = t.router({
                     message: 'Bio is toxic'
                 });
             }
-            await prisma.$transaction(async (prisma) => {
+            return await prisma.$transaction(async (prisma) => {
                 await Promise.all([
                     async () => {
                         if (nickname) {

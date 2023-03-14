@@ -297,4 +297,60 @@ describe('[GET] /api/v1/top', () => {
 
         expect(topUsers).toEqual(filteredUsers.slice(5, 15));
     });
+    it('Test get 190 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 190});
+
+        const usersCount = await prisma.user.count();
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(185, 195));
+    });
+    it('Test get 196 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 196});
+
+        const usersCount = await prisma.user.count();
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(191, 200));
+    });
+    it('Test get 197 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 197});
+
+        const usersCount = await prisma.user.count();
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(192, 200));
+    });
+    it('Test get 200 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 200});
+
+        const usersCount = await prisma.user.count();
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(195, 200));
+    });
 });
