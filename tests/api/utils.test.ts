@@ -1,8 +1,7 @@
-import type {Discipline, Faculty, Semester, File} from "@prisma/client";
-import {PrismaClient} from "@prisma/client";
+import type {Discipline, Faculty, File, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/api/mocks/trpc";
-
+import {prisma} from "./utils/prisma"
 
 
 // export type Discipline = {
@@ -13,27 +12,6 @@ import {trpc} from "tests/api/mocks/trpc";
 //     deletedAt: Date | null
 // }
 
-const prisma = new PrismaClient();
-
-beforeAll(async () => {
-    await prisma.$connect()
-})
-
-afterAll(async () => {
-    const deleteDisciplines = prisma.discipline.deleteMany()
-
-    prisma.$connect();
-    const deletes = Object.getOwnPropertyNames(prisma).
-        filter(el => el[0] !== el[0].
-        toUpperCase() && el[0].
-        match(/[a-z]/i)).
-        // @ts-ignore
-        map(el => prisma[el]?.deleteMany).
-        filter(el => el !== undefined).map(el => el())
-    await prisma.$transaction(deletes)
-
-    await prisma.$disconnect()
-})
 
 describe('[GET] /api/v1/disciplines', () => {
 
@@ -82,7 +60,7 @@ describe('[GET] /api/v1/faculties', () => {
         const faculties = Array.from({length: 10}, generateFaculty).sort((a, b) => a.id > b.id ? 1 : -1);
 
         await prisma.faculty.createMany({
-                data: faculties
+            data: faculties
         });
 
         const apiFaculties = await trpc.utils.facilities();
@@ -154,7 +132,7 @@ export type UserCreateManyInput = {
     reviewsCount?: number
     quotesCount?: number
     score?: number
-  }
+}
 
 describe('[GET] /api/v1/get_avatars', () => {
 
@@ -172,7 +150,6 @@ describe('[GET] /api/v1/get_avatars', () => {
         await prisma.user.createMany({
             data: users
         });
-
 
 
         function generateFile(): File {
@@ -210,7 +187,114 @@ describe('[GET] /api/v1/get_avatars', () => {
         const apiAvatars = await trpc.utils.getAvatars();
 
 
-        expect(images).toEqual(apiAvatars);
+        expect(apiAvatars).toEqual(images);
 
+    });
+});
+
+
+describe('[GET] /api/v1/top', () => {
+    async function initTest() {
+        function generateImage() {
+            return {
+                id: faker.datatype.uuid(),
+                tag: "avatar",
+                filename: faker.system.fileName(),
+                url: faker.internet.url(),
+                altUrl: faker.internet.url(),
+            }
+        }
+
+        const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id > b.id ? 1 : -1);
+        const imageIds = images.map(el => el.id)
+        await prisma.file.createMany({
+            data: images
+        });
+
+        function generateUser() {
+            let res = {
+                id: faker.datatype.uuid(),
+                nickname: faker.internet.userName(),
+                rating: faker.datatype.number({min: 0, max: 100}),
+                imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
+            };
+            imageIds.splice(imageIds.findIndex(el => el === res.imageId), 1)
+            return res;
+        }
+
+        let users = Array.from({length: 200}, generateUser).sort((a, b) => a.id > b.id ? 1 : -1);
+
+        await prisma.user.createMany({
+            data: users
+        });
+
+        users = users.sort((a, b) => a.rating < b.rating ? 1 : (a.rating === b.rating ? (a.id > b.id ? 1 : -1) : -1));
+
+        // add images to users
+
+
+        return users.map((el, index) => {
+            if (el.imageId !== null) {
+                const image = images.find(img => img.id === el.imageId)
+                if (image === undefined) throw new Error("Image not found")
+                let res = {
+                    ...el,
+                    image: {
+                        url: image.url,
+                    },
+                    place: index + 1
+                }
+                // @ts-ignore
+                delete res.imageId
+                return res
+            }
+            // @ts-ignore
+            delete el.imageId
+            return {...el, image: null, place: index + 1}
+        });
+    }
+
+    it('Test get 1 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 1});
+
+
+        expect(topUsers).toEqual(filteredUsers.slice(0, 10));
+
+    });
+    it('Test get 2 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 2});
+
+        const usersCount = await prisma.user.count();
+
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(0, 10));
+
+    });
+    it('Test get 10 place', async () => {
+        const filteredUsers = await initTest();
+
+        // users = users.filter(el => el.tag === "avatar")
+
+        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+        const topUsers = await trpc.utils.top({place: 10});
+
+        const usersCount = await prisma.user.count();
+        expect(usersCount).toEqual(200);
+
+        expect(topUsers).toEqual(filteredUsers.slice(5, 15));
     });
 });

@@ -137,7 +137,7 @@ export const utilsRouter = t.router({
             } else {
                 skip = 0;
             }
-            return await prisma.user.findMany({
+            let users = await prisma.user.findMany({
                     select: {
                         nickname: true,
                         id: true,
@@ -155,17 +155,20 @@ export const utilsRouter = t.router({
                     skip
                 }
             );
+            return users.map((el, i) => {
+                return {...el, place: i + skip + 1};
+            });
         }),
-    calculateScore: t.procedure.meta({
-        openapi: {
-            method: 'GET',
-            path: '/calculate_score',
-            enabled: false
-        }
-    })
-        .input(z.void())
-        .output(z.any())
-        .query(async ({ctx: {prisma}}) => {
-            return "calculate_score";
-        })
+    // calculateScore: t.procedure.meta({
+    //     openapi: {
+    //         method: 'GET',
+    //         path: '/calculate_score',
+    //         enabled: false
+    //     }
+    // })
+    //     .input(z.void())
+    //     .output(z.any())
+    //     .query(async ({ctx: {prisma}}) => {
+    //         return "calculate_score";
+    //     })
 });
