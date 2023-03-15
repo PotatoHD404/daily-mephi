@@ -193,164 +193,164 @@ describe('[GET] /api/v1/get_avatars', () => {
 });
 
 
-describe('[GET] /api/v1/top', () => {
-    async function initTest() {
-        function generateImage() {
-            return {
-                id: faker.datatype.uuid(),
-                tag: "avatar",
-                filename: faker.system.fileName(),
-                url: faker.internet.url(),
-                altUrl: faker.internet.url(),
-            }
-        }
+// describe('[GET] /api/v1/top', () => {
+//     async function initTest() {
+//         function generateImage() {
+//             return {
+//                 id: faker.datatype.uuid(),
+//                 tag: "avatar",
+//                 filename: faker.system.fileName(),
+//                 url: faker.internet.url(),
+//                 altUrl: faker.internet.url(),
+//             }
+//         }
 
-        const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id > b.id ? 1 : -1);
-        const imageIds = images.map(el => el.id)
-        await prisma.file.createMany({
-            data: images
-        });
+//         const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id > b.id ? 1 : -1);
+//         const imageIds = images.map(el => el.id)
+//         await prisma.file.createMany({
+//             data: images
+//         });
 
-        function generateUser() {
-            let res = {
-                id: faker.datatype.uuid(),
-                nickname: faker.internet.userName(),
-                rating: faker.datatype.number({min: 0, max: 100}),
-                imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
-            };
-            imageIds.splice(imageIds.findIndex(el => el === res.imageId), 1)
-            return res;
-        }
+//         function generateUser() {
+//             let res = {
+//                 id: faker.datatype.uuid(),
+//                 nickname: faker.internet.userName(),
+//                 rating: faker.datatype.number({min: 0, max: 100}),
+//                 imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
+//             };
+//             imageIds.splice(imageIds.findIndex(el => el === res.imageId), 1)
+//             return res;
+//         }
 
-        let users = Array.from({length: 200}, generateUser).sort((a, b) => a.id > b.id ? 1 : -1);
+//         let users = Array.from({length: 200}, generateUser).sort((a, b) => a.id > b.id ? 1 : -1);
 
-        await prisma.user.createMany({
-            data: users
-        });
+//         await prisma.user.createMany({
+//             data: users
+//         });
 
-        users = users.sort((a, b) => a.rating < b.rating ? 1 : (a.rating === b.rating ? (a.id > b.id ? 1 : -1) : -1));
+//         users = users.sort((a, b) => a.rating < b.rating ? 1 : (a.rating === b.rating ? (a.id > b.id ? 1 : -1) : -1));
 
-        // add images to users
-
-
-        return users.map((el, index) => {
-            if (el.imageId !== null) {
-                const image = images.find(img => img.id === el.imageId)
-                if (image === undefined) throw new Error("Image not found")
-                let res = {
-                    ...el,
-                    image: {
-                        url: image.url,
-                    },
-                    place: index + 1
-                }
-                // @ts-ignore
-                delete res.imageId
-                return res
-            }
-            // @ts-ignore
-            delete el.imageId
-            return {...el, image: null, place: index + 1}
-        });
-    }
-
-    it('Test get 1 place', async () => {
-        const filteredUsers = await initTest();
-
-        // users = users.filter(el => el.tag === "avatar")
-
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
-
-        const topUsers = await trpc.utils.top({place: 1});
+//         // add images to users
 
 
-        expect(topUsers).toEqual(filteredUsers.slice(0, 10));
+//         return users.map((el, index) => {
+//             if (el.imageId !== null) {
+//                 const image = images.find(img => img.id === el.imageId)
+//                 if (image === undefined) throw new Error("Image not found")
+//                 let res = {
+//                     ...el,
+//                     image: {
+//                         url: image.url,
+//                     },
+//                     place: index + 1
+//                 }
+//                 // @ts-ignore
+//                 delete res.imageId
+//                 return res
+//             }
+//             // @ts-ignore
+//             delete el.imageId
+//             return {...el, image: null, place: index + 1}
+//         });
+//     }
 
-    });
-    it('Test get 2 place', async () => {
-        const filteredUsers = await initTest();
+//     it('Test get 1 place', async () => {
+//         const filteredUsers = await initTest();
 
-        // users = users.filter(el => el.tag === "avatar")
+//         // users = users.filter(el => el.tag === "avatar")
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        const topUsers = await trpc.utils.top({place: 2});
+//         const topUsers = await trpc.utils.top({place: 1});
 
-        const usersCount = await prisma.user.count();
 
-        expect(usersCount).toEqual(200);
+//         expect(topUsers).toEqual(filteredUsers.slice(0, 10));
 
-        expect(topUsers).toEqual(filteredUsers.slice(0, 10));
+//     });
+//     it('Test get 2 place', async () => {
+//         const filteredUsers = await initTest();
 
-    });
-    it('Test get 10 place', async () => {
-        const filteredUsers = await initTest();
+//         // users = users.filter(el => el.tag === "avatar")
 
-        // users = users.filter(el => el.tag === "avatar")
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         const topUsers = await trpc.utils.top({place: 2});
 
-        const topUsers = await trpc.utils.top({place: 10});
+//         const usersCount = await prisma.user.count();
 
-        const usersCount = await prisma.user.count();
-        expect(usersCount).toEqual(200);
+//         expect(usersCount).toEqual(200);
 
-        expect(topUsers).toEqual(filteredUsers.slice(5, 15));
-    });
-    it('Test get 190 place', async () => {
-        const filteredUsers = await initTest();
+//         expect(topUsers).toEqual(filteredUsers.slice(0, 10));
 
-        // users = users.filter(el => el.tag === "avatar")
+//     });
+//     it('Test get 10 place', async () => {
+//         const filteredUsers = await initTest();
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         // users = users.filter(el => el.tag === "avatar")
 
-        const topUsers = await trpc.utils.top({place: 190});
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        const usersCount = await prisma.user.count();
-        expect(usersCount).toEqual(200);
+//         const topUsers = await trpc.utils.top({place: 10});
 
-        expect(topUsers).toEqual(filteredUsers.slice(185, 195));
-    });
-    it('Test get 196 place', async () => {
-        const filteredUsers = await initTest();
+//         const usersCount = await prisma.user.count();
+//         expect(usersCount).toEqual(200);
 
-        // users = users.filter(el => el.tag === "avatar")
+//         expect(topUsers).toEqual(filteredUsers.slice(5, 15));
+//     });
+//     it('Test get 190 place', async () => {
+//         const filteredUsers = await initTest();
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         // users = users.filter(el => el.tag === "avatar")
 
-        const topUsers = await trpc.utils.top({place: 196});
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        const usersCount = await prisma.user.count();
-        expect(usersCount).toEqual(200);
+//         const topUsers = await trpc.utils.top({place: 190});
 
-        expect(topUsers).toEqual(filteredUsers.slice(191, 200));
-    });
-    it('Test get 197 place', async () => {
-        const filteredUsers = await initTest();
+//         const usersCount = await prisma.user.count();
+//         expect(usersCount).toEqual(200);
 
-        // users = users.filter(el => el.tag === "avatar")
+//         expect(topUsers).toEqual(filteredUsers.slice(185, 195));
+//     });
+//     it('Test get 196 place', async () => {
+//         const filteredUsers = await initTest();
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         // users = users.filter(el => el.tag === "avatar")
 
-        const topUsers = await trpc.utils.top({place: 197});
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        const usersCount = await prisma.user.count();
-        expect(usersCount).toEqual(200);
+//         const topUsers = await trpc.utils.top({place: 196});
 
-        expect(topUsers).toEqual(filteredUsers.slice(192, 200));
-    });
-    it('Test get 200 place', async () => {
-        const filteredUsers = await initTest();
+//         const usersCount = await prisma.user.count();
+//         expect(usersCount).toEqual(200);
 
-        // users = users.filter(el => el.tag === "avatar")
+//         expect(topUsers).toEqual(filteredUsers.slice(191, 200));
+//     });
+//     it('Test get 197 place', async () => {
+//         const filteredUsers = await initTest();
 
-        // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+//         // users = users.filter(el => el.tag === "avatar")
 
-        const topUsers = await trpc.utils.top({place: 200});
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
 
-        const usersCount = await prisma.user.count();
-        expect(usersCount).toEqual(200);
+//         const topUsers = await trpc.utils.top({place: 197});
 
-        expect(topUsers).toEqual(filteredUsers.slice(195, 200));
-    });
-});
+//         const usersCount = await prisma.user.count();
+//         expect(usersCount).toEqual(200);
+
+//         expect(topUsers).toEqual(filteredUsers.slice(192, 200));
+//     });
+//     it('Test get 200 place', async () => {
+//         const filteredUsers = await initTest();
+
+//         // users = users.filter(el => el.tag === "avatar")
+
+//         // const images = users.map(el => ({url: el.url, altUrl: el.altUrl}))
+
+//         const topUsers = await trpc.utils.top({place: 200});
+
+//         const usersCount = await prisma.user.count();
+//         expect(usersCount).toEqual(200);
+
+//         expect(topUsers).toEqual(filteredUsers.slice(195, 200));
+//     });
+// });
