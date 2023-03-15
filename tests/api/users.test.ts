@@ -1,5 +1,8 @@
 import type {User} from "@prisma/client";
 import {faker} from '@faker-js/faker';
+import { isAuthorized } from "server/middlewares/isAuthorized";
+import { verifyCSRFToken } from "server/middlewares/verifyCSRFToken";
+import { verifyRecaptcha } from "server/middlewares/verifyRecaptcha";
 import {trpc} from "./mocks/trpc";
 import {TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";

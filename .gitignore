@@ -84,3 +84,5 @@ public/service-worker.js.map
 .fleet/
 
 .next-tf/
+
+public/robots.txt

@@ -438,7 +438,6 @@ data "template_file" "api_gateway" {
     api_function_id    = yandex_function.backend_api.id
     pages_function_id  = yandex_function.backend_pages.id
     bucket_name        = yandex_storage_bucket.public.bucket
-    hash               = data.external.pages_hash.result.pages_hash
   }
 }
 

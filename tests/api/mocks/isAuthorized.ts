@@ -2,36 +2,40 @@ import {t} from "server/trpc";
 import {unstable_getServerSession, User} from "next-auth";
 import {nextAuthOptions} from "lib/auth/nextAuthOptions";
 import {TRPCError} from "@trpc/server";
+import { faker } from "@faker-js/faker";
 
-const isAuthorized = t.middleware(async ({ctx: {req, res}, next}) => {
+export const isAuthorizedFunc = jest.fn()
 
-    const session = req && res && (await unstable_getServerSession(req, res, nextAuthOptions));
-    // type of user
-    type MyUser = {
-        id: string,
-        nickname: string,
-        image: string | null,
-    };
-    const sessionUser = session?.user as (User & MyUser);
-    let user: MyUser | null = null;
-    if (sessionUser.id) {
-        user = {
-            id: sessionUser.id,
-            // @ts-ignore
-            nickname: sessionUser.name,
-            image: sessionUser?.image || null,
+const isAuthorized = t.middleware(
+    isAuthorizedFunc
+)
+
+beforeAll(() => {
+    isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
+        const session = req && res && (await unstable_getServerSession(req, res, nextAuthOptions));
+        // type of user
+        type MyUser = {
+            id: string,
+            nickname: string,
+            image: string | null,
         };
-    }
-    if (!user) {
-        throw new TRPCError({code: 'UNAUTHORIZED'})
-    }
 
-    return next({
-        ctx: {
-            user,
-        },
+        let user = {
+                id: faker.datatype.uuid(),
+                // @ts-ignore
+                nickname: faker.internet.userName(),
+                image: faker.image.avatar(),
+            };
+        
+    
+        return next({
+            ctx: {
+                user,
+            },
+        })
     })
 })
+
 jest.mock('server/middlewares/isAuthorized', () => ({
     __esModule: true,
     isAuthorized: isAuthorized,
