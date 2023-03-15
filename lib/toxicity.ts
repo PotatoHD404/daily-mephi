@@ -100,7 +100,7 @@ export async function getToxicityFromText(text: string) {
         textParts.push(currentTextPart);
     }
     // TODO: fix ... in the end of text
-    console.log(textParts);
+    // console.log(textParts);
     const toxicity = [];
     for (const textPart of textParts) {
         toxicity.push(getToxicity(textPart));

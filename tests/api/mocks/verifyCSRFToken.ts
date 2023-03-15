@@ -5,19 +5,21 @@ import {defaultCookies} from "lib/utils";
 
 export const verifyCSRFTokenFunc = jest.fn()
 
-const verifyRecaptcha = t.middleware(
+const verifyCSRFToken = t.middleware(
     verifyCSRFTokenFunc,
 )
 
-beforeAll(() => {
+beforeEach(() => {
     verifyCSRFTokenFunc.mockImplementation(async ({ ctx: {req}, next }) => {
-
         return next()
-    }
-    )
+    })
+})
+
+afterEach(() => {
+    verifyCSRFTokenFunc.mockReset()
 })
 
 jest.mock('server/middlewares/verifyCSRFToken', () => ({
     __esModule: true,
-    verifyRecaptcha: verifyRecaptcha,
+    verifyCSRFToken: verifyCSRFToken,
 }))

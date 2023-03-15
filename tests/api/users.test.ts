@@ -1,11 +1,13 @@
 import type {User} from "@prisma/client";
 import {faker} from '@faker-js/faker';
-import { isAuthorized } from "server/middlewares/isAuthorized";
-import { verifyCSRFToken } from "server/middlewares/verifyCSRFToken";
-import { verifyRecaptcha } from "server/middlewares/verifyRecaptcha";
-import {trpc} from "./mocks/trpc";
+import {isAuthorizedFunc} from "./mocks/isAuthorized";
+import {verifyCSRFTokenFunc} from "./mocks/verifyCSRFToken";
+import {isToxic} from "./mocks/isToxic";
+import "./mocks/verifyRecaptcha";
+import {trpc} from "./mocks/trpc"; // order matters
 import {TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
+import { verifyRecaptchaFunc } from "./mocks/verifyRecaptcha";
 
 
 // export type User = {
@@ -50,7 +52,7 @@ async function createUsers() {
 
     // generate faker user
     function generateUser() {
-        return {
+        const res = {
             bio: faker.lorem.sentence(),
             commentsCount: faker.datatype.number({
                 'min': 0,
@@ -98,10 +100,20 @@ async function createUsers() {
             }),
             updatedAt: faker.date.past(),
         }
+        
+        // remove selected image from array
+        if (res.imageId !== null) {
+            const index = imageIds.indexOf(res.imageId);
+            if (index > -1) {
+                imageIds.splice(index, 1);
+            }
+        }
+
+        return res;
     }
 
     // generate 10 users
-    const users: User[] = Array.from({length: 10}, generateUser);
+    const users: User[] = Array.from({length: 100}, generateUser);
 
 
     await prisma.user.createMany({
@@ -164,50 +176,109 @@ describe('[GET] /api/v1/users/{id}', () => {
 });
 
 describe('[PUT] /api/v1/users', () => {
-    it('Test create new', async () => {
+    it('Edit user nickname + bio', async () => {
         const {usersWithImages, users, imageIds} = await createUsers();
-        const newUser = {
+        const currUser = faker.helpers.arrayElement(usersWithImages)
+
+        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {           
+    
+            return next({
+                ctx: {
+                    user: {
+                        id: currUser.id,
+                        nickname: currUser.nickname,
+                        image: currUser.image ? currUser.image.url : null,
+                    },
+                },
+            })
+        })
+        // noinspection TypeScriptValidateJSTypes
+
+        const newData = {
             nickname: "PotatoHD",
             bio: faker.lorem.sentence(15),
-            image: faker.helpers.arrayElement(imageIds)
+            csrfToken: '123',
+            recaptchaToken: '123'
         }
-        // noinspection TypeScriptValidateJSTypes
-        const res = await trpc.users.edit({
-            csrfToken: "123",
-            recaptchaToken: "123",
-            nickname: newUser.nickname,
-            bio: newUser.bio,
-            image: newUser.image
-        });
+        const res = await trpc.users.edit(newData);
 
         expect(res).toEqual({ok: true})
 
         const user = await prisma.user.findFirst({
             where: {
-                nickname: newUser.nickname
+                nickname: newData.nickname
             },
             select: {
                 bio: true,
                 nickname: true,
-                imageId: true
+                imageId: true,
             }
         })
-        const usersCount = await prisma.user.count()
-
-        expect(usersCount).toEqual(users.length + 1)
 
         expect(user).toEqual({
-            bio: newUser.bio,
-            nickname: newUser.nickname,
-            imageId: newUser.image
+            bio: newData.bio,
+            nickname: newData.nickname,
+            imageId: users.filter(el => el.id === currUser.id)[0].imageId,
         })
     });
 
-    it('Edit user nickname + bio', async () => {
+    it('Edit user bio/nickname toxic', async () => {
 
+    })
+
+    it('Edit user nickname duplicate', async () => {
+        
     });
 
     it('Edit user image', async () => {
 
     });
+
+    it('Edit user image wrong id', async () => {
+
+    })
+
+    it('Edit user image null', async () => {
+
+    })
+
+    it('Auth error', async () => {
+
+        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {           
+            throw new Error('Auth error')
+        })
+
+        await expect(trpc.users.edit({
+            nickname: faker.internet.userName(),
+            bio: faker.lorem.sentence(15),
+            csrfToken: '123',
+            recaptchaToken: '123'
+        })).rejects.toThrowError(Error)
+    })
+
+    it('CSRF token wrong/missing', async () => {
+        verifyCSRFTokenFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
+            throw new Error('CSRF token wrong/missing')
+        })
+
+        await expect(trpc.users.edit({
+            nickname: faker.internet.userName(),
+            bio: faker.lorem.sentence(15),
+            csrfToken: '123',
+            recaptchaToken: '123'
+        })).rejects.toThrowError(Error)
+    })
+
+    it('recaptcha token wrong/missing', async () => {
+        verifyRecaptchaFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
+            throw new Error('recaptcha token wrong/missing')
+        })
+
+        await expect(trpc.users.edit({
+            nickname: faker.internet.userName(),
+            bio: faker.lorem.sentence(15),
+            csrfToken: '123',
+            recaptchaToken: '123'
+        })).rejects.toThrowError(Error)
+    })
 });

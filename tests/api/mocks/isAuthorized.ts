@@ -10,30 +10,26 @@ const isAuthorized = t.middleware(
     isAuthorizedFunc
 )
 
-beforeAll(() => {
+beforeEach(() => {
     isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
-        const session = req && res && (await unstable_getServerSession(req, res, nextAuthOptions));
-        // type of user
-        type MyUser = {
-            id: string,
-            nickname: string,
-            image: string | null,
-        };
-
         let user = {
                 id: faker.datatype.uuid(),
                 // @ts-ignore
                 nickname: faker.internet.userName(),
                 image: faker.image.avatar(),
-            };
+        };
         
-    
+
         return next({
             ctx: {
                 user,
             },
         })
     })
+})
+
+afterEach(() => {
+    isAuthorizedFunc.mockReset()
 })
 
 jest.mock('server/middlewares/isAuthorized', () => ({

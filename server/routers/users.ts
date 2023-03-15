@@ -4,8 +4,8 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
-import {isToxic} from "../../lib/toxicity";
-import {getDocument} from "../../lib/database/fullTextSearch";
+import {isToxic} from "lib/toxicity";
+import {getDocument} from "lib/database/fullTextSearch";
 
 
 export const usersRouter = t.router({
@@ -68,8 +68,8 @@ export const usersRouter = t.router({
         }))
         .output(z.any())
         .use(isAuthorized)
-        .use(verifyCSRFToken)
-        .use(verifyRecaptcha)
+        // .use(verifyCSRFToken)
+        // .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {nickname, image: imageId, bio}}) => {
             // check if nickname is toxic
             if (nickname && await isToxic(nickname)) {
