@@ -32,7 +32,7 @@ interface DefaultNavbarParams {
 }
 
 
-function DefaultNavbar(props: DefaultNavbarParams) {
+export function DefaultNavbar(props: DefaultNavbarParams) {
     const isMobile = useIsMobile();
     return <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
                      justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
@@ -176,7 +176,7 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
     </div>;
 }
 
-function HomeNavbar(props: DefaultNavbarParams) {
+export function HomeNavbar(props: DefaultNavbarParams) {
     const isMobile = useIsMobile();
     return (
         <nav>

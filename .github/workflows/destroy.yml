@@ -33,11 +33,16 @@ jobs:
       TF_VAR_folder_id: ${{secrets.TF_VAR_FOLDER_ID}}
       TF_VAR_zone: ${{secrets.TF_VAR_ZONE}}
       TF_VAR_DOMAIN_ID: ${{secrets.TF_VAR_DOMAIN_ID}}
+      TF_VAR_CERTIFICATE_ID: ${{secrets.TF_VAR_CERTIFICATE_ID}}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
       - name: Pull Terraform CLI
         uses: hashicorp/setup-terraform@v2
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Add .terraformrc
         run: echo 'provider_installation {
           network_mirror {
@@ -97,6 +102,8 @@ jobs:
           echo DATABASE_KEY=\""$DATABASE_KEY"\" >> .env
           
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
+      - name: Install node dependencies
+        run: yarn install
       - name: Run Terraform init
         run: |
           cd terraform

@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+#  postgres:
+#    image: postgres:latest
+#    restart: unless-stopped
+#    environment:
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_USER: postgres
+#      POSTGRES_DB: postgres
+#    ports:
+#      - 5432:5432
+#    volumes:
+#      - postgres:/var/lib/postgresql/data
+#volumes:
+#  postgres:
+# url to access the database
+# jdbc:postgresql://localhost:5432/postgres
+# postgresql://postgres:postgres@localhost:5432/postgres
+  cockroach-test:
+#   image: christoofar/cockroachdb-arm64:latest
+   image: cockroachdb/cockroach:latest
+   ports:
+     - "26258:26257"
+     - "8081:8080"
+   command: start-single-node --insecure
+   volumes:
+     - "cockroach-data-test:/cockroach/cockroach-data"
+   restart: unless-stopped
+volumes:
+ cockroach-data-test:
+#  node:
+#      image: node:12.16.1
+#      volumes:
+#      - "${PWD}/app:/app"
+#      working_dir: /app
+#      command: bash -c "yarn install && yarn build && yarn start"

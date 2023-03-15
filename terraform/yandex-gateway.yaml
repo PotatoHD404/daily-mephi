@@ -147,12 +147,12 @@ paths:
           required: true
           schema:
             type: string
-  /_next/data/${hash}/tutors/{id}.json:
+  /_next/data/{hash}/tutors/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: object_storage
         bucket: ${bucket_name}
-        object: static/_next/data/${hash}/tutors/{id}.json
+        object: static/_next/data/{hash}/tutors/{id}.json
         presigned_redirect: true
         service_account_id: ${service_account_id}
       parameters:
@@ -161,7 +161,12 @@ paths:
           required: true
           schema:
             type: string
-  /_next/data/${hash}/materials/{id}:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+  /_next/data/{hash}/materials/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: dummy
@@ -174,7 +179,12 @@ paths:
           required: true
           schema:
             type: string
-  /_next/data/${hash}/quotes/{id}:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+  /_next/data/{hash}/quotes/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: dummy
@@ -187,7 +197,12 @@ paths:
           required: true
           schema:
             type: string
-  /_next/data/${hash}/reviews/{id}:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+  /_next/data/{hash}/reviews/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: dummy
@@ -200,7 +215,12 @@ paths:
           required: true
           schema:
             type: string
-  /_next/data/${hash}/users/{id}:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+  /_next/data/{hash}/users/{id}.json:
     get:
       x-yc-apigateway-integration:
         type: dummy
@@ -209,6 +229,11 @@ paths:
           application/json: '{"pageProps":{},"__N_SSP":true}'
       parameters:
         - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hash
           in: path
           required: true
           schema:

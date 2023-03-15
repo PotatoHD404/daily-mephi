@@ -28,6 +28,12 @@ variable "DOMAIN_ID" {
   sensitive = true
 }
 
+variable "CERTIFICATE_ID" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
 locals {
   mime_types = jsondecode(file("${path.module}/mimes.json"))
 }
@@ -108,7 +114,8 @@ resource "yandex_storage_bucket" "public" {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
     allowed_origins = [
-      "https://login.mephi.ru", "https://daily-mephi.ru", "https://mc.yandex.ru", "https://yastatic.net"
+      "https://login.mephi.ru", "https://daily-mephi.ru"
+#     https://login.mephi.ru, https://daily-mephi.ru, https://mc.yandex.ru, https://yastatic.net, https://*.yandex.net, https://*.yandex.net, https://*.yandex.ru, https://fonts.gstatic.com
     ]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
@@ -328,16 +335,6 @@ echo "Uploaded pages-lambda.zip"
 #access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
 #secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
 
-resource "null_resource" "set_domain" {
-  depends_on = [yandex_api_gateway.daily-mephi-gateway]
-  triggers   = {
-    build_number = yandex_api_gateway.daily-mephi-gateway.id
-  }
-  provisioner "local-exec" {
-    command = "yc serverless api-gateway add-domain ${yandex_api_gateway.daily-mephi-gateway.id} --domain-id ${var.DOMAIN_ID}"
-  }
-}
-
 #resource "null_resource" "add_domain" {
 #  depends_on = [yandex_api_gateway.daily-mephi-gateway]
 #  triggers = {
@@ -441,13 +438,16 @@ data "template_file" "api_gateway" {
     api_function_id    = yandex_function.backend_api.id
     pages_function_id  = yandex_function.backend_pages.id
     bucket_name        = yandex_storage_bucket.public.bucket
-    hash               = data.external.pages_hash.result.pages_hash
   }
 }
 
 resource "yandex_api_gateway" "daily-mephi-gateway" {
-  name        = "daily-mephi"
-  description = "Daily mephi gateway"
-  spec        = data.template_file.api_gateway.rendered
+  name           = "daily-mephi"
+  description    = "Daily mephi gateway"
+  spec           = data.template_file.api_gateway.rendered
+  custom_domains {
+    fqdn           = "daily-mephi.ru"
+    certificate_id = var.CERTIFICATE_ID
+  }
 }
 

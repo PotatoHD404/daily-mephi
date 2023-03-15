@@ -1,4 +1,3 @@
-// import {Prisma} from '@prisma/client';
 import {PrismaClient} from '@prisma/client';
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
 // import {redis} from "./redis";
@@ -25,9 +24,12 @@ if (notInitialized) {
             if (params.action == 'deleteMany') {
                 // Delete many queries
                 params.action = 'updateMany'
-                if (params.args.data != undefined) {
+                if (params?.args?.data != undefined) {
                     params.args.data['deletedAt'] = new Date()
                 } else {
+                    if (params.args === undefined) {
+                        params.args = {}
+                    }
                     params.args['data'] = {deletedAt: new Date()}
                 }
             }
@@ -76,5 +78,5 @@ if (notInitialized) {
 //     prisma = global.prisma;
 // }
 
-// @ts-ignore
+
 export { prisma };

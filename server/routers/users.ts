@@ -4,8 +4,8 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
-import {isToxic} from "../../lib/toxicity";
-import {getDocument} from "../../lib/database/fullTextSearch";
+import {isToxic} from "lib/toxicity";
+import {getDocument} from "lib/database/fullTextSearch";
 
 
 export const usersRouter = t.router({
@@ -27,7 +27,11 @@ export const usersRouter = t.router({
                 select: {
                     nickname: true,
                     id: true,
-                    image: true,
+                    image: {
+                        select: {
+                            url: true,
+                        }
+                    },
                     rating: true,
                     role: true,
                     likesCount: true,
@@ -35,6 +39,8 @@ export const usersRouter = t.router({
                     materialsCount: true,
                     reviewsCount: true,
                     quotesCount: true,
+                    bio: true,
+                    commentsCount: true,
                     place: true,
                 }
             });
@@ -55,15 +61,15 @@ export const usersRouter = t.router({
     })
         .input(z.object({
             nickname: z.string().regex(/^[a-zA-Z0-9_]{3,30}$/, {message: 'Nickname must be 3-30 characters long and contain only letters, numbers and underscores'}).optional(),
-            image: z.string().url().optional(),
+            image: z.string().uuid().optional(),
             bio: z.string().max(150, {message: 'Bio must be 150 characters or less'}).optional(),
-            csrfToken: z.string().uuid(),
+            csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
         .output(z.any())
         .use(isAuthorized)
-        .use(verifyCSRFToken)
-        .use(verifyRecaptcha)
+        // .use(verifyCSRFToken)
+        // .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {nickname, image: imageId, bio}}) => {
             // check if nickname is toxic
             if (nickname && await isToxic(nickname)) {
@@ -79,7 +85,7 @@ export const usersRouter = t.router({
                     message: 'Bio is toxic'
                 });
             }
-            await prisma.$transaction(async (prisma) => {
+            return await prisma.$transaction(async (prisma) => {
                 await Promise.all([
                     async () => {
                         if (nickname) {

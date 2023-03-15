@@ -2,8 +2,9 @@ import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
 import {PrismaClient} from "@prisma/client"
 import {NextAuthOptions, Session, SessionStrategy} from "next-auth";
+import {prisma} from "lib/database/prisma";
 
-const prisma = new PrismaClient()
+
 // const host = getHost() + "/api/auth/callback/home";
 //
 // const query = new URLSearchParams({service: host});

@@ -59,6 +59,17 @@ export const utilsRouter = t.router({
         .query(async ({ctx: {prisma}}) => {
             return prisma.discipline.findMany();
         }),
+    // departments: t.procedure.meta({
+    //     openapi: {
+    //         method: 'GET',
+    //         path: '/departments'
+    //     }
+    // })
+    //     .input(z.void())
+    //     .output(z.any())
+    //     .query(async ({ctx: {prisma}}) => {
+    //         return prisma.departments.findMany();
+    //     }),
     facilities: t.procedure.meta({
         openapi: {
             method: 'GET',
@@ -79,7 +90,10 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return prisma.semester.findMany();
+            return (await prisma.semester.findMany()).map(el => {
+                el['name'] = el['name'][0];
+                return el;
+            });
         }),
     getAvatars: t.procedure.meta({
         openapi: {
@@ -94,12 +108,12 @@ export const utilsRouter = t.router({
                 {
                     where: {
                         tag: "avatar",
-                        user: null
+                        userId: null
                     },
                     select: {
                         url: true,
                         altUrl: true,
-                    }
+                    },
                 }
             );
         }),
@@ -123,7 +137,7 @@ export const utilsRouter = t.router({
             } else {
                 skip = 0;
             }
-            return await prisma.user.findMany({
+            let users = await prisma.user.findMany({
                     select: {
                         nickname: true,
                         id: true,
@@ -141,17 +155,20 @@ export const utilsRouter = t.router({
                     skip
                 }
             );
+            return users.map((el, i) => {
+                return {...el, place: i + skip + 1};
+            });
         }),
-    calculateScore: t.procedure.meta({
-        openapi: {
-            method: 'GET',
-            path: '/calculate_score',
-            enabled: false
-        }
-    })
-        .input(z.void())
-        .output(z.any())
-        .query(async ({ctx: {prisma}}) => {
-            return "calculate_score";
-        })
+    // calculateScore: t.procedure.meta({
+    //     openapi: {
+    //         method: 'GET',
+    //         path: '/calculate_score',
+    //         enabled: false
+    //     }
+    // })
+    //     .input(z.void())
+    //     .output(z.any())
+    //     .query(async ({ctx: {prisma}}) => {
+    //         return "calculate_score";
+    //     })
 });

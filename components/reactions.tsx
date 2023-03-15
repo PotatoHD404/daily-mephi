@@ -50,8 +50,8 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
                     })
                 });
             await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
-
         } else if (type === 'dislike' && like !== false) {
+            setLike(false);
             if (like === true) {
                 setLikes(likes - 1);
             }
@@ -70,8 +70,13 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
                     })
                 });
             await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
-        } else if (type === 'dislike' && like === false) {
-            setDislikes(dislikes - 1);
+        } else if (type === 'dislike' && like === false || type === 'like' && like === true) {
+            if (!like) {
+                setDislikes(dislikes - 1);
+            } else {
+                setLikes(likes - 1);
+            }
+            setLike(null);
             const result = await fetch(`/api/v1/reactions`,
                 {
 
@@ -86,6 +91,7 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
                         id: props.id
                     })
                 });
+            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
         }
 
     }

@@ -1,21 +1,28 @@
 const runtimeCaching = require('next-pwa/cache');
-const withPreact = require('next-plugin-preact')
+const withPreact = require('next-plugin-preact');
+const {PrismaPlugin} = require('@prisma/nextjs-monorepo-workaround-plugin')
+
+const cachingStrategies = require('./pwa/cache');
+// const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
     // disable: process.env.NODE_ENV === 'development',
     register: true,
     // scope: '/app',
     sw: 'service-worker.js',
-    runtimeCaching
+    runtimeCaching: cachingStrategies
     //...
 });
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self';
-  child-src daily-mephi.ru;
-  style-src 'self' daily-mephi.ru;
-  font-src 'self';
+  script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.google.com https://www.gstatic.com gc.kis.v2.scr.kaspersky-labs.com ajax.cloudflare.com cloudflareinsights.com static.cloudflareinsights.com 'unsafe-inline';
+  img-src data: 'self' https://mc.yandex.ru;
+  connect-src 'self' https://mc.yandex.ru fonts.googleapis.com fonts.gstatic.com https://www.google.com https://www.gstatic.com cloudflareinsights.com static.cloudflareinsights.com;
+  child-src blob: 'self' https://mc.yandex.ru;
+  font-src 'self' https://fonts.gstatic.com;
+  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+  frame-src blob: 'self' https://mc.yandex.ru https://www.google.com;
 `;
 
 const securityHeaders = [
@@ -41,55 +48,68 @@ const securityHeaders = [
     }
 ];
 
-// if (process.env.NODE_ENV === 'production') {
-//     securityHeaders.push({
-//         key: 'Content-Security-Policy',
-//         value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim()
-//     });
-// }
+if (process.env.NODE_ENV === 'production') {
+    const header_value = ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim();
+    securityHeaders.push({
+        key: 'Content-Security-Policy',
+        value: header_value
+    });
+    // console.log(header_value)
+}
 
-// const sharp = "commonjs sharp";
+// const sharp = 'commonjs sharp';
 
 /** @type {import('next').NextConfig} */
-
-
-const nextConfig = withPWA(
+let nextConfig =
     {
-        target: 'serverless',
+        // target: 'serverless',
         swcMinify: true,
         reactStrictMode: true,
-        webpack: (config) => {
+        staticPageGenerationTimeout: 30,
+        webpack: (config, options) => {
             config.experiments = {layers: true, topLevelAwait: true};
-            // add sharp to externals
 
-            config.module.rules.push({
-                test: /\.node$/,
-                loader: "node-loader"
-            })
-            config.externals.push('chrome-aws-lambda');
-
-            // webpack exclude files from node_modules cjs and .js.map
-
-            // config.module.rules.push({
-            //     test: /\.js$/,
-            //     exclude: /node_modules\/(?!(puppeteer|puppeteer-core|chrome-aws-lambda)\/).*/,
-            //     use: {
-            //         loader: 'babel-loader',
-            //
-            //     }
-            // });
+            config.externals = [
+                ...config.externals,
+                'argon2',
+                '@sparticuz/chromium',
+                'node-fetch',
+                'natural',
+                'puppeteer-core'
+            ]
+            // if (!options.isServer) {
+            //     config.externals = [nodeExternals()]
+            // } else {
+            //     config.externals = [
+            //         ...config.externals,
+            //         'argon2',
+            //         'chrome-aws-lambda',
+            //         'node-fetch',
+            //         'natural',
+            //         'puppeteer-core'
+            //     ]
+            // }
 
 
             config.resolve.alias = {
                 ...config.resolve.alias,
                 'react-ssr-prepass': 'preact-ssr-prepass',
+                // 'mock-aws-s3': 'aliases/null-alias.js',
+                // 'aws-sdk': 'aliases/null-alias.js',
+                // 'nock': 'aliases/null-alias.js',
+                // 'node-gyp': 'aliases/null-alias.js',
+                // 'npm': 'aliases/null-alias.js',
             }
-            // config.externals = {...config.externals, sharp};
+
+            if (options.isServer) {
+                config.plugins = [...config.plugins, new PrismaPlugin()]
+            }
 
             return config;
         },
         experimental: {
-            esmExternals: false
+            esmExternals: false,
+            nextScriptWorkers: true,
         },
 
         async headers() {
@@ -120,8 +140,18 @@ const nextConfig = withPWA(
             // !! WARN !!
             ignoreBuildErrors: false
         }
-    });
+    };
 //https://www.npmjs.com/package/next-pwa
 
-module.exports = withPreact(nextConfig);
-// module.exports = nextConfig
+// module.exports = withPreact(withPWA(withBundleAnalyzer(nextConfig)));
+function withPlugins(plugins, config) {
+    plugins.forEach(plugin => {
+        config = plugin(config)
+    })
+    return config
+}
+
+module.exports = withPlugins([
+    withPWA,
+    withPreact
+], nextConfig);

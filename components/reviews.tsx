@@ -7,9 +7,9 @@ import Reactions from "./reactions";
 import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 import {toChildArray} from "preact";
-import { CircularProgress } from "@mui/material";
+import {CircularProgress} from "@mui/material";
 
-function Review({review}: { review: ReviewType }) {
+export function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">
         <UserHeader user={review.user}
                     legacyNickname={review.legacyNickname}
@@ -27,12 +27,11 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const {review: reviewId} = router.query;
 
     async function fetchReviews(cursor: any) {
-        const result = await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
+        // parse dates to Date objects
+        return await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
             method: 'GET',
             credentials: 'same-origin'
         }))?.json();
-        // parse dates to Date objects
-        return result;
     }
 
     async function fetchReview() {
