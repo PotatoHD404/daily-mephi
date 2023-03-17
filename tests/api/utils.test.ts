@@ -210,15 +210,23 @@ describe('[GET] /api/v1/top', () => {
         await prisma.file.createMany({
             data: images
         });
+        let used_names = new Set()
 
         function generateUser() {
+
             let res = {
                 id: faker.datatype.uuid(),
-                nickname: faker.internet.userName(),
+                nickname: "",
                 rating: faker.datatype.number({min: 0, max: 100}),
                 imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
             };
-            imageIds.splice(imageIds.findIndex(el => el === res.imageId), 1)
+            do {
+                res.nickname = faker.internet.userName();
+            } while (used_names.has(res.nickname))
+            used_names.add(res.nickname);
+            if (res.imageId) {
+                imageIds.splice(imageIds.findIndex(el => el === res.imageId), 1)
+            }
             return res;
         }
 

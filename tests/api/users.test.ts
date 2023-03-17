@@ -2,12 +2,11 @@ import type {User} from "@prisma/client";
 import {faker} from '@faker-js/faker';
 import {isAuthorizedFunc} from "./mocks/isAuthorized";
 import {verifyCSRFTokenFunc} from "./mocks/verifyCSRFToken";
-import {isToxic} from "./mocks/isToxic";
 import "./mocks/verifyRecaptcha";
 import {trpc} from "./mocks/trpc"; // order matters
 import {TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
-import { verifyRecaptchaFunc } from "./mocks/verifyRecaptcha";
+import {verifyRecaptchaFunc} from "./mocks/verifyRecaptcha";
 
 
 // export type User = {
@@ -100,7 +99,7 @@ async function createUsers() {
             }),
             updatedAt: faker.date.past(),
         }
-        
+
         // remove selected image from array
         if (res.imageId !== null) {
             const index = imageIds.indexOf(res.imageId);
@@ -180,8 +179,8 @@ describe('[PUT] /api/v1/users', () => {
         const {usersWithImages, users, imageIds} = await createUsers();
         const currUser = faker.helpers.arrayElement(usersWithImages)
 
-        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {           
-    
+        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
+
             return next({
                 ctx: {
                     user: {
@@ -227,7 +226,7 @@ describe('[PUT] /api/v1/users', () => {
     })
 
     it('Edit user nickname duplicate', async () => {
-        
+
     });
 
     it('Edit user image', async () => {
@@ -244,7 +243,7 @@ describe('[PUT] /api/v1/users', () => {
 
     it('Auth error', async () => {
 
-        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {           
+        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
             throw new Error('Auth error')
         })
 
