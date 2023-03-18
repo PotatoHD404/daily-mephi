@@ -89,8 +89,6 @@ jobs:
 
           echo GOOGLE_API_KEY=\""$GOOGLE_API_KEY"\" >> .env
           echo NOTION_YC_IDS=\""NOTION_YC_IDS"\" >> .env
-      - name: Prisma migrate
-        run: yarn prisma migrate dev --name init --preview-feature
       - name: Run tests
         run: yarn test
   chromatic:
