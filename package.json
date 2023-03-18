@@ -9,7 +9,7 @@
     "lint": "next lint",
     "postbuild": "next-sitemap",
     "build-api": "node cloud-functions/main/gen_api_config.js",
-    "test": "jest --forceExit",
+    "test": "jest --forceExit -i",
     "sb": "sb dev -p 6006",
     "build-storybook": "sb build"
   },
