@@ -41,7 +41,7 @@ async function createUsers() {
         }
     }
 
-    const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id > b.id ? 1 : -1);
+    const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id.localeCompare(b.id));
 
     await prisma.file.createMany({
         data: images

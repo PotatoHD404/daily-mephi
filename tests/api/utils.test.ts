@@ -27,7 +27,7 @@ describe('[GET] /api/v1/disciplines', () => {
             };
         }
 
-        const disciplines = Array.from({length: 10}, generateDiscipline).sort((a, b) => a.id > b.id ? 1 : -1);
+        const disciplines = Array.from({length: 10}, generateDiscipline).sort((a, b) => a.id.localeCompare(b.id));
 
         await prisma.discipline.createMany({
             data: disciplines
@@ -57,7 +57,7 @@ describe('[GET] /api/v1/faculties', () => {
             };
         }
 
-        const faculties = Array.from({length: 10}, generateFaculty).sort((a, b) => a.id > b.id ? 1 : -1);
+        const faculties = Array.from({length: 10}, generateFaculty).sort((a, b) => a.id.localeCompare(b.id));
 
         await prisma.faculty.createMany({
             data: faculties
@@ -73,22 +73,6 @@ describe('[GET] /api/v1/faculties', () => {
 describe('[GET] /api/v1/semesters', () => {
 
     it('Test get all', async () => {
-        function generateSemester(): Semester {
-            return {
-                id: faker.datatype.uuid(),
-                name: faker.random.numeric(1),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-            };
-        }
-
-        let semesters = Array.from({length: 10}, generateSemester).sort((a, b) => a.id > b.id ? 1 : -1);
-        // filter unique semesters by name
-        semesters = semesters.filter((item, index) => semesters.findIndex(el => el.name === item.name) === index)
-        await prisma.semester.createMany({
-            data: semesters
-        });
 
         const apiSemesters = await trpc.utils.semesters();
 
@@ -173,7 +157,7 @@ describe('[GET] /api/v1/get_avatars', () => {
             return res;
         }
 
-        let files = Array.from({length: 500}, generateFile).sort((a, b) => a.id > b.id ? 1 : -1);
+        let files = Array.from({length: 500}, generateFile).sort((a, b) => a.id.localeCompare(b.id));
 
         await prisma.file.createMany({data: files});
 
@@ -205,7 +189,7 @@ describe('[GET] /api/v1/top', () => {
             }
         }
 
-        const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id > b.id ? 1 : -1);
+        const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id.localeCompare(b.id));
         const imageIds = images.map(el => el.id)
         await prisma.file.createMany({
             data: images
@@ -230,13 +214,13 @@ describe('[GET] /api/v1/top', () => {
             return res;
         }
 
-        let users = Array.from({length: 200}, generateUser).sort((a, b) => a.id > b.id ? 1 : -1);
+        let users = Array.from({length: 200}, generateUser).sort((a, b) => a.id.localeCompare(b.id));
 
         await prisma.user.createMany({
             data: users
         });
 
-        users = users.sort((a, b) => a.rating < b.rating ? 1 : (a.rating === b.rating ? (a.id > b.id ? 1 : -1) : -1));
+        users = users.sort((a, b) => a.rating < b.rating ? 1 : (a.rating === b.rating ? (a.id.localeCompare(b.id)) : -1));
 
         // add images to users
 
