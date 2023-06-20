@@ -86,14 +86,14 @@ model User {
 }
 
 model VerificationToken {
-  id        String    @map("id")
+  rowid     String    @map("id")
   token     String    @unique @map("token")
   expires   DateTime  @map("expires_at")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  @@unique([id, token])
+  @@unique([rowid, token])
   @@map("verification_tokens")
 }
 

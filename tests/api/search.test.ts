@@ -1,7 +1,8 @@
 import type {Discipline} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/api/mocks/prisma";
+import {prisma} from "./utils/prisma";
 import {trpc} from "tests/api/mocks/trpc";
+import {searchRouter} from "../../server/routers/search";
 
 
 
@@ -14,7 +15,8 @@ import {trpc} from "tests/api/mocks/trpc";
 // }
 describe('[GET] /api/v1/disciplines', () => {
 
-    it('Test get all', async () => {
+});
 
-    });
+afterAll(async () => {
+    await prisma.$disconnect();
 });
