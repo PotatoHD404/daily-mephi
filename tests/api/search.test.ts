@@ -15,6 +15,13 @@ import {searchRouter} from "../../server/routers/search";
 // }
 describe('[GET] /api/v1/disciplines', () => {
 
+    it('Test get all', async () => {
+
+        // const apiSemesters = await trpc.utils.semesters();
+
+        // expect(apiSemesters).toEqual(semesters);
+
+    });
 });
 
 afterAll(async () => {

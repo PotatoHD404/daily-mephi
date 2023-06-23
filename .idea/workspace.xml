@@ -5,28 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37c9279c-a318-43c4-9b30-3589c6f79900" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/daily-mephi.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/df4d6b88-7ec6-4285-85c8-586fab2f30d7.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/df4d6b88-7ec6-4285-85c8-586fab2f30d7/storage_v2/_src_/database/defaultdb.f1Z3pg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/df4d6b88-7ec6-4285-85c8-586fab2f30d7/storage_v2/_src_/database/defaultdb.f1Z3pg/schema/crdb_internal.j0Gffg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/df4d6b88-7ec6-4285-85c8-586fab2f30d7/storage_v2/_src_/database/defaultdb.f1Z3pg/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/df4d6b88-7ec6-4285-85c8-586fab2f30d7/storage_v2/_src_/database/defaultdb.f1Z3pg/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/terraform.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migrations.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/api/utils/createUsers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/api/utils/notion.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.test.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routers/files.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/files.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/api/files.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/files.test.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/api/search.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/search.test.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/api/users.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/users.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/api/utils.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/utils.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,12 +44,107 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/PotatoHD/Documents/GitHub/daily-mephi-4/node_modules/jest&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi-4\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager" selected="Jest.filesRouter">
+    <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--runInBand" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Files Router" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/tests/api/files.test.ts" />
+      <test-names>
+        <test-name value="Files Router" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="[PUT] /api/v1/users" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/tests/api/users.test.ts" />
+      <test-names>
+        <test-name value="[PUT] /api/v1/users" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="[PUT] /api/v1/users.Edit user bio/nickname toxic" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <jest-options value="--runInBand" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/tests/api/users.test.ts" />
+      <test-names>
+        <test-name value="[PUT] /api/v1/users" />
+        <test-name value="Edit user bio/nickname toxic" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="filesRouter" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/tests/api/files.test.ts" />
+      <test-names>
+        <test-name value="filesRouter" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Jest.All Tests" />
+      <item itemvalue="Jest.[PUT] /api/v1/users" />
+      <item itemvalue="Jest.filesRouter" />
+      <item itemvalue="Jest.[PUT] /api/v1/users.Edit user bio/nickname toxic" />
+      <item itemvalue="Jest.Files Router" />
+      <item itemvalue="npm.test" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Jest.filesRouter" />
+        <item itemvalue="Jest.[PUT] /api/v1/users" />
+        <item itemvalue="Jest.[PUT] /api/v1/users.Edit user bio/nickname toxic" />
+        <item itemvalue="npm.test" />
+        <item itemvalue="Jest.Files Router" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -75,7 +159,14 @@
       <workItem from="1687002937182" duration="2324000" />
       <workItem from="1687089919808" duration="1130000" />
       <workItem from="1687251176787" duration="616000" />
-      <workItem from="1687258811852" duration="3867000" />
+      <workItem from="1687258811852" duration="4215000" />
+      <workItem from="1687263991996" duration="1066000" />
+      <workItem from="1687278448108" duration="1264000" />
+      <workItem from="1687338237974" duration="910000" />
+      <workItem from="1687339175763" duration="7898000" />
+      <workItem from="1687424236229" duration="7565000" />
+      <workItem from="1687535254396" duration="3392000" />
+      <workItem from="1687539043689" duration="5564000" />
     </task>
     <servers />
   </component>
