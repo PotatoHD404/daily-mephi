@@ -85,7 +85,7 @@ export const usersRouter = t.router({
                     message: 'Bio is toxic'
                 });
             }
-            return await prisma.$transaction(async (prisma) => {
+            return await prisma.$transaction(async (prisma: any) => {
                 await Promise.all([
                     async () => {
                         if (nickname) {

@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37c9279c-a318-43c4-9b30-3589c6f79900" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/migrations.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/api/utils/createUsers.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/api/utils/notion.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.test.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routers/files.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/routers/files.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/api/files.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/files.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/api/search.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/search.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/api/users.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/users.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
-    </list>
+    <list default="true" id="37c9279c-a318-43c4-9b30-3589c6f79900" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,29 +16,32 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2RILZabr7Y5IGJyStiROYNLqPuf" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/PotatoHD/Documents/GitHub/daily-mephi-4&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/PotatoHD/Documents/GitHub/daily-mephi-4/node_modules/jest&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi-4\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "dev",
+    "last_opened_file_path": "C:/Users/PotatoHD/Documents/GitHub/daily-mephi",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs.jest.jest_package": "C:/Users/PotatoHD/Documents/GitHub/daily-mephi-4/node_modules/jest",
+    "nodejs_package_manager_path": "yarn",
+    "settings.editor.selected.configurable": "Docker",
+    "ts.external.directory.path": "C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Jest.filesRouter">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
@@ -167,6 +158,8 @@
       <workItem from="1687424236229" duration="7565000" />
       <workItem from="1687535254396" duration="3392000" />
       <workItem from="1687539043689" duration="5564000" />
+      <workItem from="1698337332618" duration="591000" />
+      <workItem from="1704212909164" duration="3138000" />
     </task>
     <servers />
   </component>

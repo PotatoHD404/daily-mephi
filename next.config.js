@@ -1,5 +1,5 @@
 const runtimeCaching = require('next-pwa/cache');
-const withPreact = require('next-plugin-preact');
+// const withPreact = require('next-plugin-preact');
 const {PrismaPlugin} = require('@prisma/nextjs-monorepo-workaround-plugin')
 
 const cachingStrategies = require('./pwa/cache');
@@ -93,7 +93,7 @@ let nextConfig =
 
             config.resolve.alias = {
                 ...config.resolve.alias,
-                'react-ssr-prepass': 'preact-ssr-prepass',
+                // 'react-ssr-prepass': 'preact-ssr-prepass',
                 // 'mock-aws-s3': 'aliases/null-alias.js',
                 // 'aws-sdk': 'aliases/null-alias.js',
                 // 'nock': 'aliases/null-alias.js',
@@ -153,5 +153,5 @@ function withPlugins(plugins, config) {
 
 module.exports = withPlugins([
     withPWA,
-    withPreact
+    // withPreact
 ], nextConfig);
