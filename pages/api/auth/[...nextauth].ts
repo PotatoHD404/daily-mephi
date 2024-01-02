@@ -1,5 +1,5 @@
 import NextAuth from "next-auth"
-import {nextAuthOptions} from "lib/auth/nextAuthOptions";
+import {nextAuthConfig} from "lib/auth/nextAuthConfig";
 import {NextApiRequest, NextApiResponse} from "next";
 // import {} from "next/headers"
 
@@ -7,7 +7,11 @@ import {NextApiRequest, NextApiResponse} from "next";
 //     || process.env.GOOGLE_CLIENT_SECRET === undefined || process.env.AUTH_SECRET === undefined)
 //     throw new Error('There is no some environment variables');
 
-export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+export const {
+    handlers: { GET, POST },
+    auth,
+} = NextAuth(nextAuthConfig)
+export default async function authHandler(req: NextApiRequest, res: NextApiResponse) {
 
     // Check whether the request is auth callback
     // @ts-ignore
@@ -18,5 +22,5 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     }
     // Get a custom cookie value from the request
     // const someCookie = req.cookies["some-custom-cookie"]
-    return await NextAuth(req, res, nextAuthOptions);
+    return auth(req, res)
 }

@@ -8,7 +8,7 @@ import Link from "next/link";
 import {useQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
 import {Skeleton} from "@mui/material";
-import {toChildArray} from "preact";
+
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
 
@@ -119,6 +119,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
         }))?.json();
     }
 
+    // @ts-ignore
     const {data, isFetching, refetch, isError, error} = useQuery([`top`], getUser, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -164,11 +165,12 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                 {
                     isLoading ?
                         <>
-                            {toChildArray(Array(props.take || 4).map((_, index) =>
+                            {Array(props.take || 4).map((_, index) =>
                                 <TopUser key={index} src={DeadCat} place={0} rating={0} nickname=""
-                                         isLoading={isLoading}/>))}
+                                         isLoading={isLoading}/>)}
                         </> :
                         // <></>
+                        // @ts-ignore
                         data?.map((user: any, index: number) => {
                             return <TopUser src={user.image || DeadCat} key={index} nickname={user.name}
                                             place={index + place} isLoading={isLoading} id={user.id}

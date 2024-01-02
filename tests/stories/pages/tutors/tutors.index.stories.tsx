@@ -1,6 +1,6 @@
 import React from 'react';
 import Tutors from 'pages/tutors';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Tutors> = {
     title: 'Pages/Tutors page',

@@ -1,9 +1,8 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/react';
 
 import TopUsers from "components/topUsers"
-
-
-import {rest} from 'msw'
+// @ts-ignore
+import {rest} from "msw";
 
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
@@ -13,7 +12,7 @@ const meta: Meta<typeof TopUsers> = {
     parameters: {
         msw: {
             handlers: [
-                rest.get('/api/v1/top', (req, res, ctx) => {
+                rest.get('/api/v1/top', (req: any, res: any, ctx: any) => {
                     const users: any[] = [
                         {
                             id: '1',

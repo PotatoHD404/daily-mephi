@@ -1,3 +1,5 @@
+'use client';
+
 import React, {useEffect} from "react";
 import SEO from "components/seo";
 import Image from 'next/image'

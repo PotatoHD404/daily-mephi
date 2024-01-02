@@ -4,7 +4,88 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37c9279c-a318-43c4-9b30-3589c6f79900" name="Changes" comment="" />
+    <list default="true" id="37c9279c-a318-43c4-9b30-3589c6f79900" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/customDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/customDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/customSelect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/customSelect.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/postDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/postDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/registerDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/registerDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/reviews.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/reviews.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/rippledButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/rippledButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/searchFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/searchFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/sliderFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/sliderFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/topUsers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/topUsers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/tutor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/tutor.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/tutorProfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/tutorProfile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/auth/mephiOauthConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/auth/mephiOauthConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/auth/nextAuthOptions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/auth/nextAuthConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/react/useSendQuery.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/react/useSendQuery.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_app.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/_document.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_document.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/auth/[...nextauth].ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/auth/[...nextauth].ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/auth/session/renew_jwt.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/v1/[...trpc].ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/v1/[...trpc].ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/v1/openapi.json.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/v1/openapi.yaml.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/users/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/users/[id].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/middlewares/isAuthorized.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/middlewares/isAuthorized.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/utils/context.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/utils/context.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/utils/trpc.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/utils/trpc.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/api/mocks/isAuthorized.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/mocks/isAuthorized.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/api/mocks/isToxic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/api/mocks/isToxic.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/buyMeCoffee.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/buyMeCoffee.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/closeButton.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/closeButton.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/comment.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/comment.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/commentBtn.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/commentBtn.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/comments.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/comments.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/crown.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/crown.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/customAccordion.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/customAccordion.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/customDialog.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/customDialog.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/customSelect.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/customSelect.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/dislikeBtn.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/dislikeBtn.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/filterButtons.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/filterButtons.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/filters.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/filters.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/footer.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/footer.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/likeBtn.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/likeBtn.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/loadingBlock.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/loadingBlock.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/material.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/material.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/minicat.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/minicat.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/navbar.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/navbar.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/newPost.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/newPost.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/postDialog.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/postDialog.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/profileSettings.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/profileSettings.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/rating.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/rating.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/ratingPlace.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/ratingPlace.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/reactions.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/reactions.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/registerDialog.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/registerDialog.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/replyBtn.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/replyBtn.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/reviews.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/reviews.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/rippledButton.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/rippledButton.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/searchBar.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/searchBar.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/searchFilter.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/searchFilter.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/seo.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/seo.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/sliderFilter.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/sliderFilter.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/tabsBox.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/tabsBox.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/topUsers.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/topUsers.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/tutor.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/tutor.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/user.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/user.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/userHeader.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/userHeader.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/components/warningDialog.stories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/components/warningDialog.stories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/404.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/404.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/500.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/500.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/about.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/about.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/home.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/home.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/materials/materials.index.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/materials/materials.index.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/search.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/search.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/stories/pages/tutors/tutors.index.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/tests/stories/pages/tutors/tutors.index.stories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,7 +125,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs.jest.jest_package&quot;: &quot;C:/Users/PotatoHD/Documents/GitHub/daily-mephi-4/node_modules/jest&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\PotatoHD\\Documents\\GitHub\\daily-mephi\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -167,6 +248,8 @@
       <workItem from="1687539043689" duration="5564000" />
       <workItem from="1698337332618" duration="591000" />
       <workItem from="1704212909164" duration="3138000" />
+      <workItem from="1704228585106" duration="1174000" />
+      <workItem from="1704230243499" duration="5924000" />
     </task>
     <servers />
   </component>

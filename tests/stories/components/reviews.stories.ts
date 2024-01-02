@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/react';
 
 import {Review} from "components/reviews";
 import {UserType} from "../../../lib/database/types";
@@ -24,6 +24,7 @@ type Story = StoryObj<typeof Review>;
 //     user?: UserType;
 // }
 
+
 export const Primary: Story = {
     args: {
         review: {
@@ -37,6 +38,7 @@ export const Primary: Story = {
             legacyNickname: 'Legacy nickname',
             user: {
                 id: '1',
+                // @ts-ignore
                 url: 'Username',
                 image: {
                     url: 'https://avatars.githubusercontent.com/u/1158253?v=4',

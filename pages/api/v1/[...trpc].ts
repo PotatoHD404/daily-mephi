@@ -2,10 +2,12 @@ import { createOpenApiNextHandler } from "trpc-openapi";
 import {appRouter} from "server";
 import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
+import {createNextApiHandler} from "@trpc/server/adapters/next";
 // import {redis} from "lib/database/redis";
 
 
-const nextApiHandler = createOpenApiNextHandler({
+const nextApiHandler = createNextApiHandler({
+    // @ts-ignore
     router: appRouter,
     createContext,
     onError({ error }) {

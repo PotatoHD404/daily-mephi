@@ -1,7 +1,4 @@
 import {t} from "server/utils";
-import {unstable_getServerSession, User} from "next-auth";
-import {nextAuthOptions} from "lib/auth/nextAuthOptions";
-import {TRPCError} from "@trpc/server";
 import { faker } from "@faker-js/faker";
 
 export const isAuthorizedFunc = jest.fn()

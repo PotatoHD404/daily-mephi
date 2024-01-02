@@ -1,6 +1,6 @@
 // import * as React from "react";
 import {InputBase, InputLabel, NativeSelect} from '@mui/material';
-import {toChildArray} from "preact";
+
 
 export default function CustomSelect(props: {
     options: any, label: string, defaultValue?: any, color?: string, index?: number,
@@ -48,8 +48,8 @@ export default function CustomSelect(props: {
                 className="w-full font-semibold"
             >
                 {/* @ts-ignore */}
-                {toChildArray(props.options.map((item: any, index: number) =>
-                    <option className={`bg-[${props.color}] font-semibold`} value={item} key={index}>{item}</option>))}
+                {props.options.map((item: any, index: number) =>
+                    <option className={`bg-[${props.color}] font-semibold`} value={item} key={index}>{item}</option>)}
             </NativeSelect>
 
 

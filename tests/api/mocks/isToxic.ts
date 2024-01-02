@@ -1,6 +1,5 @@
 import {t} from "server/utils";
-import {unstable_getServerSession, User} from "next-auth";
-import {nextAuthOptions} from "lib/auth/nextAuthOptions";
+import {nextAuthConfig} from "lib/auth/nextAuthConfig";
 import {TRPCError} from "@trpc/server";
 import { faker } from "@faker-js/faker";
 

@@ -15,174 +15,174 @@ import {searchRouter} from "./routers/search";
 import {reactionsRouter} from "./routers/reactions";
 
 export const appRouter = t.router({
-    comments: commentsRouter,
-    files: filesRouter,
-    materials: materialsRouter,
-    news: newsRouter,
-    quotes: quotesRouter,
-    reactions: reactionsRouter,
-    reviews: reviewsRouter,
-    thumbnails: thumbnailsRouter,
-    tutors: tutorsRouter,
-    users: usersRouter,
-    utils: t.mergeRouters(utilsRouter, searchRouter),
+    // comments: commentsRouter,
+    // files: filesRouter,
+    // materials: materialsRouter,
+    // news: newsRouter,
+    // quotes: quotesRouter,
+    // reactions: reactionsRouter,
+    // reviews: reviewsRouter,
+    // thumbnails: thumbnailsRouter,
+    // tutors: tutorsRouter,
+    // users: usersRouter,
+    // utils: t.mergeRouters(utilsRouter, searchRouter),
 });
 
 export type AppRouter = typeof appRouter;
 
-const openApiDocument = generateOpenApiDocument(appRouter, {
-    title: 'DailyMEPhI OpenAPI',
-    version: '1.0.0',
-    baseUrl: getBaseUrl() + "/api/v1",
-});
+// const openApiDocument = generateOpenApiDocument(appRouter, {
+//     title: 'DailyMEPhI OpenAPI',
+//     version: '1.0.0',
+//     baseUrl: getBaseUrl() + "/api/v1",
+// });
 
-openApiDocument['paths']["/search"] = {
-    "get": {
-        "operationId": "query.utils.search",
-        "security": [
-            {
-                "Authorization": []
-            }
-        ],
-        "parameters": [
-            {
-                "name": "query",
-                "in": "path",
-                "required": true,
-                "schema": {
-                    "type": "string"
-                }
-            },
-            {
-                "name": "sort",
-                "in": "path",
-                "required": true,
-                "schema": {
-                    "type": "string",
-                    "enum": ["relevance", "time"],
-                    "default": "relevance"
-                }
-            },
-            {
-                "name": "faculty_ids",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "string" // actually array
-                }
-            },
-            {
-                "name": "discipline_ids",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "string" // actually array
-                }
-            },
-            {
-                "name": "rating_from",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "integer"
-                }
-            },
-            {
-                "name": "rating_to",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "integer"
-                }
-            },
-            {
-                "name": "types",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "string" // actually array
-                }
-            },
-            {
-                "name": "limit",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "integer"
-                }
-            },
-            {
-                "name": "offset",
-                "in": "path",
-                "required": false,
-                "schema": {
-                    "type": "integer"
-                }
-            },
-        ],
-        "responses": {
-            "200": {
-                "description": "Successful response",
-                "content": {
-                    "application/json": {
-                        "schema": {}
-                    }
-                }
-            },
-            "default": {
-                "$ref": "#/components/responses/error"
-            }
-        }
-    }
-}
-
-openApiDocument['paths']["/openapi.json"] = {
-    "get": {
-        "operationId": "openapi_json",
-        "security": [
-            {
-                "Authorization": []
-            }
-        ],
-        "parameters": [],
-        "responses": {
-            "200": {
-                "description": "Successful response",
-                "content": {
-                    "application/json": {
-                        "schema": {}
-                    }
-                }
-            },
-            "default": {
-                "$ref": "#/components/responses/error"
-            }
-        }
-    }
-}
-
-openApiDocument['paths']["/openapi.yaml"] = {
-    "get": {
-        "operationId": "openapi_yaml",
-        "security": [
-            {
-                "Authorization": []
-            }
-        ],
-        "parameters": [],
-        "responses": {
-            "200": {
-                "description": "Successful response",
-                "content": {
-                    "application/yaml": {
-                    }
-                }
-            },
-            "default": {
-                "$ref": "#/components/responses/error"
-            }
-        }
-    }
-}
-
-export {openApiDocument};
+// openApiDocument['paths']["/search"] = {
+//     "get": {
+//         "operationId": "query.utils.search",
+//         "security": [
+//             {
+//                 "Authorization": []
+//             }
+//         ],
+//         "parameters": [
+//             {
+//                 "name": "query",
+//                 "in": "path",
+//                 "required": true,
+//                 "schema": {
+//                     "type": "string"
+//                 }
+//             },
+//             {
+//                 "name": "sort",
+//                 "in": "path",
+//                 "required": true,
+//                 "schema": {
+//                     "type": "string",
+//                     "enum": ["relevance", "time"],
+//                     "default": "relevance"
+//                 }
+//             },
+//             {
+//                 "name": "faculty_ids",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "string" // actually array
+//                 }
+//             },
+//             {
+//                 "name": "discipline_ids",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "string" // actually array
+//                 }
+//             },
+//             {
+//                 "name": "rating_from",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "integer"
+//                 }
+//             },
+//             {
+//                 "name": "rating_to",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "integer"
+//                 }
+//             },
+//             {
+//                 "name": "types",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "string" // actually array
+//                 }
+//             },
+//             {
+//                 "name": "limit",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "integer"
+//                 }
+//             },
+//             {
+//                 "name": "offset",
+//                 "in": "path",
+//                 "required": false,
+//                 "schema": {
+//                     "type": "integer"
+//                 }
+//             },
+//         ],
+//         "responses": {
+//             "200": {
+//                 "description": "Successful response",
+//                 "content": {
+//                     "application/json": {
+//                         "schema": {}
+//                     }
+//                 }
+//             },
+//             "default": {
+//                 "$ref": "#/components/responses/error"
+//             }
+//         }
+//     }
+// }
+//
+// openApiDocument['paths']["/openapi.json"] = {
+//     "get": {
+//         "operationId": "openapi_json",
+//         "security": [
+//             {
+//                 "Authorization": []
+//             }
+//         ],
+//         "parameters": [],
+//         "responses": {
+//             "200": {
+//                 "description": "Successful response",
+//                 "content": {
+//                     "application/json": {
+//                         "schema": {}
+//                     }
+//                 }
+//             },
+//             "default": {
+//                 "$ref": "#/components/responses/error"
+//             }
+//         }
+//     }
+// }
+//
+// openApiDocument['paths']["/openapi.yaml"] = {
+//     "get": {
+//         "operationId": "openapi_yaml",
+//         "security": [
+//             {
+//                 "Authorization": []
+//             }
+//         ],
+//         "parameters": [],
+//         "responses": {
+//             "200": {
+//                 "description": "Successful response",
+//                 "content": {
+//                     "application/yaml": {
+//                     }
+//                 }
+//             },
+//             "default": {
+//                 "$ref": "#/components/responses/error"
+//             }
+//         }
+//     }
+// }
+//
+// export {openApiDocument};

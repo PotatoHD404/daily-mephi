@@ -11,7 +11,7 @@ import {useQuery} from "@tanstack/react-query";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import { getCsrfToken } from 'next-auth/react';
 
-// import {getCsrfToken} from "next-auth/src/react";
+// import {getCsrfToken} from "next-auth/react";
 // @ts-ignore
 // import { getCsrfToken } from 'next-auth/dist/react';
 // import {cookies} from "next/headers";

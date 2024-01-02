@@ -1,6 +1,6 @@
 import React from 'react';
 import Materials from 'pages/materials';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Materials> = {
     title: 'Pages/Materials page',

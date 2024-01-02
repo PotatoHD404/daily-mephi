@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/react';
 
 import TopUsers from "components/topUsers"
 import {Crown} from "components/topUsers";

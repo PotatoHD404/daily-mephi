@@ -1,6 +1,7 @@
 import React from 'react';
 import About from 'pages/about';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
+// @ts-ignore
 import {rest} from "msw";
 
 const meta: Meta<typeof About> = {
@@ -14,6 +15,7 @@ const meta: Meta<typeof About> = {
     parameters: {
         msw: {
             handlers: [
+                // @ts-ignore
                 rest.get('/api/v1/top', (req, res, ctx) => {
                     const users: any[] = [
                         {

@@ -23,7 +23,7 @@
     "incremental": true,
     "emitDecoratorMetadata": true,
     "sourceMap": true,
-    "declaration": true,
+    "declaration": false,
     "pretty":true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": "."

@@ -1,11 +1,12 @@
 import {TRPCError} from '@trpc/server'
 import {t} from "../utils";
+// @ts-ignore
 import {unstable_getServerSession, User} from "next-auth";
-import {nextAuthOptions} from "../../lib/auth/nextAuthOptions";
+import {nextAuthConfig} from "../../lib/auth/nextAuthConfig";
 
 export const isAuthorized = t.middleware(async ({ctx: {req, res}, next}) => {
 
-    const session = req && res && (await unstable_getServerSession(req, res, nextAuthOptions));
+    const session = req && res && (await unstable_getServerSession(req, res, nextAuthConfig));
     // type of user
     type MyUser = {
         id: string,

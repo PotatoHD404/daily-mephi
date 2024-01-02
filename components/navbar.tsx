@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 
 
 import {Box, Button, Divider, IconButton} from '@mui/material';
-import {toChildArray} from "preact";
+
 import useIsMobile from "../lib/react/isMobileContext";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
@@ -237,7 +237,7 @@ function ItemsList(props: {
     >
         <List>
             {/*  @ts-ignore  */}
-            {toChildArray([
+            {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
                 {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
                 {icon: TutorsIcon, text: "Преподаватели", link: "/tutors", alt: "tutors"},
@@ -245,20 +245,20 @@ function ItemsList(props: {
                 <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
                     <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
                     <div>{item.text}</div>
-                </ListItemButton>)))
+                </ListItemButton>))
             }
         </List>
         <Divider/>
         {!home ?
             <List>
                 {/*  @ts-ignore  */}
-                {toChildArray([
+                {[
                     {icon: UsersIcon, text: "Профиль", alt: "users"},
                 ].map((item, index) => (
                     <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
                         <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
                         <div>{item.text}</div>
-                    </ListItemButton>)))
+                    </ListItemButton>))
                 }
             </List> : null}
     </Box>;

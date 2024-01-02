@@ -6,7 +6,6 @@ import CloseButton from "./closeButton";
 import TutorImage from "../images/tutor.png";
 import {Autocomplete, Button, Dialog, FormGroup, IconButton, InputAdornment, TextField,} from "@mui/material";
 import CustomSelect from "./customSelect";
-import {toChildArray} from "preact";
 
 
 function CustomAutocomplete(props: { options: any, label: string, className?: string }) {
@@ -246,7 +245,7 @@ function Material(props: { postForm: any }) {
                     className="mb-[1.37rem] font-bold flex flex-wrap w-full text-sm leading-4 mt-[4px]">
                     <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
              bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
-                    {toChildArray([
+                    {[
                         {
                             color: "#DDD9DF",
                             label: "Предмет",
@@ -277,7 +276,7 @@ function Material(props: { postForm: any }) {
                             index={index}
                         />
 
-                    )))}
+                    ))}
 
                 </div>
                 <StyledTextField label="Описание" height='15rem' multiline rows={8}/>

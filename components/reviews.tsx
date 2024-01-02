@@ -6,7 +6,7 @@ import UserHeader from "./userHeader";
 import Reactions from "./reactions";
 import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
-import {toChildArray} from "preact";
+
 import {CircularProgress} from "@mui/material";
 
 export function Review({review}: { review: ReviewType }) {
@@ -44,6 +44,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         return result;
     }
 
+    // @ts-ignore
     const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -55,10 +56,13 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         // return lastPage.reviews_count;
     }
 
+
     const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
         [`tutor-${tutorId}-reviews`],
         ({pageParam = 0}) => fetchReviews(pageParam),
+        // @ts-ignore
         {
+            // @ts-ignore
             getNextPageParam: (lastPage) => {
                 return getCursor(lastPage);
             },
@@ -68,6 +72,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     )
     const reviews = useMemo(() => {
         const added = new Set();
+        // @ts-ignore
         const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
             if (added.has(review.id)) return false;
             added.add(review.id);
@@ -110,9 +115,9 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         <>
             {/* {reviewId && !isLoading && <Review review={data1}/>} */}
             {reviews.length > 0 ?
-                toChildArray(reviews.map((review, index) => (review.id != reviewId ?
+                reviews.map((review, index) => (review.id != reviewId ?
                     <Review key={index} review={review}/>
-                    : null)))
+                    : null))
                 : !isLoading && <div>Отзывов пока нет</div>}
             {isLoading && reviews.length === 0 ?
                 <>
