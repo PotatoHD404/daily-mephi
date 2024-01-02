@@ -15,10 +15,10 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-      - name: Setup Node.js 16.x
+      - name: Setup Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Install node dependencies
         run: yarn install
       - name: Build
@@ -52,10 +52,10 @@ jobs:
       NOTION_YC_IDS: ''
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Node.js 16.x
+      - name: Setup Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Install node dependencies
         run: yarn install
       - name: 'Run docker-compose'
@@ -126,10 +126,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Required to retrieve git history
-      - name: Setup Node.js 16.x
+      - name: Setup Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: 'Run docker-compose'
         uses: isbang/compose-action@v1.4.1
         with:
@@ -213,10 +213,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Pull Terraform CLI
         uses: hashicorp/setup-terraform@v2
-      - name: Setup Node.js 16.x
+      - name: Setup Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Add .terraformrc
         run: echo 'provider_installation {
           network_mirror {
