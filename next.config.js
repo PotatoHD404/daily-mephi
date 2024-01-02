@@ -66,6 +66,7 @@ let nextConfig =
         swcMinify: true,
         reactStrictMode: true,
         staticPageGenerationTimeout: 30,
+        output: "standalone",
         webpack: (config, options) => {
             config.experiments = {layers: true, topLevelAwait: true};
 
