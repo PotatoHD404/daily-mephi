@@ -74,7 +74,7 @@ describe('[GET] /api/v1/semesters', () => {
 
     it('Test get all', async () => {
 
-        // const apiSemesters = await trpc.utils.semesters();
+        // const apiSemesters = await utils.utils.semesters();
 
         // expect(apiSemesters).toEqual(semesters);
 

@@ -1,4 +1,4 @@
-import {t} from "server/trpc";
+import {t} from "server/utils";
 import {unstable_getServerSession, User} from "next-auth";
 import {nextAuthOptions} from "lib/auth/nextAuthOptions";
 import {TRPCError} from "@trpc/server";

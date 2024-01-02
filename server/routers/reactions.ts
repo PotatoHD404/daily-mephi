@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
@@ -26,7 +26,7 @@ export const reactionsRouter = t.router({
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {type, targetId, targetType}}) => {
-            return await prisma.$transaction(async (prisma) => {
+            return prisma.$transaction(async (prisma) => {
                     const typeMap: Record<string, any> = {
                         "quote": prisma.quote,
                         "review": prisma.review,

@@ -1,6 +1,6 @@
 
 import { TRPCError } from '@trpc/server'
-import {t} from "../trpc";
+import {t} from "../utils";
 
 export const verifyRecaptcha = t.middleware(async ({ ctx: {req}, next }) => {
     const {recaptchaToken: token} = req.body;

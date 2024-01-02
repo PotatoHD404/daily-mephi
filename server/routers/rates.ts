@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
@@ -19,7 +19,7 @@ export const ratesRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma}, input: {id}}) => {
-            return await prisma.rate.findMany({
+            return prisma.rate.findMany({
                 where: {tutorId: id},
                 select: {
                     id: true,

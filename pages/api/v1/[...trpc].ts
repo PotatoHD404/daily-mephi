@@ -1,6 +1,6 @@
 import { createOpenApiNextHandler } from "trpc-openapi";
 import {appRouter} from "server";
-import {createContext} from "server/trpc/context";
+import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
 // import {redis} from "lib/database/redis";
 

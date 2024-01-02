@@ -1,6 +1,6 @@
 import type {Discipline} from "@prisma/client";
 import {prismaMock} from "tests/api/mocks/prisma";  // <--- this import
-// order makes difference, it's important to mock prisma before importing trpc
+// order makes difference, it's important to mock prisma before importing utils
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/api/mocks/trpc";
 

@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
@@ -85,7 +85,7 @@ export const usersRouter = t.router({
                     message: 'Bio is toxic'
                 });
             }
-            return await prisma.$transaction(async (prisma: any) => {
+            return prisma.$transaction(async (prisma: any) => {
                 await Promise.all([
                     async () => {
                         if (nickname) {

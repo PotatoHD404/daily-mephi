@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
@@ -56,7 +56,7 @@ export const quotesRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma}, input: {id}}) => {
-            return await prisma.quote.findMany({
+            return prisma.quote.findMany({
                 where: {tutorId: id},
                 select: {
                     id: true,
@@ -127,7 +127,7 @@ export const quotesRouter = t.router({
                         data: {
                             type: "quote",
                             text,
-                            ...getDocument(text)
+                            words: getDocument(text).words ?? undefined
                         }
                     });
                     return quote;
