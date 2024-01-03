@@ -131,7 +131,7 @@ jobs:
         with:
           node-version: 18
       - name: 'Run docker-compose'
-        uses: isbang/compose-action@v1.4.1
+        uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.test.yml"
       - name: Install node dependencies
