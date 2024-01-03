@@ -1,8 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 
 import TopUsers from "components/topUsers"
-// @ts-ignore
-import {rest} from "msw";
+import {http, HttpResponse} from "msw";
 
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
@@ -12,7 +11,7 @@ const meta: Meta<typeof TopUsers> = {
     parameters: {
         msw: {
             handlers: [
-                rest.get('/api/v1/top', (req: any, res: any, ctx: any) => {
+                http.get('/api/v1/top', () => {
                     const users: any[] = [
                         {
                             id: '1',
@@ -39,9 +38,7 @@ const meta: Meta<typeof TopUsers> = {
                             image: 'https://avatars.githubusercontent.com/u/1158253?v=4',
                         }
                     ]
-                    return res(
-                        ctx.json(users)
-                    )
+                    return HttpResponse.json(users)
                 }),
             ]
         }

@@ -4,18 +4,20 @@ import {SessionProvider} from "next-auth/react";
 import React from "preact/compat";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
-import {useState} from "react";
+import {ComponentType, PropsWithChildren, Provider, useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
-import {initialize, mswDecorator} from 'msw-storybook-addon';
+import {initialize, mswLoader} from 'msw-storybook-addon';
 
 initialize({
     onUnhandledRequest: "bypass",
-});
-export const decorators = [
-    mswDecorator,
+})
+
+const loaders = [mswLoader];
+
+const decorators = [
     (Story: any, {args}: any) => {
-        // console.log(args.session)
+        console.log(args.session)
         const session: any = args.session === "Not logged in" ? null : {
             user: {
                 name: "PotatoHD",
@@ -60,6 +62,8 @@ const preview: Preview = {
         viewport: {
             viewports: INITIAL_VIEWPORTS,
         },
+        decorators,
+        loaders
     },
 };
 

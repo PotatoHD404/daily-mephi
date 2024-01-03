@@ -20,6 +20,7 @@ const customJestConfig: Config = {
     moduleDirectories: ['node_modules', '<rootDir>'],
     globalSetup: '<rootDir>/tests/setup.ts',
     globalTeardown: '<rootDir>/tests/teardown.ts',
+    modulePathIgnorePatterns: ["<rootDir>/.next/"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

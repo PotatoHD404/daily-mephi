@@ -1,8 +1,7 @@
 import React from 'react';
 import About from 'pages/about';
 import {Meta, StoryObj} from "@storybook/react";
-// @ts-ignore
-import {rest} from "msw";
+import {http, HttpResponse} from "msw";
 
 const meta: Meta<typeof About> = {
     title: 'Pages/About page',
@@ -15,8 +14,7 @@ const meta: Meta<typeof About> = {
     parameters: {
         msw: {
             handlers: [
-                // @ts-ignore
-                rest.get('/api/v1/top', (req, res, ctx) => {
+                http.get('/api/v1/top', () => {
                     const users: any[] = [
                         {
                             id: '1',
@@ -43,9 +41,7 @@ const meta: Meta<typeof About> = {
                             image: 'https://avatars.githubusercontent.com/u/1158253?v=4',
                         }
                     ]
-                    return res(
-                        ctx.json(users)
-                    )
+                    return HttpResponse.json(users)
                 }),
             ]
         }
