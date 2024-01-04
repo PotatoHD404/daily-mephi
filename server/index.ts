@@ -1,6 +1,6 @@
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {generateOpenApiDocument} from "trpc-openapi";
-import {getBaseUrl} from "server/trpc/utils";
+import {getBaseUrl} from "server/utils/trpc";
 import {utilsRouter} from "./routers/utils";
 import {commentsRouter} from "./routers/comments";
 import {filesRouter} from "./routers/files";
@@ -12,6 +12,7 @@ import {thumbnailsRouter} from "./routers/thumbnails";
 import {tutorsRouter} from "./routers/tutors";
 import {usersRouter} from "./routers/users";
 import {searchRouter} from "./routers/search";
+import {reactionsRouter} from "./routers/reactions";
 
 export const appRouter = t.router({
     comments: commentsRouter,
@@ -19,6 +20,7 @@ export const appRouter = t.router({
     materials: materialsRouter,
     news: newsRouter,
     quotes: quotesRouter,
+    reactions: reactionsRouter,
     reviews: reviewsRouter,
     thumbnails: thumbnailsRouter,
     tutors: tutorsRouter,

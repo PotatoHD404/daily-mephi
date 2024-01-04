@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {extToMimes} from "lib/constants/extToMimes";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import {func_ids} from "../../lib/constants/notionFuncIds";
@@ -116,27 +116,30 @@ export const filesRouter = t.router({
             }
 
             const mime = extToMimes[ext as keyof typeof extToMimes] || 'text/plain';
-            const page = process.env.NOTION_PRIVATE_PAGE;
+            const destinationDatabaseId = process.env.NOTION_PRIVATE_PAGE;
 
             let block_id: string = '';
             let i: number;
+            const properties = {
+                "Name": {"title": [{"text": {"content": filename + (ext ? '.' + ext : '')}}]},
+                "File": {"files": [{"name": filename + (ext ? '.' + ext : ''), "external": {"url": 'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d8c2e5c5-4914-452d-963b-d3718defa035/pending'}}]},
+            };
+            if (destinationDatabaseId === undefined) {
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'NOTION_PRIVATE_PAGE is not defined'
+                });
+            }
+            const parent_id = {"type": "database_id" as const, "database_id": destinationDatabaseId};
+            let new_page;
             for (i = 0; i < 3; ++i) {
                 try {
-
-                    block_id = (await notion.blocks.children.append({
-                        // @ts-ignore TODO: check if this is a bug in notion-client
-                        block_id: page,
-                        children: [
-                            {
-                                object: 'block',
-                                type: 'file',
-                                file: {external: {url: 'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d8c2e5c5-4914-452d-963b-d3718defa035/pending'}}
-                            }
-                        ],
-                    })).results[0].id;
+                    new_page = await notion.pages.create({parent: parent_id, properties: properties});
                     break;
                 } catch (e) {
-
+                    await timeout(500);
+                    console.log("Notion is not responding");
+                    console.log(e);
                 }
             }
 
@@ -255,12 +258,19 @@ export const filesRouter = t.router({
                 // find file size
 
                 const isImage = ext.toLowerCase() === 'png' || ext.toLowerCase() === 'jpg' || ext.toLowerCase() === 'jpeg';
-                await notion.blocks.update({
-                    block_id: block,
-                    type: 'file',
-                    file: {caption: [{text: {content: filename + (ext ? '.' + ext : '')}}], external: {url: unsignedUrl}}
-                });
                 const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
+
+                // Retrieve the page
+                // const page = await notion.pages.retrieve(block);
+                // Update the page properties
+                const properties = {
+                    "Name": {"title": [{"text": {"content": filename + (ext ? '.' + ext : '')}}]},
+                    "File": {"files": [{"name": filename + (ext ? '.' + ext : ''), "external": {"url": createdUrl}}]},
+                };
+                await notion.pages.update({
+                    page_id: block,
+                    properties: properties
+                });
 
                 await prisma.file.create({
                     data: {

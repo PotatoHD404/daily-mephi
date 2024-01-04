@@ -8,7 +8,7 @@ import Link from "next/link";
 import {useQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
 import {Skeleton} from "@mui/material";
-import {toChildArray} from "preact";
+
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
 
@@ -63,20 +63,18 @@ function TopUserContent(props: TopUserParams) {
     return (<tr>
         <td className="text-center"><Link href={`/users/${props.id || ""}`}>{props.place.toString()}</Link></td>
         <td>
-            <Link href={`/users/${props.id || ""}`}>
-                <a className="flex pl-4 h-[4.5rem]">
-                    <div className="h-14 my-auto w-14 flex">
-                        <Image
-                            src={props.src}
-                            alt="Profile pic"
-                            className="rounded-full"
-                            height={500}
-                            width={500}
-                        />
-                        <Crown place={props.place}/>
-                    </div>
-                    <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
-                </a>
+            <Link href={`/users/${props.id || ""}`} className="flex pl-4 h-[4.5rem]">
+                <div className="h-14 my-auto w-14 flex">
+                    <Image
+                        src={props.src}
+                        alt="Profile pic"
+                        className="rounded-full"
+                        height={500}
+                        width={500}
+                    />
+                    <Crown place={props.place}/>
+                </div>
+                <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
             </Link>
         </td>
         <td className="text-center">{formatter.format(props.rating)}</td>
@@ -121,6 +119,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
         }))?.json();
     }
 
+    // @ts-ignore
     const {data, isFetching, refetch, isError, error} = useQuery([`top`], getUser, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -166,11 +165,12 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                 {
                     isLoading ?
                         <>
-                            {toChildArray(Array(props.take || 4).map((_, index) =>
+                            {Array(props.take || 4).map((_, index) =>
                                 <TopUser key={index} src={DeadCat} place={0} rating={0} nickname=""
-                                         isLoading={isLoading}/>))}
+                                         isLoading={isLoading}/>)}
                         </> :
                         // <></>
+                        // @ts-ignore
                         data?.map((user: any, index: number) => {
                             return <TopUser src={user.image || DeadCat} key={index} nickname={user.name}
                                             place={index + place} isLoading={isLoading} id={user.id}

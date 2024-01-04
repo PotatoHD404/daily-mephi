@@ -2,7 +2,8 @@ import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 
 import superjson from 'superjson';
-import {AppRouter} from "server/index";
+import type {AppRouter} from "../index";
+import {inferRouterInputs, inferRouterOutputs} from "@trpc/server";
 
 export function getBaseUrl() {
     if (typeof window !== 'undefined') {
@@ -26,7 +27,7 @@ export function getBaseUrl() {
  * A set of strongly-typed React hooks from your `AppRouter` type signature with `createReactQueryHooks`.
  * @link https://trpc.io/docs/react#3-create-trpc-hooks
  */
-export const utils = createTRPCNext<AppRouter>({
+export const trpc = createTRPCNext<AppRouter>({
     config() {
         /**
          * If you want to use SSR, you need to use the server's full URL
@@ -60,5 +61,20 @@ export const utils = createTRPCNext<AppRouter>({
     /**
      * @link https://trpc.io/docs/ssr
      */
-    // ssr: true,
+    ssr: false,
 });
+
+/**
+ * Inference helper for inputs.
+ *
+ * @example type HelloInput = RouterInputs['example']['hello']
+ */
+export type RouterInputs = inferRouterInputs<AppRouter>;
+
+/**
+ * Inference helper for outputs.
+ *
+ * @example type HelloOutput = RouterOutputs['example']['hello']
+ */
+export type RouterOutputs = inferRouterOutputs<AppRouter>;
+

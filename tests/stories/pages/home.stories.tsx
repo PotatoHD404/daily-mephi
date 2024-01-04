@@ -1,11 +1,12 @@
 import React from 'react';
 import Home from 'pages';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Home> = {
     title: 'Pages/Home page',
     component: Home,
     argTypes: {
+        // @ts-ignore
         needsAuth: {control: 'boolean'},
         isMobile: {control: 'boolean'},
         changeNeedsAuth: {action: 'changeNeedsAuth'},
@@ -20,6 +21,7 @@ export const Primary: Story = {
         changeNeedsAuth: (a: boolean) => {
 
         },
+        // @ts-ignore
         needsAuth: false,
     }
 };

@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
@@ -62,7 +62,7 @@ export const reviewsRouter = t.router({
         }))
         .output(z.any())
         .query(async ({ctx: {prisma}, input: {id, take, cursor}}) => {
-                return await prisma.review.findMany({
+                return prisma.review.findMany({
                     where: {tutorId: id},
                     select: {
                         id: true,
@@ -141,7 +141,7 @@ export const reviewsRouter = t.router({
                         data: {
                             type: "review",
                             text,
-                            ...getDocument(text + ' ' + title),
+                            words: getDocument(text + ' ' + title).words ?? undefined,
                         }
                     });
 

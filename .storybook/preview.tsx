@@ -7,14 +7,16 @@ import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
-import {initialize, mswDecorator} from 'msw-storybook-addon';
+import {initialize, mswLoader} from 'msw-storybook-addon';
 
 initialize({
     onUnhandledRequest: "bypass",
-});
-export const decorators = [
-    mswDecorator,
-    (Story: any, {args}: any) => {
+})
+
+const loaders: any[] = [mswLoader];
+
+const decorators: any[] = [
+    (StoryFn: any, {args}: any) => {
         // console.log(args.session)
         const session: any = args.session === "Not logged in" ? null : {
             user: {
@@ -33,7 +35,7 @@ export const decorators = [
                     { /* @ts-ignore */}
                     <IsMobileProvider value={isMobile}>
                         { /* @ts-ignore */}
-                        <Story/>
+                        {StoryFn()}
                     </IsMobileProvider>
                 </QueryClientProvider>
             </SessionProvider>
@@ -61,6 +63,8 @@ const preview: Preview = {
             viewports: INITIAL_VIEWPORTS,
         },
     },
+    decorators,
+    loaders
 };
 
 export default preview;

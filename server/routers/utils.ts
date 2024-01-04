@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 
 let epoch = new Date(1970, 1, 1);
 
@@ -104,7 +104,7 @@ export const utilsRouter = t.router({
         .input(z.void())
         .output(z.any())
         .query(async ({ctx: {prisma}}) => {
-            return await prisma.file.findMany(
+            return prisma.file.findMany(
                 {
                     where: {
                         tag: "avatar",
@@ -148,9 +148,10 @@ export const utilsRouter = t.router({
                         },
                         rating: true,
                     },
-                    orderBy: {
-                        rating: 'desc',
-                    },
+                    orderBy: [
+                        {rating: 'desc'},
+                        {id: 'asc'}
+                    ],
                     take,
                     skip
                 }

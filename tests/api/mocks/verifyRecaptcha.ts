@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import {t} from "server/trpc";
+import {t} from "server/utils";
 
 export const verifyRecaptchaFunc = jest.fn()
 

@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 
 

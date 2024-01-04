@@ -1,8 +1,7 @@
-import {t} from "server/trpc";
-import {unstable_getServerSession, User} from "next-auth";
-import {nextAuthOptions} from "lib/auth/nextAuthOptions";
-import {TRPCError} from "@trpc/server";
-import { faker } from "@faker-js/faker";
+jest.mock('next-auth');
+
+import {t} from "server/utils";
+import {faker} from "@faker-js/faker";
 
 export const isAuthorizedFunc = jest.fn()
 
@@ -13,12 +12,12 @@ const isAuthorized = t.middleware(
 beforeEach(() => {
     isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
         let user = {
-                id: faker.datatype.uuid(),
-                // @ts-ignore
-                nickname: faker.internet.userName(),
-                image: faker.image.avatar(),
+            id: faker.datatype.uuid(),
+            // @ts-ignore
+            nickname: faker.internet.userName(),
+            image: faker.image.avatar(),
         };
-        
+
 
         return next({
             ctx: {

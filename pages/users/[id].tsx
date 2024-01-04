@@ -7,9 +7,9 @@ import {useQuery} from "@tanstack/react-query";
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
 import { prisma } from "lib/database/prisma";
-import {getToken} from "next-auth/jwt";
 import {useSession} from "next-auth/react";
-import {UUID_REGEX} from "../../lib/constants/uuidRegex";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
+import {auth} from "lib/auth";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
     const {status} = useSession();
@@ -43,6 +43,7 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
         });
     }
 
+    // @ts-ignore
     const {data, isFetching, refetch, isError, error} = useQuery([`user-${user.id}`], getUser, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -72,11 +73,13 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
             changeNeedsAuth(true);
         // window.onpopstate = () => changeNeedsAuth(true);
     }, [changeNeedsAuth, me]);
+
     return (
         <>
         {user ?
             <SEO title={`Пользователь ${user.nickname}`}
                  thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
+                    // @ts-ignore
                   <SEO title={`Пользователь ${data.name || '...'}`}
                  thumbnail={`https://daily-mephi.ru/api/v1/users/${id}/thumbnail.png`}/>
         }
@@ -122,7 +125,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
             notFound: true
         }
     }
-    const session = await getToken({req})
+    const session = await auth(props)
 
     // res.setHeader(
     //     'Cache-Control',
@@ -135,7 +138,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         delete user.image;
     }
     return {
-        props: {user, me: session?.sub === user.id}
+        props: {user, me: session?.user?.id === user.id}
     }
 }
 

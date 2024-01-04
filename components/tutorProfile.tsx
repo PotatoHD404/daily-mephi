@@ -100,11 +100,11 @@ export default function TutorProfile({tutor}: { tutor: any }) {
                         <>
                             <div className="my-auto flex w-full justify-between">
                                 <div className="font-semibold">Daily Mephi:</div>
-                                <div>{data.rating}</div>
+                                {/*<div>{data.rating}</div>*/}
                             </div>
                             <div className="my-auto flex w-full justify-between">
                                 <div className="font-semibold">mephist.ru:</div>
-                                <div>{data.legacyRating || "-"}</div>
+                                {/*<div>{data.legacyRating || "-"}</div>*/}
                             </div>
                         </>}
                 </div>

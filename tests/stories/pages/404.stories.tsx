@@ -1,6 +1,6 @@
 import React from 'react';
 import Page404 from 'pages/404';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Page404> = {
     title: 'Pages/Page 404',

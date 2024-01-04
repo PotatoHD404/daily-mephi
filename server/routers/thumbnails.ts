@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import satori, {SatoriOptions} from 'satori';
 import {Resvg, ResvgRenderOptions} from '@resvg/resvg-js'
 import {NextApiResponse} from "next";

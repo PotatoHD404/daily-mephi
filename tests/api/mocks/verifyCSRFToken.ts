@@ -1,4 +1,4 @@
-import {t} from "server/trpc";
+import {t} from "server/utils";
 import {TRPCError} from "@trpc/server";
 import {createHash} from "crypto";
 import {defaultCookies} from "lib/utils";

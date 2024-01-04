@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/react';
 
 import BuyMeACoffeeWidget from "components/buyMeCoffee"
 import ProfileSettings from "../../../components/profileSettings";

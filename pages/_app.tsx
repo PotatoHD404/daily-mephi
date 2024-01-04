@@ -4,14 +4,14 @@ import {NextComponentType} from "next";
 import {Session} from "next-auth";
 import React, {ReactNode, useState} from "react";
 import Footer from "components/footer";
-import Image from "next/future/image";
+import Image from "next/image";
 import Image1 from "next/image";
 import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
 import {useRouter} from "next/router";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {utils} from 'server/trpc/utils';
+import {trpc} from 'server/utils/trpc';
 
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import useMediaQuery from "../lib/react/useMediaQuery";
@@ -163,4 +163,4 @@ function MyApp(
 }
 
 
-export default utils.withTRPC(MyApp)
+export default trpc.withTRPC(MyApp)

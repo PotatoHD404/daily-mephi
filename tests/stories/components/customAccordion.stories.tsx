@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/preact';
+import type {Meta, StoryObj} from '@storybook/react';
 
 import CustomAccordion from "components/customAccordion";
 

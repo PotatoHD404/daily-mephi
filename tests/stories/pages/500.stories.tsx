@@ -1,6 +1,6 @@
 import React from 'react';
 import Page500 from 'pages/500';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Page500> = {
     title: 'Pages/Page 500',

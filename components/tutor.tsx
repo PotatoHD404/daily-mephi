@@ -8,7 +8,7 @@ import MaterialsIco from "../images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
 import {Button} from '@mui/material';
-import {toChildArray} from "preact";
+
 import useIsMobile from "../lib/react/isMobileContext";
 
 export default function Tutor() {
@@ -71,7 +71,7 @@ export default function Tutor() {
                     {/* @ts-ignore */}
                     <div className="h-fit mb-2 text-left flex flex-wrap">
                         <span className="font-bold h-fit mr-2 text-[1.1rem]">Дисциплины: </span>
-                        {toChildArray(["Теория функций копмплексных переменных",
+                        {["Теория функций копмплексных переменных",
                             "Математический анализ",
                             "Линейная алгебра",
                             "Интегральные уравнения",
@@ -80,7 +80,7 @@ export default function Tutor() {
                             return <span key={index} className="text-[1.0rem] mr-2">
                                 {`${discipline}${index !== 4 ? ", " : ""}`}
                             </span>
-                        }))}
+                        })}
                     </div>
 
                     <div className="flex w-full max-w-[7.0rem] md:max-w-[8.0rem] justify-between">

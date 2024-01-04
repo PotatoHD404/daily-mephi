@@ -1,4 +1,4 @@
-import Image from "next/future/image";
+import Image from "next/image";
 import RegisterHalfCat from 'images/register_halfcat.svg'
 import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
@@ -7,8 +7,15 @@ import RippledButton from "./rippledButton";
 import {CircularProgress, FormControl, NativeSelect, SelectChangeEvent, TextField,} from '@mui/material';
 import {ChangeEvent, useCallback, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {getCsrfToken} from "next-auth/react";
+
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
+// import { getCsrfToken } from 'next-auth/react';
+
+// import {getCsrfToken} from "next-auth/react";
+// @ts-ignore
+// import { getCsrfToken } from 'next-auth/dist/react';
+// import {cookies} from "next/headers";
+import {trpc} from "../server/utils/trpc";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -46,7 +53,8 @@ export default function RegisterDialog(props: DialogProps) {
             },
             credentials: 'same-origin',
             body: JSON.stringify({
-                csrfToken: await getCsrfToken(),
+                // csrfToken: getCsrfToken(),
+                csrfToken: "",
                 name,
                 recaptchaToken,
                 course: option != "Не указано" ? option : undefined,
@@ -65,23 +73,23 @@ export default function RegisterDialog(props: DialogProps) {
 
     }
 
-    const {data, refetch: fetchRegister, isFetching, isError} = useQuery(['register'], handleRegister, {
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
+    // const {data, refetch: fetchRegister, isFetching, isError} = trpc.register.useQuery(handleRegister, {
+    //     refetchOnWindowFocus: false,
+    //     enabled: false // disable this query from automatically running
+    // });
 
     const register = async () => {
-        if (!executeRecaptcha) {
-            return;
-        }
-
-        // Nickname regex with russian letters
-        const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-        if (name != null && nicknameRegex.test(name)) {
-            await fetchRegister();
-        } else {
-            setNicknameError(true);
-        }
+        // if (!executeRecaptcha) {
+        //     return;
+        // }
+        //
+        // // Nickname regex with russian letters
+        // const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+        // if (name != null && nicknameRegex.test(name)) {
+        //     await fetchRegister();
+        // } else {
+        //     setNicknameError(true);
+        // }
 
 
         // console.log(res.redirected)
@@ -200,22 +208,22 @@ export default function RegisterDialog(props: DialogProps) {
                                 </div>
 
                             </div>
-                            <div className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full
-                             rounded-full border-2 md:w-full lg:text-3xl md:text-2xl text-xl font-bold
-                              text-center ${isFetching ? "border-gray-400" : "border-black"}`}>
-                                <RippledButton onClick={register} disabled={isFetching}>
-                                    {!isFetching ?
-                                        <div>Регистрация</div> :
-                                        <div className="flex space-x-4">
-                                            <div className="my-auto">Загрузка...</div>
-                                            <CircularProgress color="inherit"
-                                                              thickness={3}
-                                                              size={30}
-                                                              className="my-auto"/>
+                            {/*<div className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full*/}
+                            {/* rounded-full border-2 md:w-full lg:text-3xl md:text-2xl text-xl font-bold*/}
+                            {/*  text-center ${isFetching ? "border-gray-400" : "border-black"}`}>*/}
+                            {/*    <RippledButton onClick={register} disabled={isFetching}>*/}
+                            {/*        {!isFetching ?*/}
+                            {/*            <div>Регистрация</div> :*/}
+                            {/*            <div className="flex space-x-4">*/}
+                            {/*                <div className="my-auto">Загрузка...</div>*/}
+                            {/*                <CircularProgress color="inherit"*/}
+                            {/*                                  thickness={3}*/}
+                            {/*                                  size={30}*/}
+                            {/*                                  className="my-auto"/>*/}
 
-                                        </div>}
-                                </RippledButton>
-                            </div>
+                            {/*            </div>}*/}
+                            {/*    </RippledButton>*/}
+                            {/*</div>*/}
                         </FormControl>
                     </div>
                 </div>

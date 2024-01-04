@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
@@ -151,7 +151,7 @@ export const commentsRouter = t.router({
             };
 
 
-            return await prisma.$transaction(async (prisma) => {
+            return prisma.$transaction(async (prisma) => {
                 let parentComment: Comment | null;
                 let path: string[] = [];
                 if (parentId) {

@@ -1,4 +1,6 @@
-import {PrismaClient} from "@prisma/client";
+import {PrismaClient, Semester} from "@prisma/client";
+import {faker} from "@faker-js/faker";
+import {clearDB} from "../../utils/clearDB";
 
 const prisma = new PrismaClient();
 
@@ -7,15 +9,7 @@ beforeAll(async () => {
 })
 
 afterEach(async () => {
-
-    const deletes = Object.getOwnPropertyNames(prisma).
-    filter(el => el[0] !== el[0].
-    toUpperCase() && el[0].
-    match(/[a-z]/i)).
-        // @ts-ignore
-        map(el => prisma[el]?.deleteMany).
-        filter(el => el !== undefined).map(el => el())
-    await prisma.$transaction(deletes)
+    await clearDB(prisma)
 })
 
 afterAll(async () => {

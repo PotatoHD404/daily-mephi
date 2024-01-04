@@ -1,6 +1,6 @@
 import React from 'react';
 import Search from 'pages/search';
-import {Meta, StoryObj} from "@storybook/preact";
+import {Meta, StoryObj} from "@storybook/react";
 
 const meta: Meta<typeof Search> = {
     title: 'Pages/Search page',

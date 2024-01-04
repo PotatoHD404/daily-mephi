@@ -3,7 +3,7 @@ import Image from "next/image";
 import {Slider} from "@mui/material";
 import StarIcon from "../images/star.svg";
 import CustomAccordion from './customAccordion'
-import {toChildArray} from "preact";
+
 
 const dev = process.env.NODE_ENV == "development";
 //                                     />
@@ -47,7 +47,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
             </div>
             <Slider
                 // @ts-ignore
-                value={dev ? toChildArray(value.map((v, index) => <div key={index}>{v.toString()}</div>)) : value}
+                value={dev ? value.map((v, index) => <div key={index}>{v.toString()}</div>) : value}
                 // onChange={(event, newValue) => {
                 //     console.log(newValue);
                 // }}

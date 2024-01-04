@@ -32,4 +32,4 @@ export const createContext = async (
         notion
     };
 };
-export type Context = trpc.inferAsyncReturnType<typeof createContext>;
+export type Context = typeof createContext

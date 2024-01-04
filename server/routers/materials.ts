@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {t} from 'server/trpc';
+import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "../middlewares/isAuthorized";
 import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
@@ -91,7 +91,7 @@ export const materialsRouter = t.router({
         .output(z.any())
         .use(isAuthorized)
         .query(async ({ctx: {prisma}}) => {
-            return await prisma.material.findMany({
+            return prisma.material.findMany({
                 select: {
                     id: true,
                     title: true,
@@ -320,7 +320,7 @@ export const materialsRouter = t.router({
                     data: {
                         type: "material",
                         text,
-                        ...getDocument(title + ' ' + text)
+                        words: getDocument(title + ' ' + text).words ?? undefined
                     }
                 });
 

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Image from "next/future/image";
+import Image from "next/image";
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
@@ -51,8 +51,8 @@ export default function WarningDialog(props: DialogProps) {
                                 <div>Ваши данные защищены.</div>
                                 <div>
                                     <span>Подробнее читайте в разделе </span>
-                                    <Link href="/about">
-                                        <a className="underlining font-semibold" onClick={handleClose}>О нас</a>
+                                    <Link href="/about" className="underlining font-semibold" onClick={handleClose}>
+                                        О нас
                                     </Link>
                                 </div>
                             </div>
