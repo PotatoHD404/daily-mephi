@@ -10,6 +10,7 @@ const createJestConfig = nextJest({
     dir: "./",
 });
 
+
 const customJestConfig: Config = {
     clearMocks: true,
     testEnvironment: "node",
@@ -21,16 +22,16 @@ const customJestConfig: Config = {
     globalSetup: '<rootDir>/tests/setup.ts',
     globalTeardown: '<rootDir>/tests/teardown.ts',
     modulePathIgnorePatterns: ["<rootDir>/.next/"],
-    transform: {
-        "^.+\\.(t|j)sx?$": "@swc/jest",
-    },
+    collectCoverage: true,
+    collectCoverageFrom: ['pages/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 
+const esModules = ["superjson"];
+
 
 export default createJestConfig(customJestConfig)().then(value => {
-    // value.transform = {};
-    console.log(JSON.stringify(value.transform))
+    value = {...value, transformIgnorePatterns: [`/node_modules/(?!(${esModules.join("|")})/)`],}
     return value;
 })

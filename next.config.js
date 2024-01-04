@@ -63,6 +63,9 @@ if (process.env.NODE_ENV === 'production') {
 let nextConfig =
     {
         // target: 'serverless',
+        // compiler: {
+        //     styledComponents: true
+        // },
         swcMinify: true,
         reactStrictMode: true,
         staticPageGenerationTimeout: 30,
