@@ -58,6 +58,7 @@
   "devDependencies": {
     "@builder.io/partytown": "^0.7.5",
     "@faker-js/faker": "^7.6.0",
+    "@jest/globals": "^29.7.0",
     "@storybook/addon-a11y": "^7.6.7",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-interactions": "^7.6.7",
@@ -68,7 +69,6 @@
     "@storybook/react": "^7.6.7",
     "@storybook/testing-library": "^0.2.2",
     "@types/cookie": "^0.4.1",
-    "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/luxon": "^3.3.7",
     "@types/node": "^20.10.6",
@@ -85,8 +85,8 @@
     "prisma": "^5.7.1",
     "storybook": "^7.6.7",
     "supertest": "^6.3.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
   },
   "msw": {
     "workerDirectory": "public"

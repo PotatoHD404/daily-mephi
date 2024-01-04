@@ -3,7 +3,7 @@ import {faker} from "@faker-js/faker";
 import {prisma} from "./utils/prisma";
 import {trpc} from "tests/api/mocks/trpc";
 import {searchRouter} from "../../server/routers/search";
-
+import {describe, it, expect, jest} from '@jest/globals';
 
 
 // export type Discipline = {

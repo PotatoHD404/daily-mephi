@@ -9,7 +9,7 @@ import {prisma} from "./utils/prisma";
 import {verifyRecaptchaFunc} from "./mocks/verifyRecaptcha";
 import {AppRouter} from "../../server";
 import {createUsers} from "./utils/createUsers";
-
+import {describe, it, expect, jest} from '@jest/globals';
 
 // export type User = {
 //     id: string

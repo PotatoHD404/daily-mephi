@@ -2,7 +2,7 @@ import type {Discipline, Faculty, File, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/api/mocks/trpc";
 import {prisma} from "./utils/prisma"
-
+import {describe, it, expect, jest} from '@jest/globals';
 
 // export type Discipline = {
 //     id: string
