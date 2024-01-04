@@ -46,7 +46,7 @@ terraform {
   }
   required_version = ">= 0.13"
   backend "s3" {
-    endpoint = "storage.yandexcloud.net"
+    endpoints = { s3 = "https://storage.yandexcloud.net" }
     bucket   = "daily-service-1"
     region   = "ru-central1"
     key      = "daily-mephi-terraform/main.tfstate"
