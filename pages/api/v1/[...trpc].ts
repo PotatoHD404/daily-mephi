@@ -1,16 +1,15 @@
 import { createOpenApiNextHandler } from "trpc-openapi";
-import type {AppRouter} from "server";
+import {appRouter} from "server";
 import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
-import {createNextApiHandler} from "@trpc/server/adapters/next";
+// import {createNextApiHandler} from "@trpc/server/adapters/next";
 // import {redis} from "lib/database/redis";
 
 
-const nextApiHandler = createNextApiHandler({
-    // @ts-ignore
+const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
     createContext,
-    onError({ error }) {
+    onError({ error }: any) {
         // @ts-ignore
         if(error.code === 'INTERNAL_SERVER_ERROR' && error.cause?.code === 'ERR_HTTP_HEADERS_SENT') {
             // Ignore this error, it's not really an error

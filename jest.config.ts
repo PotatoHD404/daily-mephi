@@ -2,7 +2,7 @@
  * https://nextjs.org/docs/testing#setting-up-jest-with-the-rust-compiler
  */
 import nextJest from "next/jest";
-import type { Config } from "jest";
+import type {Config} from "jest";
 
 
 const createJestConfig = nextJest({
@@ -10,7 +10,7 @@ const createJestConfig = nextJest({
     dir: "./",
 });
 
-const customJestConfig: Config  = {
+const customJestConfig: Config = {
     clearMocks: true,
     testEnvironment: "node",
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
@@ -21,8 +21,16 @@ const customJestConfig: Config  = {
     globalSetup: '<rootDir>/tests/setup.ts',
     globalTeardown: '<rootDir>/tests/teardown.ts',
     modulePathIgnorePatterns: ["<rootDir>/.next/"],
+    transform: {
+        "^.+\\.(t|j)sx?$": "@swc/jest",
+    },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 
-export default createJestConfig(customJestConfig)()
+
+export default createJestConfig(customJestConfig)().then(value => {
+    // value.transform = {};
+    console.log(JSON.stringify(value.transform))
+    return value;
+})
