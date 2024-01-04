@@ -64,7 +64,7 @@ const preview: Preview = {
         },
     },
     decorators,
-    // loaders
+    loaders
 };
 
 export default preview;
