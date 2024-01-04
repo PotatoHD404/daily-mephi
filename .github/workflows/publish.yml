@@ -26,6 +26,13 @@ jobs:
   jest:
     name: 'Jest tests'
     runs-on: ubuntu-latest
+    services:
+      cockroach-test:
+        image: cockroachdb/cockroach:latest
+        ports:
+          - "26258:26257"
+          - "8081:8080"
+        options: start-single-node --insecure
     env:
       DATABASE_URL: 'postgresql://root@127.0.0.1:26258/defaultdb?sslmode=disable'
       LOCAL: ${{ secrets.TF_VAR_LOCAL }}
@@ -58,10 +65,6 @@ jobs:
           node-version: 18
       - name: Install node dependencies
         run: yarn install
-      - name: 'Run docker-compose'
-        uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: "./docker-compose.test.yml"
       - name: Create .env file
         run: |
           echo DATABASE_URL=\""$DATABASE_URL"\" >> .env
