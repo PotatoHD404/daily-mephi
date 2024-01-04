@@ -168,7 +168,7 @@ describe('[PUT] /api/v1/users', () => {
 
     it('Edit user image null', async () => {
         const {users} = await createUsers();
-        const currUser = faker.helpers.arrayElement(users);
+        const currUser = faker.helpers.arrayElement(users.filter(user => user.imageId === null));
 
         isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
             return next({
@@ -183,8 +183,8 @@ describe('[PUT] /api/v1/users', () => {
         });
 
         const imageData: inferProcedureInput<AppRouter["users"]["edit"]> = {
-            nickname: currUser.nickname || undefined,
-            bio: currUser.bio || undefined,
+            nickname: 'Faker',
+            bio: 'Some bio',
             csrfToken: '123',
             recaptchaToken: '123'
         };

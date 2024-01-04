@@ -148,9 +148,10 @@ export const utilsRouter = t.router({
                         },
                         rating: true,
                     },
-                    orderBy: {
-                        rating: 'desc',
-                    },
+                    orderBy: [
+                        {rating: 'desc'},
+                        {id: 'asc'}
+                    ],
                     take,
                     skip
                 }
