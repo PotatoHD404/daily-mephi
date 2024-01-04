@@ -788,5 +788,3 @@ ALTER TABLE "_materials_semesters" ADD CONSTRAINT "_materials_semesters_A_fkey" 
 
 -- AddForeignKey
 ALTER TABLE "_materials_semesters" ADD CONSTRAINT "_materials_semesters_B_fkey" FOREIGN KEY ("B") REFERENCES "semesters"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE INDEX "documents_text_idx" ON "documents" USING GIN("text" gin_trgm_ops);

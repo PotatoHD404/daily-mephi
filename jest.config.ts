@@ -13,14 +13,16 @@ const createJestConfig = nextJest({
 
 const customJestConfig: Config = {
     clearMocks: true,
-    testEnvironment: "node",
+    testEnvironment: 'node',
+    coverageProvider: 'v8',
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
     testMatch: [
         "<rootDir>/tests/**/*.{spec,test}.{js,jsx,ts,tsx}",
     ],
     moduleDirectories: ['node_modules', '<rootDir>'],
-    globalSetup: '<rootDir>/tests/setup.ts',
-    globalTeardown: '<rootDir>/tests/teardown.ts',
+    globalSetup: '<rootDir>/tests/global-setup.ts',
+    globalTeardown: '<rootDir>/tests/global-teardown.ts',
+    setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
     modulePathIgnorePatterns: ["<rootDir>/.next/"],
     collectCoverage: true,
     collectCoverageFrom: ['pages/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
@@ -35,8 +37,8 @@ export default createJestConfig(customJestConfig)().then(value => {
     value = {
         ...value,
         transformIgnorePatterns: [`/node_modules/(?!(${esModules.join("|")})/)`],
-        moduleNameMapper: {...value.moduleNameMapper, '^next-auth(.*)$': '<rootDir>/node_modules/next-auth$1', '^@auth/core(.*)$': '<rootDir>/node_modules/@auth/core$1',}
+        moduleNameMapper: {...value.moduleNameMapper, '^next-auth(.*)$': '<rootDir>/node_modules/next-auth$1', '^@auth/core(.*)$': '<rootDir>/node_modules/@auth/core$1'}
     }
-    console.log(JSON.stringify(value))
+    // console.log(JSON.stringify(value))
     return value;
 })

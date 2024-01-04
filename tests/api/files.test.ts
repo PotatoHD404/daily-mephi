@@ -1,30 +1,29 @@
 import {faker} from "@faker-js/faker";
+import {isAuthorizedFunc} from "./mocks/isAuthorized";
+import "./mocks/verifyCSRFToken";
+import "./mocks/verifyRecaptcha";
 import {trpc} from "./mocks/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
 import "./utils/notion";
 import type {AppRouter} from "../../server";
-import jwt from "jsonwebtoken";
-import {isAuthorizedFunc} from "./mocks/isAuthorized";
-import "./mocks/verifyCSRFToken";
-import "./mocks/verifyRecaptcha";
 import {BinaryLike, createHash} from "crypto";
 
 import axios from "axios";
 import {createUsers} from "./utils/createUsers";
 import {describe, it, expect, jest} from '@jest/globals';
-// describe('[GET] /api/v1/files/{id}', () => {
-//
-// });
-//
-// describe('[POST] /api/v1/files', () => {
-//
-//
-// });
-//
-// describe('[PUT] /api/v1/files', () => {
-//
-// });
+describe('[GET] /api/v1/files/{id}', () => {
+
+});
+
+describe('[POST] /api/v1/files', () => {
+
+
+});
+
+describe('[PUT] /api/v1/files', () => {
+
+});
 
 // This is a sample file for upload. Replace it with your actual file.
 const sampleFile = Buffer.from("Hello, World!");
@@ -74,7 +73,6 @@ describe('filesRouter', () => {
 
         // Get upload link
         const {token, signedGetUrl} = await trpc.files.getLink(params);
-
 
 
         // Upload sample file to the upload link

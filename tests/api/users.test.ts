@@ -213,7 +213,7 @@ describe('[PUT] /api/v1/users', () => {
         });
 
         let toxicData: inferProcedureInput<AppRouter["users"]["edit"]> = {
-            nickname: "Gnida",
+            nickname: "StupidNerd",
             bio: "Bio",
             csrfToken: '123',
             recaptchaToken: '123'
@@ -221,11 +221,9 @@ describe('[PUT] /api/v1/users', () => {
 
         await expect(trpc.users.edit(toxicData)).rejects.toThrowError(TRPCError);
 
-        //
-
         toxicData = {
             nickname: "Nickname",
-            bio: "Чертила блiн",
+            bio: "StupidNerd",
             csrfToken: '123',
             recaptchaToken: '123'
         };

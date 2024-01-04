@@ -20,6 +20,18 @@ async function createUsers() {
     });
 
     const imageIds = images.map(image => image.id);
+    function generateNickname() {
+        let nickname = faker.internet.userName();
+        // Replace disallowed characters with underscores and limit length
+        nickname = nickname.replace(/[^a-zA-Z0-9_]/g, '_').substring(0, 30);
+
+        // Ensure nickname is at least 3 characters long
+        if (nickname.length < 3) {
+            nickname += '_'.repeat(3 - nickname.length);
+        }
+
+        return nickname;
+    }
 
     // generate faker user
     function generateUser() {
@@ -47,7 +59,7 @@ async function createUsers() {
                 'min': 0,
                 'max': 50
             }),
-            nickname: faker.internet.userName(),
+            nickname: generateNickname(),
             place: faker.datatype.number({
                 'min': 1,
                 'max': 100
