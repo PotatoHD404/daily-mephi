@@ -3,7 +3,7 @@ import {trpc} from "./mocks/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
 import "./utils/notion";
-import {AppRouter} from "../../server";
+import type {AppRouter} from "../../server";
 import jwt from "jsonwebtoken";
 import {isAuthorizedFunc} from "./mocks/isAuthorized";
 import "./mocks/verifyCSRFToken";

@@ -7,7 +7,7 @@ import {trpc} from "./mocks/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
 import {verifyRecaptchaFunc} from "./mocks/verifyRecaptcha";
-import {AppRouter} from "../../server";
+import type {AppRouter} from "../../server";
 import {createUsers} from "./utils/createUsers";
 import {describe, it, expect, jest} from '@jest/globals';
 

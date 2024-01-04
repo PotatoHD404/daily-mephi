@@ -2,7 +2,7 @@ import { httpBatchLink, loggerLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 
 import superjson from 'superjson';
-import {AppRouter} from "../index";
+import type {AppRouter} from "../index";
 import {inferRouterInputs, inferRouterOutputs} from "@trpc/server";
 
 export function getBaseUrl() {
