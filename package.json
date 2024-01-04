@@ -11,7 +11,8 @@
     "build-api": "node cloud-functions/main/gen_api_config.js",
     "test": "jest --forceExit -i",
     "sb": "sb dev -p 6006",
-    "build-storybook": "sb build"
+    "build-storybook": "sb build",
+    "storybook-serve": "npx http-server ./storybook-static"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

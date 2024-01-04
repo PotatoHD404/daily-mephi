@@ -24,7 +24,7 @@ export default async function seed() {
     let semesters = Array.from({length: 10}, generateSemester).sort((a, b) => a.id.localeCompare(b.id));
     // filter unique semesters by name
     semesters = semesters.filter((item, index) => semesters.findIndex(el => el.name === item.name || el.id === item.id) === index)
-    console.log(semesters)
+    // console.log(semesters)
     await prisma.semester.createMany({
         data: semesters
     });
