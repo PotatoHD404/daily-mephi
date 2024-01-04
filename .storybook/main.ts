@@ -11,10 +11,18 @@ const config: StorybookConfig = {
     ],
     framework: {
         name: "@storybook/nextjs",
-        options: {},
+        options: { builder: { useSWC: true } }
     },
     docs: {
         autodocs: "tag",
+    },
+    build: {
+        test: {
+            disabledAddons: [
+                '@storybook/addon-docs',
+                '@storybook/addon-essentials/docs',
+            ],
+        },
     },
     staticDirs: ['../public'],
 };
