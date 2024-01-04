@@ -26,13 +26,6 @@ jobs:
   jest:
     name: 'Jest tests'
     runs-on: ubuntu-latest
-    services:
-      cockroach-test:
-        image: cockroachdb/cockroach:latest
-        ports:
-          - "26258:26257"
-          - "8081:8080"
-        options: start-single-node --insecure
     env:
       DATABASE_URL: 'postgresql://root@127.0.0.1:26258/defaultdb?sslmode=disable'
       LOCAL: ${{ secrets.TF_VAR_LOCAL }}
