@@ -28,10 +28,15 @@ const customJestConfig: Config = {
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 
-const esModules = ["superjson"];
+const esModules = ["superjson", "uncrypto", "next-auth", "@auth/core", "oauth4webapi"];
 
 
 export default createJestConfig(customJestConfig)().then(value => {
-    value = {...value, transformIgnorePatterns: [`/node_modules/(?!(${esModules.join("|")})/)`],}
+    value = {
+        ...value,
+        transformIgnorePatterns: [`/node_modules/(?!(${esModules.join("|")})/)`],
+        moduleNameMapper: {...value.moduleNameMapper, '^next-auth(.*)$': '<rootDir>/node_modules/next-auth$1', '^@auth/core(.*)$': '<rootDir>/node_modules/@auth/core$1',}
+    }
+    console.log(JSON.stringify(value))
     return value;
 })

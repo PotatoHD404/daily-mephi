@@ -8,8 +8,8 @@ import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
 import { prisma } from "lib/database/prisma";
 import {useSession} from "next-auth/react";
-import {UUID_REGEX} from "../../lib/constants/uuidRegex";
-import {auth} from "../api/auth/[...nextauth]";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
+import {auth} from "lib/auth";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
     const {status} = useSession();

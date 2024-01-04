@@ -49,81 +49,81 @@ jest.mock('jsonwebtoken', () => ({
     })),
 }));
 
-// describe('filesRouter', () => {
-//     it('uploads, saves and retrieves a file correctly', async () => {
-//         const {usersWithImages, users, imageIds} = await createUsers();
-//         const currUser = faker.helpers.arrayElement(usersWithImages)
-//
-//         isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
-//             return next({
-//                 ctx: {
-//                     user: {
-//                         id: currUser.id,
-//                         nickname: currUser.nickname,
-//                         image: currUser.image ? currUser.image.url : null,
-//                     },
-//                 },
-//             })
-//         })
-//
-//         const params: inferProcedureInput<AppRouter["files"]["getLink"]> = {
-//             filename: 'sample.txt',
-//             csrfToken: 'csrfToken',
-//             recaptchaToken: 'recaptchaToken'
-//         }
-//
-//         // Get upload link
-//         const {token, signedGetUrl} = await trpc.files.getLink(params);
-//
-//
-//
-//         // Upload sample file to the upload link
-//         await axios.put(signedGetUrl, sampleFile, {headers: {'Content-Type': 'text/plain'}});
-//
-//         const params1: inferProcedureInput<AppRouter["files"]["putFile"]> = {
-//             token: token,
-//             csrfToken: 'csrfToken',
-//             recaptchaToken: 'recaptchaToken'
-//         }
-//
-//         // Post the link to save it
-//         const {url} = await trpc.files.putFile(params1);
-//
-//         // get block id from db
-//         const file = await prisma.file.findFirst({
-//             where: {
-//                 url: url
-//             },
-//             select: {
-//                 id: true
-//             }
-//         });
-//
-//         expect(file).not.toBeNull();
-//
-//         if (!file) {
-//             throw new Error('File not found');
-//         }
-//
-//
-//         const params2: inferProcedureInput<AppRouter["files"]["get"]> = {
-//             id: file.id
-//         }
-//
-//         // Get the file link
-//         const fileData = await trpc.files.get(params2);
-//
-//         expect(fileData).not.toBeNull();
-//
-//         if (!fileData) {
-//             throw new Error('File not found');
-//         }
-//
-//         expect(fileData.url).toEqual(url);
-//
-//         // Download the file and verify its checksum
-//         const response = await axios.get(url);
-//         const downloadedChecksum = calculateChecksum(response.data);
-//         expect(downloadedChecksum).toEqual(originalChecksum);
-//     });
-// });
+describe('filesRouter', () => {
+    it('uploads, saves and retrieves a file correctly', async () => {
+        const {usersWithImages, users, imageIds} = await createUsers();
+        const currUser = faker.helpers.arrayElement(usersWithImages)
+
+        isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
+            return next({
+                ctx: {
+                    user: {
+                        id: currUser.id,
+                        nickname: currUser.nickname,
+                        image: currUser.image ? currUser.image.url : null,
+                    },
+                },
+            })
+        })
+
+        const params: inferProcedureInput<AppRouter["files"]["getLink"]> = {
+            filename: 'sample.txt',
+            csrfToken: 'csrfToken',
+            recaptchaToken: 'recaptchaToken'
+        }
+
+        // Get upload link
+        const {token, signedGetUrl} = await trpc.files.getLink(params);
+
+
+
+        // Upload sample file to the upload link
+        await axios.put(signedGetUrl, sampleFile, {headers: {'Content-Type': 'text/plain'}});
+
+        const params1: inferProcedureInput<AppRouter["files"]["putFile"]> = {
+            token: token,
+            csrfToken: 'csrfToken',
+            recaptchaToken: 'recaptchaToken'
+        }
+
+        // Post the link to save it
+        const {url} = await trpc.files.putFile(params1);
+
+        // get block id from db
+        const file = await prisma.file.findFirst({
+            where: {
+                url: url
+            },
+            select: {
+                id: true
+            }
+        });
+
+        expect(file).not.toBeNull();
+
+        if (!file) {
+            throw new Error('File not found');
+        }
+
+
+        const params2: inferProcedureInput<AppRouter["files"]["get"]> = {
+            id: file.id
+        }
+
+        // Get the file link
+        const fileData = await trpc.files.get(params2);
+
+        expect(fileData).not.toBeNull();
+
+        if (!fileData) {
+            throw new Error('File not found');
+        }
+
+        expect(fileData.url).toEqual(url);
+
+        // Download the file and verify its checksum
+        const response = await axios.get(url);
+        const downloadedChecksum = calculateChecksum(response.data);
+        expect(downloadedChecksum).toEqual(originalChecksum);
+    });
+});
