@@ -22,7 +22,6 @@ const customJestConfig: Config = {
     moduleDirectories: ['node_modules', '<rootDir>'],
     globalSetup: '<rootDir>/tests/global-setup.ts',
     globalTeardown: '<rootDir>/tests/global-teardown.ts',
-    setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
     modulePathIgnorePatterns: ["<rootDir>/.next/"],
     collectCoverage: true,
     collectCoverageFrom: ['pages/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
