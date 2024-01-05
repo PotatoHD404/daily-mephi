@@ -50,10 +50,10 @@ terraform {
     bucket   = "daily-service-1"
     region   = "ru-central1"
     key      = "daily-mephi-terraform/main.tfstate"
-    skip_requesting_account_id = true
-
     skip_region_validation      = true
     skip_credentials_validation = true
+    skip_requesting_account_id  = true # необходимая опция Terraform для версии 1.6.1 и старше.
+    skip_s3_checksum            = true # необходимая опция при описании бэкенда для Terraform версии 1.6.3 и старше.
 
   }
 }
