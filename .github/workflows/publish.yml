@@ -244,7 +244,7 @@ jobs:
       - name: Configure Yandex Cloud Credentials
         run: |
           yc config profile create github-actions
-          echo "${{ secrets.YC_KEY }}" > key.json
+          echo '${{ secrets.YC_KEY }}' > key.json
           yc config set service-account-key key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
