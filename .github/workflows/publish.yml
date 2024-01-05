@@ -202,10 +202,8 @@ jobs:
       RECAPTCHA_PUBLIC: ${{secrets.TF_VAR_RECAPTCHA_PUBLIC}}
       DATABASE_KEY: ${{secrets.TF_VAR_DATABASE_KEY}}
       GOOGLE_API_KEY: ${{secrets.TF_VAR_GOOGLE_API_KEY}}
-      TF_VAR_token: ${{secrets.TF_VAR_TOKEN}}
-      TF_VAR_cloud_id: ${{secrets.TF_VAR_CLOUD_ID}}
       TF_VAR_folder_id: ${{secrets.TF_VAR_FOLDER_ID}}
-      TF_VAR_zone: ${{secrets.TF_VAR_ZONE}}
+      YC_ZONE: ${{secrets.TF_VAR_ZONE}}
       TF_VAR_DOMAIN_ID: ${{secrets.TF_VAR_DOMAIN_ID}}
       TF_VAR_CERTIFICATE_ID: ${{secrets.TF_VAR_CERTIFICATE_ID}}
     steps:
