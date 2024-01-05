@@ -75,7 +75,7 @@
     "@types/luxon": "^3.3.8",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
-    "@types/supertest": "^2.0.12",
+    "@types/supertest": "^6.0.2",
     "chromatic": "^10.2.0",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4",
