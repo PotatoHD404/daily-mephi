@@ -202,7 +202,6 @@ jobs:
       RECAPTCHA_PUBLIC: ${{secrets.TF_VAR_RECAPTCHA_PUBLIC}}
       DATABASE_KEY: ${{secrets.TF_VAR_DATABASE_KEY}}
       GOOGLE_API_KEY: ${{secrets.TF_VAR_GOOGLE_API_KEY}}
-      TF_VAR_folder_id: ${{secrets.TF_VAR_FOLDER_ID}}
       TF_VAR_zone: ${{secrets.TF_VAR_ZONE}}
       TF_VAR_DOMAIN_ID: ${{secrets.TF_VAR_DOMAIN_ID}}
       TF_VAR_CERTIFICATE_ID: ${{secrets.TF_VAR_CERTIFICATE_ID}}
@@ -246,10 +245,9 @@ jobs:
           yc config set service-account-key key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
-          yc iam create-token
-          export TF_VAR_cloud_id=$(yc config get cloud-id)
-          export TF_VAR_folder_id=$(yc config get folder-id)
-          export TF_VAR_service_account_key_file=key.json
+          echo "TF_VAR_cloud_id=$(yc config get cloud-id)" >> $GITHUB_ENV
+          echo "TF_VAR_folder_id=$(yc config get folder-id)" >> $GITHUB_ENV
+          echo "TF_VAR_service_account_key_file=${GITHUB_WORKSPACE}/key.json" >> $GITHUB_ENV
       - name: Install tf-next
         run: |
           yarn global add @potatohd/tf-next
