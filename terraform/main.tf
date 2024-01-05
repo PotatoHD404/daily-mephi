@@ -1,9 +1,3 @@
-variable "token" {
-  type      = string
-  nullable  = false
-  sensitive = true
-}
-
 variable "cloud_id" {
   type      = string
   nullable  = false
@@ -11,6 +5,12 @@ variable "cloud_id" {
 }
 
 variable "folder_id" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "service_account_key_file" {
   type      = string
   nullable  = false
   sensitive = true
@@ -46,22 +46,23 @@ terraform {
   }
   required_version = ">= 0.13"
   backend "s3" {
-    endpoint = "storage.yandexcloud.net"
-    bucket   = "daily-service-1"
-    region   = "ru-central1"
-    key      = "daily-mephi-terraform/main.tfstate"
-
+    endpoints                   = { s3 = "https://storage.yandexcloud.net" }
+    bucket                      = "daily-service-1"
+    region                      = "ru-central1"
+    key                         = "daily-mephi-terraform/main.tfstate"
     skip_region_validation      = true
     skip_credentials_validation = true
+    skip_requesting_account_id  = true # необходимая опция Terraform для версии 1.6.1 и старше.
+    skip_s3_checksum            = true # необходимая опция при описании бэкенда для Terraform версии 1.6.3 и старше.
 
   }
 }
 
 provider "yandex" {
-  token     = var.token
-  cloud_id  = var.cloud_id
-  folder_id = var.folder_id
-  zone      = var.zone
+  service_account_key_file = var.service_account_key_file
+  cloud_id                 = var.cloud_id
+  folder_id                = var.folder_id
+  zone                     = var.zone
 }
 
 #data "terraform_remote_state" "state" {
@@ -115,7 +116,7 @@ resource "yandex_storage_bucket" "public" {
     allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
     allowed_origins = [
       "https://login.mephi.ru", "https://daily-mephi.ru"
-#     https://login.mephi.ru, https://daily-mephi.ru, https://mc.yandex.ru, https://yastatic.net, https://*.yandex.net, https://*.yandex.net, https://*.yandex.ru, https://fonts.gstatic.com
+      #     https://login.mephi.ru, https://daily-mephi.ru, https://mc.yandex.ru, https://yastatic.net, https://*.yandex.net, https://*.yandex.net, https://*.yandex.ru, https://fonts.gstatic.com
     ]
     expose_headers  = ["ETag"]
     max_age_seconds = 0
@@ -442,9 +443,9 @@ data "template_file" "api_gateway" {
 }
 
 resource "yandex_api_gateway" "daily-mephi-gateway" {
-  name           = "daily-mephi"
-  description    = "Daily mephi gateway"
-  spec           = data.template_file.api_gateway.rendered
+  name        = "daily-mephi"
+  description = "Daily mephi gateway"
+  spec        = data.template_file.api_gateway.rendered
   custom_domains {
     fqdn           = "daily-mephi.ru"
     certificate_id = var.CERTIFICATE_ID
