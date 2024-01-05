@@ -1,4 +1,22 @@
+variable "cloud_id" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
 variable "folder_id" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "service_account_key_file" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
+variable "zone" {
   type      = string
   nullable  = false
   sensitive = true
@@ -41,6 +59,10 @@ terraform {
 }
 
 provider "yandex" {
+  service_account_key_file     = var.service_account_key_file
+  cloud_id  = var.cloud_id
+  folder_id = var.folder_id
+  zone      = var.zone
 }
 
 #data "terraform_remote_state" "state" {
