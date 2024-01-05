@@ -248,6 +248,9 @@ jobs:
           yc config set service-account-key key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+          export YC_TOKEN=$(yc iam create-token)
+          export YC_CLOUD_ID=$(yc config get cloud-id)
+          export YC_FOLDER_ID=$(yc config get folder-id)
       - name: Install tf-next
         run: |
           yarn global add @potatohd/tf-next
