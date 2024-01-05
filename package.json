@@ -58,7 +58,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@builder.io/partytown": "^0.7.5",
+    "@builder.io/partytown": "^0.8.1",
     "@faker-js/faker": "^7.6.0",
     "@jest/globals": "^29.7.0",
     "@storybook/addon-a11y": "^7.6.7",
