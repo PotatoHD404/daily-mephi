@@ -34,39 +34,41 @@ interface DefaultNavbarParams {
 
 export function DefaultNavbar(props: DefaultNavbarParams) {
     const isMobile = useIsMobile();
-    return <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
-                     justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
-        {!isMobile ?
-            <div className="flex col-start-1 col-end-13 justify-between">
+    return (
+        <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
+                         justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
+            {!isMobile ?
+                <div className="flex col-start-1 col-end-13 justify-between">
 
 
-                <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2">
-                    <Minicat/>
-                </Link>
+                    <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2" legacyBehavior>
+                        <Minicat/>
+                    </Link>
 
 
-                <Link href="/about" className="underlining my-auto">
-                    <h3>О нас</h3>
-                </Link>
+                    <Link href="/about" className="underlining my-auto" legacyBehavior>
+                        <h3>О нас</h3>
+                    </Link>
 
-                <Link href="/materials" className="underlining my-auto">
-                    <h3>Материалы</h3>
-                </Link>
+                    <Link href="/materials" className="underlining my-auto" legacyBehavior>
+                        <h3>Материалы</h3>
+                    </Link>
 
-                <Link href="/tutors" className="underlining my-auto">
-                    <h3>Преподаватели</h3>
-                </Link>
-                <div className="mt-2">
-                    <AuthSection {...props}/>
+                    <Link href="/tutors" className="underlining my-auto" legacyBehavior>
+                        <h3>Преподаватели</h3>
+                    </Link>
+                    <div className="mt-2">
+                        <AuthSection {...props}/>
+                    </div>
                 </div>
-            </div>
-            :
-            <div className="col-start-1 col-end-13">
-                <MobileNavbar onClick={props.toggleDrawer}/>
-            </div>
-        }
+                :
+                <div className="col-start-1 col-end-13">
+                    <MobileNavbar onClick={props.toggleDrawer}/>
+                </div>
+            }
 
-    </nav>;
+        </nav>
+    );
 }
 
 function AuthSection(props: DefaultNavbarParams) {
@@ -119,22 +121,19 @@ function AuthSection(props: DefaultNavbarParams) {
                 </button> : null
         )
     } else {
-        return (
-            <>
-                <RegisterDialog
-                    handleClose={() => setOpen(false)}
-                    opened={open}/>
+        return <>
+            <RegisterDialog
+                handleClose={() => setOpen(false)}
+                opened={open}/>
 
-                {!isMobile ?
-                    // @ts-ignore
-                    <Link href={`/users/${session?.user?.id}`}>
-                        <a
-                            className={`${style.authText}`}>
-                            <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
-                        </a>
-                    </Link> : null}
-            </>
-        )
+            {!isMobile ?
+                // @ts-ignore
+                <Link href={`/users/${session?.user?.id}`} className={`${style.authText}`}>
+
+                    <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
+
+                </Link> : null}
+        </>;
     }
 }
 
@@ -148,30 +147,32 @@ function AuthSection(props: DefaultNavbarParams) {
 // }
 
 function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
-    return <div className="w-full">
-        <div className={"flex justify-between h-12 pl-5 pr-5 items-center " + (props.home ? "mt-2" : "")}>
-            {/* @ts-ignore */}
-            <IconButton
-                aria-label="close"
-                onClick={props.onClick()}
-                className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem]"
-            >
-                <Image className="flex" src={burger} alt="burger"/>
-            </IconButton>
-            <Link href="/">
-                <Button className="flex h-full w-11 rounded-full">
-                    <Image src={MiniCat} alt="mini cat"
-                           className="flex"
-                        // layout="responsive"
-                    />
+    return (
+        <div className="w-full">
+            <div className={"flex justify-between h-12 pl-5 pr-5 items-center " + (props.home ? "mt-2" : "")}>
+                {/* @ts-ignore */}
+                <IconButton
+                    aria-label="close"
+                    onClick={props.onClick()}
+                    className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem]"
+                >
+                    <Image className="flex" src={burger} alt="burger"/>
+                </IconButton>
+                <Link href="/" legacyBehavior>
+                    <Button className="flex h-full w-11 rounded-full">
+                        <Image src={MiniCat} alt="mini cat"
+                               className="flex"
+                            // layout="responsive"
+                        />
 
-                </Button>
-            </Link>
+                    </Button>
+                </Link>
+            </div>
+            <AuthSection handleClickOpenWarning={() => {
+            }} toggleDrawer={() => {
+            }}/>
         </div>
-        <AuthSection handleClickOpenWarning={() => {
-        }} toggleDrawer={() => {
-        }}/>
-    </div>;
+    );
 }
 
 export function HomeNavbar(props: DefaultNavbarParams) {
@@ -185,14 +186,14 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                     <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
                         <div className="flex col-start-1 col-end-10 justify-between">
-                            <Link href="/about" className="underlining">
+                            <Link href="/about" className="underlining" legacyBehavior>
                                 <h3>О нас</h3>
                             </Link>
-                            <Link href="/materials" className="underlining">
+                            <Link href="/materials" className="underlining" legacyBehavior>
                                 <h3>Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors" className="underlining">
+                            <Link href="/tutors" className="underlining" legacyBehavior>
                                 <h3>Преподаватели</h3>
                             </Link>
                         </div>
@@ -204,7 +205,8 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                 <MobileNavbar onClick={props.toggleDrawer} home={true}/>
             }
 
-        </nav>);
+        </nav>
+    );
 }
 
 interface NavParams {

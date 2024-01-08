@@ -75,5 +75,5 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             };
         },
         clientId: '1'
-    }
+    };
 }
