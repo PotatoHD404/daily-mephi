@@ -18,7 +18,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         name: "Home MEPHi",
         type: "oauth",
         authorization: {
-            url: "https://login.mephi.ru/login",
+            url: "https://auth.mephi.ru/login",
             params: {service: host} // TODO: add host check
         },
         token: {
@@ -27,7 +27,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 if (!params.code)
                     throw new Error("There is no cas ticket");
                 const query = new URLSearchParams({service: host, ticket: params.code});
-                const response = await fetch('https://login.mephi.ru/validate?' + query)
+                const response = await fetch('https://auth.mephi.ru/validate?' + query)
                 const respString = await response.text();
                 // const respString = 'yes\n1\n';
                 const resArr: string[] = respString.split('\n');
