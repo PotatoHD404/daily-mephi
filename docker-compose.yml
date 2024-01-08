@@ -1,6 +1,20 @@
 version: '3.5'
 
 services:
+  mysql:
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+volumes:
+  mysql:
 #  postgres:
 #    image: postgres:latest
 #    restart: unless-stopped
@@ -9,7 +23,7 @@ services:
 #      POSTGRES_USER: postgres
 #      POSTGRES_DB: postgres
 #    ports:
-#      - 5432:5432
+#      - "5432:5432"
 #    volumes:
 #      - postgres:/var/lib/postgresql/data
 #volumes:
@@ -17,18 +31,18 @@ services:
 # url to access the database
 # jdbc:postgresql://localhost:5432/postgres
 # postgresql://postgres:postgres@localhost:5432/postgres
-  cockroach:
-#   image: christoofar/cockroachdb-arm64:latest
-   image: cockroachdb/cockroach:latest
-   ports:
-     - "26257:26257"
-     - "8080:8080"
-   command: start-single-node --insecure
-   volumes:
-     - "cockroach-data:/cockroach/cockroach-data"
-   restart: unless-stopped
-volumes:
- cockroach-data:
+#  cockroach:
+##   image: christoofar/cockroachdb-arm64:latest
+#   image: cockroachdb/cockroach:latest
+#   ports:
+#     - "26257:26257"
+#     - "8080:8080"
+#   command: start-single-node --insecure
+#   volumes:
+#     - "cockroach-data:/cockroach/cockroach-data"
+#   restart: unless-stopped
+#volumes:
+# cockroach-data:
 #  node:
 #      image: node:12.16.1
 #      volumes:

@@ -72,14 +72,14 @@ export const usersRouter = t.router({
         // .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {nickname, image: imageId, bio}}) => {
             // check if nickname is toxic
-            if (nickname && await isToxic(nickname)) {
+            if (nickname && (await isToxic(nickname))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'Nickname is toxic'
                 });
             }
             // check if bio is toxic
-            if (bio && await isToxic(bio)) {
+            if (bio && (await isToxic(bio))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'Bio is toxic'

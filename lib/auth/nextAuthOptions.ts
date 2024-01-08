@@ -2,7 +2,7 @@ import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
 import {PrismaClient} from "@prisma/client"
 import {Session} from "next-auth";
-import type { NextAuthConfig } from "next-auth"
+import type { NextAuthOptions } from "next-auth"
 import {prisma} from "lib/database/prisma";
 
 
@@ -11,7 +11,7 @@ import {prisma} from "lib/database/prisma";
 // const query = new URLSearchParams({service: host});
 
 
-export const nextAuthConfig: NextAuthConfig = {
+export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
     adapter: PrismaAdapter(prisma),
     session: {
@@ -25,7 +25,8 @@ export const nextAuthConfig: NextAuthConfig = {
         HomeMEPhiOauth(),
     ],
     callbacks: {
-        async jwt({token, user, account, profile, isNewUser}: any) {
+        async jwt({token, user, account, profile, trigger}: any) {
+            // trigger === "signUp"
             if (user || profile) {
                 // @ts-ignore
                 token.id = user?.id ?? profile?.id;

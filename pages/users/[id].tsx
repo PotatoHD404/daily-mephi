@@ -9,7 +9,7 @@ import {GetServerSideProps} from "next";
 import { prisma } from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-import {auth} from "lib/auth";
+import {getToken} from "next-auth/jwt";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
     const {status} = useSession();
@@ -125,7 +125,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
             notFound: true
         }
     }
-    const session = await auth(props)
+    const session = await getToken({req})
 
     // res.setHeader(
     //     'Cache-Control',
@@ -138,7 +138,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         delete user.image;
     }
     return {
-        props: {user, me: session?.user?.id === user.id}
+        props: {user, me: session?.sub === user.id}
     }
 }
 

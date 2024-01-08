@@ -30,7 +30,10 @@ function Footer() {
                             </div>
                             <div
                                 className="justify-end gap-3 text-2xl hidden lg:flex">
-                                <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
+                                <Link
+                                    href="https://github.com/MEPhI-Floppas/daily-mephi"
+                                    passHref
+                                    legacyBehavior>
                                     <div className="w-8 h-8 flex">
                                         <Image
                                             src={GitHub}
@@ -39,7 +42,10 @@ function Footer() {
                                         />
                                     </div>
                                 </Link>
-                                <Link href="https://github.com/MEPhI-Floppas/daily-mephi" passHref>
+                                <Link
+                                    href="https://github.com/MEPhI-Floppas/daily-mephi"
+                                    passHref
+                                    legacyBehavior>
                                     <div className="cursor-pointer flex">github.com</div>
                                 </Link>
 
