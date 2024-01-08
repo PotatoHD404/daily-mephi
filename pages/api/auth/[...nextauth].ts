@@ -15,18 +15,19 @@ interface IHeaders {
 export default async function authHandler(req: NextApiRequest, res: NextApiResponse) {
 
     // Check whether the request is auth callback
-    // if (req?.query?.nextauth?.includes("callback")) {
-    //     // CAS returns ticket, but OAUTH needs code parameter
-    //     req.query.code = req.query.ticket;
-    //     delete req.query.ticket;
-    // }
+    if (req?.query?.nextauth?.includes("callback")) {
+        // CAS returns ticket, but OAUTH needs code parameter
+        req.query.code = req.query.ticket;
+        delete req.query.ticket;
+    }
     // Get a custom cookie value from the request
     // const someCookie = req.cookies["some-custom-cookie"]
-    // let newRes = (res as NextApiResponse & IHeaders)
-    // newRes.headers = new Headers()
-    // await auth(req, res);
-    // for (const header of newRes.headers)
-    //     res.setHeader(...header)
+    let newRes = (res as NextApiResponse & IHeaders)
+    newRes.headers = new Headers()
+    const session = await auth(req, res);
+    for (const header of newRes.headers)
+        res.setHeader(...header)
 
-    res.status(200).json({})
+    // res.status(200).json({})
+    res.status(res.statusCode).json(session)
 }
