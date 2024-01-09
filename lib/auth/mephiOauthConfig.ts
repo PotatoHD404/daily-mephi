@@ -62,10 +62,10 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 }
             });
             // get random avatar
-            let image: string | undefined = undefined;
-            do {
-                image = avatars[Math.floor(Math.random() * avatars.length)];
-            } while (addedAvatars.find(a => a.image?.id == image));
+            let image: string | null = null;
+            // do {
+            //     image = avatars[Math.floor(Math.random() * avatars.length)];
+            // } while (addedAvatars.find(a => a.image?.id == image));
             // console.log(profile)
             return {
                 id: profile.id,
