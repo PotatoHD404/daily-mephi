@@ -30,6 +30,8 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 
 
 function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, changeNeedsAuth: (a: boolean) => void }) {
+
+
     async function getUser() {
         return await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
@@ -52,6 +54,13 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     const isLoading = isFetching;
     const router = useRouter();
     const {id} = router.query;
+
+    if (typeof id != "string" || UUID_REGEX.test(id)) {
+        router.push('/404');
+        return (<></>);
+    }
+
+
     const {data: session} = useSession();
     // @ts-ignore
     const isMe = session?.user?.id === id;
