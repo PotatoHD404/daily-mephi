@@ -55,10 +55,7 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     const router = useRouter();
     const {id} = router.query;
 
-    if (typeof id != "string" || UUID_REGEX.test(id)) {
-        router.push('/404');
-        return (<></>);
-    }
+
 
 
     const {data: session} = useSession();
@@ -82,6 +79,11 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
             changeNeedsAuth(true);
         // window.onpopstate = () => changeNeedsAuth(true);
     }, [changeNeedsAuth, me]);
+
+    if (typeof id != "string" || UUID_REGEX.test(id)) {
+        router.push('/404');
+        return (<></>);
+    }
 
     return (
         <>

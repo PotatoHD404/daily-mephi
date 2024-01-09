@@ -28,10 +28,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
 
-    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
-        router.push('/404');
-        return (<></>);
-    }
     async function fetchReviews(cursor: any) {
         // parse dates to Date objects
         return await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
@@ -115,6 +111,11 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             document.removeEventListener('scroll', handleScroll)
         }
     }, [fetchNextPage, hasNextPage]);
+    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
+        router.push('/404');
+        return (<></>);
+    }
+
     const isLoading = hasNextPage === undefined || isFetchingNextPage || (reviewId !== undefined && isFetching);
 
     return (
