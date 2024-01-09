@@ -70,10 +70,10 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     return (
         <>
             <SEO thumbnail={`https://daily-mephi.ru/images/thumbnails/index.png`}/>
-            {isMobile == null ?                                 <h1 className="hidden">Самый
-                                    классный студенческий портал. Здесь вы можете оценить качества преподавателя или
-                                    оставить материалы для других студентов.
-                                </h1> :
+            {isMobile == null ? <h1 className="hidden">Самый
+                    классный студенческий портал. Здесь вы можете оценить качества преподавателя или
+                    оставить материалы для других студентов.
+                </h1> :
                 <>
                     <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
                         <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>

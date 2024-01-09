@@ -42,20 +42,22 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
 
 
                     <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2" legacyBehavior>
-                        <Minicat/>
+                        <button>
+                            <Minicat/>
+                        </button>
                     </Link>
 
 
-                    <Link href="/about" className="underlining my-auto" legacyBehavior>
-                        <h3>О нас</h3>
+                    <Link href="/about" legacyBehavior>
+                        <h3 className="underlining my-auto">О нас</h3>
                     </Link>
 
-                    <Link href="/materials" className="underlining my-auto" legacyBehavior>
-                        <h3>Материалы</h3>
+                    <Link href="/materials" legacyBehavior>
+                        <h3 className="underlining my-auto">Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors" className="underlining my-auto" legacyBehavior>
-                        <h3>Преподаватели</h3>
+                    <Link href="/tutors" legacyBehavior>
+                        <h3 className="underlining my-auto">Преподаватели</h3>
                     </Link>
                     <div className="mt-2">
                         <AuthSection {...props}/>
@@ -186,15 +188,15 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                     <div className="col-start-2 col-end-12 flex flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
                         <div className="flex col-start-1 col-end-10 justify-between">
-                            <Link href="/about" className="underlining" legacyBehavior>
-                                <h3>О нас</h3>
+                            <Link href="/about" legacyBehavior>
+                                <h3 className="underlining">О нас</h3>
                             </Link>
-                            <Link href="/materials" className="underlining" legacyBehavior>
-                                <h3>Материалы</h3>
+                            <Link href="/materials" legacyBehavior>
+                                <h3 className="underlining">Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors" className="underlining" legacyBehavior>
-                                <h3>Преподаватели</h3>
+                            <Link href="/tutors" legacyBehavior>
+                                <h3 className="underlining">Преподаватели</h3>
                             </Link>
                         </div>
                         <AuthSection {...props}/>
