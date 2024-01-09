@@ -118,10 +118,10 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     }
 
     async function getUser() {
-        return await (await fetch(`/api/v1/top?${new URLSearchParams(params)}`, {
+        return await fetch(`/api/v1/top?${new URLSearchParams(params)}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(el => el?.json());
     }
 
     // @ts-ignore

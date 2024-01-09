@@ -8,6 +8,8 @@ import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 
 import {CircularProgress} from "@mui/material";
+import {UUID_REGEX} from "../lib/constants/uuidRegex";
+import {Router} from "express";
 
 export function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">
@@ -26,19 +28,23 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
 
+    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
+        router.push('/404');
+        return (<></>);
+    }
     async function fetchReviews(cursor: any) {
         // parse dates to Date objects
-        return await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
+        return await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(el => el?.json());
     }
 
     async function fetchReview() {
-        const result = await (await fetch(`/api/v1/reviews/${reviewId}`, {
+        const result = await fetch(`/api/v1/reviews/${reviewId}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(res => res?.json());
         // parse dates to Date objects
         result.createdAt = new Date(result.createdAt);
         return result;

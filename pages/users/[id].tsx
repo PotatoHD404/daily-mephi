@@ -31,10 +31,10 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 
 function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, changeNeedsAuth: (a: boolean) => void }) {
     async function getUser() {
-        return await (await fetch(`/api/v1/users/${id}`, {
+        return await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json().then((data) => {
+        }).then(el => el?.json()).then((data) => {
             if (data?.error) {
                 changeNeedsAuth(true);
             }

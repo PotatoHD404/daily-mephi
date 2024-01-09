@@ -28,10 +28,10 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
 
 export default function TutorProfile({tutor}: { tutor: any }) {
     async function getTutor() {
-        return await (await fetch(`/api/v1/tutors/${tutor.id}`, {
+        return await fetch(`/api/v1/tutors/${tutor.id}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(el => el?.json());
     }
 
     const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
