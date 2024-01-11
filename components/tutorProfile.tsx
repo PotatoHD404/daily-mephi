@@ -26,7 +26,7 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
         ;
 }
 
-export default function TutorProfile({tutor}: { tutor: any }) {
+export default function TutorProfile({tutor, loading = false}: { tutor: any, loading?: boolean }) {
     async function getTutor() {
         return await fetch(`/api/v1/tutors/${tutor.id}`, {
             method: 'GET',
@@ -35,7 +35,7 @@ export default function TutorProfile({tutor}: { tutor: any }) {
     }
 
     const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
-    const isLoading = isFetching || !data;
+    const isLoading = isFetching || !data || loading;
     const session = useSession();
     const authenticating = session.status === 'loading';
     const authenticated = session.status === 'authenticated';

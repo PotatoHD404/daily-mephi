@@ -12,7 +12,7 @@ import NewPost from "components/newPost";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
 import {getCache, setCache} from "../../lib/utils";
-import { prisma } from "../../lib/database/prisma";
+import {prisma} from "../../lib/database/prisma";
 import TutorProfile from "../../components/tutorProfile";
 import Reviews from "../../components/reviews";
 import {useRouter} from "next/router";
@@ -108,7 +108,10 @@ function Tabs(props: { tutorId: any }) {
 
 function Tutor({tutor}: { tutor: any }) {
     const isMobile = useIsMobile();
+    const router = useRouter()
 
+    if (tutor === undefined)
+        return (<></>);
 
     return (
         <>
@@ -117,7 +120,7 @@ function Tutor({tutor}: { tutor: any }) {
             {isMobile == null ? null :
                 <>
                     <div className="flex-wrap w-full">
-                        <TutorProfile tutor={tutor}/>
+                        <TutorProfile tutor={tutor} loading={router.isFallback}/>
                         <div className="w-full mt-7">
                             <Tabs tutorId={tutor.id}/>
                         </div>
@@ -156,7 +159,7 @@ export async function getStaticPaths() {
         paths: tutors.map((tutor) =>
             ({params: {id: tutor.id}})
         ),
-        fallback: false, // can also be true or 'blocking'
+        fallback: true, // can also be true or 'blocking'
     }
 }
 
