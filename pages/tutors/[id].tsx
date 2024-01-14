@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {SetStateAction, useEffect, useState} from "react";
 import Image from "next/image";
 
 import QuoteIco from "images/quote.svg";
@@ -64,7 +64,7 @@ function Tabs(props: { tutorId: any }) {
 
     const [value, setValue] = React.useState<0 | 1 | 2>(0);
     const [postValue, setPostValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent | null, newValue: 0 | 1 | 2) => {
+    const handleChange = (_: React.SyntheticEvent | null, newValue: 0 | 1 | 2) => {
         setValue(newValue);
         setPostValue(newValue);
     };
@@ -83,8 +83,9 @@ function Tabs(props: { tutorId: any }) {
         <>
             <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
                         setValue={setPostValue}/>
-            {/* @ts-ignore */}
-            <TabsBox value={value} onChange={handleChange} tabs={["Отзывы", "Цитаты", "Материалы"]}/>
+            <TabsBox value={value}
+                     onChange={handleChange as any}
+                     tabs={["Отзывы", "Цитаты", "Материалы"]}/>
 
             <div className="mt-6 mx-auto">
                 <div className="flex-wrap space-y-4 w-full">

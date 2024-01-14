@@ -14,7 +14,7 @@ import useIsMobile from "../lib/react/isMobileContext";
 export default function Tutor() {
     const isMobile = useIsMobile();
     return (
-        <Link href="/tutors/1">
+        <Link href="/tutors/00000000-0000-0000-0000-000000000000">
 
             <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white

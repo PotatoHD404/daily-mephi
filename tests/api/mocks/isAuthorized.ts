@@ -12,8 +12,7 @@ const isAuthorized = t.middleware(
 beforeEach(() => {
     isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
         let user = {
-            id: faker.datatype.uuid(),
-            // @ts-ignore
+            id: faker.string.uuid(),
             nickname: faker.internet.userName(),
             image: faker.image.avatar(),
         };

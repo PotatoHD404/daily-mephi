@@ -1,15 +1,23 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
 import {PrismaClient} from "@prisma/client"
-import {Session} from "next-auth";
-import type { NextAuthOptions } from "next-auth"
+import {Session, User} from "next-auth";
+import type {NextAuthOptions} from "next-auth"
 import {prisma} from "lib/database/prisma";
+import {AdapterUser} from "next-auth/adapters";
 
 
 // const host = getHost() + "/api/auth/callback/home";
 //
 // const query = new URLSearchParams({service: host});
 
+export interface MyAppUser extends User, AdapterUser {
+    id: string;
+    name: string;
+    email: string;
+    // customClaim?: string; // Add any custom fields you need
+    role?: string
+}
 
 export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview
@@ -25,34 +33,26 @@ export const nextAuthOptions: NextAuthOptions = {
         HomeMEPhiOauth(),
     ],
     callbacks: {
-        async jwt({token, user, account, profile, trigger}: any) {
+        async jwt({token, user, account, profile, trigger}) {
             // trigger === "signUp"
-            if (user || profile) {
-                // @ts-ignore
-                token.id = user?.id ?? profile?.id;
-                // @ts-ignore
-                token.role = user?.role ?? profile?.role;
+            if (user) {
+                token.user = user as MyAppUser;
+                // token.id = user?.id ?? profile?.id;
+                // token.role = user?.role ?? profile?.role;
             }
-            token.nickname = token.name;
-            delete token.name;
+            // token.nickname = token.name;
+            // delete token.name;
             return token;
         },
-        // session: async ({session, token, user}) => {
-        //     // console.log("session");
-        //     // console.log(session)
-        //     // console.log(user)
-        //     // console.log(token)
-        //     type MySession = Session & {user: {id: string | null, role: string}}
-        //     let newSession = session as MySession;
-        //     if (session.user || token) {
-        //
-        //         newSession.user.id = user?.id ?? token?.sub ?? null;
-        //         // @ts-ignore
-        //         newSession.user.role = user?.role ?? token?.role ?? "default";
-        //     }
-        //     // console.log("session1");
-        //     return newSession;
-        // }
+        async session({session, token, user}) {
+            if (token.user) {
+                // Ensure the session user is of type MyAppUser
+                // console.log(token.user)
+
+                session.user = token.user as MyAppUser;
+            }
+            return session;
+        }
     },
     // pages: {
     //     // signIn: 'https://login.mephi.ru/login?' + query,

@@ -46,7 +46,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         return result;
     }
 
-    // @ts-ignore
     const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -74,7 +73,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     )
     const reviews = useMemo(() => {
         const added = new Set();
-        // @ts-ignore
         const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
             if (added.has(review.id)) return false;
             added.add(review.id);
@@ -116,7 +114,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         return (<></>);
     }
 
-    const isLoading = hasNextPage === undefined || isFetchingNextPage || (reviewId !== undefined && isFetching);
+    const isLoading = hasNextPage === undefined || isFetchingNextPage || isFetching;
 
     return (
         <>
