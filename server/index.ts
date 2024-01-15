@@ -33,7 +33,7 @@ export type AppRouter = typeof appRouter;
 const openApiDocument = generateOpenApiDocument(appRouter, {
     title: 'DailyMEPhI OpenAPI',
     version: '1.0.0',
-    baseUrl: getBaseUrl() + "/api/v1",
+    baseUrl: getBaseUrl() + "/api/v2",
 });
 
 openApiDocument['paths']["/search"] = {

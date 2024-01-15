@@ -13,7 +13,7 @@ import {describe, it, expect, jest} from '@jest/globals';
 // }
 
 
-describe('[GET] /api/v1/disciplines', () => {
+describe('[GET] /api/v2/disciplines', () => {
 
     it('Test get all', async () => {
 
@@ -44,7 +44,7 @@ describe('[GET] /api/v1/disciplines', () => {
     });
 });
 
-describe('[GET] /api/v1/faculties', () => {
+describe('[GET] /api/v2/faculties', () => {
 
     it('Test get all', async () => {
         function generateFaculty(): Faculty {
@@ -70,7 +70,7 @@ describe('[GET] /api/v1/faculties', () => {
     });
 });
 
-describe('[GET] /api/v1/semesters', () => {
+describe('[GET] /api/v2/semesters', () => {
 
     it('Test get all', async () => {
 
@@ -118,7 +118,7 @@ export type UserCreateManyInput = {
     score?: number
 }
 
-describe('[GET] /api/v1/get_avatars', () => {
+describe('[GET] /api/v2/get_avatars', () => {
 
     it('Test get all', async () => {
         function generateUser() {
@@ -177,7 +177,7 @@ describe('[GET] /api/v1/get_avatars', () => {
 });
 
 
-describe('[GET] /api/v1/top', () => {
+describe('[GET] /api/v2/top', () => {
     async function initTest() {
         function generateImage() {
             return {

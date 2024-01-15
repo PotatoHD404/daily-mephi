@@ -44,7 +44,7 @@ function generateEditInput(): inferProcedureInput<AppRouter["users"]["edit"]> {
     };
 }
 
-describe('[GET] /api/v1/users/{id}', () => {
+describe('[GET] /api/v2/users/{id}', () => {
 
     it('Test get one', async () => {
         const {usersWithImages, users} = await createUsers();
@@ -58,7 +58,7 @@ describe('[GET] /api/v1/users/{id}', () => {
     });
 });
 
-describe('[PUT] /api/v1/users', () => {
+describe('[PUT] /api/v2/users', () => {
     it('Edit user nickname + bio', async () => {
         const {usersWithImages, users, imageIds} = await createUsers();
         const currUser = faker.helpers.arrayElement(usersWithImages)

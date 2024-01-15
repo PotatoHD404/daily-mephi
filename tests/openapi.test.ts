@@ -1,8 +1,8 @@
 import supertest from 'supertest';
 import "tests/mocks/prisma";
 import * as http from "http";
-import openapiJsonHandler from "pages/api/v1/openapi.json"
-import openapiYamlHandler from "pages/api/v1/openapi.yaml"
+import openapiJsonHandler from "pages/api/v2/openapi.json"
+import openapiYamlHandler from "pages/api/v2/openapi.yaml"
 import {describe, it, expect} from '@jest/globals';
 import {apiResolver} from "next/dist/server/api-utils/node/api-resolver";
 
@@ -42,7 +42,7 @@ function getServer(handler: any) {
 }
 
 // }
-describe('[GET] /api/v1/openapi.json', () => {
+describe('[GET] /api/v2/openapi.json', () => {
     let server: http.Server = getServer(openapiJsonHandler);
 
     it('Test get', async () => {
@@ -60,7 +60,7 @@ describe('[GET] /api/v1/openapi.json', () => {
     });
 });
 
-describe('[GET] /api/v1/openapi.yaml', () => {
+describe('[GET] /api/v2/openapi.yaml', () => {
     let server: http.Server = getServer(openapiYamlHandler);
 
     it('Test get', async () => {
