@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
-import {isAuthorized} from "../middlewares/isAuthorized";
+import {isAuthorized} from "middlewares/isAuthorized";
 import {isToxic} from "lib/toxicity";
 import {getDocument} from "lib/database/fullTextSearch";
 

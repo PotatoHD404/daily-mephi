@@ -3,7 +3,7 @@ import type {Preview} from "@storybook/react";
 import {SessionProvider} from "next-auth/react";
 import React from "preact/compat";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {IsMobileProvider} from "../lib/react/isMobileContext";
+import {IsMobileProvider} from "lib/react/isMobileContext";
 import {useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 

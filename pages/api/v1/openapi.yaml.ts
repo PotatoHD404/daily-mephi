@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {openApiDocument} from "../../../server";
+import {openApiDocument} from "server";
 import YAML from "yaml";
 
 const doc = new YAML.Document();

@@ -5,8 +5,8 @@ import SEO from "components/seo";
 import Comments from "components/comments";
 import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
-import TopUsers from "../components/topUsers";
-import useIsMobile from "../lib/react/isMobileContext";
+import TopUsers from "components/topUsers";
+import useIsMobile from "lib/react/isMobileContext";
 
 export function Post() {
     return <>

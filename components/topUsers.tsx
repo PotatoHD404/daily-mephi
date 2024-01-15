@@ -1,17 +1,12 @@
 import DeadCat from "images/dead_cat.svg";
-import React, {useEffect} from "react";
+import React from "react";
 import Image from "next/image";
-import GoldenCrown from "../images/golden_crown.svg";
-import SilverCrown from "../images/silver_crown.svg";
-import BronzeCrown from "../images/bronze_crown.svg";
+import GoldenCrown from "images/golden_crown.svg";
+import SilverCrown from "images/silver_crown.svg";
+import BronzeCrown from "images/bronze_crown.svg";
 import Link from "next/link";
-import {useRouter} from "next/router";
 import {Skeleton} from "@mui/material";
-import {trpc} from "../server/utils/trpc";
-import {getSession} from "next-auth/react";
-import {useQuery} from "@tanstack/react-query";
-import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {trpc} from "server/utils/trpc";
 
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -123,8 +118,6 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     // if (props.take) {
     //     params["take"] = props.take.toString();
     // }
-
-
 
 
     const topInput = {place: place, take: props.take}

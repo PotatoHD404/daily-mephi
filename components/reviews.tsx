@@ -1,14 +1,14 @@
 import {useRouter} from "next/router";
 import React, {useEffect, useMemo} from "react";
-import {ReviewType} from "../lib/database/types";
+import {ReviewType} from "lib/database/types";
 import UserHeader from "./userHeader";
 import Reactions from "./reactions";
 import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 
 import {CircularProgress} from "@mui/material";
-import {UUID_REGEX} from "../lib/constants/uuidRegex";
-import {trpc} from "../server/utils/trpc";
+import {UUID_REGEX} from "lib/constants/uuidRegex";
+import {trpc} from "server/utils/trpc";
 
 export function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">

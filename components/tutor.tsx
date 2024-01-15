@@ -1,15 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import TutorImage from "../images/tutor.png";
-import StarIcon from "../images/star.svg";
-import ReviewsIco from "../images/reviews.svg";
-import QuotesIco from "../images/quotes.svg";
-import MaterialsIco from "../images/materials.svg";
+import TutorImage from "images/tutor.png";
+import StarIcon from "images/star.svg";
+import ReviewsIco from "images/reviews.svg";
+import QuotesIco from "images/quotes.svg";
+import MaterialsIco from "images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
 import {Button} from '@mui/material';
 
-import useIsMobile from "../lib/react/isMobileContext";
+import useIsMobile from "lib/react/isMobileContext";
 
 export default function Tutor() {
     const isMobile = useIsMobile();

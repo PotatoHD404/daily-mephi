@@ -3,7 +3,7 @@ import Image from "next/image";
 import FileUpload from "images/file_upload.svg";
 import TabsBox from "./tabsBox";
 import CloseButton from "./closeButton";
-import TutorImage from "../images/tutor.png";
+import TutorImage from "images/tutor.png";
 import {Autocomplete, Button, Dialog, FormGroup, IconButton, InputAdornment, TextField,} from "@mui/material";
 import CustomSelect from "./customSelect";
 
@@ -238,6 +238,7 @@ function StyledTextField(props: {
                       multiline={props.multiline}
                       rows={props.rows}/>;
 }
+
 // bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
 //              bg-[#F4BDE6] bg-[#C7A8F3]
 function Material(props: { postForm: any }) {

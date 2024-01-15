@@ -7,10 +7,22 @@ import RatingPlace from "./ratingPlace";
 
 
 import {ButtonBase, Divider, Skeleton, Tooltip} from '@mui/material';
-import useIsMobile from "../lib/react/isMobileContext";
+import useIsMobile from "lib/react/isMobileContext";
 import {signOut} from "next-auth/react";
 
-export default function User(props: { name?: string, userCourse?: string, rating?: number, reviews?: number, materials?: number, quotes?: number, image?: string, place?: number, role?: string, me?: boolean, isLoading?: boolean }) {
+export default function User(props: {
+    name?: string,
+    userCourse?: string,
+    rating?: number,
+    reviews?: number,
+    materials?: number,
+    quotes?: number,
+    image?: string,
+    place?: number,
+    role?: string,
+    me?: boolean,
+    isLoading?: boolean
+}) {
     props.userCourse = props.userCourse?.replace("B", "Б").replace("C", "С").replace("M", "М").replace("A", "А") || "Курс не указан";
     // Tooltip opens on hover
     const isMobile = useIsMobile();

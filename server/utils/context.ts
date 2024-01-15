@@ -1,7 +1,7 @@
 import {TRPCError} from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import {prisma} from 'lib/database/prisma';
-import {notion} from "../../lib/database/notion";
+import {notion} from "lib/database/notion";
 
 // create context based of incoming request
 // set as optional here, so it can also be re-used for `getStaticProps()`

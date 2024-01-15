@@ -11,10 +11,10 @@ import Material from "components/material";
 import NewPost from "components/newPost";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
-import {getCache, setCache} from "../../lib/utils";
-import {prisma} from "../../lib/database/prisma";
-import TutorProfile from "../../components/tutorProfile";
-import Reviews from "../../components/reviews";
+import {getCache, setCache} from "lib/utils";
+import {prisma} from "lib/database/prisma";
+import TutorProfile from "components/tutorProfile";
+import Reviews from "components/reviews";
 import {useRouter} from "next/router";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});

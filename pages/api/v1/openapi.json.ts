@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {openApiDocument} from "../../../server";
+import {openApiDocument} from "server";
 
 let json = openApiDocument;
 // Respond with our OpenAPI schema

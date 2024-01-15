@@ -1,9 +1,9 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
-import {isAuthorized} from "../middlewares/isAuthorized";
+import {isAuthorized} from "middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
-import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
+import {verifyCSRFToken} from "middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "middlewares/verifyRecaptcha";
 import {Comment} from "@prisma/client";
 
 

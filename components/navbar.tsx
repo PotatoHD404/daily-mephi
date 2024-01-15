@@ -16,9 +16,9 @@ import dynamic from "next/dynamic";
 
 import {Box, Button, Divider, IconButton} from '@mui/material';
 
-import useIsMobile from "../lib/react/isMobileContext";
+import useIsMobile from "lib/react/isMobileContext";
 import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {MyAppUser} from "lib/auth/nextAuthOptions";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});

@@ -1,6 +1,6 @@
 import {TRPCError} from '@trpc/server'
-import {t} from "../utils";
-import {defaultCookies} from "../../lib/utils";
+import {t} from "utils";
+import {defaultCookies} from "lib/utils";
 import {createHash} from "crypto";
 
 export const verifyCSRFToken = t.middleware(async ({ctx: {req}, next}) => {

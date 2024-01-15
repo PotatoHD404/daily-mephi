@@ -1,6 +1,6 @@
 import {PrismaClient, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {clearDB} from "../../utils/clearDB";
+import {clearDB} from "utils/clearDB";
 
 const prisma = new PrismaClient();
 

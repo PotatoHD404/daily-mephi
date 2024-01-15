@@ -10,8 +10,8 @@ import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {getToken} from "next-auth/jwt";
 import {Session} from "next-auth";
-import {MyAppUser} from "../../lib/auth/nextAuthOptions";
-import {trpc} from "../../server/utils/trpc";
+import {MyAppUser} from "lib/auth/nextAuthOptions";
+import {trpc} from "server/utils/trpc";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
     const {status} = useSession() as any as {

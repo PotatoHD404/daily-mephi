@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import SEO from "components/seo";
 import dynamic from "next/dynamic";
-import SearchBar from "../components/searchBar";
+import SearchBar from "components/searchBar";
 import {useRouter} from "next/router";
-import Material from "../components/material";
-import Tutor from "../components/tutor";
-import useIsMobile from "../lib/react/isMobileContext";
+import Material from "components/material";
+import Tutor from "components/tutor";
+import useIsMobile from "lib/react/isMobileContext";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});

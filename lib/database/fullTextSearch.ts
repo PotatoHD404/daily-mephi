@@ -1,5 +1,5 @@
 // generate 3-grams from string
-import {tokenize} from "../nlp";
+import {tokenize} from "nlp";
 
 export function generate3grams(text: string) {
     // prepare text

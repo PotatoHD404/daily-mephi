@@ -1,14 +1,13 @@
-import useSendQuery from "../lib/react/useSendQuery";
 import {useSession} from "next-auth/react";
 import Image from "next/image";
-import DeadCat from "../images/dead_cat.svg";
+import DeadCat from "images/dead_cat.svg";
 import RatingPlace from "./ratingPlace";
 import {Skeleton} from "@mui/material";
 import RippledButton from "./rippledButton";
 import React from "react";
 import HoverRating from "./rating";
 import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {MyAppUser} from "lib/auth/nextAuthOptions";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
     if (props.isLoading) {

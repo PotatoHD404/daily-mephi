@@ -7,7 +7,6 @@ import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
 
 
-
 function CustomCheckbox() {
     return <Checkbox
         sx={{

@@ -1,11 +1,14 @@
 import Image from "next/image";
 import LikeIco from "images/like.svg";
-import {useState} from "react";
 import addPrefixes from "lib/react/addPrefixes";
 import PressedLikeIco from "images/pressed_like.svg";
 import {Button} from '@mui/material';
 
-export default function DislikeBtn({count, pressed, onClick}: { count: number, pressed?: boolean | null, onClick?: () => void }) {
+export default function DislikeBtn({count, pressed, onClick}: {
+    count: number,
+    pressed?: boolean | null,
+    onClick?: () => void
+}) {
     const prefixes = ['hover:', 'focus:', 'active:', ""];
 
     return <Button variant="contained"

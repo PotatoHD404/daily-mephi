@@ -6,7 +6,11 @@ import addPrefixes from "lib/react/addPrefixes";
 import {Button} from '@mui/material';
 
 
-export default function LikeBtn({count, pressed, onClick}: { count: number, pressed?: boolean | null, onClick?: () => void }) {
+export default function LikeBtn({count, pressed, onClick}: {
+    count: number,
+    pressed?: boolean | null,
+    onClick?: () => void
+}) {
     const prefixes = ['hover:', 'focus:', 'active:', ""];
     // use state liked
     return (

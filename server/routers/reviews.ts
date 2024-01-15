@@ -1,10 +1,10 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
-import {isAuthorized} from "../middlewares/isAuthorized";
-import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
-import {getDocument} from "../../lib/database/fullTextSearch";
+import {isAuthorized} from "middlewares/isAuthorized";
+import {verifyCSRFToken} from "middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "middlewares/verifyRecaptcha";
+import {getDocument} from "lib/database/fullTextSearch";
 import {Prisma} from "@prisma/client";
 
 

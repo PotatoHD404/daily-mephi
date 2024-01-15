@@ -4,18 +4,17 @@ import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 
-import {CircularProgress, FormControl, NativeSelect, SelectChangeEvent, TextField,} from '@mui/material';
-import {ChangeEvent, useCallback, useState} from "react";
+import {CircularProgress, FormControl, SelectChangeEvent, TextField,} from '@mui/material';
+import {ChangeEvent, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import { getCsrfToken } from 'next-auth/react';
-
 // import {getCsrfToken} from "next-auth/react";
 // @ts-ignore
 // import { getCsrfToken } from 'next-auth/dist/react';
 // import {cookies} from "next/headers";
-import {trpc} from "../server/utils/trpc";
+import {trpc} from "server/utils/trpc";
 import {getCsrfToken, getSession} from "next-auth/react";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
