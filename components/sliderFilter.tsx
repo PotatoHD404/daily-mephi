@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import {Slider} from "@mui/material";
-import StarIcon from "../images/star.svg";
+import StarIcon from "images/star.svg";
 import CustomAccordion from './customAccordion'
 
 

@@ -11,7 +11,12 @@ function dateToSocial(date: Date) {
     return DateTime.fromJSDate(date).setLocale("ru").toRelative();
 }
 
-export default function UserHeaderComponent(props: { user?: UserType, legacyNickname?: string, date: Date, isLoading?: boolean }) {
+export default function UserHeaderComponent(props: {
+    user?: UserType,
+    legacyNickname?: string,
+    date: Date,
+    isLoading?: boolean
+}) {
     const date = dateToSocial(props.date);
     return (
         <div className="flex w-full mb-3 content-center items-center">

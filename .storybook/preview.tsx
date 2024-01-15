@@ -3,19 +3,20 @@ import type {Preview} from "@storybook/react";
 import {SessionProvider} from "next-auth/react";
 import React from "preact/compat";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {IsMobileProvider} from "../lib/react/isMobileContext";
+import {IsMobileProvider} from "lib/react/isMobileContext";
 import {useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
 import {initialize, mswLoader} from 'msw-storybook-addon';
+import {trpc} from "../server/utils/trpc";
 
 initialize({
     onUnhandledRequest: "bypass",
 })
 
-const loaders: any[] = [mswLoader];
+export const loaders: any[] = [mswLoader];
 
-const decorators: any[] = [
+export const decorators: any[] = [
     (StoryFn: any, {args}: any) => {
         // console.log(args.session)
         const session: any = args.session === "Not logged in" ? null : {
@@ -28,18 +29,22 @@ const decorators: any[] = [
         };
         const queryClient = new QueryClient();
         const [isMobile, changeIsMobile] = useState<boolean>(false);
+
         return (
             <SessionProvider session={session} refetchOnWindowFocus={true}>
                 { /* @ts-ignore */}
                 <QueryClientProvider client={queryClient}>
                     { /* @ts-ignore */}
                     <IsMobileProvider value={isMobile}>
-                        { /* @ts-ignore */}
                         {StoryFn()}
                     </IsMobileProvider>
                 </QueryClientProvider>
             </SessionProvider>
         )
+    },
+    (Story: any) => {
+        const Component = trpc.withTRPC(Story) as any;
+        return <Component />;
     },
 ];
 

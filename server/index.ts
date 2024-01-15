@@ -1,5 +1,5 @@
 import {t} from 'server/utils';
-import {generateOpenApiDocument} from "trpc-openapi";
+import {generateOpenApiDocument} from "@potatohd/trpc-openapi";
 import {getBaseUrl} from "server/utils/trpc";
 import {utilsRouter} from "./routers/utils";
 import {commentsRouter} from "./routers/comments";
@@ -174,8 +174,7 @@ openApiDocument['paths']["/openapi.yaml"] = {
             "200": {
                 "description": "Successful response",
                 "content": {
-                    "application/yaml": {
-                    }
+                    "application/yaml": {}
                 }
             },
             "default": {

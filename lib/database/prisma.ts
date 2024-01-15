@@ -79,4 +79,4 @@ if (notInitialized) {
 // }
 
 
-export { prisma };
+export {prisma};

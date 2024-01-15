@@ -5,7 +5,7 @@ import {User} from "@prisma/client";
 async function createUsers() {
     function generateImage() {
         return {
-            id: faker.datatype.uuid(),
+            id: faker.string.uuid(),
             tag: "avatar",
             filename: faker.system.fileName(),
             url: faker.internet.url(),
@@ -37,47 +37,47 @@ async function createUsers() {
     function generateUser() {
         const res = {
             bio: faker.lorem.sentence(),
-            commentsCount: faker.datatype.number({
+            commentsCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
             createdAt: faker.date.past(),
             deletedAt: null,
-            dislikesCount: faker.datatype.number({
+            dislikesCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
             email: null,
             emailVerified: null,
-            id: faker.datatype.uuid(),
+            id: faker.string.uuid(),
             imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
-            likesCount: faker.datatype.number({
+            likesCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
-            materialsCount: faker.datatype.number({
+            materialsCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
             nickname: generateNickname(),
-            place: faker.datatype.number({
+            place: faker.number.int({
                 'min': 1,
                 'max': 100
             }),
-            quotesCount: faker.datatype.number({
+            quotesCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
-            rating: faker.datatype.number({
+            rating: faker.number.int({
                 'min': 0,
                 'max': 100
             }),
-            reviewsCount: faker.datatype.number({
+            reviewsCount: faker.number.int({
                 'min': 0,
                 'max': 50
             }),
             role: 'user',
-            score: faker.datatype.number({
+            score: faker.number.int({
                 'min': 0,
                 'max': 100
             }),

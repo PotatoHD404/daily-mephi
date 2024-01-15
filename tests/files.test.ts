@@ -6,7 +6,7 @@ import {trpc} from "./mocks/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
 import {prisma} from "./utils/prisma";
 // import "./utils/notion";
-import type {AppRouter} from "../../server";
+import type {AppRouter} from "server";
 import {BinaryLike, createHash} from "crypto";
 
 import axios from "axios";

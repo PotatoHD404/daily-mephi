@@ -371,7 +371,9 @@ function addDots(line: string, font: { [p: string]: number }, width: number, max
     return res;
 }
 
-export function getWrappedText(font: { [x: string]: number; }, text: string, maxWidth: number, maxLines: number, multiplier: number): { text: string, width: number }[] {
+export function getWrappedText(font: {
+    [x: string]: number;
+}, text: string, maxWidth: number, maxLines: number, multiplier: number): { text: string, width: number }[] {
     maxLines += 1;
     const res: { text: string, width: number }[] = [];
     let width = 0;

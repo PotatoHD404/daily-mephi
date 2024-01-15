@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CommentIco from "../images/comment.svg";
+import CommentIco from "images/comment.svg";
 import React from "react";
 import {Button} from '@mui/material';
 

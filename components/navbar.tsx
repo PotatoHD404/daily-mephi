@@ -16,9 +16,9 @@ import dynamic from "next/dynamic";
 
 import {Box, Button, Divider, IconButton} from '@mui/material';
 
-import useIsMobile from "../lib/react/isMobileContext";
+import useIsMobile from "lib/react/isMobileContext";
 import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {MyAppUser} from "lib/auth/nextAuthOptions";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
@@ -92,7 +92,7 @@ function AuthSection(props: DefaultNavbarParams) {
         if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
-    }, [status, session, authenticated, loading])
+    }, [status, session])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
@@ -297,7 +297,7 @@ function Navbar(props: { needsAuth: boolean }) {
         } else {
             setState(s => ({...s, warning: false}));
         }
-    }, [props.needsAuth, router.pathname, authenticated, loading, callback]);
+    }, [status, props.needsAuth, router.pathname, callback]);
 
     const handleCloseWarning = async () => {
         if (props.needsAuth) {

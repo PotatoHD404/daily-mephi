@@ -1,7 +1,7 @@
-import {appRouter} from "server";
+import {AppRouter, appRouter} from "server";
 import {prisma} from "lib/database/prisma";
 import {notion} from "lib/database/notion";
-import {createCallerFactory} from "@trpc/server";
+import {t} from "server/utils";
 
 // req: NextApiRequest; res: NextApiResponse<any>; prisma: PrismaClient<PrismaClientOptions, never, RejectOnNotFound | RejectPerOperation | undefined>; notion: Client
 
@@ -12,7 +12,13 @@ const ctx = {
     prisma,
     notion
 }
-const createCaller = createCallerFactory()(appRouter);
+
+
+const { createCallerFactory } = t;
+
+const createCaller = createCallerFactory(appRouter);
+
 
 export const trpc = createCaller(ctx)
+
 

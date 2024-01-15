@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CloseIcon from "../images/close_icon.svg";
+import CloseIcon from "images/close_icon.svg";
 import {IconButton} from '@mui/material';
 
 export default function CloseButton(props: { onClick: () => void, hidden?: boolean }) {

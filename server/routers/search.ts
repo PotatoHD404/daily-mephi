@@ -23,11 +23,12 @@ export const searchRouter = t.router({
             rating_from: z.number().optional(),
             rating_to: z.number().optional(),
             types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional(),
-            limit: z.number().optional(),
-            offset: z.number().optional(),
+            limit: z.number().int().min(1).max(100).default(10),
+            offset: z.number().int().min(1).max(100).default(0),
         }))
         .output(z.any())
-        .query(async ({ctx: {prisma},
+        .query(async ({
+                          ctx: {prisma},
                           input: {
                               query,
                               sort,

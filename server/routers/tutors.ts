@@ -3,7 +3,6 @@ import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 
 
-
 export const tutorSelect = {
     id: true,
     shortName: true,

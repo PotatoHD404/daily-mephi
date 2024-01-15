@@ -1,15 +1,12 @@
 import DeadCat from "images/dead_cat.svg";
-import React, {useEffect} from "react";
+import React from "react";
 import Image from "next/image";
-import GoldenCrown from "../images/golden_crown.svg";
-import SilverCrown from "../images/silver_crown.svg";
-import BronzeCrown from "../images/bronze_crown.svg";
+import GoldenCrown from "images/golden_crown.svg";
+import SilverCrown from "images/silver_crown.svg";
+import BronzeCrown from "images/bronze_crown.svg";
 import Link from "next/link";
-import {useRouter} from "next/router";
 import {Skeleton} from "@mui/material";
-import {trpc} from "../server/utils/trpc";
-import {getSession} from "next-auth/react";
-import {useQuery} from "@tanstack/react-query";
+import {trpc} from "server/utils/trpc";
 
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -111,29 +108,26 @@ function TopUser(props: TopUserParams) {
 }
 
 export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean, take?: number }) {
-    const place = props.place || 0;
+    const place = props.place ?? 0
     // const isUUID = props.id && typeof props.id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(props.id)
     // const {status} = useSession();
     // const queryParams = {skip: props.skip, take: props.take};
     // @ts-ignore
     // Object.keys(queryParams).forEach(key => queryParams[key] === undefined ? delete queryParams[key] : {});
-    const params: Record<string, string> = {place: place.toString()};
-    if (props.take) {
-        params["take"] = props.take.toString();
-    }
+    // const params: Record<string, string> = {place: place.toString()};
+    // if (props.take) {
+    //     params["take"] = props.take.toString();
+    // }
 
-    async function getUser() {
-        return await getSession();
-    }
-    useQuery({
-        queryKey: ["getSession"]
-    })
 
-    const {data, isFetching, refetch, isError, error} = trpc.utils.top.useQuery({}, {
+    const topInput = {place: place, take: props.take}
+
+    const {data, isFetching, refetch, isError, error} = trpc.utils.top.useQuery(topInput, {
         enabled: !props.isLoading
     });
+
     const isLoading = isFetching || props.isLoading;
-    const router = useRouter();
+    // const router = useRouter();
     return <div className="w-[23.5] hidden md:block -mt-2">
         {
             props.withLabel ? (<>

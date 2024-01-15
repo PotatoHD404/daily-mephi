@@ -1,12 +1,11 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
-import {isAuthorized} from "../middlewares/isAuthorized";
-import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
-import {getDocument} from "../../lib/database/fullTextSearch";
+import {isAuthorized} from "server/middlewares/isAuthorized";
+import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
+import {getDocument} from "lib/database/fullTextSearch";
 import {Prisma} from "@prisma/client";
-
 
 
 export const reviewsRouter = t.router({
@@ -57,7 +56,7 @@ export const reviewsRouter = t.router({
     })
         .input(z.object({
             id: z.string().uuid(),
-            take: z.number().default(10),
+            take: z.number().int().min(1).max(100).default(10),
             cursor: z.string().optional(),
         }))
         .output(z.any())

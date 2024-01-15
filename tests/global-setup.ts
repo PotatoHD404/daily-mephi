@@ -1,6 +1,6 @@
 import {PrismaClient, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prisma} from "./api/utils/prisma";
+import {prisma} from "./utils/prisma";
 import {Prisma} from ".prisma/client";
 import {clearDB} from "./utils/clearDB";
 
@@ -13,8 +13,8 @@ export default async function seed() {
 
     function generateSemester(): Semester {
         return {
-            id: faker.datatype.uuid(),
-            name: faker.random.numeric(2),
+            id: faker.string.uuid(),
+            name: faker.string.numeric(2),
             createdAt: faker.date.past(),
             updatedAt: faker.date.past(),
             deletedAt: null,

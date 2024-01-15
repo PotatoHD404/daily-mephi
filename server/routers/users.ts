@@ -1,9 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
-import {isAuthorized} from "../middlewares/isAuthorized";
-import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
+import {isAuthorized} from "server/middlewares/isAuthorized";
 import {isToxic} from "lib/toxicity";
 import {getDocument} from "lib/database/fullTextSearch";
 
@@ -75,14 +73,14 @@ export const usersRouter = t.router({
             if (nickname && (await isToxic(nickname))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
-                    message: 'Nickname is toxic'
+                    message: 'Никнейм токсичен'
                 });
             }
             // check if bio is toxic
             if (bio && (await isToxic(bio))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
-                    message: 'Bio is toxic'
+                    message: 'Био токсично'
                 });
             }
             return prisma.$transaction(async (prisma: any) => {
@@ -93,7 +91,7 @@ export const usersRouter = t.router({
                             if (user && user.id !== user.id) {
                                 throw new TRPCError({
                                     code: 'BAD_REQUEST',
-                                    message: 'Nickname is already taken'
+                                    message: 'Никнейм уже занят'
                                 });
                             }
                         }
@@ -103,7 +101,7 @@ export const usersRouter = t.router({
                             if (user && user.id !== user.id) {
                                 throw new TRPCError({
                                     code: 'BAD_REQUEST',
-                                    message: 'Image already taken'
+                                    message: 'Аватар уже занят'
                                 });
                             }
                         }

@@ -1,8 +1,7 @@
 import {OAuthConfig} from "next-auth/providers";
 import {getHost} from "lib/utils";
 import {hash} from "lib/crypto";
-import { prisma } from "../database/prisma";
-import avatars from "../database/jsons/avatars.json";
+import {prisma} from "lib/database/prisma";
 
 export interface Profile {
     id: string;
@@ -46,7 +45,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         },
         userinfo: {
             // Custom implementation of userinfo
-            async request({ tokens }) {
+            async request({tokens}) {
                 if (!tokens.access_token) {
                     throw Error("No login in the auth request")
                 }

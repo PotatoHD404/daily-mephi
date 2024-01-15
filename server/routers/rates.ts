@@ -1,10 +1,9 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
-import {isAuthorized} from "../middlewares/isAuthorized";
-import {verifyCSRFToken} from "../middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
+import {isAuthorized} from "server/middlewares/isAuthorized";
+import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {TRPCError} from "@trpc/server";
-
 
 
 export const ratesRouter = t.router({

@@ -23,7 +23,14 @@ async function apply_result(result: Response,
     setDislikes(data.dislikes);
 }
 
-export default function Reactions(props: { isLoading?: boolean, type: string, id: string, likes: number, dislikes: number, comments: number }) {
+export default function Reactions(props: {
+    isLoading?: boolean,
+    type: string,
+    id: string,
+    likes: number,
+    dislikes: number,
+    comments: number
+}) {
     const [like, setLike] = React.useState<true | false | null>(null);
     const [likes, setLikes] = React.useState(props.likes);
     const [dislikes, setDislikes] = React.useState(props.dislikes);
@@ -69,6 +76,9 @@ export default function Reactions(props: { isLoading?: boolean, type: string, id
                         id: props.id
                     })
                 });
+
+            // const data =
+
             await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
         } else if (type === 'dislike' && like === false || type === 'like' && like === true) {
             if (!like) {

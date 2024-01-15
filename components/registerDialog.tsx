@@ -4,19 +4,18 @@ import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 
-import {CircularProgress, FormControl, NativeSelect, SelectChangeEvent, TextField,} from '@mui/material';
-import {ChangeEvent, useCallback, useState} from "react";
+import {CircularProgress, FormControl, SelectChangeEvent, TextField,} from '@mui/material';
+import {ChangeEvent, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import { getCsrfToken } from 'next-auth/react';
-
 // import {getCsrfToken} from "next-auth/react";
 // @ts-ignore
 // import { getCsrfToken } from 'next-auth/dist/react';
 // import {cookies} from "next/headers";
-import {trpc} from "../server/utils/trpc";
-import {getSession} from "next-auth/react";
+import {trpc} from "server/utils/trpc";
+import {getCsrfToken, getSession} from "next-auth/react";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -36,72 +35,67 @@ export default function RegisterDialog(props: DialogProps) {
         setAge(event.target.value);
     };
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
+    const {executeRecaptcha} = useGoogleReCaptcha();
     const [name, setName] = useState<string | null>(null);
     // nickname error
-    const [nicknameError, setNicknameError] = useState<boolean>(false);
-    const [option, setOption] = useState<string>("Не указано");
+    const [nicknameError, setNicknameError] = useState<string | undefined>(undefined);
+    const [isFetching, setIsFetching] = useState(false);
 
-    async function handleRegister() {
+    const getTokens = async () => {
         if (!executeRecaptcha) {
-            return;
+            throw new Error("Recaptcha is not initialized");
+        }
+        const csrfToken = await getCsrfToken();
+        if (!csrfToken) {
+            throw new Error("CSRF token is not found");
         }
         const recaptchaToken = await executeRecaptcha('register');
-        const res = await fetch('/api/v1/users/edit', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                // csrfToken: getCsrfToken(),
-                csrfToken: "",
-                name,
-                recaptchaToken,
-                course: option != "Не указано" ? option : undefined,
-            })
-        });
-        if (res?.status == 200) {
-            await getSession();
-            location.reload();
-        }
-        return "ok";
-
+        return {csrfToken, recaptchaToken};
     }
-
-    let tmp = trpc.materials.add.useMutation
-
-    const {data, refetch: fetchRegister, isFetching, isError} = trpc.users.edit.useQuery(handleRegister, {
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
+    const tokensQuery = useQuery({
+        queryFn: getTokens,
+        queryKey: ["tokens"],
+        enabled: !!executeRecaptcha
     });
-
+    const userMutation = trpc.users.edit.useMutation();
+    // Make system where we have an async query which returns whether the mutation was successful or not (call it register).
+    // It should be called only after we press the button. So usecallback should not be used.
+    const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
     const register = async () => {
-        if (!executeRecaptcha) {
+        if (!tokensQuery.data) {
             return;
         }
-
-        // Nickname regex with russian letters
-        const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-        if (name != null && nicknameRegex.test(name)) {
-            await fetchRegister();
-        } else {
-            setNicknameError(true);
+        const {csrfToken, recaptchaToken} = tokensQuery.data;
+        if (!csrfToken || !recaptchaToken) {
+            return;
         }
-
-
-        // console.log(res.redirected)
-        // console.log(res.headers.values())
-        // Refresh session
-        // const
-        // Set cookie to the session
-        // document.cookie = `next-auth.session-token=${session}; path=/;`;
-
+        if (name != null && nicknameRegex.test(name)) {
+            setIsFetching(true);
+            await userMutation.mutateAsync({csrfToken, recaptchaToken, nickname: name}, {
+                onSuccess: async () => {
+                    await getSession();
+                    location.reload();
+                },
+                onError: (error) => {
+                    if (error.data?.code !== "BAD_REQUEST") {
+                        setNicknameError(`Произошла ошибка, попробуйте позже, ${error.message}`)
+                        return;
+                    }
+                    setNicknameError(error.message);
+                },
+                onSettled: () => {
+                    tokensQuery.refetch();
+                }
+            })
+            setIsFetching(false);
+        } else {
+            setNicknameError("Ник должен состоять из латинских букв, цифр и знака подчёркивания и быть длиной от 3 до 16 символов");
+        }
     }
 
 
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setNicknameError(false);
+        setNicknameError(undefined);
         setName(event.target.value);
     };
 
@@ -117,7 +111,7 @@ export default function RegisterDialog(props: DialogProps) {
                 <Image
                     src={RegisterHalfCat}
                     alt="Warning cat"
-                    className="col-start-1 col-end-6 grid mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
+                    className="col-start-1 col-end-6 mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
                 />
 
                 <div className="col-start-1 md:col-start-6 col-end-13">
@@ -132,8 +126,8 @@ export default function RegisterDialog(props: DialogProps) {
                                 <div>Введите ник, который будет отображаться на портале</div>
                                 <div className="flex flex-wrap space-y-4 md:mx-2">
                                     <TextField
-                                        helperText={nicknameError ? "Ник может состоять только из латиницы, цифр и _, длина от 3 до 16 символов" : undefined}
-                                        error={nicknameError}
+                                        helperText={nicknameError}
+                                        error={nicknameError !== undefined}
                                         value={name}
                                         onChange={handleTextChange}
                                         label="Ник"
@@ -178,50 +172,48 @@ export default function RegisterDialog(props: DialogProps) {
                                             }
                                         }}
                                         variant="standard" className="w-full"/>
-                                    <div className="w-full border-black flex flex-wrap h-fit space-y-0">
-                                        <label htmlFor="uncontrolled-native" className="ml-[1px] relative -mb-1 py-0 text-black lg:text-lg text-sm
-                                         ">Курс</label>
-                                        <NativeSelect
-                                            value={option}
-                                            onChange={(event) => setOption(event.target.value)}
-                                            sx={{
-                                                "&.MuiInputBase-root:after": {
-                                                    borderBottomColor: "black",
-                                                }
-                                            }}
-                                            defaultValue="Не указано"
-                                            inputProps={{
-                                                name: 'age',
-                                                id: 'uncontrolled-native',
-                                            }}
-                                            className="w-full py-0 my-0 focus:bg-black lg:text-2xl text-xl"
-                                        >
-                                            {["Не указано", "Б1", "Б2", "Б3", "Б4", "С1", "С2", "С3", "С4", "С5", "М1", "М2", "А1",
-                                                "А2", "А3", "А4"].map((item) =>
-                                                <option value={item} key={item}>{item}</option>)}
-                                        </NativeSelect>
-                                    </div>
-                                    {/*<StyledTextField label="Ник"*/}
-                                    {/*                 variant="standard" className="w-full"/>*/}
+                                    {/*<div className="w-full border-black flex flex-wrap h-fit space-y-0">*/}
+                                    {/*    <label htmlFor="uncontrolled-native" className="ml-[1px] relative -mb-1 py-0 text-black lg:text-lg text-sm*/}
+                                    {/*     ">Курс</label>*/}
+                                    {/*    <NativeSelect*/}
+                                    {/*        value={option}*/}
+                                    {/*        onChange={(event) => setOption(event.target.value)}*/}
+                                    {/*        sx={{*/}
+                                    {/*            "&.MuiInputBase-root:after": {*/}
+                                    {/*                borderBottomColor: "black",*/}
+                                    {/*            }*/}
+                                    {/*        }}*/}
+                                    {/*        defaultValue="Не указано"*/}
+                                    {/*        inputProps={{*/}
+                                    {/*            name: 'age',*/}
+                                    {/*            id: 'uncontrolled-native',*/}
+                                    {/*        }}*/}
+                                    {/*        className="w-full py-0 my-0 focus:bg-black lg:text-2xl text-xl"*/}
+                                    {/*    >*/}
+                                    {/*        {["Не указано", "Б1", "Б2", "Б3", "Б4", "С1", "С2", "С3", "С4", "С5", "М1", "М2", "А1",*/}
+                                    {/*            "А2", "А3", "А4"].map((item) =>*/}
+                                    {/*            <option value={item} key={item}>{item}</option>)}*/}
+                                    {/*    </NativeSelect>*/}
+                                    {/*</div>*/}
                                 </div>
 
                             </div>
-                            {/*<div className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full*/}
-                            {/* rounded-full border-2 md:w-full lg:text-3xl md:text-2xl text-xl font-bold*/}
-                            {/*  text-center ${isFetching ? "border-gray-400" : "border-black"}`}>*/}
-                            {/*    <RippledButton onClick={register} disabled={isFetching}>*/}
-                            {/*        {!isFetching ?*/}
-                            {/*            <div>Регистрация</div> :*/}
-                            {/*            <div className="flex space-x-4">*/}
-                            {/*                <div className="my-auto">Загрузка...</div>*/}
-                            {/*                <CircularProgress color="inherit"*/}
-                            {/*                                  thickness={3}*/}
-                            {/*                                  size={30}*/}
-                            {/*                                  className="my-auto"/>*/}
+                            <div className={`md:col-span-12 col-span-12 xs:w-2/3 xxs:w-3/4 w-full h-full
+                             rounded-full border-2 md:w-full lg:text-3xl md:text-2xl text-xl font-bold
+                              text-center ${isFetching ? "border-gray-400" : "border-black"}`}>
+                                <RippledButton onClick={register} disabled={isFetching}>
+                                    {!isFetching ?
+                                        <div>Регистрация</div> :
+                                        <div className="flex space-x-4">
+                                            <div className="my-auto">Загрузка...</div>
+                                            <CircularProgress color="inherit"
+                                                              thickness={3}
+                                                              size={30}
+                                                              className="my-auto"/>
 
-                            {/*            </div>}*/}
-                            {/*    </RippledButton>*/}
-                            {/*</div>*/}
+                                        </div>}
+                                </RippledButton>
+                            </div>
                         </FormControl>
                     </div>
                 </div>

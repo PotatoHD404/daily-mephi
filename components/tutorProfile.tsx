@@ -1,14 +1,14 @@
-import useSendQuery from "../lib/react/useSendQuery";
 import {useSession} from "next-auth/react";
 import Image from "next/image";
-import DeadCat from "../images/dead_cat.svg";
+import DeadCat from "images/dead_cat.svg";
 import RatingPlace from "./ratingPlace";
 import {Skeleton} from "@mui/material";
 import RippledButton from "./rippledButton";
 import React from "react";
 import HoverRating from "./rating";
 import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {MyAppUser} from "lib/auth/nextAuthOptions";
+import {trpc} from "server/utils/trpc";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
     if (props.isLoading) {
@@ -29,14 +29,11 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
 }
 
 export default function TutorProfile({tutor, loading = false}: { tutor: any, loading?: boolean }) {
-    async function getTutor() {
-        return await fetch(`/api/v1/tutors/${tutor.id}`, {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(el => el?.json());
-    }
 
-    const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
+    // const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
+
+    const {data, isFetching} = trpc.tutors.getOne.useQuery({id: tutor.id});
+
     const isLoading = isFetching || !data || loading;
     const session = useSession() as any as {
         data: Session & { user: MyAppUser },
@@ -66,7 +63,7 @@ export default function TutorProfile({tutor, loading = false}: { tutor: any, loa
             <RatingPlace place={47}/>
         </div>
         <div className="flex flex-nowrap items-center">
-            <div className="flex items-center w-fit hidden mr-4 md:block">
+            <div className="items-center w-fit hidden mr-4 md:block">
                 <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
                     <div className="flex mb-3 w-32 md:w-60">
                         <Image

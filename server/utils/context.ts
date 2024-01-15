@@ -1,8 +1,7 @@
-import * as trpc from '@trpc/server';
+import {TRPCError} from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import {prisma} from 'lib/database/prisma';
-import {notion} from "../../lib/database/notion";
-import {TRPCError} from "@trpc/server";
+import {notion} from "lib/database/notion";
 
 // create context based of incoming request
 // set as optional here, so it can also be re-used for `getStaticProps()`
@@ -19,7 +18,7 @@ export const createContext = async (
             message: 'No request found'
         })
     }
-    if(!res) {
+    if (!res) {
         throw new TRPCError({
             code: 'UNAUTHORIZED',
             message: 'No response found'
