@@ -8,7 +8,7 @@ import {useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
 import {initialize, mswLoader} from 'msw-storybook-addon';
-import {withTRPC} from "@trpc/next";
+import {trpc} from "../server/utils/trpc";
 
 initialize({
     onUnhandledRequest: "bypass",
@@ -29,18 +29,22 @@ export const decorators: any[] = [
         };
         const queryClient = new QueryClient();
         const [isMobile, changeIsMobile] = useState<boolean>(false);
+
         return (
             <SessionProvider session={session} refetchOnWindowFocus={true}>
                 { /* @ts-ignore */}
                 <QueryClientProvider client={queryClient}>
                     { /* @ts-ignore */}
                     <IsMobileProvider value={isMobile}>
-                        { /* @ts-ignore */}
-                        {withTRPC(StoryFn())}
+                        {StoryFn()}
                     </IsMobileProvider>
                 </QueryClientProvider>
             </SessionProvider>
         )
+    },
+    (Story: any) => {
+        const Component = trpc.withTRPC(Story) as any;
+        return <Component />;
     },
 ];
 
