@@ -13,9 +13,9 @@ initialize({
     onUnhandledRequest: "bypass",
 })
 
-const loaders: any[] = [mswLoader];
+export const loaders: any[] = [mswLoader];
 
-const decorators: any[] = [
+export const decorators: any[] = [
     (StoryFn: any, {args}: any) => {
         // console.log(args.session)
         const session: any = args.session === "Not logged in" ? null : {
