@@ -167,7 +167,7 @@ jobs:
       - name: Prisma migrate
         run: yarn prisma migrate dev --name init --preview-feature
       - name: Publish to Chromatic
-        uses: chromaui/action@latest
+        uses: chromaui/action-canary@latest
         # Options required for Chromatic's GitHub Action
         with:
           #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/react/en/deploy/ to obtain it
