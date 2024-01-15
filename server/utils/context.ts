@@ -31,4 +31,4 @@ export const createContext = async (
         notion
     };
 };
-export type Context = typeof createContext
+export type Context = Awaited<ReturnType<typeof createContext>>
