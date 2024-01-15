@@ -1,8 +1,9 @@
 import type {Discipline} from "@prisma/client";
+import {prismaMock} from "tests/mocks/prisma";  // <--- this import
+// order makes difference, it's important to mock prisma before importing utils
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/api/mocks/prisma";
-import {trpc} from "tests/api/mocks/trpc";
-import {describe, it, expect, jest} from '@jest/globals';
+import {trpc} from "tests/mocks/trpc";
+import {describe, it} from '@jest/globals';
 
 
 // export type Discipline = {

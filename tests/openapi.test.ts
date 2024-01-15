@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import "tests/api/mocks/prisma";
+import "tests/mocks/prisma";
 import * as http from "http";
 import openapiJsonHandler from "pages/api/v1/openapi.json"
 import openapiYamlHandler from "pages/api/v1/openapi.yaml"

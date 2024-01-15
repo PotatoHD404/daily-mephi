@@ -1,8 +1,7 @@
 import type {Discipline} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prisma} from "./utils/prisma";
-import {trpc} from "tests/api/mocks/trpc";
-import {searchRouter} from "server/routers/search";
+import {prismaMock} from "tests/mocks/prisma";
+import {trpc} from "tests/mocks/trpc";
 import {describe, it, expect, jest} from '@jest/globals';
 
 
@@ -17,13 +16,5 @@ describe('[GET] /api/v1/disciplines', () => {
 
     it('Test get all', async () => {
 
-        // const apiSemesters = await utils.utils.semesters();
-
-        // expect(apiSemesters).toEqual(semesters);
-
     });
-});
-
-afterAll(async () => {
-    await prisma.$disconnect();
 });
