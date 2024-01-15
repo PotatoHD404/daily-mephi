@@ -6,7 +6,6 @@ import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 import {TRPCError} from "@trpc/server";
 
 
-
 export const ratesRouter = t.router({
     getFromTutor: t.procedure.meta({
         openapi: {

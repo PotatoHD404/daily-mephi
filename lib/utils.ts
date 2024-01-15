@@ -70,7 +70,10 @@ export function defaultCookies(useSecureCookies: boolean) {
     }
 }
 
-export function checkStatus(options: https.RequestOptions, data?: any): Promise<{ code: number | undefined, redirect: string | undefined }> {
+export function checkStatus(options: https.RequestOptions, data?: any): Promise<{
+    code: number | undefined,
+    redirect: string | undefined
+}> {
     return new Promise((resolve, reject) => {
         if (data) {
             data = JSON.stringify(data);

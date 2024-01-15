@@ -10,7 +10,6 @@ import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 import {timeout} from "../../lib/utils";
 
 
-
 async function getNotionToken() {
     return process.env.NOTION_TOKEN_V2 ?? ""
     /*let token_v2: string | null = null;
@@ -122,7 +121,12 @@ export const filesRouter = t.router({
             let i: number;
             const properties = {
                 "Name": {"title": [{"text": {"content": filename + (ext ? '.' + ext : '')}}]},
-                "File": {"files": [{"name": filename + (ext ? '.' + ext : ''), "external": {"url": 'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d8c2e5c5-4914-452d-963b-d3718defa035/pending'}}]},
+                "File": {
+                    "files": [{
+                        "name": filename + (ext ? '.' + ext : ''),
+                        "external": {"url": 'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/d8c2e5c5-4914-452d-963b-d3718defa035/pending'}
+                    }]
+                },
             };
             if (destinationDatabaseId === undefined) {
                 throw new TRPCError({
@@ -199,91 +203,91 @@ export const filesRouter = t.router({
             }, process.env.JWT_PRIVATE);
             return {token, signedGetUrl: links['signedGetUrl']};
         }),
-        putFile: t.procedure.meta({
-            openapi: {
-                method: 'PUT',
-                path: '/files',
-                protect: true
+    putFile: t.procedure.meta({
+        openapi: {
+            method: 'PUT',
+            path: '/files',
+            protect: true
+        }
+    })
+        .input(z.object({
+            token: z.string(),
+            csrfToken: z.string(),
+            recaptchaToken: z.string(),
+        }))
+        .output(z.any())
+        .use(isAuthorized)
+        .use(verifyCSRFToken)
+        .use(verifyRecaptcha)
+        .mutation(async ({input: {token}, ctx: {prisma, notion, user}}) => {
+            if (!process.env.JWT_PRIVATE)
+                throw new Error('Jwt key is undefined');
+            let data: JwtPayload | string
+            try {
+                data = jwt.verify(token, process.env.JWT_PRIVATE);
+            } catch (e) {
+                throw new TRPCError({
+                    code: 'FORBIDDEN',
+                    message: 'Invalid token'
+                });
             }
-        })
-            .input(z.object({
-                token: z.string(),
-                csrfToken: z.string(),
-                recaptchaToken: z.string(),
-            }))
-            .output(z.any())
-            .use(isAuthorized)
-            .use(verifyCSRFToken)
-            .use(verifyRecaptcha)
-            .mutation(async ({input: {token}, ctx: {prisma, notion, user}}) => {
-                if (!process.env.JWT_PRIVATE)
-                    throw new Error('Jwt key is undefined');
-                let data: JwtPayload | string
-                try {
-                    data = jwt.verify(token, process.env.JWT_PRIVATE);
-                } catch (e) {
-                    throw new TRPCError({
-                        code: 'FORBIDDEN',
-                        message: 'Invalid token'
-                    });
-                }
 
-                const {
-                    signedPutUrl,
-                    block,
-                    ext,
-                    filename
-                } = data as { signedPutUrl: string, block: string, ext: string, filename: string };
-                const dbFile = await prisma.file.findFirst({where: {id: block}})
-                if (dbFile) {
-                    throw new TRPCError({
-                        code: 'CONFLICT',
-                        message: 'File already exists'
-                    });
-                }
-                const unsignedUrl: string = signedPutUrl.split('?')[0];
-                // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
-                // console.log(unsignedUrl)
-                // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
-                const res1 = await fetch(unsignedUrl, {
-                    method: 'HEAD',
-                })
-                const size = parseInt(res1.headers.get('content-length') || '0');
-                if (!res1.ok || size === 0) {
-                    throw new TRPCError({
-                        code: 'INTERNAL_SERVER_ERROR',
-                        message: 'The file is not uploaded'
-                    });
-                }
-                // find file size
-
-                const isImage = ext.toLowerCase() === 'png' || ext.toLowerCase() === 'jpg' || ext.toLowerCase() === 'jpeg';
-                const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
-
-                // Retrieve the page
-                // const page = await notion.pages.retrieve(block);
-                // Update the page properties
-                const properties = {
-                    "Name": {"title": [{"text": {"content": filename + (ext ? '.' + ext : '')}}]},
-                    "File": {"files": [{"name": filename + (ext ? '.' + ext : ''), "external": {"url": createdUrl}}]},
-                };
-                await notion.pages.update({
-                    page_id: block,
-                    properties: properties
+            const {
+                signedPutUrl,
+                block,
+                ext,
+                filename
+            } = data as { signedPutUrl: string, block: string, ext: string, filename: string };
+            const dbFile = await prisma.file.findFirst({where: {id: block}})
+            if (dbFile) {
+                throw new TRPCError({
+                    code: 'CONFLICT',
+                    message: 'File already exists'
                 });
-
-                await prisma.file.create({
-                    data: {
-                        id: block,
-                        url: createdUrl,
-                        // altUrl: isImage ? unsignedUrl : undefined,
-                        filename: filename + (ext ? '.' + ext : ''),
-                        size,
-                        user: user.id ? {connect: {id: user.id}} : undefined,
-                        tag: "material"
-                    },
-                });
-                return {url: createdUrl};
+            }
+            const unsignedUrl: string = signedPutUrl.split('?')[0];
+            // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
+            // console.log(unsignedUrl)
+            // console.log(`https://www.notion.so/signed/${encodeURIComponent(unsignedUrl)}?table=block&cache=v2&id=${block}`)
+            const res1 = await fetch(unsignedUrl, {
+                method: 'HEAD',
             })
+            const size = parseInt(res1.headers.get('content-length') || '0');
+            if (!res1.ok || size === 0) {
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'The file is not uploaded'
+                });
+            }
+            // find file size
+
+            const isImage = ext.toLowerCase() === 'png' || ext.toLowerCase() === 'jpg' || ext.toLowerCase() === 'jpeg';
+            const createdUrl = (isImage ? `https://www.notion.so/image/${encodeURIComponent(unsignedUrl)}?cache=v2` : unsignedUrl)
+
+            // Retrieve the page
+            // const page = await notion.pages.retrieve(block);
+            // Update the page properties
+            const properties = {
+                "Name": {"title": [{"text": {"content": filename + (ext ? '.' + ext : '')}}]},
+                "File": {"files": [{"name": filename + (ext ? '.' + ext : ''), "external": {"url": createdUrl}}]},
+            };
+            await notion.pages.update({
+                page_id: block,
+                properties: properties
+            });
+
+            await prisma.file.create({
+                data: {
+                    id: block,
+                    url: createdUrl,
+                    // altUrl: isImage ? unsignedUrl : undefined,
+                    filename: filename + (ext ? '.' + ext : ''),
+                    size,
+                    user: user.id ? {connect: {id: user.id}} : undefined,
+                    tag: "material"
+                },
+            });
+            return {url: createdUrl};
+        })
 
 });

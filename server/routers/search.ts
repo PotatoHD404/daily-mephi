@@ -27,7 +27,8 @@ export const searchRouter = t.router({
             offset: z.number().int().min(1).max(100).default(0),
         }))
         .output(z.any())
-        .query(async ({ctx: {prisma},
+        .query(async ({
+                          ctx: {prisma},
                           input: {
                               query,
                               sort,

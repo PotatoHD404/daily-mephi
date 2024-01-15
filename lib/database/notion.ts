@@ -9,4 +9,4 @@ if (process.env.NODE_ENV !== 'production') {
     (global as any).notion = notion;
 }
 
-export { notion };
+export {notion};

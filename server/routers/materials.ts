@@ -7,7 +7,6 @@ import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 import {getDocument} from "../../lib/database/fullTextSearch";
 
 
-
 export const materialsRouter = t.router({
     getOne: t.procedure.meta({
         openapi: {
@@ -134,7 +133,10 @@ export const materialsRouter = t.router({
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
-        .mutation(async ({ctx: {prisma, user}, input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}}) => {
+        .mutation(async ({
+                             ctx: {prisma, user},
+                             input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}
+                         }) => {
             return await prisma.$transaction(async (prisma) => {
                 const material = await prisma.material.create({
                         data: {

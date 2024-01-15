@@ -7,7 +7,6 @@ import {verifyRecaptcha} from "../middlewares/verifyRecaptcha";
 import {getDocument} from "../../lib/database/fullTextSearch";
 
 
-
 export const quotesRouter = t.router({
     getOne: t.procedure.meta({
         openapi: {

@@ -174,8 +174,7 @@ openApiDocument['paths']["/openapi.yaml"] = {
             "200": {
                 "description": "Successful response",
                 "content": {
-                    "application/yaml": {
-                    }
+                    "application/yaml": {}
                 }
             },
             "default": {

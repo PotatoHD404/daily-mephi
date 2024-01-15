@@ -8,7 +8,6 @@ import {getDocument} from "../../lib/database/fullTextSearch";
 import {Prisma} from "@prisma/client";
 
 
-
 export const reviewsRouter = t.router({
     getOne: t.procedure.meta({
         openapi: {
