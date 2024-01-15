@@ -10,7 +10,6 @@ export default function RippledButton(props: {
     return <ButtonBase onClick={props.onClick}
                        className="rounded-full w-full p-1" disabled={props.disabled}
     >
-        {/* @ts-ignore */}
         {props.children}
     </ButtonBase>;
 }

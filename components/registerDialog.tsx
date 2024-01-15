@@ -16,6 +16,7 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import { getCsrfToken } from 'next-auth/dist/react';
 // import {cookies} from "next/headers";
 import {trpc} from "../server/utils/trpc";
+import {getSession} from "next-auth/react";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -61,42 +62,39 @@ export default function RegisterDialog(props: DialogProps) {
             })
         });
         if (res?.status == 200) {
-            const res1 = await fetch('/api/auth/session/renew_jwt', {
-                method: 'GET',
-                credentials: 'same-origin',
-            });
-            if (res1.status == 200) {
-                location.reload();
-            }
+            await getSession();
+            location.reload();
         }
         return "ok";
 
     }
 
-    // const {data, refetch: fetchRegister, isFetching, isError} = trpc.register.useQuery(handleRegister, {
-    //     refetchOnWindowFocus: false,
-    //     enabled: false // disable this query from automatically running
-    // });
+    let tmp = trpc.materials.add.useMutation
+
+    const {data, refetch: fetchRegister, isFetching, isError} = trpc.users.edit.useQuery(handleRegister, {
+        refetchOnWindowFocus: false,
+        enabled: false // disable this query from automatically running
+    });
 
     const register = async () => {
-        // if (!executeRecaptcha) {
-        //     return;
-        // }
-        //
-        // // Nickname regex with russian letters
-        // const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-        // if (name != null && nicknameRegex.test(name)) {
-        //     await fetchRegister();
-        // } else {
-        //     setNicknameError(true);
-        // }
+        if (!executeRecaptcha) {
+            return;
+        }
+
+        // Nickname regex with russian letters
+        const nicknameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+        if (name != null && nicknameRegex.test(name)) {
+            await fetchRegister();
+        } else {
+            setNicknameError(true);
+        }
 
 
         // console.log(res.redirected)
         // console.log(res.headers.values())
         // Refresh session
         // const
-        // // Set cookie to the session
+        // Set cookie to the session
         // document.cookie = `next-auth.session-token=${session}; path=/;`;
 
     }

@@ -10,9 +10,14 @@ import { prisma } from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {getToken} from "next-auth/jwt";
+import {Session} from "next-auth";
+import {MyAppUser} from "../../lib/auth/nextAuthOptions";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
-    const {status} = useSession();
+    const {status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    };
 
     const router = useRouter();
     // if(!isFetching)
@@ -30,11 +35,13 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 
 
 function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, changeNeedsAuth: (a: boolean) => void }) {
+
+
     async function getUser() {
-        return await (await fetch(`/api/v1/users/${id}`, {
+        return await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json().then((data) => {
+        }).then(el => el?.json()).then((data) => {
             if (data?.error) {
                 changeNeedsAuth(true);
             }
@@ -43,7 +50,6 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
         });
     }
 
-    // @ts-ignore
     const {data, isFetching, refetch, isError, error} = useQuery([`user-${user.id}`], getUser, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -52,8 +58,14 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     const isLoading = isFetching;
     const router = useRouter();
     const {id} = router.query;
-    const {data: session} = useSession();
-    // @ts-ignore
+
+
+
+
+    const {data: session} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    };
     const isMe = session?.user?.id === id;
 
     useEffect(() => {
@@ -73,6 +85,11 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
             changeNeedsAuth(true);
         // window.onpopstate = () => changeNeedsAuth(true);
     }, [changeNeedsAuth, me]);
+
+    if (typeof id != "string" || UUID_REGEX.test(id)) {
+        // router.push('/404');
+        return (<></>);
+    }
 
     return (
         <>

@@ -47,7 +47,6 @@ export default function CustomSelect(props: {
                 />}
                 className="w-full font-semibold"
             >
-                {/* @ts-ignore */}
                 {props.options.map((item: any, index: number) =>
                     <option className={`bg-[${props.color}] font-semibold`} value={item} key={index}>{item}</option>)}
             </NativeSelect>

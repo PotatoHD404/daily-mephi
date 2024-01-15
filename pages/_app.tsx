@@ -18,6 +18,9 @@ import useMediaQuery from "../lib/react/useMediaQuery";
 import {IsMobileProvider} from "../lib/react/isMobileContext";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 import MetricContainer from "../components/yandexMetrika";
+import {SpeedInsights} from "@vercel/speed-insights/next"
+import {Analytics} from '@vercel/analytics/react';
+
 // import NProgress from 'nprogress';
 
 const queryClient = new QueryClient()
@@ -155,6 +158,8 @@ function MyApp(
                         </IsMobileProvider>
                     </GoogleReCaptchaProvider>
                     <MetricContainer/>
+                    <SpeedInsights/>
+                    <Analytics/>
                 </>
         }
         </>

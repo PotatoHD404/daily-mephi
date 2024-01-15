@@ -18,12 +18,11 @@ export function LogoText() {
     return <div className="text-[14vw] md:text-[6vw] md:-ml-1 md:-my-10 flex font-bold flex-nowrap
      w-full justify-center md:justify-start">
         {!isMobile ?
-            < div className="flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">
+            <div className="flex h-fit w-[4vw] mt-[4vw] justify-center pl-[0.8vw] z-0">
                 <Image src={MiniCat} alt="mini cat"
                        className="flex scale-95 active:scale-110 transition ease-in-out duration-300"
                     // layout="responsive"
                 />
-
             </div> : null}
 
         <div className="md:-ml-[4vw] md:z-10 md:mt-1.5 md:pointer-events-none">Daily MEPhi</div>
@@ -42,10 +41,10 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
-    // const session = useSession();
+    // const session = useSession()
     const [input, setInput] = React.useState('');
     // console.log(session);
-    // let session = useSession();
+    // let session = useSession()
     useEffect(() => {
         const input = document.querySelector("input");
         input?.focus();

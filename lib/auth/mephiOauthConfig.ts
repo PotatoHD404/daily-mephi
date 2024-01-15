@@ -5,12 +5,14 @@ import { prisma } from "../database/prisma";
 import avatars from "../database/jsons/avatars.json";
 
 export interface Profile {
-    id: string
+    id: string;
+    role?: string;
 }
 
 let host = getHost() + "/api/auth/callback/home";
 
 // It's a little dirty code, but it's working! It's converting CAS auth to OAuth formatting
+
 
 export default function HomeOauth<P extends Record<string, any> = Profile>(): OAuthConfig<P> {
     return {
@@ -23,7 +25,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         },
         token: {
             url: "http://localhost:3000/api/debug",
-            async request({params}: any) {
+            async request({params}) {
                 if (!params.code)
                     throw new Error("There is no cas ticket");
                 const query = new URLSearchParams({service: host, ticket: params.code});
@@ -43,15 +45,18 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             }
         },
         userinfo: {
-            url: "https://example.com/oauth/userinfo",
-            // @ts-ignore
-            async request({tokens: {access_token, id_token}}) {
-                if (!access_token)
-                    throw new Error("Something went wrong during getting user info");
-                return {id: access_token, role: id_token}
+            // Custom implementation of userinfo
+            async request({ tokens }) {
+                if (!tokens.access_token) {
+                    throw Error("No login in the auth request")
+                }
+                return {
+                    id: tokens.access_token as string,
+                    role: tokens.id_token as string,
+                } as any;
             }
         },
-        async profile(profile) {
+        async profile(profile, tokens) {
             const addedAvatars = await prisma.user.findMany({
                 select: {
                     image: {
@@ -62,7 +67,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 }
             });
             // get random avatar
-            let image: string | null = null;
+            // let image: string | null = null;
             // do {
             //     image = avatars[Math.floor(Math.random() * avatars.length)];
             // } while (addedAvatars.find(a => a.image?.id == image));
@@ -71,7 +76,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
                 id: profile.id,
                 role: profile.role,
                 nickname: null,
-                imageId: image
+                imageId: null
             };
         },
         clientId: '1'

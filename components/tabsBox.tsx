@@ -8,7 +8,9 @@ function a11yProps(index: number) {
     };
 }
 
-export default function TabsBox(props: {
+
+
+export default function TabsBox<N extends number>(props: {
     value: number, onChange: (event: React.SyntheticEvent, newValue: number) => void,
     tabs: string[],
     color?: string,

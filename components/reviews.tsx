@@ -8,6 +8,8 @@ import Comments from "./comments";
 import LoadingBlock from "./loadingBlock";
 
 import {CircularProgress} from "@mui/material";
+import {UUID_REGEX} from "../lib/constants/uuidRegex";
+import {Router} from "express";
 
 export function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">
@@ -28,23 +30,22 @@ export default function Reviews({tutorId}: { tutorId: string }) {
 
     async function fetchReviews(cursor: any) {
         // parse dates to Date objects
-        return await (await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
+        return await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(el => el?.json());
     }
 
     async function fetchReview() {
-        const result = await (await fetch(`/api/v1/reviews/${reviewId}`, {
+        const result = await fetch(`/api/v1/reviews/${reviewId}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(res => res?.json());
         // parse dates to Date objects
         result.createdAt = new Date(result.createdAt);
         return result;
     }
 
-    // @ts-ignore
     const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
         cacheTime: 0,
         refetchOnWindowFocus: false,
@@ -60,9 +61,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
         [`tutor-${tutorId}-reviews`],
         ({pageParam = 0}) => fetchReviews(pageParam),
-        // @ts-ignore
         {
-            // @ts-ignore
             getNextPageParam: (lastPage) => {
                 return getCursor(lastPage);
             },
@@ -72,7 +71,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     )
     const reviews = useMemo(() => {
         const added = new Set();
-        // @ts-ignore
         const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
             if (added.has(review.id)) return false;
             added.add(review.id);
@@ -109,7 +107,12 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             document.removeEventListener('scroll', handleScroll)
         }
     }, [fetchNextPage, hasNextPage]);
-    const isLoading = hasNextPage === undefined || isFetchingNextPage || (reviewId !== undefined && isFetching);
+    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
+        router.push('/404');
+        return (<></>);
+    }
+
+    const isLoading = hasNextPage === undefined || isFetchingNextPage || isFetching;
 
     return (
         <>

@@ -17,6 +17,8 @@ import dynamic from "next/dynamic";
 import {Box, Button, Divider, IconButton} from '@mui/material';
 
 import useIsMobile from "../lib/react/isMobileContext";
+import {Session} from "next-auth";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
@@ -76,7 +78,10 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
 function AuthSection(props: DefaultNavbarParams) {
     // const router = useRouter()
     const isMobile = useIsMobile();
-    const {data: session, status} = useSession()
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    }
     const authenticated = status === 'authenticated';
     const loading = status === 'loading';
     const [open, setOpen] = useState(false)
@@ -129,7 +134,6 @@ function AuthSection(props: DefaultNavbarParams) {
                 opened={open}/>
 
             {!isMobile ?
-                // @ts-ignore
                 <Link href={`/users/${session?.user?.id}`} className={`${style.authText}`}>
 
                     <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
@@ -152,10 +156,9 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
     return (
         <div className="w-full">
             <div className={"flex justify-between h-12 pl-5 pr-5 items-center " + (props.home ? "mt-2" : "")}>
-                {/* @ts-ignore */}
                 <IconButton
                     aria-label="close"
-                    onClick={props.onClick()}
+                    onClick={props.onClick}
                     className="md:w-[3.5rem] md:h-[3.5rem] w-[2.5rem] h-[2.5rem]"
                 >
                     <Image className="flex" src={burger} alt="burger"/>
@@ -240,7 +243,6 @@ function ItemsList(props: {
         onKeyDown={props.onClick}
     >
         <List>
-            {/*  @ts-ignore  */}
             {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
                 {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
@@ -255,7 +257,6 @@ function ItemsList(props: {
         <Divider/>
         {!home ?
             <List>
-                {/*  @ts-ignore  */}
                 {[
                     {icon: UsersIcon, text: "Профиль", alt: "users"},
                 ].map((item, index) => (
@@ -276,7 +277,10 @@ function Navbar(props: { needsAuth: boolean }) {
     });
     const router = useRouter();
     const isMobile = useIsMobile();
-    const {data: session, status} = useSession();
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    };
     const authenticated = status == "authenticated";
     const loading = status == "loading";
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
@@ -302,34 +306,33 @@ function Navbar(props: { needsAuth: boolean }) {
         setState({...state, warning: false});
     };
     const toggleDrawer =
-        () =>
-            (event: React.KeyboardEvent | React.MouseEvent) => {
-                if (
-                    event &&
-                    event.type === 'keydown' &&
-                    ((event as React.KeyboardEvent).key === 'Tab' ||
-                        (event as React.KeyboardEvent).key === 'Shift')
-                ) {
-                    return;
-                }
+        (event: React.KeyboardEvent | React.MouseEvent) => {
+            if (
+                event &&
+                event.type === 'keydown' &&
+                ((event as React.KeyboardEvent).key === 'Tab' ||
+                    (event as React.KeyboardEvent).key === 'Shift')
+            ) {
+                return;
+            }
 
-                setState({...state, opened: !state.opened});
-            };
+            setState({...state, opened: !state.opened});
+        };
 
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{home, handleClickOpenWarning: callback, toggleDrawer}}/>
+            <Nav {...{home, handleClickOpenWarning: callback, toggleDrawer: () => toggleDrawer}}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer
                     anchor='left'
                     open={state.opened}
-                    onClose={toggleDrawer()}
-                    onOpen={toggleDrawer()}
+                    onClose={toggleDrawer}
+                    onOpen={toggleDrawer}
                     disableBackdropTransition={false}
                     // disableDiscovery={true}
                 >
-                    <ItemsList onClick={toggleDrawer()} {...{handleClickOpenWarning: callback}}/>
+                    <ItemsList onClick={toggleDrawer} {...{handleClickOpenWarning: callback}}/>
                 </SwappableDrawer> : null}
 
         </header>

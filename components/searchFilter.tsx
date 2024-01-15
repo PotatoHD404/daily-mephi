@@ -106,7 +106,6 @@ export default function SearchFilter(props: { name: string, options: string[], d
                            }}
                 />
             </div>
-            {/* @ts-ignore */}
             <div
                 className="overflow-y-auto overflow-x-visible flex flex-wrap px-4"> {props.options.map((option, index) => (
                     <FormControlLabel

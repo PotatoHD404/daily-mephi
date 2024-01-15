@@ -7,6 +7,8 @@ import {Skeleton} from "@mui/material";
 import RippledButton from "./rippledButton";
 import React from "react";
 import HoverRating from "./rating";
+import {Session} from "next-auth";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
     if (props.isLoading) {
@@ -26,17 +28,20 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
         ;
 }
 
-export default function TutorProfile({tutor}: { tutor: any }) {
+export default function TutorProfile({tutor, loading = false}: { tutor: any, loading?: boolean }) {
     async function getTutor() {
-        return await (await fetch(`/api/v1/tutors/${tutor.id}`, {
+        return await fetch(`/api/v1/tutors/${tutor.id}`, {
             method: 'GET',
             credentials: 'same-origin'
-        }))?.json();
+        }).then(el => el?.json());
     }
 
     const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
-    const isLoading = isFetching || !data;
-    const session = useSession();
+    const isLoading = isFetching || !data || loading;
+    const session = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    };
     const authenticating = session.status === 'loading';
     const authenticated = session.status === 'authenticated';
 

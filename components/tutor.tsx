@@ -14,7 +14,7 @@ import useIsMobile from "../lib/react/isMobileContext";
 export default function Tutor() {
     const isMobile = useIsMobile();
     return (
-        <Link href="/tutors/1">
+        <Link href="/tutors/00000000-0000-0000-0000-000000000000">
 
             <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white
@@ -69,7 +69,6 @@ export default function Tutor() {
                 </div>
 
                 <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem]">
-                    {/* @ts-ignore */}
                     <div className="h-fit mb-2 text-left flex flex-wrap">
                         <span className="font-bold h-fit mr-2 text-[1.1rem]">Дисциплины: </span>
                         {["Теория функций копмплексных переменных",

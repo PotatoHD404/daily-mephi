@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {SetStateAction, useEffect, useState} from "react";
 import Image from "next/image";
 
 import QuoteIco from "images/quote.svg";
@@ -12,7 +12,7 @@ import NewPost from "components/newPost";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
 import {getCache, setCache} from "../../lib/utils";
-import { prisma } from "../../lib/database/prisma";
+import {prisma} from "../../lib/database/prisma";
 import TutorProfile from "../../components/tutorProfile";
 import Reviews from "../../components/reviews";
 import {useRouter} from "next/router";
@@ -64,7 +64,7 @@ function Tabs(props: { tutorId: any }) {
 
     const [value, setValue] = React.useState<0 | 1 | 2>(0);
     const [postValue, setPostValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent | null, newValue: 0 | 1 | 2) => {
+    const handleChange = (_: React.SyntheticEvent | null, newValue: 0 | 1 | 2) => {
         setValue(newValue);
         setPostValue(newValue);
     };
@@ -83,8 +83,9 @@ function Tabs(props: { tutorId: any }) {
         <>
             <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
                         setValue={setPostValue}/>
-            {/* @ts-ignore */}
-            <TabsBox value={value} onChange={handleChange} tabs={["Отзывы", "Цитаты", "Материалы"]}/>
+            <TabsBox value={value}
+                     onChange={handleChange as any}
+                     tabs={["Отзывы", "Цитаты", "Материалы"]}/>
 
             <div className="mt-6 mx-auto">
                 <div className="flex-wrap space-y-4 w-full">
@@ -108,7 +109,10 @@ function Tabs(props: { tutorId: any }) {
 
 function Tutor({tutor}: { tutor: any }) {
     const isMobile = useIsMobile();
+    const router = useRouter()
 
+    if (tutor === undefined)
+        return (<></>);
 
     return (
         <>
@@ -117,7 +121,7 @@ function Tutor({tutor}: { tutor: any }) {
             {isMobile == null ? null :
                 <>
                     <div className="flex-wrap w-full">
-                        <TutorProfile tutor={tutor}/>
+                        <TutorProfile tutor={tutor} loading={router.isFallback}/>
                         <div className="w-full mt-7">
                             <Tabs tutorId={tutor.id}/>
                         </div>
@@ -156,7 +160,7 @@ export async function getStaticPaths() {
         paths: tutors.map((tutor) =>
             ({params: {id: tutor.id}})
         ),
-        fallback: false, // can also be true or 'blocking'
+        fallback: true, // can also be true or 'blocking'
     }
 }
 

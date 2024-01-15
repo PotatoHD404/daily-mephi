@@ -10,7 +10,6 @@ const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
     createContext,
     onError({ error }: any) {
-        // @ts-ignore
         if(error.code === 'INTERNAL_SERVER_ERROR' && error.cause?.code === 'ERR_HTTP_HEADERS_SENT') {
             // Ignore this error, it's not really an error
             return;

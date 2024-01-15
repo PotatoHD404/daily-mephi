@@ -179,7 +179,13 @@ function CustomAutocomplete(props: { options: any, label: string, className?: st
     );
 }
 
-function StyledTextField(props: { height: string, rows?: number, label: string, multiline?: boolean, className?: string }) {
+function StyledTextField(props: {
+    height: string,
+    rows?: number,
+    label: string,
+    multiline?: boolean,
+    className?: string
+}) {
     return <TextField label={props.label}
                       variant="outlined" className={`w-full ${props.className}`}
                       sx={{
@@ -232,7 +238,8 @@ function StyledTextField(props: { height: string, rows?: number, label: string, 
                       multiline={props.multiline}
                       rows={props.rows}/>;
 }
-
+// bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
+//              bg-[#F4BDE6] bg-[#C7A8F3]
 function Material(props: { postForm: any }) {
     const [file, setFile] = React.useState('');
     return (
@@ -240,11 +247,9 @@ function Material(props: { postForm: any }) {
             <FormGroup className="w-full flex">
                 <StyledTextField label="Название"
                                  height='40px'/>
-                {/* @ts-ignore */}
                 <div
                     className="mb-[1.37rem] font-bold flex flex-wrap w-full text-sm leading-4 mt-[4px]">
-                    <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
-             bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
+                    <div className="bg-[#C7A8F3] hidden"></div>
                     {[
                         {
                             color: "#DDD9DF",

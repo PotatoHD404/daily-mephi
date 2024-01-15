@@ -14,7 +14,6 @@ export default function CustomDialog(props: { onClose?: () => void, open: boolea
         }}
         fullWidth
     >
-        {/* @ts-ignore */}
         {props.children}
     </Dialog>;
 }
