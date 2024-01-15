@@ -75,14 +75,14 @@ export const usersRouter = t.router({
             if (nickname && (await isToxic(nickname))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
-                    message: 'Nickname is toxic'
+                    message: 'Никнейм токсичен'
                 });
             }
             // check if bio is toxic
             if (bio && (await isToxic(bio))) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
-                    message: 'Bio is toxic'
+                    message: 'Био токсично'
                 });
             }
             return prisma.$transaction(async (prisma: any) => {
@@ -93,7 +93,7 @@ export const usersRouter = t.router({
                             if (user && user.id !== user.id) {
                                 throw new TRPCError({
                                     code: 'BAD_REQUEST',
-                                    message: 'Nickname is already taken'
+                                    message: 'Никнейм уже занят'
                                 });
                             }
                         }
@@ -103,7 +103,7 @@ export const usersRouter = t.router({
                             if (user && user.id !== user.id) {
                                 throw new TRPCError({
                                     code: 'BAD_REQUEST',
-                                    message: 'Image already taken'
+                                    message: 'Аватар уже занят'
                                 });
                             }
                         }

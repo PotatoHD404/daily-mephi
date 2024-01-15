@@ -3,17 +3,17 @@ import {useRouter} from "next/router";
 import React, {useEffect} from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
-import {useQuery} from "@tanstack/react-query";
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
-import { prisma } from "lib/database/prisma";
+import {prisma} from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {getToken} from "next-auth/jwt";
 import {Session} from "next-auth";
 import {MyAppUser} from "../../lib/auth/nextAuthOptions";
+import {trpc} from "../../server/utils/trpc";
 
-function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean}) {
+function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
     const {status} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
@@ -34,44 +34,31 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 }
 
 
-function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, changeNeedsAuth: (a: boolean) => void }) {
-
-
-    async function getUser() {
-        return await fetch(`/api/v1/users/${id}`, {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(el => el?.json()).then((data) => {
-            if (data?.error) {
-                changeNeedsAuth(true);
-            }
-            data.image = data.image?.url;
-            return data;
-        });
-    }
-
-    const {data, isFetching, refetch, isError, error} = useQuery([`user-${user.id}`], getUser, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
-    const isLoading = isFetching;
+function UserProfile({user, me, changeNeedsAuth}: {
+    user?: MyAppUser,
+    me?: boolean,
+    changeNeedsAuth: (a: boolean) => void
+}) {
     const router = useRouter();
     const {id} = router.query;
 
-
-
+    if (typeof id != "string" || UUID_REGEX.test(id)) {
+        // router.push('/404');
+        return (<></>);
+    }
 
     const {data: session} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     };
     const isMe = session?.user?.id === id;
-
-    useEffect(() => {
-        if(id)
-            refetch();
-    }, [router.pathname, refetch, id])
+    const result = trpc.users.getOne.useQuery({id});
+    const {data, isFetching, refetch, isError, error} = result;
+    const isLoading = isFetching;
+    // useEffect(() => {
+    //     if (id)
+    //         refetch();
+    // }, [router.pathname, refetch, id])
     useEffect(() => {
         if (isError && error) {
             // console.log(`Ошибка ${error}`)
@@ -93,13 +80,13 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
 
     return (
         <>
-        {user ?
-            <SEO title={`Пользователь ${user.nickname}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
-                    // @ts-ignore
-                  <SEO title={`Пользователь ${data.name || '...'}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/users/${id}/thumbnail.png`}/>
-        }
+            {user ?
+                <SEO title={`Пользователь ${user.nickname}`}
+                     thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
+                // @ts-ignore
+                <SEO title={`Пользователь ${data.name || '...'}`}
+                     thumbnail={`https://daily-mephi.ru/api/v1/users/${id}/thumbnail.png`}/>
+            }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={isMe} user={data ?? user} isLoading={isLoading}/>
@@ -109,8 +96,6 @@ function UserProfile({user, me, changeNeedsAuth}: { user?: any, me?: boolean, ch
     );
 
 }
-
-
 
 
 export const getServerSideProps: GetServerSideProps = async (props) => {

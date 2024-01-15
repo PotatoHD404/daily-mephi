@@ -1,4 +1,4 @@
-import { createOpenApiNextHandler } from "trpc-openapi";
+import {createOpenApiNextHandler} from "trpc-openapi";
 import {appRouter} from "server";
 import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
@@ -9,8 +9,8 @@ import {NextApiRequest, NextApiResponse} from "next";
 const nextApiHandler = createOpenApiNextHandler({
     router: appRouter,
     createContext,
-    onError({ error }: any) {
-        if(error.code === 'INTERNAL_SERVER_ERROR' && error.cause?.code === 'ERR_HTTP_HEADERS_SENT') {
+    onError({error}: any) {
+        if (error.code === 'INTERNAL_SERVER_ERROR' && error.cause?.code === 'ERR_HTTP_HEADERS_SENT') {
             // Ignore this error, it's not really an error
             return;
         }
@@ -53,8 +53,7 @@ export default async function handler(
     // pass the (modified) req/res to the handler
     try {
         await nextApiHandler(req, res);
-    }
-    catch (e: any) {
+    } catch (e: any) {
         if (e?.code === 'ERR_HTTP_HEADERS_SENT') {
             // Ignore this error, it's not really an error
             return;

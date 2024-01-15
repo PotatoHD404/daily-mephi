@@ -57,7 +57,7 @@ export const reviewsRouter = t.router({
     })
         .input(z.object({
             id: z.string().uuid(),
-            take: z.number().default(10),
+            take: z.number().int().min(1).max(100).default(10),
             cursor: z.string().optional(),
         }))
         .output(z.any())

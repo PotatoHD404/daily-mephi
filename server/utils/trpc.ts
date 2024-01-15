@@ -73,6 +73,8 @@ export const trpc = createTRPCNext<AppRouter>({
     ssr: false,
 });
 
+trpc.auth = {};
+
 /**
  * Inference helper for inputs.
  *

@@ -92,7 +92,7 @@ function AuthSection(props: DefaultNavbarParams) {
         if (session?.user && authenticated && session.user.name === null && !loading) {
             setOpen(true);
         }
-    }, [status, session, authenticated, loading])
+    }, [status, session])
 
     // export async function getInitialProps(context: any) {
     //     const session = await getSession(context)
@@ -297,7 +297,7 @@ function Navbar(props: { needsAuth: boolean }) {
         } else {
             setState(s => ({...s, warning: false}));
         }
-    }, [props.needsAuth, router.pathname, authenticated, loading, callback]);
+    }, [status, props.needsAuth, router.pathname, callback]);
 
     const handleCloseWarning = async () => {
         if (props.needsAuth) {

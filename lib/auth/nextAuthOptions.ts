@@ -1,7 +1,7 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
-import {PrismaClient} from "@prisma/client"
-import {Session, User} from "next-auth";
+import {PrismaClient, User} from "@prisma/client"
+// import {Session, User} from "next-auth";
 import type {NextAuthOptions} from "next-auth"
 import {prisma} from "lib/database/prisma";
 import {AdapterUser} from "next-auth/adapters";
@@ -10,14 +10,8 @@ import {AdapterUser} from "next-auth/adapters";
 // const host = getHost() + "/api/auth/callback/home";
 //
 // const query = new URLSearchParams({service: host});
-
-export interface MyAppUser extends User, AdapterUser {
-    id: string;
-    name: string;
-    email: string;
-    // customClaim?: string; // Add any custom fields you need
-    role?: string
-}
+// get user type from prisma
+export type MyAppUser = User
 
 export const nextAuthOptions: NextAuthOptions = {
     // https://next-auth.js.org/providers/overview

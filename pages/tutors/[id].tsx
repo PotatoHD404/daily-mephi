@@ -1,4 +1,4 @@
-import React, {SetStateAction, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 
 import QuoteIco from "images/quote.svg";

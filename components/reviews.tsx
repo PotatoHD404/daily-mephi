@@ -1,5 +1,4 @@
 import {useRouter} from "next/router";
-import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
 import React, {useEffect, useMemo} from "react";
 import {ReviewType} from "../lib/database/types";
 import UserHeader from "./userHeader";
@@ -9,7 +8,7 @@ import LoadingBlock from "./loadingBlock";
 
 import {CircularProgress} from "@mui/material";
 import {UUID_REGEX} from "../lib/constants/uuidRegex";
-import {Router} from "express";
+import {trpc} from "../server/utils/trpc";
 
 export function Review({review}: { review: ReviewType }) {
     return (<div className="text-[1.7rem] w-full whiteBox">
@@ -18,7 +17,8 @@ export function Review({review}: { review: ReviewType }) {
                     date={review.createdAt}/>
         <h1 className="font-bold text-[1.1rem] leading-6">{review.header}</h1>
         <div className="mb-2 text-[1.0rem] leading-5">{review.body}</div>
-        <Reactions type={"review"} id={review.id} likes={review.likes} dislikes={review.dislikes} comments={review.commentCount}/>
+        <Reactions type={"review"} id={review.id} likes={review.likes} dislikes={review.dislikes}
+                   comments={review.commentCount}/>
         <div className="w-full bg-black mx-auto mb-4 h-[2px]"/>
         <Comments/>
     </div>);
@@ -27,6 +27,16 @@ export function Review({review}: { review: ReviewType }) {
 export default function Reviews({tutorId}: { tutorId: string }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
+
+    if (UUID_REGEX.test(tutorId)) {
+        // router.push('/404');
+        return (<></>);
+    }
+
+    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
+        // router.push('/404');
+        return (<></>);
+    }
 
     async function fetchReviews(cursor: any) {
         // parse dates to Date objects
@@ -46,29 +56,37 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         return result;
     }
 
-    const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false // disable this query from automatically running
-    });
+    // const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
+    //     cacheTime: 0,
+    //     refetchOnWindowFocus: false,
+    //     enabled: false // disable this query from automatically running
+    // });
 
-    function getCursor(lastPage: { next_cursor: any; }) {
-        return lastPage.next_cursor ?? undefined;
-        // return lastPage.reviews_count;
-    }
+    const {data: data1, isFetching, refetch} = trpc.reviews.getOne.useQuery({id: reviewId});
 
 
-    const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
-        [`tutor-${tutorId}-reviews`],
-        ({pageParam = 0}) => fetchReviews(pageParam),
-        {
-            getNextPageParam: (lastPage) => {
-                return getCursor(lastPage);
-            },
-            refetchOnWindowFocus: false,
-            enabled: true
-        }
-    )
+    const {
+        data,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage
+    } = trpc.reviews.getFromTutor.useInfiniteQuery({id: tutorId}, {
+        getNextPageParam: (lastPage: { next_cursor: any }) => {
+            return lastPage.next_cursor ?? undefined;
+        },
+    })
+
+    // const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
+    //     [`tutor-${tutorId}-reviews`],
+    //     ({pageParam = 0}) => fetchReviews(pageParam),
+    //     {
+    //         getNextPageParam: (lastPage) => {
+    //             return getCursor(lastPage);
+    //         },
+    //         refetchOnWindowFocus: false,
+    //         enabled: true
+    //     }
+    // )
     const reviews = useMemo(() => {
         const added = new Set();
         const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
@@ -107,8 +125,8 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             document.removeEventListener('scroll', handleScroll)
         }
     }, [fetchNextPage, hasNextPage]);
-    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
-        router.push('/404');
+    if (UUID_REGEX.test(reviewId)) {
+        // router.push('/404');
         return (<></>);
     }
 
