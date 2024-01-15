@@ -8,6 +8,7 @@ import {useState} from "react";
 import {INITIAL_VIEWPORTS} from '@storybook/addon-viewport';
 
 import {initialize, mswLoader} from 'msw-storybook-addon';
+import {withTRPC} from "@trpc/next";
 
 initialize({
     onUnhandledRequest: "bypass",
@@ -35,7 +36,7 @@ export const decorators: any[] = [
                     { /* @ts-ignore */}
                     <IsMobileProvider value={isMobile}>
                         { /* @ts-ignore */}
-                        {StoryFn()}
+                        {withTRPC(StoryFn())}
                     </IsMobileProvider>
                 </QueryClientProvider>
             </SessionProvider>
