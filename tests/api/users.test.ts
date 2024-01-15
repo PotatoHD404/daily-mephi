@@ -38,7 +38,7 @@ function generateEditInput(): inferProcedureInput<AppRouter["users"]["edit"]> {
     return {
         nickname: faker.internet.userName(),
         bio: faker.lorem.sentence(15),
-        image: faker.datatype.uuid(),
+        image: faker.string.uuid(),
         csrfToken: '123',
         recaptchaToken: '123'
     };
@@ -54,7 +54,7 @@ describe('[GET] /api/v1/users/{id}', () => {
         expect(apiUsers).toEqual(usersWithImages)
 
         await expect(trpc.users.getOne({id: '123'})).rejects.toThrowError(TRPCError) // uuid in not valid
-        await expect(trpc.users.getOne({id: faker.datatype.uuid()})).rejects.toThrowError(TRPCError) // not found
+        await expect(trpc.users.getOne({id: faker.string.uuid()})).rejects.toThrowError(TRPCError) // not found
     });
 });
 
@@ -153,7 +153,7 @@ describe('[PUT] /api/v1/users', () => {
             })
         });
 
-        const wrongImageId = faker.datatype.uuid();
+        const wrongImageId = faker.string.uuid();
 
         const imageData: inferProcedureInput<AppRouter["users"]["edit"]> = {
             nickname: currUser.nickname || undefined,

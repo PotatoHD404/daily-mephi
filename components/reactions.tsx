@@ -76,6 +76,9 @@ export default function Reactions(props: {
                         id: props.id
                     })
                 });
+
+            // const data =
+
             await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
         } else if (type === 'dislike' && like === false || type === 'like' && like === true) {
             if (!like) {

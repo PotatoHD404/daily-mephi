@@ -19,7 +19,7 @@ describe('[GET] /api/v1/disciplines', () => {
 
         function generateDiscipline(): Discipline {
             return {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
                 name: faker.lorem.sentence(),
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.past(),
@@ -49,7 +49,7 @@ describe('[GET] /api/v1/faculties', () => {
     it('Test get all', async () => {
         function generateFaculty(): Faculty {
             return {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
                 name: faker.lorem.sentence(),
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.past(),
@@ -123,7 +123,7 @@ describe('[GET] /api/v1/get_avatars', () => {
     it('Test get all', async () => {
         function generateUser() {
             return {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
             }
         }
 
@@ -138,7 +138,7 @@ describe('[GET] /api/v1/get_avatars', () => {
 
         function generateFile(): File {
             const res = {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
                 url: faker.internet.url(),
                 altUrl: faker.internet.url(),
                 createdAt: faker.date.past(),
@@ -149,7 +149,7 @@ describe('[GET] /api/v1/get_avatars', () => {
                 tutorId: null,
                 materialId: null,
                 tag: faker.datatype.boolean() ? "avatar" : "other",
-                size: faker.datatype.number(),
+                size: faker.number.int({min: 0, max: 10000000}),
             }
             // remove user id from users array
             if (res.userId !== null && res.tag === "avatar")
@@ -181,7 +181,7 @@ describe('[GET] /api/v1/top', () => {
     async function initTest() {
         function generateImage() {
             return {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
                 tag: "avatar",
                 filename: faker.system.fileName(),
                 url: faker.internet.url(),
@@ -199,9 +199,9 @@ describe('[GET] /api/v1/top', () => {
         function generateUser() {
 
             let res = {
-                id: faker.datatype.uuid(),
+                id: faker.string.uuid(),
                 nickname: "",
-                rating: faker.datatype.number({min: 0, max: 100}),
+                rating: faker.number.int({min: 0, max: 100}),
                 imageId: faker.datatype.boolean() ? faker.helpers.arrayElement(imageIds) : null,
             };
             do {

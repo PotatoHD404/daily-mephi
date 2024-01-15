@@ -13,8 +13,8 @@ export default async function seed() {
 
     function generateSemester(): Semester {
         return {
-            id: faker.datatype.uuid(),
-            name: faker.random.numeric(2),
+            id: faker.string.uuid(),
+            name: faker.string.numeric(2),
             createdAt: faker.date.past(),
             updatedAt: faker.date.past(),
             deletedAt: null,

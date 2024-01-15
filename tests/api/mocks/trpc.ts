@@ -1,8 +1,6 @@
 import {AppRouter, appRouter} from "server";
 import {prisma} from "lib/database/prisma";
 import {notion} from "lib/database/notion";
-import {initTRPC} from "@trpc/server";
-import {Context} from "server/utils/context";
 import {t} from "server/utils";
 
 // req: NextApiRequest; res: NextApiResponse<any>; prisma: PrismaClient<PrismaClientOptions, never, RejectOnNotFound | RejectPerOperation | undefined>; notion: Client

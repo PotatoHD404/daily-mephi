@@ -2122,6 +2122,18 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
+"@potatohd/trpc-openapi@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@potatohd/trpc-openapi/-/trpc-openapi-1.2.2.tgz#eb76bef9916707c618019a050265ac4196a6dcfc"
+  integrity sha512-9/sKEHLwhHXejnSjgj60K+tW3s6MotaVQx/5psa5jYjQnOkPIG1Pi5n/XaVOv+ee++/oArXBKQh/Y6kOWqk1Fg==
+  dependencies:
+    co-body "^6.1.0"
+    h3 "^1.6.4"
+    lodash.clonedeep "^4.5.0"
+    node-mocks-http "^1.12.2"
+    openapi-types "^12.1.1"
+    zod-to-json-schema "^3.21.1"
+
 "@prisma/client@^5.8.0":
   version "5.8.0"
   resolved "https://registry.yarnpkg.com/@prisma/client/-/client-5.8.0.tgz#5f4c8c1c7cb60b1f4d39082bb214d048ffeb3730"
@@ -13040,18 +13052,6 @@ tree-kill@1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/tree-kill/-/tree-kill-1.2.2.tgz#4ca09a9092c88b73a7cdc5e8a01b507b0790a0cc"
   integrity sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==
-
-trpc-openapi@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/trpc-openapi/-/trpc-openapi-1.2.0.tgz#2aa1495cd66809fc28a4a512992c6a3e7b865c71"
-  integrity sha512-pfYoCd/3KYXWXvUPZBKJw455OOwngKN/6SIcj7Yit19OMLJ+8yVZkEvGEeg5wUSwfsiTdRsKuvqkRPXVSwV7ew==
-  dependencies:
-    co-body "^6.1.0"
-    h3 "^1.6.4"
-    lodash.clonedeep "^4.5.0"
-    node-mocks-http "^1.12.2"
-    openapi-types "^12.1.1"
-    zod-to-json-schema "^3.21.1"
 
 ts-api-utils@^1.0.1:
   version "1.0.3"

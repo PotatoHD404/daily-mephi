@@ -1,4 +1,4 @@
-import {createOpenApiNextHandler} from "trpc-openapi";
+import {createOpenApiNextHandler} from "@potatohd/trpc-openapi";
 import {appRouter} from "server";
 import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
