@@ -41,40 +41,39 @@ function UserProfile({user, me, changeNeedsAuth}: {
 }) {
     const router = useRouter();
     const {id} = router.query;
-
-    if (typeof id != "string" || UUID_REGEX.test(id)) {
-        // router.push('/404');
-        return (<></>);
-    }
-
-    const {data: session} = useSession() as any as {
+    const {data: session, status} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     };
-    const isMe = session?.user?.id === id;
-    const result = trpc.users.getOne.useQuery({id});
-    const {data, isFetching, refetch, isError, error} = result;
+    const isMobile = useIsMobile();
+
+    // Ensure id is a string
+
+    const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
+    const {data, isFetching, isError, error} = validId ?
+        trpc.users.getOne.useQuery({id: validId}) : {
+            data: null,
+            isFetching: false,
+            isError: false,
+            error: null
+        };
     const isLoading = isFetching;
-    // useEffect(() => {
-    //     if (id)
-    //         refetch();
-    // }, [router.pathname, refetch, id])
+    const isMe = session?.user?.id === validId;
+
     useEffect(() => {
         if (isError && error) {
-            // console.log(`Ошибка ${error}`)
-            console.log(error)
-            // router.push('/500');
+            console.log(error);
         }
-    }, [isError, error, router])
-    const isMobile = useIsMobile();
+    }, [isError, error, router]);
+
     useEffect(() => {
-        if (me)
+        if (me) {
             changeNeedsAuth(true);
-        // window.onpopstate = () => changeNeedsAuth(true);
+        }
     }, [changeNeedsAuth, me]);
 
-    if (typeof id != "string" || UUID_REGEX.test(id)) {
-        // router.push('/404');
+    // Early return for invalid id
+    if (!validId) {
         return (<></>);
     }
 
@@ -83,9 +82,8 @@ function UserProfile({user, me, changeNeedsAuth}: {
             {user ?
                 <SEO title={`Пользователь ${user.nickname}`}
                      thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
-                // @ts-ignore
-                <SEO title={`Пользователь ${data.name || '...'}`}
-                     thumbnail={`https://daily-mephi.ru/api/v1/users/${id}/thumbnail.png`}/>
+                <SEO title={`Пользователь ${data?.name || '...'}`}
+                     thumbnail={`https://daily-mephi.ru/api/v1/users/${validId}/thumbnail.png`}/>
             }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
@@ -94,9 +92,7 @@ function UserProfile({user, me, changeNeedsAuth}: {
             }
         </>
     );
-
 }
-
 
 export const getServerSideProps: GetServerSideProps = async (props) => {
     const {req, query} = props;

@@ -4,9 +4,9 @@ import {extToMimes} from "lib/constants/extToMimes";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import {func_ids} from "lib/constants/notionFuncIds";
 import {TRPCError} from "@trpc/server";
-import {isAuthorized} from "middlewares/isAuthorized";
-import {verifyCSRFToken} from "middlewares/verifyCSRFToken";
-import {verifyRecaptcha} from "middlewares/verifyRecaptcha";
+import {isAuthorized} from "server/middlewares/isAuthorized";
+import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
+import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {timeout} from "lib/utils";
 
 

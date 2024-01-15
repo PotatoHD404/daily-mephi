@@ -28,41 +28,18 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const router = useRouter();
     const {review: reviewId} = router.query;
 
-    if (UUID_REGEX.test(tutorId)) {
-        // router.push('/404');
-        return (<></>);
-    }
 
-    if (typeof reviewId != "string" || UUID_REGEX.test(reviewId)) {
-        // router.push('/404');
-        return (<></>);
-    }
 
-    async function fetchReviews(cursor: any) {
-        // parse dates to Date objects
-        return await fetch(`/api/v1/tutors/${tutorId}/reviews?cursor=${cursor}`, {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(el => el?.json());
-    }
+    const validReviewId = typeof reviewId === "string" && UUID_REGEX.test(reviewId) ? reviewId : null;
+    const validTutorId = UUID_REGEX.test(tutorId) ? tutorId : null;
+    const {data: data1, isFetching, refetch} = validReviewId ?
+        trpc.reviews.getOne.useQuery({id: validReviewId}) : {
+            data: null,
+            isFetching: false,
+            refetch: () => {
 
-    async function fetchReview() {
-        const result = await fetch(`/api/v1/reviews/${reviewId}`, {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(res => res?.json());
-        // parse dates to Date objects
-        result.createdAt = new Date(result.createdAt);
-        return result;
-    }
-
-    // const {data: data1, isFetching, refetch} = useQuery([`tutor-${tutorId}-reviews-${reviewId}`], fetchReview, {
-    //     cacheTime: 0,
-    //     refetchOnWindowFocus: false,
-    //     enabled: false // disable this query from automatically running
-    // });
-
-    const {data: data1, isFetching, refetch} = trpc.reviews.getOne.useQuery({id: reviewId});
+            }
+        };
 
 
     const {
@@ -76,17 +53,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         },
     })
 
-    // const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
-    //     [`tutor-${tutorId}-reviews`],
-    //     ({pageParam = 0}) => fetchReviews(pageParam),
-    //     {
-    //         getNextPageParam: (lastPage) => {
-    //             return getCursor(lastPage);
-    //         },
-    //         refetchOnWindowFocus: false,
-    //         enabled: true
-    //     }
-    // )
     const reviews = useMemo(() => {
         const added = new Set();
         const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
@@ -125,7 +91,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
             document.removeEventListener('scroll', handleScroll)
         }
     }, [fetchNextPage, hasNextPage]);
-    if (UUID_REGEX.test(reviewId)) {
+    if (!validReviewId || !validTutorId) {
         // router.push('/404');
         return (<></>);
     }

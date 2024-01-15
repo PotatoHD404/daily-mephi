@@ -2,7 +2,7 @@ import {httpBatchLink, loggerLink} from '@trpc/client';
 import {createTRPCNext} from '@trpc/next';
 
 import superjson from 'superjson';
-import type {AppRouter} from "../index";
+import type {AppRouter} from "server";
 import {inferRouterInputs, inferRouterOutputs} from "@trpc/server";
 
 export function getBaseUrl() {
@@ -72,8 +72,6 @@ export const trpc = createTRPCNext<AppRouter>({
      */
     ssr: false,
 });
-
-trpc.auth = {};
 
 /**
  * Inference helper for inputs.
