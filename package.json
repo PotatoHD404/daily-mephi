@@ -89,7 +89,7 @@
     "msw-storybook-addon": "2.0.0--canary.122.06f0c92.0",
     "prisma": "^5.8.0",
     "storybook": "^7.6.7",
-    "supertest": "^6.3.3",
+    "supertest": "^6.3.4",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
