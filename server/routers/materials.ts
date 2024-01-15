@@ -19,7 +19,7 @@ export const materialsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const material = await prisma.material.findUnique({
@@ -87,7 +87,7 @@ export const materialsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .query(async ({ctx: {prisma}}) => {
             return prisma.material.findMany({
@@ -129,7 +129,7 @@ export const materialsRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
@@ -209,7 +209,7 @@ export const materialsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             return await prisma.material.findMany({
                 where: {tutorId: id},
@@ -251,7 +251,7 @@ export const materialsRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string()
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

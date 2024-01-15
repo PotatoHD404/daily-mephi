@@ -1,6 +1,6 @@
 import {useRouter} from "next/router";
 import React, {useEffect, useMemo} from "react";
-import {ReviewType} from "lib/database/types";
+import {Review as ReviewType} from "@prisma/client";
 import UserHeader from "./userHeader";
 import Reactions from "./reactions";
 import Comments from "./comments";
@@ -29,7 +29,6 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const {review: reviewId} = router.query;
 
 
-
     const validReviewId = typeof reviewId === "string" && UUID_REGEX.test(reviewId) ? reviewId : null;
     const validTutorId = UUID_REGEX.test(tutorId) ? tutorId : null;
     const {data: data1, isFetching, refetch} = validReviewId ?
@@ -55,11 +54,11 @@ export default function Reviews({tutorId}: { tutorId: string }) {
 
     const reviews = useMemo(() => {
         const added = new Set();
-        const result = data?.pages.flatMap(page => page.reviews.filter((review: any) => {
+        const result = data?.pages.flatMap(reviews => reviews.filter((review) => {
             if (added.has(review.id)) return false;
             added.add(review.id);
             return true;
-        })).map((review: any) => {
+        })).map((review) => {
             review.createdAt = new Date(review.createdAt);
             return review;
         }) ?? [];
@@ -102,10 +101,12 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         <>
             {/* {reviewId && !isLoading && <Review review={data1}/>} */}
             {reviews.length > 0 ?
-                reviews.map((review, index) => (review.id != reviewId ?
-                    <Review key={index} review={review}/>
-                    : null))
-                : !isLoading && <div>Отзывов пока нет</div>}
+                reviews.map((review, index) => {
+                    if (review.id !== reviewId) {
+                        const data: {review: ReviewType} = {review};
+                        return <Review key={index} review={data}/>
+                    } else return null;
+                }) : !isLoading && <div>Отзывов пока нет</div>}
             {isLoading && reviews.length === 0 ?
                 <>
                     <LoadingBlock/>

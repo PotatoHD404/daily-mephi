@@ -21,7 +21,7 @@ export const reactionsRouter = t.router({
                 recaptchaToken: z.string()
             }
         ))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

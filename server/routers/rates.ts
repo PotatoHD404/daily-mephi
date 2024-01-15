@@ -16,7 +16,7 @@ export const ratesRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             return prisma.rate.findMany({
                 where: {tutorId: id},
@@ -48,7 +48,7 @@ export const ratesRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

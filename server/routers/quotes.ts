@@ -17,7 +17,7 @@ export const quotesRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const quote = await prisma.quote.findUnique({
                 where: {id},
@@ -53,7 +53,7 @@ export const quotesRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             return prisma.quote.findMany({
                 where: {tutorId: id},
@@ -88,7 +88,7 @@ export const quotesRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string()
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

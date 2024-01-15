@@ -19,7 +19,7 @@ export const commentsRouter = t.router({
             id: z.string().uuid(),
             comment_id: z.string().uuid()
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(({ctx: {prisma}, input: {id, type, comment_id: commentId}}) => {
             return prisma.comment.findUnique({
                 where: {
@@ -51,7 +51,7 @@ export const commentsRouter = t.router({
             type: z.enum(["news", "material", "review"]),
             id: z.string().uuid()
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id, type}}) => {
             let comments: {
                 id: string,
@@ -138,7 +138,7 @@ export const commentsRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string()
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

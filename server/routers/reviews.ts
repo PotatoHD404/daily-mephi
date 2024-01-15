@@ -18,7 +18,7 @@ export const reviewsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const review = await prisma.review.findUnique({
                 where: {id},
@@ -59,7 +59,7 @@ export const reviewsRouter = t.router({
             take: z.number().int().min(1).max(100).default(10),
             cursor: z.string().optional(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id, take, cursor}}) => {
                 return prisma.review.findMany({
                     where: {tutorId: id},
@@ -100,7 +100,7 @@ export const reviewsRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

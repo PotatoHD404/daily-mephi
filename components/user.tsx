@@ -23,7 +23,7 @@ export default function User(props: {
     me?: boolean,
     isLoading?: boolean
 }) {
-    props.userCourse = props.userCourse?.replace("B", "Б").replace("C", "С").replace("M", "М").replace("A", "А") || "Курс не указан";
+    // props.userCourse = props.userCourse?.replace("B", "Б").replace("C", "С").replace("M", "М").replace("A", "А") || "Курс не указан";
     // Tooltip opens on hover
     const isMobile = useIsMobile();
     const [open, setOpen] = React.useState(false);

@@ -55,7 +55,7 @@ export const utilsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.discipline.findMany();
         }),
@@ -66,7 +66,7 @@ export const utilsRouter = t.router({
     //     }
     // })
     //     .input(z.void())
-    //     .output(z.any())
+    //     /* .output(z.any()) */
     //     .query(async ({ctx: {prisma}}) => {
     //         return prisma.departments.findMany();
     //     }),
@@ -77,7 +77,7 @@ export const utilsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.faculty.findMany();
         }),
@@ -88,7 +88,7 @@ export const utilsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return (await prisma.semester.findMany()).map(el => {
                 el['name'] = el['name'][0];
@@ -102,7 +102,7 @@ export const utilsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.file.findMany(
                 {
@@ -126,7 +126,7 @@ export const utilsRouter = t.router({
         place: z.number().int().default(0),
         take: z.number().int().default(10),
     }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {place, take}}) => {
             const userCount = await prisma.user.count();
             let skip: number;
@@ -168,7 +168,7 @@ export const utilsRouter = t.router({
     //     }
     // })
     //     .input(z.void())
-    //     .output(z.any())
+    //     /* .output(z.any()) */
     //     .query(async ({ctx: {prisma}}) => {
     //         return "calculate_score";
     //     })

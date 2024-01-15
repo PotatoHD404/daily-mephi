@@ -13,7 +13,7 @@ export const newsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const news = prisma.news.findUnique({
                 where: {
@@ -43,7 +43,7 @@ export const newsRouter = t.router({
         }
     })
         .input(z.void())
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.news.findMany({
                 select: {
