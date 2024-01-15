@@ -69,7 +69,9 @@ export default function RegisterDialog(props: DialogProps) {
 
     }
 
-    const {data, refetch: fetchRegister, isFetching, isError} = trpc.register.useQuery(handleRegister, {
+    let tmp = trpc.materials.add.useMutation
+
+    const {data, refetch: fetchRegister, isFetching, isError} = trpc.users.edit.useQuery(handleRegister, {
         refetchOnWindowFocus: false,
         enabled: false // disable this query from automatically running
     });

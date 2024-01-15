@@ -61,9 +61,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
     const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
         [`tutor-${tutorId}-reviews`],
         ({pageParam = 0}) => fetchReviews(pageParam),
-        // @ts-ignore
         {
-            // @ts-ignore
             getNextPageParam: (lastPage) => {
                 return getCursor(lastPage);
             },

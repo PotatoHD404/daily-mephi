@@ -5,9 +5,11 @@ import GoldenCrown from "../images/golden_crown.svg";
 import SilverCrown from "../images/silver_crown.svg";
 import BronzeCrown from "../images/bronze_crown.svg";
 import Link from "next/link";
-import {useQuery} from "@tanstack/react-query";
 import {useRouter} from "next/router";
 import {Skeleton} from "@mui/material";
+import {trpc} from "../server/utils/trpc";
+import {getSession} from "next-auth/react";
+import {useQuery} from "@tanstack/react-query";
 
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -121,24 +123,17 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     }
 
     async function getUser() {
-        return await fetch(`/api/v1/top?${new URLSearchParams(params)}`, {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(el => el?.json());
+        return await getSession();
     }
+    useQuery({
+        queryKey: ["getSession"]
+    })
 
-    // @ts-ignore
-    const {data, isFetching, refetch, isError, error} = useQuery([`top`], getUser, {
-        cacheTime: 0,
-        refetchOnWindowFocus: false,
-        enabled: false  // disable this query from automatically running
+    const {data, isFetching, refetch, isError, error} = trpc.utils.top.useQuery({}, {
+        enabled: !props.isLoading
     });
     const isLoading = isFetching || props.isLoading;
     const router = useRouter();
-    useEffect(() => {
-        if (!props.isLoading)
-            refetch();
-    }, [router.pathname, props.isLoading, refetch])
     return <div className="w-[23.5] hidden md:block -mt-2">
         {
             props.withLabel ? (<>
@@ -178,7 +173,6 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                                          isLoading={isLoading}/>)}
                         </> :
                         // <></>
-                        // @ts-ignore
                         data?.map((user: any, index: number) => {
                             return <TopUser src={user.image || DeadCat} key={index} nickname={user.name}
                                             place={index + place} isLoading={isLoading} id={user.id}

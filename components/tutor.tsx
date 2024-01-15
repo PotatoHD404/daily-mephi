@@ -69,7 +69,6 @@ export default function Tutor() {
                 </div>
 
                 <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem]">
-                    {/* @ts-ignore */}
                     <div className="h-fit mb-2 text-left flex flex-wrap">
                         <span className="font-bold h-fit mr-2 text-[1.1rem]">Дисциплины: </span>
                         {["Теория функций копмплексных переменных",

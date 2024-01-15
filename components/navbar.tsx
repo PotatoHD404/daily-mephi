@@ -243,7 +243,6 @@ function ItemsList(props: {
         onKeyDown={props.onClick}
     >
         <List>
-            {/*  @ts-ignore  */}
             {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
                 {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
@@ -258,7 +257,6 @@ function ItemsList(props: {
         <Divider/>
         {!home ?
             <List>
-                {/*  @ts-ignore  */}
                 {[
                     {icon: UsersIcon, text: "Профиль", alt: "users"},
                 ].map((item, index) => (
@@ -279,7 +277,10 @@ function Navbar(props: { needsAuth: boolean }) {
     });
     const router = useRouter();
     const isMobile = useIsMobile();
-    const {data: session, status} = useSession();
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    };
     const authenticated = status == "authenticated";
     const loading = status == "loading";
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';

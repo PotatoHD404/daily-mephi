@@ -35,8 +35,10 @@ export const nextAuthOptions: NextAuthOptions = {
     callbacks: {
         async jwt({token, user, account, profile, trigger}) {
             // trigger === "signUp"
-            if (user) {
+            if (user || profile) {
                 token.user = user as MyAppUser;
+                // @ts-ignore
+                token.user.role = profile?.role;
                 // token.id = user?.id ?? profile?.id;
                 // token.role = user?.role ?? profile?.role;
             }
@@ -55,7 +57,7 @@ export const nextAuthOptions: NextAuthOptions = {
         }
     },
     // pages: {
-    //     // signIn: 'https://login.mephi.ru/login?' + query,
+    // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',
     //     // error: '/500', // Error code passed in query string as ?error=
     //     // verifyRequest: '/auth/verify-request', // (used for check email message)
