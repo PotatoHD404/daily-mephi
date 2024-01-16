@@ -5,6 +5,7 @@ import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Prisma} from ".prisma/client";
 import {DefaultArgs} from "@prisma/client/runtime/library";
+import {TRPCError} from "@trpc/server";
 
 // type PrismaModelClient = Prisma.Prisma__QuoteClient<any> | Prisma.Prisma__ReviewClient<any> | Prisma.Prisma__MaterialClient<any> | Prisma.Prisma__CommentClient<any> | Prisma.Prisma__NewsClient<any>;
 // interface TypeMap {
@@ -14,7 +15,6 @@ import {DefaultArgs} from "@prisma/client/runtime/library";
 //     comment: Prisma.CommentDelegate<DefaultArgs>;
 //     news: Prisma.NewsDelegate<DefaultArgs>;
 // }
-
 
 
 // type TypeMap = {
@@ -37,7 +37,7 @@ export const reactionsRouter = t.router({
         .input(z.object({
                 type: z.enum(['like', 'dislike', 'unlike']),
                 targetId: z.string().uuid(),
-                targetType: z.enum(['comment', 'quote', 'material', 'review', 'news']), // TODO: 'news',
+                targetType: z.enum(['comment', 'quote', 'material', 'review', 'news']),
                 csrfToken: z.string(),
                 recaptchaToken: z.string()
             }
@@ -57,7 +57,20 @@ export const reactionsRouter = t.router({
                     }
                     const fkId = `${targetType}Id` as const;
                     const table = typeMap[targetType] as Prisma.QuoteDelegate<DefaultArgs>;
-                    const likeExists = await prisma.reaction.findFirst({
+                    let record = await table.findUniqueOrThrow({
+                        where: {id: targetId},
+                        select: {
+                            likesCount: true,
+                            dislikesCount: true
+                        },
+                    }).catch(() => {
+                        throw new TRPCError({
+                            code: "NOT_FOUND",
+                            message: `Not found ${targetType} with id ${targetId}`
+                        });
+                    });
+
+                    let likeRecord = await prisma.reaction.findFirst({
                         where: {
                             user: {
                                 id: user.id
@@ -72,128 +85,98 @@ export const reactionsRouter = t.router({
                     });
 
 
-                    if (!likeExists && type === "unlike") {
-                        const res = await table.findUniqueOrThrow({
-                            where: {id: targetId},
-                            select: {
-                                likesCount: true,
-                                dislikesCount: true
-                            },
-                        });
-                    }
-                    if (likeExists && type === "unlike") {
-                        await prisma.reaction.delete({
-                            where: {
-                                id: likeExists.id
+                    if (!likeRecord && type === "unlike") {
+                        return record;
+                    } else if (likeRecord && type === "unlike") {
+                        let action = {
+                            [likeRecord.like ? "likesCount" : "dislikesCount"]: {
+                                decrement: 1
                             }
-                        });
-                        await table.update({
-                            where: {id: targetId},
-                            data: {
-                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
-                                    decrement: 1
+                        };
+                        return await Promise.all([
+                            prisma.reaction.delete({
+                                where: {
+                                    id: likeRecord.id
                                 }
-                            }
-                        });
-
-                        await prisma.user.update({
-                            where: {id: user.id},
-                            data: {
-                                [likeExists.like ? "likesCount" : "dislikesCount"]: {}
-                            }
-                        });
-                    }
-                    if (likeExists) {
-                        if (likeExists.like === (type === "like") || !likeExists.like === (type === "dislike")) {
-                            return table.findUnique({
+                            }),
+                            prisma.user.update({
+                                where: {id: user.id},
+                                data: action
+                            }),
+                            table.update({
                                 where: {id: targetId},
+                                data: action,
                                 select: {
                                     likesCount: true,
                                     dislikesCount: true
                                 }
-                            });
-                        }
-                        await prisma.reaction.update({
-                            where: {
-                                id: likeExists.id
-                            },
-                            data: {
-                                like: type === "like"
-                            }
-                        });
-                        await table.update({
-                            where: {id: targetId},
-                            data: {
-                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
-                                    decrement: 1
-                                },
-                                [likeExists.like ? "dislikesCount" : "likesCount"]: {
-                                    increment: 1
-                                }
-                            }
-                        });
-
-                        // update likes and dislikes
-                        await prisma.user.update({
-                            where: {
-                                id: user.id
-                            },
-                            data: {
-                                [likeExists.like ? "likesCount" : "dislikesCount"]: {
-                                    decrement: 1
-                                },
-                                [likeExists.like ? "dislikesCount" : "likesCount"]: {
-                                    increment: 1
-                                }
-                            }
-                        });
+                            })]).then((values) => values[2]);
                     } else {
-                        await prisma.reaction.create({
-                            data: {
-                                user: {
-                                    connect: {
-                                        id: user.id
-                                    }
-                                },
-                                [type]: {
-                                    connect: {
-                                        id: targetId
-                                    }
-                                },
-                                like: type === "like"
-                            }
-                        });
-                        await table.update({
-                            where: {id: targetId},
-                            data: {
-                                [type === "like" ? "likesCount" : "dislikesCount"]: {
-                                    increment: 1
-                                }
-                            }
-                        });
-                        // increment user's likes and dislikes
-                        await prisma.user.update({
-                            where: {
-                                id: user.id
-                            },
-                            data: {
-                                [type === "like" ? "likesCount" : "dislikesCount"]: {
-                                    increment: 1
-                                }
-                            }
-                        });
-
-                    }
-                    return table.findUnique({
-                        where: {id: targetId},
-                        select: {
-                            likesCount: true,
-                            dislikesCount: true
+                        let action: { [x: string]: { decrement: number; } | { increment: number; }; };
+                        let promise: Promise<any>;
+                        if (likeRecord?.like === (type === "like") || !likeRecord?.like === (type === "dislike")) {
+                            return record;
                         }
-                    });
+                        if (likeRecord) {
+                            action = {
+                                [likeRecord.like ? "likesCount" : "dislikesCount"]: {
+                                    decrement: 1
+                                },
+                                [likeRecord.like ? "dislikesCount" : "likesCount"]: {
+                                    increment: 1
+                                }
+                            };
+                            promise = prisma.reaction.update({
+                                where: {
+                                    id: likeRecord.id
+                                },
+                                data: {
+                                    like: type === "like"
+                                }
+                            });
+                        } else {
+                            promise = prisma.reaction.create({
+                                data: {
+                                    user: {
+                                        connect: {
+                                            id: user.id
+                                        }
+                                    },
+                                    [targetType]: {
+                                        connect: {
+                                            id: targetId
+                                        }
+                                    },
+                                    like: type === "like"
+                                }
+                            });
+                            action = {
+                                [type === "like" ? "likesCount" : "dislikesCount"]: {
+                                    increment: 1
+                                }
+                            };
+                        }
+                        return await Promise.all([
+                            promise,
+                            prisma.user.update({
+                                where: {
+                                    id: user.id
+                                },
+                                data: action
+                            }),
+                            table.update({
+                                where: {id: targetId},
+                                data: action,
+                                select: {
+                                    likesCount: true,
+                                    dislikesCount: true
+                                }
+                            })
+                        ]).then((values) => values[2]);
+                    }
                 },
                 {
-                    isolationLevel: "Serializable"
+                    isolationLevel: Prisma.TransactionIsolationLevel.Serializable
                 });
 
         })

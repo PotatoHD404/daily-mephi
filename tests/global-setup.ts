@@ -1,7 +1,5 @@
 import {PrismaClient, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prisma} from "./utils/prisma";
-import {Prisma} from ".prisma/client";
 import {clearDB} from "./utils/clearDB";
 
 export default async function seed() {

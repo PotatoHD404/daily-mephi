@@ -1,14 +1,14 @@
-import UserHeader from "./userHeader";
+import UserHeader, {UserType} from "./userHeader";
 import Image from "next/image";
 import DownloadIco from "images/download.svg";
 import Reactions from "./reactions";
 import React from "react";
 import {IconButton} from '@mui/material';
 
-export default function Material() {
+export default function Material({user}: { user: UserType }) {
     return <>
         <div className="whiteBox text-xl w-full mt-4 pb-2">
-            <UserHeader date={new Date()}/>
+            <UserHeader date={new Date()} user={user}/>
             <h1 className="font-bold text-[1.1rem] leading-6 mt-3">Название</h1>
             <div className="relative flex text-[1.0rem] leading-5">
 
@@ -23,8 +23,7 @@ export default function Material() {
             </div>
             <div
                 className="mt-2.5 mb-2 font-bold flex flex-wrap w-full text-[0.9rem] leading-4">
-                <div className="bg-[#DDD9DF] bg-[#F9C5D3] bg-[#FEB3B4]
-             bg-[#F4BDE6] bg-[#C7A8F3] hidden"></div>
+                <div className="bg-[#C7A8F3] hidden"></div>
                 {
                     [
                         {label: "Факультет", color: "#DDD9DF"},
@@ -43,7 +42,7 @@ export default function Material() {
             <div
                 className="flex flex-wrap md:flex-nowrap font-semibold relative">
                 <div
-                    className="md:absolute md:right-0 flex space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
+                    className="md:absolute md:right-0 space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
                     <div className="font-medium">exam_file_1.pdf (50 MB)</div>
                     <IconButton
                         onClick={undefined}

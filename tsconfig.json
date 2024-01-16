@@ -5,7 +5,7 @@
     "types": [
       "node",
       "@types/jest",
-      "@quramy/jest-prisma"
+      "@quramy/jest-prisma-node"
     ],
     "lib": [
       "dom",

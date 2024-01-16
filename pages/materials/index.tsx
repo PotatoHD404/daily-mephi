@@ -4,16 +4,21 @@ import Material from "components/material";
 
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
+import {UserType} from "../../components/userHeader";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
 
 function Materials() {
-    const [value, setValue] = React.useState(0);
     const isMobile = useIsMobile();
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
+    const user: UserType = {
+        id: "1",
+        nickname: "Трифоненков В.П.",
+        image: {
+            url: "https://daily-mephi.ru/images/dead_cat.svg"
+        },
+        // legacyNickname: "User1"
+    }
     return (
         <>
             <SEO title='Материалы' thumbnail={`https://daily-mephi.ru/images/thumbnails/materials.png`}/>
@@ -24,8 +29,8 @@ function Materials() {
                     <div className="w-full h-[1px] bg-black bg-opacity-10"/>
                     <div className="flex">
                         <div className="md:w-[75%] w-[100%]">
-                            <Material/>
-                            <Material/>
+                            <Material user={user}/>
+                            <Material user={user}/>
                         </div>
                         {!isMobile ? <Filters/> : null}
 
