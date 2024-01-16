@@ -61,7 +61,7 @@ export default function Reactions(props: {
             //             id: props.id
             //         })
             //     });
-            const tokens = await  getTokens(executeRecaptcha);
+            const tokens = await getTokens(executeRecaptcha);
             const result = await mutateReactions.mutateAsync({
                 type: 'like',
                 ...tokens,
