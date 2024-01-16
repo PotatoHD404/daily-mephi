@@ -2163,6 +2163,25 @@
   dependencies:
     "@prisma/debug" "5.8.1"
 
+"@prisma/nextjs-monorepo-workaround-plugin@^5.8.1":
+  version "5.8.1"
+  resolved "https://registry.yarnpkg.com/@prisma/nextjs-monorepo-workaround-plugin/-/nextjs-monorepo-workaround-plugin-5.8.1.tgz#c18a11afadf3bdc223652a3ddd965954d671809d"
+  integrity sha512-0DhnWwI5I75ZGPpFq+q1i2tU080xR7GW1pzK2jh958Yeb7I8iR6hWsEN32nCIalh8m+IbKoc4W++qbWmWWNv2w==
+
+"@quramy/jest-prisma-core@^1.7.0":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@quramy/jest-prisma-core/-/jest-prisma-core-1.7.3.tgz#be71ee3745ce5e44d86486a2dcd7fc48d10896dd"
+  integrity sha512-x/V/OqnUdmXUrv0mQa18ixJ61jYFTvNGrpzhVxr1FriAUQL2p2srMj15iLe8DmkxHqnlwBJHcM2rSx8HM3wiEA==
+  dependencies:
+    chalk "^4.0.0"
+
+"@quramy/jest-prisma-node@^1.7.3":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@quramy/jest-prisma-node/-/jest-prisma-node-1.7.3.tgz#5c41117e5667a1abe3f12af662408882d757f3c8"
+  integrity sha512-100EQiA7M+t3rOX7MHCU7Yda+nhYf3lIJsbSqAgcrFLzhycucLcEc2w9gKwsCiKALh6UXU/IgrAvNm2qdqUU+Q==
+  dependencies:
+    "@quramy/jest-prisma-core" "^1.7.0"
+
 "@radix-ui/number@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@radix-ui/number/-/number-1.0.1.tgz#644161a3557f46ed38a042acf4a770e826021674"

@@ -2,6 +2,11 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "target": "esnext",
+    "types": [
+      "node",
+      "@types/jest",
+      "@quramy/jest-prisma"
+    ],
     "lib": [
       "dom",
       "dom.iterable",
@@ -24,14 +29,14 @@
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "declaration": false,
-    "pretty":true,
+    "pretty": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules",
@@ -39,5 +44,5 @@
     "./terraform/main-lambda/lambda.js",
     "./.vercel",
     "./tests/rest"
-  ],
+  ]
 }

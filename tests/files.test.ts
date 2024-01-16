@@ -2,9 +2,8 @@ import {faker} from "@faker-js/faker";
 import {isAuthorizedFunc} from "./mocks/isAuthorized";
 import "./mocks/verifyCSRFToken";
 import "./mocks/verifyRecaptcha";
-import {trpc} from "./mocks/trpc"; // order matters
+import {trpc} from "./utils/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
-import {prisma} from "./utils/prisma";
 // import "./utils/notion";
 import type {AppRouter} from "server";
 import {BinaryLike, createHash} from "crypto";

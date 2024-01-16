@@ -13,7 +13,17 @@ const createJestConfig = nextJest({
 
 const customJestConfig: Config = {
     clearMocks: true,
-    testEnvironment: 'node',
+    testEnvironment: '@quramy/jest-prisma-node/environment',
+    testEnvironmentOptions: {
+        verboseQuery: false,
+    },
+    setupFilesAfterEnv: [
+        "<rootDir>/tests/mocks/isAuthorized.ts",
+        // "<rootDir>/tests/mocks/isToxic.ts",
+        "<rootDir>/tests/mocks/prisma.ts",
+        "<rootDir>/tests/mocks/verifyCSRFToken.ts",
+        "<rootDir>/tests/mocks/verifyRecaptcha.ts",
+    ],
     coverageProvider: 'v8',
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
     testMatch: [
@@ -36,7 +46,11 @@ export default createJestConfig(customJestConfig)().then(value => {
     value = {
         ...value,
         transformIgnorePatterns: [`/node_modules/(?!(${esModules.join("|")})/)`],
-        moduleNameMapper: {...value.moduleNameMapper, '^next-auth(.*)$': '<rootDir>/node_modules/next-auth$1', '^@auth/core(.*)$': '<rootDir>/node_modules/@auth/core$1'}
+        moduleNameMapper: {
+            ...value.moduleNameMapper,
+            '^next-auth(.*)$': '<rootDir>/node_modules/next-auth$1',
+            '^@auth/core(.*)$': '<rootDir>/node_modules/@auth/core$1'
+        }
     }
     // console.log(JSON.stringify(value))
     return value;

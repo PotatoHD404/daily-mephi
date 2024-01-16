@@ -1,8 +1,8 @@
 import type {Discipline, Faculty, File, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {trpc} from "tests/mocks/trpc";
-import {prisma} from "./utils/prisma"
+import {trpc} from "tests/utils/trpc";
 import {describe, it, expect, jest} from '@jest/globals';
+import { prisma } from "lib/database/prisma";
 
 // export type Discipline = {
 //     id: string
