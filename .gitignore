@@ -63,9 +63,9 @@ terraform/config.s3.tfbackend
 /terraform/static/
 
 terraform/.terraform.lock.hcl
-/pages/api/v1/dev/
+/pages/api/v2/dev/
 
-pages/api/v1/dev1/
+pages/api/v2/dev1/
 /terraform/main-lambda/
 
 cloud-functions/notion-api/node_modules/

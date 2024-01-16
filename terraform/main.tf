@@ -353,7 +353,7 @@ echo "Uploaded pages-lambda.zip"
 #  type        = "zip"
 #  source_dir = "./main-lambda/"
 #  output_path = "main-lambda.zip"
-##  excludes = fileset(path.module, "main-lambda/api/v1/**/*")
+##  excludes = fileset(path.module, "main-lambda/api/v2/**/*")
 #}
 
 #resource "yandex_storage_object" "static-object" {

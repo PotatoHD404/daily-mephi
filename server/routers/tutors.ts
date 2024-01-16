@@ -49,7 +49,7 @@ export const tutorsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const tutor = await prisma.tutor.findUnique({
                 where: {
@@ -74,7 +74,7 @@ export const tutorsRouter = t.router({
             limit: z.number().int().default(10),
         }
     ))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {limit}}) => {
             return prisma.tutor.findMany({
                 select: tutorSelect,

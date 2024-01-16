@@ -16,6 +16,7 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import {cookies} from "next/headers";
 import {trpc} from "server/utils/trpc";
 import {getCsrfToken, getSession} from "next-auth/react";
+import {getTokens} from "../lib/react/getTokens";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
 // import axios from "axios";
@@ -41,19 +42,8 @@ export default function RegisterDialog(props: DialogProps) {
     const [nicknameError, setNicknameError] = useState<string | undefined>(undefined);
     const [isFetching, setIsFetching] = useState(false);
 
-    const getTokens = async () => {
-        if (!executeRecaptcha) {
-            throw new Error("Recaptcha is not initialized");
-        }
-        const csrfToken = await getCsrfToken();
-        if (!csrfToken) {
-            throw new Error("CSRF token is not found");
-        }
-        const recaptchaToken = await executeRecaptcha('register');
-        return {csrfToken, recaptchaToken};
-    }
     const tokensQuery = useQuery({
-        queryFn: getTokens,
+        queryFn: async () => getTokens(executeRecaptcha),
         queryKey: ["tokens"],
         enabled: !!executeRecaptcha
     });

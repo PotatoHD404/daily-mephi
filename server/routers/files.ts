@@ -75,7 +75,7 @@ export const filesRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(({input: {id}, ctx: {prisma}}) => {
             return prisma.file.findUnique({
                 where: {
@@ -101,7 +101,7 @@ export const filesRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
@@ -215,7 +215,7 @@ export const filesRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)

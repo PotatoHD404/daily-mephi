@@ -104,7 +104,7 @@ async function createUsers() {
     });
 
     // const result = await supertest(server)
-    //     .get('/api/v1/top')
+    //     .get('/api/v2/top')
     //     .expect(200)
     //     .expect('Content-Type', /json/);
     // expect(result.body).toBeDefined();

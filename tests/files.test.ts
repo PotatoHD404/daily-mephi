@@ -12,18 +12,18 @@ import {BinaryLike, createHash} from "crypto";
 import axios from "axios";
 import {createUsers} from "./utils/createUsers";
 import {describe, it, expect, jest} from '@jest/globals';
-describe('[GET] /api/v1/files/{id}', () => {
+describe('[GET] /api/v2/files/{id}', () => {
     it('Test get one', async () => {
 
     });
 });
 
-// describe('[POST] /api/v1/files', () => {
+// describe('[POST] /api/v2/files', () => {
 //
 //
 // });
 //
-// describe('[PUT] /api/v1/files', () => {
+// describe('[PUT] /api/v2/files', () => {
 //
 // });
 

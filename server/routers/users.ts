@@ -16,7 +16,7 @@ export const usersRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
             const user = await prisma.user.findUnique({
                 where: {
@@ -64,7 +64,7 @@ export const usersRouter = t.router({
             csrfToken: z.string(),
             recaptchaToken: z.string(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .use(isAuthorized)
         // .use(verifyCSRFToken)
         // .use(verifyRecaptcha)

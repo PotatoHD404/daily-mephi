@@ -93,7 +93,7 @@ export const thumbnailsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
             const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
@@ -117,7 +117,7 @@ export const thumbnailsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
             const element = QuoteThumbnail({
                 name: "Трифоненков В.П.",
@@ -134,7 +134,7 @@ export const thumbnailsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
             const images = ["/images/profile1.png", "/images/tutor.png"]
             const urls = images.map((image) => normalizeUrl(image, "/images/dead_cat.svg", true))
@@ -159,7 +159,7 @@ export const thumbnailsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
             const url = normalizeUrl("/images/tutor.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
@@ -183,7 +183,7 @@ export const thumbnailsRouter = t.router({
         .input(z.object({
             id: z.string().uuid(),
         }))
-        .output(z.any())
+        /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
             const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
