@@ -6,7 +6,7 @@ import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 
 
 export const reactionsRouter = t.router({
-    add: t.procedure.meta({
+    change: t.procedure.meta({
         openapi: {
             method: 'PUT',
             path: '/reactions',
@@ -16,7 +16,7 @@ export const reactionsRouter = t.router({
         .input(z.object({
                 type: z.enum(['like', 'dislike', 'unlike']),
                 targetId: z.string().uuid(),
-                targetType: z.enum(['news', 'comment', 'quote', 'material', 'review']),
+                targetType: z.enum(['comment', 'quote', 'material', 'review']), // TODO: 'news',
                 csrfToken: z.string(),
                 recaptchaToken: z.string()
             }
@@ -27,14 +27,14 @@ export const reactionsRouter = t.router({
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {type, targetId, targetType}}) => {
             return prisma.$transaction(async (prisma) => {
-                    const typeMap: Record<string, any> = {
+                    const typeMap = {
                         "quote": prisma.quote,
                         "review": prisma.review,
                         "material": prisma.material,
                         "comment": prisma.comment
                     }
                     const fkId = `${targetType}Id`;
-                    const table = typeMap[type];
+                    const table = typeMap[targetType];
                     const likeExists = await prisma.reaction.findFirst({
                         where: {
                             user: {
@@ -49,7 +49,7 @@ export const reactionsRouter = t.router({
                         }
                     });
                     if (!likeExists && type === "unlike") {
-                        return await table.findUnique({
+                        return table.findUnique({
                             where: {id: targetId},
                             select: {
                                 likes: true,
@@ -81,7 +81,7 @@ export const reactionsRouter = t.router({
                     }
                     if (likeExists) {
                         if (likeExists.like === (type === "like") || !likeExists.like === (type === "dislike")) {
-                            return await table.findUnique({
+                            return table.findUnique({
                                 where: {id: targetId},
                                 select: {
                                     likes: true,
@@ -160,7 +160,7 @@ export const reactionsRouter = t.router({
                         });
 
                     }
-                    return await table.findUnique({
+                    return table.findUnique({
                         where: {id: targetId},
                         select: {
                             likes: true,

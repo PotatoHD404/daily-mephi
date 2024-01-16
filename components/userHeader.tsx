@@ -2,18 +2,21 @@ import React from "react";
 import Image from "next/image";
 import DeadCat from "images/dead_cat.svg";
 import {Skeleton} from "@mui/material";
-import {UserType} from "lib/database/types";
 import Link from "next/link";
 import {DateTime} from "luxon";
+import {RouterOutputs} from "server/utils/trpc";
+import {ReviewType} from "./reviews";
 
 // use luxon to format date as russian
 function dateToSocial(date: Date) {
     return DateTime.fromJSDate(date).setLocale("ru").toRelative();
 }
 
+export type UserType = ReviewType['user']
+
 export default function UserHeaderComponent(props: {
     user?: UserType,
-    legacyNickname?: string,
+    legacyNickname: string | null,
     date: Date,
     isLoading?: boolean
 }) {
@@ -27,7 +30,7 @@ export default function UserHeaderComponent(props: {
                         className="h-14 my-auto w-14"
                         legacyBehavior>
                         <Image
-                            src={props.user?.image.url ?? DeadCat}
+                            src={props.user?.image?.url ?? DeadCat}
                             alt="Profile picture"
                             className="rounded-full"
                             width={512}
@@ -36,7 +39,7 @@ export default function UserHeaderComponent(props: {
                     </Link> :
                     <div className="h-14 my-auto w-14">
                         <Image
-                            src={props.user?.image.url ?? DeadCat}
+                            src={props.user?.image?.url ?? DeadCat}
                             alt="Profile picture"
                             className="rounded-full"
                             width={512}
@@ -52,7 +55,7 @@ export default function UserHeaderComponent(props: {
                 props.user?.id ?
                     <Link href={`/users/${props.user.id}`} className="ml-2 h-fit" legacyBehavior>
                         <div className="font-bold text-[0.9rem] leading-5">
-                            {props.user?.name ?? props?.legacyNickname ?? "Аноним"}
+                            {props.user?.nickname ?? props?.legacyNickname ?? "Аноним"}
                         </div>
                         <div className="text-[0.8rem] leading-5 my-auto opacity-60">
                             {date}
@@ -60,7 +63,7 @@ export default function UserHeaderComponent(props: {
                     </Link> :
                     <div className="ml-2 h-fit">
                         <div className="font-bold text-[0.9rem] leading-5">
-                            {props.user?.name ?? props?.legacyNickname ?? "Аноним"}
+                            {props.user?.nickname ?? props?.legacyNickname ?? "Аноним"}
                         </div>
                         <div className="text-[0.8rem] leading-5 my-auto opacity-60">
                             {date}

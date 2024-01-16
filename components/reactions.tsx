@@ -3,6 +3,10 @@ import Dislike from "./dislikeBtn";
 import Comment from "./commentBtn";
 import {Skeleton} from "@mui/material";
 import React from "react";
+import {trpc} from "../server/utils/trpc";
+import {getCsrfToken} from "next-auth/react";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
+import {getTokens} from "../lib/react/getTokens";
 
 async function apply_result(result: Response,
                             setLike: (value: (((prevState: (boolean | null)) => (boolean | null)) | boolean | null)) => void,
@@ -25,7 +29,7 @@ async function apply_result(result: Response,
 
 export default function Reactions(props: {
     isLoading?: boolean,
-    type: string,
+    type: "news" | "material" | "review" | "comment" | "quote",
     id: string,
     likes: number,
     dislikes: number,
@@ -35,7 +39,8 @@ export default function Reactions(props: {
     const [likes, setLikes] = React.useState(props.likes);
     const [dislikes, setDislikes] = React.useState(props.dislikes);
     const [prevState, setPrevState] = React.useState<any>({like: null, likes: props.likes, dislikes: props.dislikes});
-
+    const mutateReactions = trpc.reactions.change.useMutation();
+    const {executeRecaptcha} = useGoogleReCaptcha();
     async function onClick(type: string) {
         if (type === 'like' && like !== true) {
             if (like === false) {
@@ -43,19 +48,26 @@ export default function Reactions(props: {
             }
             setLike(true);
             setLikes(likes + 1);
-            const result = await fetch(`/api/v1/reactions`,
-                {
-                    method: 'PUT',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        reaction: 'like',
-                        type: props.type,
-                        id: props.id
-                    })
-                });
+            // const result = await fetch(`/api/v1/reactions`,
+            //     {
+            //         method: 'PUT',
+            //         credentials: 'same-origin',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify({
+            //             reaction: 'like',
+            //             type: props.type,
+            //             id: props.id
+            //         })
+            //     });
+            const tokens = await  getTokens(executeRecaptcha);
+            const result = await mutateReactions.mutateAsync({
+                type: 'like',
+                ...tokens,
+                targetType: props.type,
+                targetId: props.id
+            })
             await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
         } else if (type === 'dislike' && like !== false) {
             setLike(false);
