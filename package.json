@@ -64,7 +64,7 @@
     "@builder.io/partytown": "^0.8.2",
     "@faker-js/faker": "^8.3.1",
     "@jest/globals": "^29.7.0",
-    "@storybook/addon-a11y": "^7.6.7",
+    "@storybook/addon-a11y": "^7.6.8",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-interactions": "^7.6.7",
     "@storybook/addon-links": "^7.6.8",
