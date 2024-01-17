@@ -8,7 +8,7 @@ import UsersIcon from "images/users.svg";
 import {useRouter} from "next/router";
 import Image from "next/image";
 import burger from 'images/burger.svg'
-import {useSession} from "next-auth/react";
+import {getSession, useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
 import dynamic from "next/dynamic";
@@ -88,23 +88,24 @@ function AuthSection(props: DefaultNavbarParams) {
 
 
     useEffect(() => {
-        // console.log(session)
-        if (session?.user && authenticated && session.user.name === null && !loading) {
+        console.log(session)
+        if (session?.user && authenticated && !session.user.nickname && !loading) {
             setOpen(true);
         }
     }, [status, session])
 
-    // export async function getInitialProps(context: any) {
-    //     const session = await getSession(context)
-    //     console.log(session)
-    //     if (session?.user === null) {
-    //         return {
-    //             redirect: {
-    //                 destination: '/users/new',
-    //                 permanent: false,
-    //             },
-    //         }
-    //     }
+    // console.log(session)
+    // if (session?.user === null) {
+        // return {
+        //     redirect: {
+        //         destination: '/users/new',
+        //         permanent: false,
+        //     },
+        // }
+    // }
+
+    // async function getInitialProps(context: any) {
+    //
     //
     //     return {
     //         props: { session }
