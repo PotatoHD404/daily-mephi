@@ -55,7 +55,7 @@
     "satori": "^0.10.11",
     "superjson": "^2.2.1",
     "tailwindcss": "^3.4.1",
-    "vercel": "^33.0.2",
+    "vercel": "^33.1.0",
     "webpack-node-externals": "^3.0.0",
     "zod": "^3.22.4"
   },
