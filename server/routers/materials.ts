@@ -137,7 +137,8 @@ export const materialsRouter = t.router({
                              input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}
                          }) => {
             return prisma.$transaction(async (prisma) => {
-                const material = await prisma.material.create({
+                const [material] = await Promise.all([
+                    prisma.material.create({
                         data: {
                             title,
                             text,
@@ -173,8 +174,8 @@ export const materialsRouter = t.router({
                             }
                         }
                     }
-                );
-                await prisma.user.update({
+                ),
+                prisma.user.update({
                     where: {
                         id: user.id
                     },
@@ -183,19 +184,21 @@ export const materialsRouter = t.router({
                             increment: 1
                         }
                     }
-                });
-                if (tutorId) {
-                    await prisma.tutor.update({
-                        where: {
-                            id: tutorId
-                        },
-                        data: {
-                            materialsCount: {
-                                increment: 1
+                }),
+                async () => {
+                    if (tutorId) {
+                        await prisma.tutor.update({
+                            where: {
+                                id: tutorId
+                            },
+                            data: {
+                                materialsCount: {
+                                    increment: 1
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                }]);
                 return material;
             });
         }),

@@ -5,8 +5,8 @@ import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Comment, Prisma} from "@prisma/client";
-import {DefaultArgs} from "@prisma/client/runtime/library";
 import {uuidv4} from "msw/lib/core/utils/internal/uuidv4";
+import {DefaultArgs} from "@prisma/client/runtime/library";
 
 
 export const commentsRouter = t.router({
@@ -160,34 +160,42 @@ export const commentsRouter = t.router({
                 }
                 const id = uuidv4();
                 path.push(id);
+                const table = prisma[type] as Prisma.NewsDelegate<DefaultArgs>;
 
-                return prisma.comment.create({
-                    data: {
-                        id,
-                        text,
-                        path,
-                        [type]: {
-                            connect: {
-                                id: recordId,
+                const [comment] = await Promise.all([
+                    prisma.comment.create({
+                        data: {
+                            id,
+                            text,
+                            path,
+                            [type]: {
+                                connect: {
+                                    id: recordId,
+                                },
                             },
-                            update: {
-                                commentsCount: {
-                                    increment: 1
+                            parent: parentId ? {
+                                connect: {
+                                    id: parentId,
                                 }
-                            }
+                            } : undefined,
+                            user: {
+                                connect: {
+                                    id: user.id
+                                }
+                            },
+                        }
+                    }),
+                    table.update({
+                        where: {
+                            id: recordId
                         },
-                        parent: parentId ? {
-                            connect: {
-                                id: parentId,
+                        data: {
+                            commentsCount: {
+                                increment: 1
                             }
-                        } : undefined,
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        },
-                    }
-                });
+                        }
+                    })]);
+                return comment;
             }, {
                 isolationLevel: "Serializable"
             });

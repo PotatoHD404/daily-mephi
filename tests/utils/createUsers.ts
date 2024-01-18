@@ -82,6 +82,7 @@ async function createUsers() {
                 'max': 100
             }),
             updatedAt: faker.date.past(),
+            documentId: null
         }
 
         // remove selected image from array

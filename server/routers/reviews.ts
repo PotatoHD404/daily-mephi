@@ -107,7 +107,8 @@ export const reviewsRouter = t.router({
             try {
                 return await prisma.$transaction(async (prisma) => {
 
-                    const review = await prisma.review.create({
+                    const [review] = await Promise.all([
+                        prisma.review.create({
                         data: {
                             text,
                             title,
@@ -124,23 +125,23 @@ export const reviewsRouter = t.router({
                                 }
                             }
                         },
-                    });
-                    await prisma.tutor.update({
+                    }),
+                    prisma.tutor.update({
                         where: {id: tutorId},
                         data: {
                             reviewsCount: {
                                 increment: 1
                             }
                         }
-                    });
-                    await prisma.user.update({
+                    }),
+                    prisma.user.update({
                         where: {id: user.id},
                         data: {
                             reviewsCount: {
                                 increment: 1
                             }
                         }
-                    });
+                    })]);
 
                     return review;
                 });
