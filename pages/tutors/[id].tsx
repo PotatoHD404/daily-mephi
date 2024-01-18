@@ -5,7 +5,7 @@ import QuoteIco from "images/quote.svg";
 import SEO from "components/seo";
 import Like from "components/likeBtn";
 import Dislike from "components/dislikeBtn";
-import UserHeader from "components/userHeader";
+import UserHeader, {UserType} from "components/userHeader";
 import TabsBox from "components/tabsBox";
 import Material from "components/material";
 import NewPost from "components/newPost";
@@ -78,7 +78,14 @@ function Tabs(props: { tutorId: any }) {
         }
     }, [router.query]);
     const [open, setOpen] = useState(false)
-
+    const user: UserType = {
+        id: "1",
+        nickname: "Трифоненков В.П.",
+        image: {
+            url: "https://daily-mephi.ru/images/dead_cat.svg"
+        },
+        // legacyNickname: "User1"
+    }
     return (
         <>
             <PostDialog opened={open} handleClose={() => setOpen(false)} defaultValue={value} value={postValue}
@@ -89,7 +96,7 @@ function Tabs(props: { tutorId: any }) {
 
             <div className="mt-6 mx-auto">
                 <div className="flex-wrap space-y-4 w-full">
-                    <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)}/>
+                    <NewPost placeholder={newPostPlaceholders[value]} onClick={() => setOpen(true)} user={user}/>
                     {value == 0 ?
                         <Reviews tutorId={props.tutorId}/>
                         : null}
@@ -99,7 +106,7 @@ function Tabs(props: { tutorId: any }) {
                         </>
                         : null}
                     {value == 2 ? <>
-                            <Material/>
+                            <Material user={user}/>
                         </>
                         : null}
                 </div>

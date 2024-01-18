@@ -4,28 +4,10 @@ import Comment from "./commentBtn";
 import {Skeleton} from "@mui/material";
 import React from "react";
 import {trpc} from "../server/utils/trpc";
-import {getCsrfToken} from "next-auth/react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {getTokens} from "../lib/react/getTokens";
 
-async function apply_result(result: Response,
-                            setLike: (value: (((prevState: (boolean | null)) => (boolean | null)) | boolean | null)) => void,
-                            prevState: any, setLikes: (value: (((prevState: number) => number) | number)) => void,
-                            setDislikes: (value: (((prevState: number) => number) | number)) => void,
-                            setPrevState: (value: any) => void, like: boolean | null,
-                            likes: number,
-                            dislikes: number) {
-    if (result.status !== 200) {
-        setLike(prevState.like);
-        setLikes(prevState.likes);
-        setDislikes(prevState.dislikes);
-        return;
-    }
-    setPrevState({like: like, likes: likes, dislikes: dislikes});
-    const data = await result.json();
-    setLikes(data.likes);
-    setDislikes(data.dislikes);
-}
+
 
 export default function Reactions(props: {
     isLoading?: boolean,
@@ -39,6 +21,28 @@ export default function Reactions(props: {
     const [likes, setLikes] = React.useState(props.likes);
     const [dislikes, setDislikes] = React.useState(props.dislikes);
     const [prevState, setPrevState] = React.useState<any>({like: null, likes: props.likes, dislikes: props.dislikes});
+    async function apply_result(type: 'like' | 'dislike' | 'unlike') {
+        let data: {likesCount: number, dislikesCount: number};
+        try {
+            const tokens = await getTokens(executeRecaptcha);
+            data = await mutateReactions.mutateAsync({
+                type,
+                ...tokens,
+                targetType: props.type,
+                targetId: props.id
+            })
+        }
+        catch (e) {
+            setLike(prevState.like);
+            setLikes(prevState.likes);
+            setDislikes(prevState.dislikes);
+            console.log(e);
+            return;
+        }
+        setPrevState({like: like, likes: likes, dislikes: dislikes});
+        setLikes(data.likesCount);
+        setDislikes(data.dislikesCount);
+    }
     const mutateReactions = trpc.reactions.change.useMutation();
     const {executeRecaptcha} = useGoogleReCaptcha();
     async function onClick(type: string) {
@@ -48,50 +52,14 @@ export default function Reactions(props: {
             }
             setLike(true);
             setLikes(likes + 1);
-            // const result = await fetch(`/api/v1/reactions`,
-            //     {
-            //         method: 'PUT',
-            //         credentials: 'same-origin',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({
-            //             reaction: 'like',
-            //             type: props.type,
-            //             id: props.id
-            //         })
-            //     });
-            const tokens = await  getTokens(executeRecaptcha);
-            const result = await mutateReactions.mutateAsync({
-                type: 'like',
-                ...tokens,
-                targetType: props.type,
-                targetId: props.id
-            })
-            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
+            await apply_result('like');
         } else if (type === 'dislike' && like !== false) {
             setLike(false);
             if (like === true) {
                 setLikes(likes - 1);
             }
             setDislikes(dislikes + 1);
-            const result = await fetch(`/api/v1/reactions`,
-                {
-                    method: 'PUT',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        reaction: 'dislike',
-                        type: props.type,
-                        id: props.id
-                    })
-                });
-
-            // const data =
-
-            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
+            await apply_result('dislike');
         } else if (type === 'dislike' && like === false || type === 'like' && like === true) {
             if (!like) {
                 setDislikes(dislikes - 1);
@@ -99,21 +67,7 @@ export default function Reactions(props: {
                 setLikes(likes - 1);
             }
             setLike(null);
-            const result = await fetch(`/api/v1/reactions`,
-                {
-
-                    method: 'DELETE',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        reaction: 'unlike',
-                        type: props.type,
-                        id: props.id
-                    })
-                });
-            await apply_result(result, setLike, prevState, setLikes, setDislikes, setPrevState, like, likes, dislikes);
+            await apply_result('unlike');
         }
 
     }

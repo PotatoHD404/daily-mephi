@@ -1,12 +1,12 @@
 import {t} from "server/utils";
 import {z} from "zod";
-import {generate3grams, prepareText} from "lib/database/fullTextSearch";
-import {Prisma} from ".prisma/client";
+import {convertGoogleQueryToTsQuery, prepareText} from "lib/database/fullTextSearch";
 import {TRPCError} from "@trpc/server";
-import Sql = Prisma.Sql;
+import {User} from "next-auth";
+import {Material, News, Review} from ".prisma/client";
+import {Quote} from "@prisma/client";
 
-// sort in ["popularity", "time", "text"] ||
-// (typeof types === "string" && types in ["tutor", "user", "material", "review", "quote", "news"]) ||
+type DocsKeyTypes = "tutor" | "user" | "material" | "review" | "quote" | "news";
 export const searchRouter = t.router({
     search: t.procedure
         // .meta({
@@ -16,7 +16,7 @@ export const searchRouter = t.router({
         //     }
         // })
         .input(z.object({
-            query: z.string(),
+            query: z.string().min(1).max(100),
             sort: z.enum(['relevance', 'time']).default('relevance'),
             faculty_ids: z.array(z.string()).optional(),
             discipline_ids: z.array(z.string()).optional(),
@@ -24,7 +24,7 @@ export const searchRouter = t.router({
             rating_to: z.number().optional(),
             types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional(),
             limit: z.number().int().min(1).max(100).default(10),
-            offset: z.number().int().min(1).max(100).default(0),
+            offset: z.number().int().min(0).default(0),
         }))
         /* .output(z.any()) */
         .query(async ({
@@ -41,113 +41,217 @@ export const searchRouter = t.router({
                               types
                           }
                       }) => {
-            const preparedQuery = prepareText(query);
-            if (preparedQuery.length === 0) {
+            const preparedText = prepareText(query);
+            if (preparedText.length === 0) {
                 throw new TRPCError({
                     code: 'BAD_REQUEST',
                     message: 'Query is empty'
                 });
             }
-
-            const grams = generate3grams(query);
-            // console.log(grams);
-            query = preparedQuery;
-            const mustBe = Array.from(query.matchAll(/"([^ ]+)"/g), (el) => el[1]);
-
-            const mustNotBe = Array.from(query.matchAll(/-([^ ]+)/g), (el) => el[1]);
-            // console.log(query, grams, mustBe, mustNotBe);
-            // const searchResult = await prisma.$queryRaw`
-            //     SELECT * FROM "Document"`;
-            let orderBy: Sql = Prisma.empty;
-            if (sort === "time") {
-                orderBy = Prisma.sql`"Document"."timeScore" DESC`;
-            } else if (sort === "relevance") {
-                orderBy = Prisma.sql`"Document"."score" DESC`;
+            const tsQuery = convertGoogleQueryToTsQuery(query);
+            // model Document {
+            //     id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+            //     text      String     @map("text")
+            //     recordId  String     @unique @db.Uuid
+            //     type      String     @default("unknown") @map("type")
+            //     createdAt DateTime   @default(now()) @map("created_at")
+            //     updatedAt DateTime   @updatedAt @map("updated_at")
+            //     deletedAt DateTime?  @map("deleted_at")
+            //         score     Float      @default(0) @map("score")
+            //     Review    Review[]
+            //     Tutor     Tutor[]
+            //     User      User[]
+            //     Material  Material[]
+            //     News      News[]
+            //     Quote     Quote[]
+            //
+            // @@index([type])
+            // @@index([recordId])
+            // @@map("documents")
+            // }
+            interface DocsType {
+                id: string;
+                text: string;
+                recordId: string;
+                type: DocsKeyTypes;
+                createdAt: Date;
+                updatedAt: Date;
+                deletedAt: Date | null;
+                score: number;
             }
 
-            const prismaMapping = {
-                "tutor": prisma.tutor,
-                "user": prisma.user,
-                "material": prisma.material,
-                "review": prisma.review,
-                "quote": prisma.quote,
-                "news": prisma.news
-            }
+            const docs: DocsType[] = await prisma.$queryRaw`
+                SELECT *, similarity("Document"."text", ${tsQuery}) as similarity FROM "Document"
+                WHERE "Document"."text" @@ to_tsquery(${tsQuery})
+                ORDER BY similarity DESC
+                LIMIT ${limit} OFFSET ${offset}`;
 
 
-            let searchResult: any = await prisma.$queryRaw`
-                WITH ${mustNotBe.length > 0 ? Prisma.sql`t as (SELECT ARRAY [UNNEST(CAST(${mustNotBe} AS TEXT[]))] as word),` : Prisma.empty}
-                         t1 as (SELECT *
-                    FROM "Document"
-                         ${mustBe.length > 0 || types ? Prisma.sql`WHERE` : Prisma.empty}
-                         ${types ? Prisma.sql`type in (${Prisma.join(types)})` : Prisma.empty}
-                         ${mustBe.length > 0 ? types && Prisma.sql` AND ` : Prisma.empty}
-                         ${mustBe.length > 0 ? Prisma.sql`words @> ${mustBe}` : Prisma.empty}
-                         )
-                         ,
-                         t2
-                         as
-                         (
-                         SELECT t1.*
-                         FROM t1 ${mustNotBe.length > 0 ? Prisma.sql`INNER JOIN t ON words @> t.word}` : Prisma.sql`WHERE FALSE`}), t3 as (
-                         SELECT t1.*
-                         FROM t1
-                         EXCEPT
-                         SELECT t2.*
-                         FROM t2), t4 as (
-                         SELECT (CAST (${grams} AS TEXT[])) as ngrams), qbool AS (
-                         SELECT id, grams, 1 + ABS(ARRAY_LENGTH(grams, 1) - ARRAY_LENGTH(t4.ngrams, 1)) as delta
-                         FROM t3, t4
-                         WHERE grams && t4.ngrams)
-                             , qscore AS (
-                         SELECT id, COUNT(*) n
-                         FROM (SELECT id, UNNEST(grams)
-                             FROM qbool
-                             INTERSECT
-                             SELECT id, UNNEST(t4.ngrams)
-                             FROM qbool, t4) as t6
-                         GROUP BY id),
-                             t5 as (
-                         SELECT "Document".*, (100 * n / delta)::FLOAT as score, 1 / (1 + (now() - t5."updatedAt")::FLOAT / (60 * 60 * 24 * 30 * 9.3)) as "timeScore"
-                         FROM "Document"
-                             JOIN qscore
-                         ON qscore.id = "Document".id
-                             JOIN qbool
-                             ON qbool.id = "Document".id)
-                         SELECT t5.id, t5."userId", t5."tutorId", t5."materialId", t5."reviewId", t5."quoteId", t5."newsId", t5.type, t5.score * 100 as score, t5.score * (1 + t5."ratingScore") * 50 as "ratingScore", t5.score * (2 - t5."ratingScore") * 50 as "reversedRatingScore", t5.score * (1 + t5."timeScore") * 50 as "timeScore", t5.score * (2 - t5."timeScore") * 50 as "reversedTimeScore",
-                         FROM t5
-                         ORDER BY ${orderBy};
-            `;
-            searchResult = searchResult.map((el: any) => {
-                el.docId = el.userId ?? el.tutorId ?? el.materialId ?? el.reviewId ?? el.quoteId ?? el.newsId;
-                delete el.userId;
-                delete el.tutorId;
-                delete el.materialId;
-                delete el.reviewId;
-                delete el.quoteId;
-                delete el.newsId;
-                return el;
+            // group by type into some object
+            const groupedDocs: Record<DocsKeyTypes, DocsType[]> = {
+                tutor: [],
+                user: [],
+                material: [],
+                review: [],
+                quote: [],
+                news: [],
+            };
+
+            docs.forEach(el => {
+                groupedDocs[el.type].push(el);
             });
-            let results: any = {};
-            searchResult.forEach((el: any) => {
-                if (!results[el.type]) {
-                    results[el.type] = [];
+
+            // const prismaMapping = {
+            //     "tutor": prisma["tutor"],
+            //     "user": prisma.user,
+            //     "material": prisma.material,
+            //     "review": prisma.review,
+            //     "quote": prisma.quote,
+            //     "news": prisma.news
+            // }
+
+
+            // export type $TutorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+            //     name: "Tutor"
+            //     objects: {
+            //         images: Prisma.$FilePayload<ExtArgs>[]
+            //         rates: Prisma.$RatePayload<ExtArgs>[]
+            //         reviews: Prisma.$ReviewPayload<ExtArgs>[]
+            //         disciplines: Prisma.$DisciplinePayload<ExtArgs>[]
+            //         faculties: Prisma.$FacultyPayload<ExtArgs>[]
+            //         materials: Prisma.$MaterialPayload<ExtArgs>[]
+            //         legacyRating: Prisma.$LegacyRatingPayload<ExtArgs> | null
+            //         rating: Prisma.$RatingPayload<ExtArgs> | null
+            //         quotes: Prisma.$QuotePayload<ExtArgs>[]
+            //         document: Prisma.$DocumentPayload<ExtArgs> | null
+            //     }
+            //     scalars: $Extensions.GetPayloadResult<{
+            //         id: string
+            //         firstName: string | null
+            //         lastName: string | null
+            //         fatherName: string | null
+            //         fullName: string
+            //         shortName: string
+            //         nickname: string | null
+            //         url: string | null
+            //         createdAt: Date
+            //         updatedAt: Date
+            //         deletedAt: Date | null
+            //         reviewsCount: number
+            //         materialsCount: number
+            //         quotesCount: number
+            //         ratesCount: number
+            //         score: number
+            //         documentId: string | null
+            //     }, ExtArgs["result"]["tutor"]>
+            //     composites: {}
+            // }
+
+            const result: {
+                tutor: Tutor[],
+                user: User[],
+                material: Material[],
+                review: Review[],
+                quote: Quote[],
+                news: News[]
+            } = {
+                tutor: [],
+                user: [],
+                material: [],
+                review: [],
+                quote: [],
+                news: [],
+            };
+
+            await Promise.all(Object.entries(groupedDocs).map(async ([key, value]) => {
+                const ids = value.map(el => el.recordId);
+
+                switch (key) {
+                    case "tutor":
+                        // we need to select all fields but also the image
+                        const r =  await prisma.tutor.findMany({
+                            where: {
+                                id: {in: ids},
+                            },
+                            select: {
+                                id: true,
+                                firstName: true,
+                                images: {
+                                    select: {
+                                        url: true,
+
+                                    }
+                                },
+                            }
+                        });
+                        break;
+                    case "user":
+                        result.user = await prisma.user.findMany({
+                            where: { id: { in: ids } }
+                        });
+                        break;
+                    case "material":
+                        result.material = await prisma.material.findMany({
+                            where: { id: { in: ids } }
+                        });
+                        break;
+                    case "review":
+                        result.review = await prisma.review.findMany({
+                            where: { id: { in: ids } }
+                        });
+                        break;
+                    case "quote":
+                        result.quote = await prisma.quote.findMany({
+                            where: { id: { in: ids } }
+                        });
+                        break;
+                    case "news":
+                        result.news = await prisma.news.findMany({
+                            where: { id: { in: ids } }
+                        });
+                        break;
+                    default:
+                        throw new Error(`Unsupported type: ${key}`);
                 }
-                if (el.type !== "unknown") {
-                    results[el.type].push(el);
-                }
-            });
-            return (await Promise.all(Object.entries(results).map(async ([key, value]: any) => {
-                let ids = value.map((el: any) => el.docId);
-                // @ts-ignore
-                const table = prismaMapping[key];
-                return await table.findMany({
-                    where: {
-                        id: {
-                            in: ids
-                        }
-                    }
-                });
-            }))).flat();
+            }));
+
+
+
+            //
+            // const docs = await prisma.$queryRaw`
+            //     SELECT * FROM "Document"
+            //     WHERE "Document"."text" @@ to_tsquery(${preparedQuery})`;
+            //
+            //
+            // // console.log(grams);
+            // query = preparedQuery;
+            // const mustBe = Array.from(query.matchAll(/"([^ ]+)"/g), (el) => el[1]);
+            //
+            // const mustNotBe = Array.from(query.matchAll(/-([^ ]+)/g), (el) => el[1]);
+            // // console.log(query, grams, mustBe, mustNotBe);
+            // // const searchResult = await prisma.$queryRaw`
+            // //     SELECT * FROM "Document"`;
+            // let orderBy: Sql = Prisma.empty;
+            // if (sort === "time") {
+            //     orderBy = Prisma.sql`"Document"."timeScore" DESC`;
+            // } else if (sort === "relevance") {
+            //     orderBy = Prisma.sql`"Document"."score" DESC`;
+            // }
+            //
+
+            //
+            //
+            //
+            // return (await Promise.all(Object.entries(results).map(async ([key, value]) => {
+            //     let ids = value.map((el: any) => el.docId);
+            //     const table = prismaMapping[key] as Prisma.TutorDelegate<DefaultArgs>;
+            //     return await table.findMany({
+            //         where: {
+            //             id: {
+            //                 in: ids
+            //             }
+            //         }
+            //     });
+            // }))).flat();
         }),
 });

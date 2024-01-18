@@ -6,6 +6,7 @@ import {useRouter} from "next/router";
 import Material from "components/material";
 import Tutor from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
+import {UserType} from "../components/userHeader";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
@@ -32,6 +33,14 @@ function Search() {
         }
         // console.log(e)
     }
+    const user: UserType = {
+        id: "1",
+        nickname: "Трифоненков В.П.",
+        image: {
+            url: "https://daily-mephi.ru/images/dead_cat.svg"
+        },
+        // legacyNickname: "User1"
+    }
 
     return (
         <>
@@ -51,7 +60,7 @@ function Search() {
                     <div className="flex">
                         <div className="md:w-[75%] w-[100%]">
                             <Tutor/>
-                            <Material/>
+                            <Material user={user}/>
                         </div>
                         {!isMobile ?
                             <div className="ml-auto">

@@ -1,6 +1,6 @@
 import {faker} from "@faker-js/faker";
-import {prisma} from "./prisma";
 import {User} from "@prisma/client";
+import {prisma} from "lib/database/prisma";
 
 async function createUsers() {
     function generateImage() {

@@ -82,7 +82,7 @@ function UserProfile({user, me, changeNeedsAuth}: {
             {user ?
                 <SEO title={`Пользователь ${user.nickname}`}
                      thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
-                <SEO title={`Пользователь ${data?.name || '...'}`}
+                <SEO title={`Пользователь ${data?.nickname || '...'}`}
                      thumbnail={`https://daily-mephi.ru/api/v1/users/${validId}/thumbnail.png`}/>
             }
             {isMobile == null ? null :

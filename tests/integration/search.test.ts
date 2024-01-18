@@ -1,8 +1,9 @@
 import type {Discipline} from "@prisma/client";
 import {faker} from "@faker-js/faker";
-import {prismaMock} from "tests/mocks/prisma";
-import {trpc} from "tests/mocks/trpc";
-import {describe, it} from '@jest/globals';
+import {trpc} from "tests/utils/trpc";
+import {searchRouter} from "server/routers/search";
+import {describe, it, expect, jest} from '@jest/globals';
+import {prisma} from "../../lib/database/prisma";
 
 
 // export type Discipline = {
@@ -15,6 +16,10 @@ import {describe, it} from '@jest/globals';
 describe('[GET] /api/v2/disciplines', () => {
 
     it('Test get all', async () => {
+
+        // const apiSemesters = await utils.utils.semesters();
+
+        // expect(apiSemesters).toEqual(semesters);
 
     });
 });

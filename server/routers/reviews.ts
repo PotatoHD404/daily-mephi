@@ -117,6 +117,12 @@ export const reviewsRouter = t.router({
                             },
                             tutor: {
                                 connect: {id: tutorId}
+                            },
+                            document: {
+                                create: {
+                                    type: "review",
+                                    text,
+                                }
                             }
                         },
                     });
@@ -136,13 +142,12 @@ export const reviewsRouter = t.router({
                             }
                         }
                     });
-                    await prisma.document.create({
-                        data: {
-                            type: "review",
-                            text,
-                            words: getDocument(text + ' ' + title).words ?? undefined,
-                        }
-                    });
+                    // await prisma.document.create({
+                    //     data: {
+                    //         type: "review",
+                    //         text,
+                    //     }
+                    // });
 
                     return review;
                 });

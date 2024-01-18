@@ -1,15 +1,15 @@
 import type {User} from "@prisma/client";
 import {faker} from '@faker-js/faker';
-import {isAuthorizedFunc} from "./mocks/isAuthorized";
-import {verifyCSRFTokenFunc} from "./mocks/verifyCSRFToken";
-import "./mocks/verifyRecaptcha";
-import {trpc} from "./mocks/trpc"; // order matters
+import {isAuthorizedFunc} from "../mocks/isAuthorized";
+import {verifyCSRFTokenFunc} from "../mocks/verifyCSRFToken";
+import "../mocks/verifyRecaptcha";
+import {trpc} from "../utils/trpc"; // order matters
 import {inferProcedureInput, TRPCError} from "@trpc/server";
-import {prisma} from "./utils/prisma";
-import {verifyRecaptchaFunc} from "./mocks/verifyRecaptcha";
+import {verifyRecaptchaFunc} from "../mocks/verifyRecaptcha";
 import type {AppRouter} from "server";
-import {createUsers} from "./utils/createUsers";
+import {createUsers} from "../utils/createUsers";
 import {describe, it, expect, jest} from '@jest/globals';
+import {prisma} from "lib/database/prisma";
 
 // export type User = {
 //     id: string
