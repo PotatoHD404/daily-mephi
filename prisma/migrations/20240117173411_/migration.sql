@@ -203,6 +203,7 @@ CREATE TABLE "reviews" (
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
+    "document_id" UUID,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
@@ -227,14 +228,8 @@ CREATE TABLE "reactions" (
 -- CreateTable
 CREATE TABLE "documents" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "words" STRING[],
     "text" STRING NOT NULL,
-    "user_id" UUID,
-    "tutor_id" UUID,
-    "material_id" UUID,
-    "review_id" UUID,
-    "quote_id" UUID,
-    "news_id" UUID,
+    "recordId" UUID NOT NULL,
     "type" STRING NOT NULL DEFAULT 'unknown',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -262,6 +257,7 @@ CREATE TABLE "tutors" (
     "quotes_count" INT4 NOT NULL DEFAULT 0,
     "rates_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
+    "document_id" UUID,
 
     CONSTRAINT "tutors_pkey" PRIMARY KEY ("id")
 );
@@ -514,28 +510,13 @@ CREATE UNIQUE INDEX "reactions_user_id_comment_id_key" ON "reactions"("user_id",
 CREATE UNIQUE INDEX "reactions_user_id_news_id_key" ON "reactions"("user_id", "news_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "documents_user_id_key" ON "documents"("user_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "documents_tutor_id_key" ON "documents"("tutor_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "documents_material_id_key" ON "documents"("material_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "documents_review_id_key" ON "documents"("review_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "documents_quote_id_key" ON "documents"("quote_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "documents_news_id_key" ON "documents"("news_id");
-
--- CreateIndex
-CREATE INDEX "documents_words_idx" ON "documents" USING GIN ("words");
+CREATE UNIQUE INDEX "documents_recordId_key" ON "documents"("recordId");
 
 -- CreateIndex
 CREATE INDEX "documents_type_idx" ON "documents"("type");
+
+-- CreateIndex
+CREATE INDEX "documents_recordId_idx" ON "documents"("recordId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tutors_nickname_key" ON "tutors"("nickname");
@@ -712,6 +693,9 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_tutor_id_fkey" FOREIGN KEY ("tutor
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -730,22 +714,7 @@ ALTER TABLE "reactions" ADD CONSTRAINT "reactions_comment_id_fkey" FOREIGN KEY (
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_material_id_fkey" FOREIGN KEY ("material_id") REFERENCES "materials"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_review_id_fkey" FOREIGN KEY ("review_id") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_quote_id_fkey" FOREIGN KEY ("quote_id") REFERENCES "quotes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "documents" ADD CONSTRAINT "documents_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tutors" ADD CONSTRAINT "tutors_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "rates" ADD CONSTRAINT "rates_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;

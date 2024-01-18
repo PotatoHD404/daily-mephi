@@ -30,14 +30,14 @@ export interface DialogProps {
 export default function RegisterDialog(props: DialogProps) {
     const {handleClose, opened} = props;
 
-    const [age, setAge] = useState('');
+    // const [age, setAge] = useState('');
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value);
-    };
+    // const handleChange = (event: SelectChangeEvent) => {
+    //     setAge(event.target.value);
+    // };
 
     const {executeRecaptcha} = useGoogleReCaptcha();
-    const [name, setName] = useState<string | null>(null);
+    const [name, setName] = useState<string>('');
     // nickname error
     const [nicknameError, setNicknameError] = useState<string | undefined>(undefined);
     const [isFetching, setIsFetching] = useState(false);
@@ -59,7 +59,7 @@ export default function RegisterDialog(props: DialogProps) {
         if (!csrfToken || !recaptchaToken) {
             return;
         }
-        if (name != null && nicknameRegex.test(name)) {
+        if (name && nicknameRegex.test(name)) {
             setIsFetching(true);
             await userMutation.mutateAsync({csrfToken, recaptchaToken, nickname: name}, {
                 onSuccess: async () => {

@@ -322,7 +322,6 @@ export const materialsRouter = t.router({
                     data: {
                         type: "material",
                         text,
-                        words: getDocument(title + ' ' + text).words ?? undefined
                     }
                 });
 

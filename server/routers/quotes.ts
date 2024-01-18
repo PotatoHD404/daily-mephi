@@ -126,7 +126,6 @@ export const quotesRouter = t.router({
                         data: {
                             type: "quote",
                             text,
-                            words: getDocument(text).words ?? undefined
                         }
                     });
                     return quote;

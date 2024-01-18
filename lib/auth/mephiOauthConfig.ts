@@ -56,15 +56,15 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
             }
         },
         async profile(profile, tokens) {
-            const addedAvatars = await prisma.user.findMany({
-                select: {
-                    image: {
-                        select: {
-                            id: true
-                        }
-                    }
-                }
-            });
+            // const addedAvatars = await prisma.user.findMany({
+            //     select: {
+            //         image: {
+            //             select: {
+            //                 id: true
+            //             }
+            //         }
+            //     }
+            // });
             // get random avatar
             // let image: string | null = null;
             // do {
