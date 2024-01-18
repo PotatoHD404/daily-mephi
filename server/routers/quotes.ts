@@ -4,7 +4,6 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {getDocument} from "lib/database/fullTextSearch";
 
 
 export const quotesRouter = t.router({
@@ -93,9 +92,9 @@ export const quotesRouter = t.router({
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {id: tutorId, text}}) => {
-            try {
-                return await prisma.$transaction(async (prisma) => {
-                    const quote = await prisma.quote.create({
+            return prisma.$transaction(async (prisma) => {
+                const [quote] = await Promise.all([
+                    prisma.quote.create({
                         data: {
                             text,
                             user: {
@@ -103,38 +102,32 @@ export const quotesRouter = t.router({
                             },
                             tutor: {
                                 connect: {id: tutorId}
+                            },
+                            document: {
+                                create: {
+                                    type: "quote",
+                                    text,
+                                }
                             }
                         },
-                    });
-                    await prisma.tutor.update({
+                    }),
+                    prisma.tutor.update({
                         where: {id: tutorId},
                         data: {
                             quotesCount: {
                                 increment: 1
                             }
                         }
-                    });
-                    await prisma.user.update({
+                    }),
+                    prisma.user.update({
                         where: {id: user.id},
                         data: {
                             quotesCount: {
                                 increment: 1
                             }
                         }
-                    });
-                    await prisma.document.create({
-                        data: {
-                            type: "quote",
-                            text,
-                        }
-                    });
-                    return quote;
-                });
-            } catch (e: any) {
-                throw new TRPCError({
-                    code: 'INTERNAL_SERVER_ERROR',
-                    message: e.message
-                });
-            }
+                    })]);
+                return quote;
+            });
         }),
 });

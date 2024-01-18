@@ -4,7 +4,9 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {Comment} from "@prisma/client";
+import {Comment, Prisma} from "@prisma/client";
+import {DefaultArgs} from "@prisma/client/runtime/library";
+import {uuidv4} from "msw/lib/core/utils/internal/uuidv4";
 
 
 export const commentsRouter = t.router({
@@ -54,7 +56,7 @@ export const commentsRouter = t.router({
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id, type}}) => {
             let comments: {
-                id: string,
+                id: string
                 text: string,
                 createdAt: Date,
                 parentId: string | null,
@@ -62,15 +64,14 @@ export const commentsRouter = t.router({
                 path: string[],
                 childrenCount: bigint | number
             }[] = await prisma.$queryRaw`
-                WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "likes", "dislikes",
-                                                     "path")
-                                                    AS (SELECT id,
+                WITH RECURSIVE cte AS (SELECT id,
                                                                text,
-                                                               "createdAt",
+                                                               "created_at",
                                                                "parentId",
                                                                "userId",
-                                                               "likes",
-                                                               "dislikes",
+                                                               "likesCount",
+                                                               "dislikesCount",
+                                                               "commentsCount"
                                                                array [id] AS path
                                                         FROM "Comment"
                                                         WHERE "Comment"."parentId" IS NULL
@@ -78,43 +79,30 @@ export const commentsRouter = t.router({
                                                         UNION ALL
                                                         SELECT c.id,
                                                                c.text,
-                                                               c."createdAt",
-                                                               c."parentId",
+                                                               c."created_at",
+                                                               c."parent_id",
                                                                c."userId",
-                                                               c."likes",
-                                                               c."dislikes",
+                                                               c."likes_count",
+                                                               c."dislikes_count",
+                                                               c."commentsCount",
                                                                cte.path || c.id
-                                                        FROM "Comment" c
+                                                        FROM "comments" c
                                                                  INNER JOIN cte
                                                                             ON c."parentId" = cte.id)
                                  SELECT cte.id,
                                         cte.text,
-                                        cte."createdAt",
-                                        cte."parentId",
-                                        cte."userId",
-                                        cte."likes",
-                                        cte."dislikes",
-                                        count(cte2.id) as "childrenCount"
+                                        cte."created_at",
+                                        cte."parent_id",
+                                        cte."user_id",
+                                        cte."likes_count",
+                                        cte."dislikes_count",
+                                        cte."childrenCount"
                                  FROM cte
-                                          LEFT JOIN public."User"
+                                          LEFT JOIN public."users"
                                                     ON
                                                         "User"."id" = cte."userId"
-                                          LEFT JOIN cte cte2
-                                                    ON
-                                                        cte.id = ANY (cte2.path) AND cte2."id" != cte."id"
-                                 GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path,
-                                          cte."likes", cte."dislikes"
-                                 ORDER BY "childrenCount" DESC
-                                 LIMIT 10)
-                SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"
-                from results
-                         LEFT JOIN results AS results2
-                                   ON
-                                       results2."parentId" = results.id
-                GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId",
-                         results.likes,
-                         results.dislikes,
-                         results."childrenCount";
+                                 ORDER BY "likes_count", "childrenCount" DESC
+                                 LIMIT 10;
             `
 
             comments = comments.map(comment => {
@@ -142,15 +130,7 @@ export const commentsRouter = t.router({
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
-        .mutation(async ({ctx: {prisma, user}, input: {id, type, text, parentId}}) => {
-
-            let typeMapping: Record<string, any> = {
-                review: prisma.review,
-                material: prisma.material,
-                news: prisma.news
-            };
-
-
+        .mutation(async ({ctx: {prisma, user}, input: {id: recordId, type, text, parentId}}) => {
             return prisma.$transaction(async (prisma) => {
                 let parentComment: Comment | null;
                 let path: string[] = [];
@@ -178,22 +158,22 @@ export const commentsRouter = t.router({
                     })
                     path = parentComment.path;
                 }
-                await typeMapping[type].update({
-                    where: {
-                        id
-                    },
+                const id = uuidv4();
+                path.push(id);
+
+                return prisma.comment.create({
                     data: {
-                        commentsCount: {
-                            increment: 1
-                        }
-                    }
-                });
-                const comment = await prisma.comment.create({
-                    data: {
+                        id,
                         text,
+                        path,
                         [type]: {
                             connect: {
-                                id,
+                                id: recordId,
+                            },
+                            update: {
+                                commentsCount: {
+                                    increment: 1
+                                }
                             }
                         },
                         parent: parentId ? {
@@ -206,15 +186,6 @@ export const commentsRouter = t.router({
                                 id: user.id
                             }
                         },
-                    }
-                });
-                path.push(comment.id);
-                await prisma.comment.update({
-                    where: {
-                        id: comment.id
-                    },
-                    data: {
-                        path
                     }
                 });
             }, {

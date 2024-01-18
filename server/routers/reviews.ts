@@ -4,7 +4,6 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {getDocument} from "lib/database/fullTextSearch";
 import {Prisma} from "@prisma/client";
 
 
@@ -142,12 +141,6 @@ export const reviewsRouter = t.router({
                             }
                         }
                     });
-                    // await prisma.document.create({
-                    //     data: {
-                    //         type: "review",
-                    //         text,
-                    //     }
-                    // });
 
                     return review;
                 });

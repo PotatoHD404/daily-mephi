@@ -3,7 +3,6 @@ import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {isToxic} from "lib/toxicity";
-import {getDocument} from "lib/database/fullTextSearch";
 
 
 export const usersRouter = t.router({
@@ -114,25 +113,14 @@ export const usersRouter = t.router({
                             nickname,
                             image: imageId ? {connect: {id: imageId}} : undefined,
                             bio,
+                            document: {
+                                update: {
+                                    text: nickname + ' ' + bio
+                                }
+                            }
                         }
                     }
                 )
-                // update or create document
-                let text = nickname + ' ' + bio;
-                const docContent = getDocument(text);
-                await prisma.document.upsert({
-                    where: {
-                        userId: user.id
-                    },
-                    create: {
-                        userId: user.id,
-                        text,
-                        ...docContent
-                    },
-                    update: {text, ...docContent}
-                });
-                // TODO: update search index
-
 
                 return {ok: true};
             });

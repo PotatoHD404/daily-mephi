@@ -19,7 +19,7 @@ export function generate3grams(text: string) {
 
 export function prepareText(text: string) {
     text = text.toLowerCase();
-    text = text.replace(/[^a-zа-яё0-9"\-]/g, ' ');
+    text = text.replace(/[^a-zа-яё0-9"-]/g, ' ');
     text = text.replace(/\s+/g, ' ');
     return text.trim();
 }
@@ -44,9 +44,5 @@ export function generateWords(text: string) {
     text = prepareText(text);
     // split text
     return tokenize(text);
-}
-
-export function getDocument(text: string) {
-    return {words: generateWords(text)};
 }
 

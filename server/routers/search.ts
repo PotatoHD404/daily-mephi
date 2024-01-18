@@ -189,11 +189,18 @@ export const searchRouter = t.router({
                 score: number;
             }
 
+
+
             const docs: DocsType[] = await prisma.$queryRaw`
-                SELECT *, similarity("Document"."text", ${tsQuery}) as similarity FROM "Document"
-                WHERE "Document"."text" @@ to_tsquery(${tsQuery})
-                ORDER BY ${}similarity DESC
-                LIMIT ${limit} OFFSET ${offset}`;
+                SELECT *, similarity("documents"."text", ${tsQuery}) as similarity FROM "documents"
+                ${tsQuery !== "" ? Prisma.sql`WHERE "Document"."text" @@ to_tsquery('russian', ${tsQuery})` : Prisma.empty}
+                ${tsQuery === "" && types?.length ? Prisma.sql`WHERE "documents"."type" = ANY(${types})` : Prisma.empty}
+                
+                ORDER BY
+                ${sort === "time" ? Prisma.sql`updated_at DESC,` : Prisma.empty}
+                similarity DESC
+                LIMIT ${limit}
+                OFFSET ${offset}`;
 
 
             // group by type into some object
