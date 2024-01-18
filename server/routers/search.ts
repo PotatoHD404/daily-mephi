@@ -147,11 +147,11 @@ export const searchRouter = t.router({
         .input(z.object({
             query: z.string().min(1).max(100),
             sort: z.enum(['relevance', 'time']).default('relevance'),
-            faculty_ids: z.array(z.string()).optional(),
-            discipline_ids: z.array(z.string()).optional(),
+            faculty_ids: z.array(z.string()).optional().default([]),
+            discipline_ids: z.array(z.string()).optional().default([]),
             rating_from: z.number().optional(),
             rating_to: z.number().optional(),
-            types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional(),
+            types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional().default([]),
             limit: z.number().int().min(1).max(100).default(10),
             offset: z.number().int().min(0).default(0),
         }))
@@ -193,8 +193,13 @@ export const searchRouter = t.router({
 
             const docs: DocsType[] = await prisma.$queryRaw`
                 SELECT *, similarity("documents"."text", ${tsQuery}) as similarity FROM "documents"
-                ${tsQuery !== "" ? Prisma.sql`WHERE "Document"."text" @@ to_tsquery('russian', ${tsQuery})` : Prisma.empty}
-                ${tsQuery === "" && types?.length ? Prisma.sql`WHERE "documents"."type" = ANY(${types})` : Prisma.empty}
+                LEFT JOIN "tutors" ON "documents"."record_id" = "tutors"."id" AND "documents"."type" = 'tutor'
+                
+                ${tsQuery !== "" ? Prisma.sql`WHERE "documents"."text" @@ to_tsquery('russian', ${tsQuery})` : Prisma.empty}
+                ${tsQuery === "" ? Prisma.sql`WHERE` : Prisma.sql`AND`}
+                "documents"."type" = ANY(${types}) AND
+                "documents"."deleted_at" IS NULL AND
+                "documents".""
                 
                 ORDER BY
                 ${sort === "time" ? Prisma.sql`updated_at DESC,` : Prisma.empty}

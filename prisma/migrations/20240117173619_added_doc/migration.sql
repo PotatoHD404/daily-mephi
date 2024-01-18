@@ -25,8 +25,6 @@ ALTER TABLE "news" ADD CONSTRAINT "news_document_id_fkey" FOREIGN KEY ("document
 -- AddForeignKey
 ALTER TABLE "quotes" ADD CONSTRAINT "quotes_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE "quotes" ADD CONSTRAINT "quotes_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
-
 ALTER TABLE "documents" ADD COLUMN "words" TSVECTOR AS (to_tsvector('russian', "text")) STORED;
 
 CREATE INDEX ON "documents" USING GIN ("words");

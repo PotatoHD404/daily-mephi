@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-1.0.x"]
 }
 
@@ -105,31 +105,26 @@ model Comment {
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
   userId        String    @map("user_id") @db.Uuid
-  reviewId      String?   @map("review_id") @db.Uuid
-  materialId    String?   @map("material_id") @db.Uuid
-  newsId        String?   @map("news_id") @db.Uuid
-  parentId      String?   @map("parent_id") @db.Uuid
+  recordId      String?   @map("record_id") @db.Uuid
+  type          String    @map("type")
   path          String[]  @map("path")
+  depth         Int       @default(0) @map("depth")
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
   score         Float     @default(0) @map("score")
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments")
-  review    Review?    @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_comments")
-  material  Material?  @relation(fields: [materialId], references: [id], onDelete: Cascade, name: "materials_comments")
-  news      News?      @relation(fields: [newsId], references: [id], onDelete: Cascade, name: "news_comments")
-  parent    Comment?   @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, name: "comments_parents")
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments", map: "comments_user_id_fkey")
+  review    Review?    @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "reviews_comments", map: "comments_review_id_fkey")
+  material  Material?  @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "materials_comments", map: "comments_material_id_fkey")
+  news      News?      @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "news_comments", map: "comments_news_id_fkey")
+  parent    Comment?   @relation(fields: [recordId], references: [id], onDelete: NoAction, onUpdate: NoAction, name: "comments_parents", map: "comments_parent_id_fkey")
   comments  Comment[]  @relation(name: "comments_parents")
   reactions Reaction[] @relation(name: "comments_reactions")
 
   @@index([createdAt])
   @@index([userId])
-  @@index([reviewId])
-  @@index([materialId])
-  @@index([newsId])
-  @@index([parentId])
-  // gin index for path
+  @@index([type, recordId, depth])
   @@index([path], type: Gin)
   @@map("comments")
 }
@@ -373,7 +368,7 @@ model Tutor {
 model Document {
   id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
   text      String     @map("text")
-  recordId  String?    @unique @db.Uuid
+  recordId  String?    @unique @map("record_id") @db.Uuid
   type      String     @default("unknown") @map("type")
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
@@ -387,7 +382,7 @@ model Document {
   Quote     Quote[]
 
   @@index([type])
-  @@index([recordId])
+  @@index([type, recordId])
   @@map("documents")
 }
 

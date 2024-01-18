@@ -85,7 +85,7 @@ export const commentsRouter = t.router({
                                                                c."likes_count",
                                                                c."dislikes_count",
                                                                c."commentsCount",
-                                                               cte.path || c.id
+                                                               
                                                         FROM "comments" c
                                                                  INNER JOIN cte
                                                                             ON c."parentId" = cte.id)
@@ -146,6 +146,7 @@ export const commentsRouter = t.router({
                     await prisma.comment.updateMany({
                         where: {
                             // path contains parent comment id
+                            type,
                             path: {
                                 has: parentId
                             }
@@ -168,6 +169,7 @@ export const commentsRouter = t.router({
                             id,
                             text,
                             path,
+                            depth: path.length,
                             [type]: {
                                 connect: {
                                     id: recordId,
