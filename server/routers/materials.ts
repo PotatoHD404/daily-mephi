@@ -137,7 +137,7 @@ export const materialsRouter = t.router({
                              ctx: {prisma, user},
                              input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}
                          }) => {
-            return await prisma.$transaction(async (prisma) => {
+            return prisma.$transaction(async (prisma) => {
                 const material = await prisma.material.create({
                         data: {
                             title,
@@ -211,7 +211,7 @@ export const materialsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}, input: {id}}) => {
-            return await prisma.material.findMany({
+            return prisma.material.findMany({
                 where: {tutorId: id},
                 select: {
                     id: true,
