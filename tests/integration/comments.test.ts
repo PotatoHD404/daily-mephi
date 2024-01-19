@@ -1,8 +1,7 @@
-import type {Discipline} from "@prisma/client";
 // order makes difference, it's important to mock prisma before importing utils
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/utils/trpc";
-import {describe, it, expect} from '@jest/globals';
+import {describe, expect, it} from '@jest/globals';
 import {generateComment, generateNews, generateUser} from "./utils/faker";
 import {prisma} from "lib/database/prisma";
 
@@ -21,11 +20,11 @@ describe('[GET] /api/v2/comments', () => {
         const users = Array.from({length: 100}, generateUser);
         const news = Array.from({length: 100}, generateNews);
         const rawComments = Array.from({length: 1000}, generateComment);
-        const comments = rawComments.map((comment, index) => {
+        const comments = rawComments.map((comment) => {
             return {
                 ...comment,
-                userId: users[index].id,
-                newsId: news[index].id,
+                userId: faker.helpers.arrayElement(users).id,
+                newsId: faker.helpers.arrayElement(news).id,
                 type: "news"
             }
         });
@@ -44,6 +43,12 @@ describe('[GET] /api/v2/comments', () => {
             id: news[0].id
         });
 
-        expect(apiComments).toEqual(comments.slice(0, 20));
+        expect(apiComments).toEqual(comments.filter(el => el.newsId === news[0].id).map(el => {
+            return {
+                ...el,
+                user: users.find(user => user.id === el.userId)
+            }
+        }));
+
     });
 });

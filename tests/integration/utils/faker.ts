@@ -66,15 +66,9 @@ export function generateUser() {
     return {
         id: faker.string.uuid(),
         nickname: faker.internet.userName(),
-        createdAt: faker.date.past(),
-        updatedAt: faker.date.past(),
         deletedAt: null,
         image: generateImage(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-        role: faker.helpers.arrayElement(["admin", "user"]),
-        facultyId: null,
-        semesterId: null,
+        role: faker.helpers.arrayElement(["tutor", "default"]),
     };
 }
 
