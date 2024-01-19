@@ -94,6 +94,6 @@
     "typescript": "^5.3.3"
   },
   "msw": {
-    "workerDirectory": ".storybook/public"
+    "workerDirectory": "public"
   }
 }

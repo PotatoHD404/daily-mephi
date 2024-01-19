@@ -61,3 +61,46 @@ export function generateFile(usersCopy: string[]): File {
         usersCopy.splice(usersCopy.findIndex(el => el === res.userId), 1)
     return res;
 }
+
+export function generateUser() {
+    return {
+        id: faker.string.uuid(),
+        nickname: faker.internet.userName(),
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+        deletedAt: null,
+        image: generateImage(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        role: faker.helpers.arrayElement(["admin", "user"]),
+        facultyId: null,
+        semesterId: null,
+    };
+}
+
+export function generateNews() {
+    return {
+        id: faker.string.uuid(),
+        title: faker.lorem.sentence(),
+        text: faker.lorem.paragraph(),
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+        deletedAt: null,
+        image: generateImage(),
+        userId: null,
+    };
+}
+
+export function generateComment() {
+    return {
+        id: faker.string.uuid(),
+        text: faker.lorem.paragraph(),
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+        deletedAt: null,
+        parentId: null,
+        userId: null,
+        type: faker.helpers.arrayElement(["news", "material", "review"]),
+        recordId: null,
+    };
+}
