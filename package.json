@@ -27,6 +27,7 @@
     "@quramy/jest-prisma-node": "^1.7.3",
     "@resvg/resvg-js": "^2.6.0",
     "@sparticuz/chromium": "^119.0.2",
+    "@t3-oss/env-nextjs": "^0.7.3",
     "@tanstack/react-query": "^5.17.9",
     "@trpc/client": "^11.0.0-next-beta.193",
     "@trpc/next": "^11.0.0-next-beta.193",

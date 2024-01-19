@@ -1,4 +1,6 @@
-const googleApiKey = process.env.GOOGLE_API_KEY;
+import {env} from "./env";
+
+const googleApiKey = env.GOOGLE_API_KEY;
 
 export async function getToxicity(text: string) {
 

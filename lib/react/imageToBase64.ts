@@ -1,8 +1,9 @@
 import {StaticImageData} from "next/image";
+import {env} from "../env";
 
 export function normalizeUrl(url: string | StaticImageData | null, alt: StaticImageData | string | null, normalize: boolean = false): string {
     let res: string | null = null;
-    const domain = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const domain = env.NEXTAUTH_URL ?? "http://localhost:3000";
     if (typeof url === "string") {
         res = url;
     } else if (url !== null && url?.src !== undefined) {

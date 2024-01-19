@@ -8,10 +8,11 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {timeout} from "lib/utils";
+import {env} from "../../lib/env";
 
 
 async function getNotionToken() {
-    return process.env.NOTION_TOKEN_V2 ?? ""
+    return env.NOTION_TOKEN_V2 ?? ""
     /*let token_v2: string | null = null;
     const db_token_data = await prisma.internal.findUnique({where: {name: 'notion_token_v2'}});
 
@@ -21,7 +22,7 @@ async function getNotionToken() {
         let {value: enc_token} = db_token_data;
         expires = db_token_data.expires
         try {
-            token_v2 = await decrypt(enc_token, process.env.DATABASE_KEY);
+            token_v2 = await decrypt(enc_token, env.DATABASE_KEY);
         } catch (e) {
         }
     }
@@ -38,8 +39,8 @@ async function getNotionToken() {
                 method: 'POST',
             },
             {
-                email: process.env.NOTION_EMAIL,
-                password: process.env.NOTION_PASSWORD
+                email: env.NOTION_EMAIL,
+                password: env.NOTION_PASSWORD
             });
         token_v2 = cookies["token_v2"].value;
         expires = cookies["token_v2"].expires !== 'Infinity' ? cookies["token_v2"].expires : null;
@@ -47,7 +48,7 @@ async function getNotionToken() {
             throw new Error('There is no token_v2');
         if (!expires)
             throw new Error('There is no expires');
-        token_v2 = await encrypt(token_v2, process.env.DATABASE_KEY)
+        token_v2 = await encrypt(token_v2, env.DATABASE_KEY)
 
         await prisma.internal.upsert({
             where: {name: 'notion_token_v2'},
@@ -115,7 +116,7 @@ export const filesRouter = t.router({
             }
 
             const mime = extToMimes[ext as keyof typeof extToMimes] || 'text/plain';
-            const destinationDatabaseId = process.env.NOTION_PRIVATE_PAGE;
+            const destinationDatabaseId = env.NOTION_PRIVATE_PAGE;
 
             let block_id: string = '';
             let i: number;
@@ -189,7 +190,7 @@ export const filesRouter = t.router({
                 });
             }
             const links = await res1.json();
-            if (!process.env.JWT_PRIVATE) {
+            if (!env.JWT_PRIVATE) {
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',
                     message: 'JWT_PRIVATE is not set'
@@ -200,7 +201,7 @@ export const filesRouter = t.router({
                 block: block_id,
                 ext,
                 filename
-            }, process.env.JWT_PRIVATE);
+            }, env.JWT_PRIVATE);
             return {token, signedGetUrl: links['signedGetUrl']};
         }),
     putFile: t.procedure.meta({
@@ -220,11 +221,11 @@ export const filesRouter = t.router({
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
         .mutation(async ({input: {token}, ctx: {prisma, notion, user}}) => {
-            if (!process.env.JWT_PRIVATE)
+            if (!env.JWT_PRIVATE)
                 throw new Error('Jwt key is undefined');
             let data: JwtPayload | string
             try {
-                data = jwt.verify(token, process.env.JWT_PRIVATE);
+                data = jwt.verify(token, env.JWT_PRIVATE);
             } catch (e) {
                 throw new TRPCError({
                     code: 'FORBIDDEN',

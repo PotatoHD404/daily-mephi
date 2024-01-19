@@ -3,6 +3,7 @@ const runtimeCaching = require('next-pwa/cache');
 const {PrismaPlugin} = require('@prisma/nextjs-monorepo-workaround-plugin')
 
 const cachingStrategies = require('./pwa/cache');
+const {env} = require("./lib/env");
 // const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
@@ -48,7 +49,7 @@ const securityHeaders = [
     }
 ];
 
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
     const header_value = ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim();
     securityHeaders.push({
         key: 'Content-Security-Policy',
