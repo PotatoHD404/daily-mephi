@@ -4,7 +4,6 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {getDocument} from "lib/database/fullTextSearch";
 import {Prisma} from "@prisma/client";
 
 
@@ -108,7 +107,8 @@ export const reviewsRouter = t.router({
             try {
                 return await prisma.$transaction(async (prisma) => {
 
-                    const review = await prisma.review.create({
+                    const [review] = await Promise.all([
+                        prisma.review.create({
                         data: {
                             text,
                             title,
@@ -125,29 +125,23 @@ export const reviewsRouter = t.router({
                                 }
                             }
                         },
-                    });
-                    await prisma.tutor.update({
+                    }),
+                    prisma.tutor.update({
                         where: {id: tutorId},
                         data: {
                             reviewsCount: {
                                 increment: 1
                             }
                         }
-                    });
-                    await prisma.user.update({
+                    }),
+                    prisma.user.update({
                         where: {id: user.id},
                         data: {
                             reviewsCount: {
                                 increment: 1
                             }
                         }
-                    });
-                    // await prisma.document.create({
-                    //     data: {
-                    //         type: "review",
-                    //         text,
-                    //     }
-                    // });
+                    })]);
 
                     return review;
                 });

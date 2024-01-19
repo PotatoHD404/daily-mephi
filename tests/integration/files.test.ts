@@ -52,7 +52,7 @@ jest.mock('jsonwebtoken', () => ({
 // describe('filesRouter', () => {
 //     it('uploads, saves and retrieves a file correctly', async () => {
 //         const {usersWithImages, users, imageIds} = await createUsers();
-//         const currUser = faker.helpers.arrayElement(usersWithImages)
+//         const currUser = faker.ts.helpers.arrayElement(usersWithImages)
 //
 //         isAuthorizedFunc.mockImplementation(async ({ctx: {req, res}, next}) => {
 //             return next({

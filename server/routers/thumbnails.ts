@@ -9,6 +9,7 @@ import ReviewThumbnail from 'server/components/thumbnails/review';
 import TutorThumbnail from 'server/components/thumbnails/tutor';
 import UserThumbnail from 'server/components/thumbnails/user';
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
+import {TRPCError} from "@trpc/server";
 
 
 async function getFontData(url: string) {
@@ -17,7 +18,7 @@ async function getFontData(url: string) {
         .then(r => Buffer.from(r));
 }
 
-async function renderAndSend(element: JSX.Element, res: NextApiResponse) {
+async function renderAndSend(element: React.ReactElement, res: NextApiResponse) {
     // const fontPath = join(process.cwd(), 'public', 'fonts', 'Montserrat.ttf')
     // let fontData = await fs.readFile(fontPath)
     let fontsData = [
@@ -119,8 +120,28 @@ export const thumbnailsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: quoteId}}) => {
+            const quote = await prisma.quote.findUnique({
+                where: {
+                    id: quoteId
+                },
+                select: {
+                    id: true,
+                    text: true,
+                    updatedAt: true,
+                    likesCount: true,
+                    dislikesCount: true,
+                    tutor: {
+                        select: {
+                            shortName: true
+                        }
+                    }
+                }
+            })
+            if (!quote) {
+                throw new TRPCError({code: 'NOT_FOUND', message: 'Quote not found'});
+            }
             const element = QuoteThumbnail({
-                name: "Трифоненков В.П.",
+                name: quote.tutor.shortName,
                 text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. "
             })
             await renderAndSend(element, res);

@@ -2,12 +2,10 @@ import {t} from "server/utils";
 import {z} from "zod";
 import {convertGoogleQueryToTsQuery, prepareText} from "lib/database/fullTextSearch";
 import {TRPCError} from "@trpc/server";
-import {DefaultArgs} from "@prisma/client/runtime/library";
 import {Prisma, PrismaClient} from "@prisma/client";
 
 export type DocsKeyTypes = "tutor" | "user" | "material" | "review" | "quote" | "news";
-export type PrismaType = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
-const findTutors = async (prisma: PrismaType, ids: string[]) =>
+const findTutors = async (prisma: PrismaClient, ids: string[]) =>
     prisma.tutor.findMany({
         where: {
             id: {in: ids},
@@ -28,7 +26,7 @@ const findTutors = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findUsers = async (prisma: PrismaType, ids: string[]) =>
+const findUsers = async (prisma: PrismaClient, ids: string[]) =>
     prisma.user.findMany({
         where: {
             id: {in: ids},
@@ -43,7 +41,7 @@ const findUsers = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findMaterials = async (prisma: PrismaType, ids: string[]) =>
+const findMaterials = async (prisma: PrismaClient, ids: string[]) =>
     prisma.material.findMany({
         where: {
             id: {in: ids},
@@ -64,7 +62,7 @@ const findMaterials = async (prisma: PrismaType, ids: string[]) =>
         }
     });
 
-const findReviews = async (prisma: PrismaType, ids: string[]) =>
+const findReviews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.review.findMany({
         where: {
             id: {in: ids},
@@ -88,7 +86,7 @@ const findReviews = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findQuote = async (prisma: PrismaType, ids: string[]) =>
+const findQuote = async (prisma: PrismaClient, ids: string[]) =>
     prisma.quote.findMany({
         where: {
             id: {in: ids},
@@ -113,7 +111,7 @@ const findQuote = async (prisma: PrismaType, ids: string[]) =>
         }
     });
 
-const findNews = async (prisma: PrismaType, ids: string[]) =>
+const findNews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.news.findMany({
         where: {
             id: {in: ids},
@@ -147,11 +145,11 @@ export const searchRouter = t.router({
         .input(z.object({
             query: z.string().min(1).max(100),
             sort: z.enum(['relevance', 'time']).default('relevance'),
-            faculty_ids: z.array(z.string()).optional(),
-            discipline_ids: z.array(z.string()).optional(),
-            rating_from: z.number().optional(),
-            rating_to: z.number().optional(),
-            types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional(),
+            faculty_ids: z.array(z.string()).optional().default([]),
+            discipline_ids: z.array(z.string()).optional().default([]),
+            rating_from: z.number().min(0).max(5).optional().default(0),
+            rating_to: z.number().min(0).max(5).optional().default(5),
+            types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional().default([]),
             limit: z.number().int().min(1).max(100).default(10),
             offset: z.number().int().min(0).default(0),
         }))
@@ -189,11 +187,28 @@ export const searchRouter = t.router({
                 score: number;
             }
 
+
+
             const docs: DocsType[] = await prisma.$queryRaw`
-                SELECT *, similarity("Document"."text", ${tsQuery}) as similarity FROM "Document"
-                WHERE "Document"."text" @@ to_tsquery(${tsQuery})
-                ORDER BY ${}similarity DESC
-                LIMIT ${limit} OFFSET ${offset}`;
+            SELECT *, similarity("documents"."text", '${tsQuery}') as similarity FROM "documents"
+                WHERE "documents"."type" = ANY(${types}) AND
+                ${tsQuery !== "" ? Prisma.sql`"documents"."text" @@ to_tsquery('russian', '${tsQuery}') AND` : Prisma.empty}
+                "documents"."deleted_at" IS NOT NULL AND
+                ${types.includes('tutor') ? Prisma.sql`("documents"."type" = 'tutor' AND EXISTS(SELECT 1 FROM "tutors"
+                                JOIN "_tutors_faculties" ON tutors.id = _tutors_faculties."B"
+                                JOIN "_tutors_disciplines" ON tutors.id = _tutors_disciplines."B"
+                                JOIN "ratings" ON tutors.id = ratings.tutor_id
+                                WHERE "documents"."record_id" = "tutors"."id" AND
+                                      ${disciplineIds.length ? Prisma.sql`"_tutors_disciplines"."id" = ANY(${disciplineIds}) AND` : Prisma.empty}
+                                      ${facultyIds.length ? Prisma.sql`"_tutors_faculties"."id" = ANY(${facultyIds}) AND` : Prisma.empty}
+                                      ${ratingFrom != 0 || ratingTo == 5 ? Prisma.sql`"ratings".avg_rating BETWEEN ${ratingFrom} AND ${ratingTo}` : Prisma.empty}
+                                      )
+                                      ${types.length > 1 ? Prisma.sql`OR "documents"."type" != 'tutor'` : Prisma.empty})` : Prisma.empty}
+            ORDER BY
+                ${sort === "time" ? Prisma.sql`updated_at DESC,` : Prisma.empty}
+                similarity DESC
+            LIMIT ${limit}
+                OFFSET ${offset}`;
 
 
             // group by type into some object

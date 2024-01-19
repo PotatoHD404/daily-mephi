@@ -4,8 +4,69 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {Comment} from "@prisma/client";
+import {PrismaClient, Comment as DefaultComment, Prisma} from "@prisma/client";
+import {DefaultArgs} from "@prisma/client/runtime/library";
 
+
+type AdditionalSearchType = {} | { path: { has: string }, depth: { gte: number } }
+const getComments = async (prisma: PrismaClient, type: "news" | "material" | "review", recordId: string, additionalSearch: AdditionalSearchType, limit: number, offset: number) =>
+    prisma.comment.findMany({
+        where: {
+            type,
+            recordId,
+            ...additionalSearch
+        },
+        select: {
+            id: true,
+            text: true,
+            createdAt: true,
+            parentId: true,
+            commentsCount: true,
+            likesCount: true,
+            dislikesCount: true,
+            user: {
+                select: {
+                    id: true,
+                    nickname: true,
+                    image: {
+                        select: {
+                            url: true
+                        }
+                    }
+                }
+            },
+        },
+        orderBy: {
+            score: 'desc'
+        },
+        take: limit,
+        skip: offset
+    });
+
+type Comment = Awaited<ReturnType<typeof getComments>>[0]
+
+export function buildCommentTree(comments: Comment[]): Comment[] {
+    const commentMap: { [key: string]: Comment & { children: Comment[] } } = {};
+
+    // Initialize the map and create a children container for each comment
+    comments.forEach(comment => {
+        commentMap[comment.id] = {...comment, children: []};
+    });
+
+    const rootComments: Comment[] = [];
+
+    comments.forEach(comment => {
+        if (comment.parentId) {
+            // If it has a parentId, it's a child comment, add it to the parent's children array
+            commentMap[comment.parentId].children.push(commentMap[comment.id]);
+        } else {
+            // If it doesn't have a parentId, it's a root comment
+            rootComments.push(commentMap[comment.id]);
+        }
+    });
+
+    return rootComments;
+}
 
 export const commentsRouter = t.router({
     getOne: t.procedure.meta({
@@ -20,10 +81,11 @@ export const commentsRouter = t.router({
             comment_id: z.string().uuid()
         }))
         /* .output(z.any()) */
-        .query(({ctx: {prisma}, input: {id, type, comment_id: commentId}}) => {
+        .query(({ctx: {prisma}, input: {id: recordId, type, comment_id: commentId}}) => {
             return prisma.comment.findUnique({
                 where: {
-                    [`${type}Id`]: id,
+                    type,
+                    recordId,
                     id: commentId
                 },
                 select: {
@@ -49,79 +111,45 @@ export const commentsRouter = t.router({
     })
         .input(z.object({
             type: z.enum(["news", "material", "review"]),
-            id: z.string().uuid()
+            id: z.string().uuid(),
+            parentId: z.string().uuid().nullish().default(null),
+            limit: z.number().int().min(1).max(100).default(20),
+            offset: z.number().int().min(0).default(0),
         }))
         /* .output(z.any()) */
-        .query(async ({ctx: {prisma}, input: {id, type}}) => {
-            let comments: {
-                id: string,
-                text: string,
-                createdAt: Date,
-                parentId: string | null,
-                userId: string,
-                path: string[],
-                childrenCount: bigint | number
-            }[] = await prisma.$queryRaw`
-                WITH results as (WITH RECURSIVE cte (id, text, "createdAt", "parentId", "userId", "likes", "dislikes",
-                                                     "path")
-                                                    AS (SELECT id,
-                                                               text,
-                                                               "createdAt",
-                                                               "parentId",
-                                                               "userId",
-                                                               "likes",
-                                                               "dislikes",
-                                                               array [id] AS path
-                                                        FROM "Comment"
-                                                        WHERE "Comment"."parentId" IS NULL
-                                                          AND "Comment"."${type}Id" = ${id}
-                                                        UNION ALL
-                                                        SELECT c.id,
-                                                               c.text,
-                                                               c."createdAt",
-                                                               c."parentId",
-                                                               c."userId",
-                                                               c."likes",
-                                                               c."dislikes",
-                                                               cte.path || c.id
-                                                        FROM "Comment" c
-                                                                 INNER JOIN cte
-                                                                            ON c."parentId" = cte.id)
-                                 SELECT cte.id,
-                                        cte.text,
-                                        cte."createdAt",
-                                        cte."parentId",
-                                        cte."userId",
-                                        cte."likes",
-                                        cte."dislikes",
-                                        count(cte2.id) as "childrenCount"
-                                 FROM cte
-                                          LEFT JOIN public."User"
-                                                    ON
-                                                        "User"."id" = cte."userId"
-                                          LEFT JOIN cte cte2
-                                                    ON
-                                                        cte.id = ANY (cte2.path) AND cte2."id" != cte."id"
-                                 GROUP BY cte.id, cte.text, cte."createdAt", cte."parentId", cte."userId", cte.path,
-                                          cte."likes", cte."dislikes"
-                                 ORDER BY "childrenCount" DESC
-                                 LIMIT 10)
-                SELECT results.*, IF(COUNT(results2.id) > 0, ARRAY_AGG(DISTINCT results2.id), '{}') as "directChildren"
-                from results
-                         LEFT JOIN results AS results2
-                                   ON
-                                       results2."parentId" = results.id
-                GROUP BY results.id, results.text, results."createdAt", results."parentId", results."userId",
-                         results.likes,
-                         results.dislikes,
-                         results."childrenCount";
-            `
+        .query(async ({ctx: {prisma}, input: {id: recordId, type, parentId, limit, offset}}) => {
+            let additionalSearch: AdditionalSearchType = {};
+            if (parentId) {
+                const parentComment = await prisma.comment.findUnique({
+                    where: {
+                        type,
+                        recordId,
+                        id: parentId
+                    },
+                    select: {
+                        depth: true
+                    }
+                });
+                if (!parentComment) {
+                    throw new TRPCError({
+                        code: 'NOT_FOUND',
+                        message: 'Parent comment not found'
+                    });
+                }
+                let depth = parentComment.depth;
+                additionalSearch = {
+                    path: {
+                        has: parentId
+                    },
+                    depth: {
+                        gte: depth
+                    }
+                }
+            }
+            let comments = await getComments(prisma, type, recordId, additionalSearch, limit, offset);
 
-            comments = comments.map(comment => {
-                comment.childrenCount = Number(comment.childrenCount);
-                return comment;
-            });
-            return comments;
+            return buildCommentTree(comments);
+
         }),
     create: t.procedure.meta({
         openapi: {
@@ -142,17 +170,9 @@ export const commentsRouter = t.router({
         .use(isAuthorized)
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
-        .mutation(async ({ctx: {prisma, user}, input: {id, type, text, parentId}}) => {
-
-            let typeMapping: Record<string, any> = {
-                review: prisma.review,
-                material: prisma.material,
-                news: prisma.news
-            };
-
-
+        .mutation(async ({ctx: {prisma, user}, input: {id: recordId, type, text, parentId}}) => {
             return prisma.$transaction(async (prisma) => {
-                let parentComment: Comment | null;
+                let parentComment: DefaultComment | null;
                 let path: string[] = [];
                 if (parentId) {
                     parentComment = await prisma.comment.findFirst({where: {id: parentId}});
@@ -166,6 +186,11 @@ export const commentsRouter = t.router({
                     await prisma.comment.updateMany({
                         where: {
                             // path contains parent comment id
+                            type,
+                            recordId,
+                            depth: {
+                                lte: parentComment.depth
+                            },
                             path: {
                                 has: parentId
                             }
@@ -173,50 +198,54 @@ export const commentsRouter = t.router({
                         data: {
                             commentsCount: {
                                 increment: 1
+                            },
+                            score: {
+                                increment: 1
                             }
                         }
                     })
                     path = parentComment.path;
                 }
-                await typeMapping[type].update({
-                    where: {
-                        id
-                    },
-                    data: {
-                        commentsCount: {
-                            increment: 1
+                const id = crypto.randomUUID()
+                path.push(id);
+                const table = prisma[type] as Prisma.NewsDelegate<DefaultArgs>;
+
+                const [comment] = await Promise.all([
+                    prisma.comment.create({
+                        data: {
+                            id,
+                            text,
+                            path,
+                            type,
+                            depth: path.length,
+                            [type]: {
+                                connect: {
+                                    id: recordId,
+                                },
+                            },
+                            parent: parentId ? {
+                                connect: {
+                                    id: parentId,
+                                }
+                            } : undefined,
+                            user: {
+                                connect: {
+                                    id: user.id
+                                }
+                            },
                         }
-                    }
-                });
-                const comment = await prisma.comment.create({
-                    data: {
-                        text,
-                        [type]: {
-                            connect: {
-                                id,
-                            }
+                    }),
+                    table.update({
+                        where: {
+                            id: recordId
                         },
-                        parent: parentId ? {
-                            connect: {
-                                id: parentId,
+                        data: {
+                            commentsCount: {
+                                increment: 1
                             }
-                        } : undefined,
-                        user: {
-                            connect: {
-                                id: user.id
-                            }
-                        },
-                    }
-                });
-                path.push(comment.id);
-                await prisma.comment.update({
-                    where: {
-                        id: comment.id
-                    },
-                    data: {
-                        path
-                    }
-                });
+                        }
+                    })]);
+                return comment;
             }, {
                 isolationLevel: "Serializable"
             });

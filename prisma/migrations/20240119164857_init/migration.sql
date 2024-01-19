@@ -75,11 +75,11 @@ CREATE TABLE "comments" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
     "user_id" UUID NOT NULL,
-    "review_id" UUID,
-    "material_id" UUID,
-    "news_id" UUID,
+    "record_id" UUID,
     "parent_id" UUID,
+    "type" STRING NOT NULL,
     "path" STRING[],
+    "depth" INT4 NOT NULL DEFAULT 0,
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
@@ -203,7 +203,6 @@ CREATE TABLE "reviews" (
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
@@ -226,20 +225,6 @@ CREATE TABLE "reactions" (
 );
 
 -- CreateTable
-CREATE TABLE "documents" (
-    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "text" STRING NOT NULL,
-    "recordId" UUID NOT NULL,
-    "type" STRING NOT NULL DEFAULT 'unknown',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-    "deleted_at" TIMESTAMP(3),
-    "score" FLOAT8 NOT NULL DEFAULT 0,
-
-    CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "tutors" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "first_name" STRING(64),
@@ -257,9 +242,22 @@ CREATE TABLE "tutors" (
     "quotes_count" INT4 NOT NULL DEFAULT 0,
     "rates_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "tutors_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "documents" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "text" STRING NOT NULL,
+    "record_id" UUID,
+    "type" STRING NOT NULL DEFAULT 'unknown',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+    "score" FLOAT8 NOT NULL DEFAULT 0,
+
+    CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -402,22 +400,25 @@ CREATE UNIQUE INDEX "verification_tokens_token_key" ON "verification_tokens"("to
 CREATE UNIQUE INDEX "verification_tokens_id_token_key" ON "verification_tokens"("id", "token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "comments_record_id_key" ON "comments"("record_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "comments_parent_id_key" ON "comments"("parent_id");
+
+-- CreateIndex
 CREATE INDEX "comments_created_at_idx" ON "comments"("created_at");
 
 -- CreateIndex
 CREATE INDEX "comments_user_id_idx" ON "comments"("user_id");
 
 -- CreateIndex
-CREATE INDEX "comments_review_id_idx" ON "comments"("review_id");
-
--- CreateIndex
-CREATE INDEX "comments_material_id_idx" ON "comments"("material_id");
-
--- CreateIndex
-CREATE INDEX "comments_news_id_idx" ON "comments"("news_id");
+CREATE INDEX "comments_type_record_id_depth_score_parent_id_idx" ON "comments"("type", "record_id", "depth", "score" DESC, "parent_id");
 
 -- CreateIndex
 CREATE INDEX "comments_parent_id_idx" ON "comments"("parent_id");
+
+-- CreateIndex
+CREATE INDEX "comments_score_idx" ON "comments"("score");
 
 -- CreateIndex
 CREATE INDEX "comments_path_idx" ON "comments" USING GIN ("path");
@@ -510,15 +511,6 @@ CREATE UNIQUE INDEX "reactions_user_id_comment_id_key" ON "reactions"("user_id",
 CREATE UNIQUE INDEX "reactions_user_id_news_id_key" ON "reactions"("user_id", "news_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "documents_recordId_key" ON "documents"("recordId");
-
--- CreateIndex
-CREATE INDEX "documents_type_idx" ON "documents"("type");
-
--- CreateIndex
-CREATE INDEX "documents_recordId_idx" ON "documents"("recordId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "tutors_nickname_key" ON "tutors"("nickname");
 
 -- CreateIndex
@@ -529,6 +521,15 @@ CREATE INDEX "tutors_full_name_idx" ON "tutors"("full_name");
 
 -- CreateIndex
 CREATE INDEX "tutors_short_name_idx" ON "tutors"("short_name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "documents_record_id_key" ON "documents"("record_id");
+
+-- CreateIndex
+CREATE INDEX "documents_type_idx" ON "documents"("type");
+
+-- CreateIndex
+CREATE INDEX "documents_type_record_id_idx" ON "documents"("type", "record_id");
 
 -- CreateIndex
 CREATE INDEX "rates_user_id_idx" ON "rates"("user_id");
@@ -654,13 +655,13 @@ ALTER TABLE "users" ADD CONSTRAINT "users_image_id_fkey" FOREIGN KEY ("image_id"
 ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_review_id_fkey" FOREIGN KEY ("review_id") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_review_id_fkey" FOREIGN KEY ("record_id") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_material_id_fkey" FOREIGN KEY ("material_id") REFERENCES "materials"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_material_id_fkey" FOREIGN KEY ("record_id") REFERENCES "materials"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_news_id_fkey" FOREIGN KEY ("record_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "comments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -693,9 +694,6 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_tutor_id_fkey" FOREIGN KEY ("tutor
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -714,7 +712,22 @@ ALTER TABLE "reactions" ADD CONSTRAINT "reactions_comment_id_fkey" FOREIGN KEY (
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tutors" ADD CONSTRAINT "tutors_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("recordId") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "documents" ADD CONSTRAINT "documents_material_id_fkey" FOREIGN KEY ("record_id") REFERENCES "materials"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_news_id_fkey" FOREIGN KEY ("record_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_quote_id_fkey" FOREIGN KEY ("record_id") REFERENCES "quotes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_review_id_fkey" FOREIGN KEY ("record_id") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_tutor_id_fkey" FOREIGN KEY ("record_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_user_id_fkey" FOREIGN KEY ("record_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "rates" ADD CONSTRAINT "rates_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -757,3 +770,9 @@ ALTER TABLE "_materials_semesters" ADD CONSTRAINT "_materials_semesters_A_fkey" 
 
 -- AddForeignKey
 ALTER TABLE "_materials_semesters" ADD CONSTRAINT "_materials_semesters_B_fkey" FOREIGN KEY ("B") REFERENCES "semesters"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "documents" ADD COLUMN "words" TSVECTOR AS (to_tsvector('russian', "text")) STORED;
+
+CREATE INDEX ON "documents" USING GIN ("type", "words");
+
+CREATE INDEX ON "documents" USING GIN ("text" gin_trgm_ops);

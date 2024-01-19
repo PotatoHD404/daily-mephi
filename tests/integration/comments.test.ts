@@ -12,7 +12,7 @@ import {describe, it} from '@jest/globals';
 //     updatedAt: Date
 //     deletedAt: Date | null
 // }
-describe('[GET] /api/v2/disciplines', () => {
+describe('[GET] /api/v2/comments', () => {
 
     it('Test get all', async () => {
 

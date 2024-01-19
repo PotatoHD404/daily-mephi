@@ -4,7 +4,6 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {getDocument} from "lib/database/fullTextSearch";
 
 
 export const materialsRouter = t.router({
@@ -138,7 +137,8 @@ export const materialsRouter = t.router({
                              input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}
                          }) => {
             return prisma.$transaction(async (prisma) => {
-                const material = await prisma.material.create({
+                const [material] = await Promise.all([
+                    prisma.material.create({
                         data: {
                             title,
                             text,
@@ -174,8 +174,8 @@ export const materialsRouter = t.router({
                             }
                         }
                     }
-                );
-                await prisma.user.update({
+                ),
+                prisma.user.update({
                     where: {
                         id: user.id
                     },
@@ -184,19 +184,21 @@ export const materialsRouter = t.router({
                             increment: 1
                         }
                     }
-                });
-                if (tutorId) {
-                    await prisma.tutor.update({
-                        where: {
-                            id: tutorId
-                        },
-                        data: {
-                            materialsCount: {
-                                increment: 1
+                }),
+                async () => {
+                    if (tutorId) {
+                        await prisma.tutor.update({
+                            where: {
+                                id: tutorId
+                            },
+                            data: {
+                                materialsCount: {
+                                    increment: 1
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                }]);
                 return material;
             });
         }),
@@ -259,9 +261,9 @@ export const materialsRouter = t.router({
                              ctx: {prisma, user},
                              input: {id: tutorId, title, text, fileIds, facultyIds, disciplineIds, semesterIds}
                          }) => {
-            const material = await prisma.$transaction(async (prisma) => {
+            return prisma.$transaction(async (prisma) => {
 
-                const material = await prisma.material.create({
+                const [material] = await Promise.all([prisma.material.create({
                         data: {
                             title,
                             text,
@@ -294,11 +296,17 @@ export const materialsRouter = t.router({
                                 connect: {
                                     id: user.id
                                 }
+                            },
+                            document: {
+                                create: {
+                                    type: "material",
+                                    text,
+                                }
                             }
                         }
                     }
-                );
-                await prisma.tutor.update({
+                ),
+                prisma.tutor.update({
                     where: {
                         id: tutorId
                     },
@@ -307,7 +315,7 @@ export const materialsRouter = t.router({
                             increment: 1
                         }
                     }
-                });
+                }),
                 await prisma.user.update({
                     where: {
                         id: user.id
@@ -317,13 +325,7 @@ export const materialsRouter = t.router({
                             increment: 1
                         }
                     }
-                });
-                await prisma.document.create({
-                    data: {
-                        type: "material",
-                        text,
-                    }
-                });
+                })]);
 
                 return material;
             });

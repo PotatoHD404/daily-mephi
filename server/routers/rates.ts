@@ -28,7 +28,12 @@ export const ratesRouter = t.router({
                             nickname: true,
                             image: true,
                         }
-                    }
+                    },
+                    personality: true,
+                    punctuality: true,
+                    exams: true,
+                    quality: true,
+                    updatedAt: true,
                 }
             });
         }),
@@ -55,7 +60,7 @@ export const ratesRouter = t.router({
         .mutation(async ({ctx: {prisma, user}, input: {id: tutorId, personality, punctuality, exams, quality}}) => {
             try {
                 return await prisma.$transaction(async (prisma) => {
-                    const rate = await prisma.rate.create({
+                    return prisma.rate.create({
                         data: {
                             personality,
                             punctuality,
@@ -69,15 +74,6 @@ export const ratesRouter = t.router({
                             }
                         }
                     });
-                    await prisma.tutor.update({
-                        where: {id: tutorId},
-                        data: {
-                            rates: {
-                                connect: {id: rate.id}
-                            }
-                        }
-                    });
-                    return rate;
                 });
             } catch (e: any) {
                 if (e.code === 'P2002') {

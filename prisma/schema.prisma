@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-1.0.x"]
 }
 
@@ -68,7 +68,6 @@ model User {
   materialsCount Int       @default(0) @map("materials_count")
   reviewsCount   Int       @default(0) @map("reviews_count")
   quotesCount    Int       @default(0) @map("quotes_count")
-  documentId     String?   @map("document_id") @db.Uuid
 
   accounts  Account[]  @relation(name: "users_accounts")
   sessions  Session[]  @relation(name: "users_sessions")
@@ -80,7 +79,7 @@ model User {
   materials Material[] @relation(name: "users_materials")
   quotes    Quote[]    @relation(name: "users_quotes")
   score     Float      @default(0) @map("score")
-  document  Document?  @relation(fields: [documentId], references: [recordId])
+  document  Document?  @relation(name: "users_documents")
 
   @@index([rating(sort: Desc)])
   @@map("users")
@@ -105,31 +104,29 @@ model Comment {
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
   userId        String    @map("user_id") @db.Uuid
-  reviewId      String?   @map("review_id") @db.Uuid
-  materialId    String?   @map("material_id") @db.Uuid
-  newsId        String?   @map("news_id") @db.Uuid
-  parentId      String?   @map("parent_id") @db.Uuid
+  recordId      String?   @unique @map("record_id") @db.Uuid
+  parentId      String?   @unique @map("parent_id") @db.Uuid
+  type          String    @map("type")
   path          String[]  @map("path")
+  depth         Int       @default(0) @map("depth")
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
   score         Float     @default(0) @map("score")
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments")
-  review    Review?    @relation(fields: [reviewId], references: [id], onDelete: Cascade, name: "reviews_comments")
-  material  Material?  @relation(fields: [materialId], references: [id], onDelete: Cascade, name: "materials_comments")
-  news      News?      @relation(fields: [newsId], references: [id], onDelete: Cascade, name: "news_comments")
-  parent    Comment?   @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, name: "comments_parents")
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_comments", map: "comments_user_id_fkey")
+  review    Review?    @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "reviews_comments", map: "comments_review_id_fkey")
+  material  Material?  @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "materials_comments", map: "comments_material_id_fkey")
+  news      News?      @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "news_comments", map: "comments_news_id_fkey")
+  parent    Comment?   @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, name: "comments_parents", map: "comments_parent_id_fkey")
   comments  Comment[]  @relation(name: "comments_parents")
   reactions Reaction[] @relation(name: "comments_reactions")
 
   @@index([createdAt])
   @@index([userId])
-  @@index([reviewId])
-  @@index([materialId])
-  @@index([newsId])
+  @@index([type, recordId, depth, score(sort: Desc), parentId])
   @@index([parentId])
-  // gin index for path
+  @@index([score])
   @@index([path], type: Gin)
   @@map("comments")
 }
@@ -197,7 +194,6 @@ model Material {
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
   score         Float     @default(0) @map("score")
-  documentId    String?   @map("document_id") @db.Uuid
 
   files       File[]       @relation(name: "materials_files")
   user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_materials")
@@ -207,7 +203,7 @@ model Material {
   comments    Comment[]    @relation(name: "materials_comments")
   reactions   Reaction[]   @relation(name: "materials_reactions")
   semesters   Semester[]   @relation(name: "materials_semesters")
-  document    Document?    @relation(fields: [documentId], references: [recordId])
+  document    Document?    @relation(name: "materials_documents")
 
   @@index([createdAt])
   @@index([userId])
@@ -236,11 +232,10 @@ model News {
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   commentsCount Int       @default(0) @map("comments_count")
-  documentId    String?   @map("document_id") @db.Uuid
 
   comments  Comment[]  @relation(name: "news_comments")
   reactions Reaction[] @relation(name: "news_reactions")
-  document  Document?  @relation(fields: [documentId], references: [recordId])
+  document  Document?  @relation(name: "news_documents")
 
   @@index([createdAt])
   @@map("news")
@@ -257,12 +252,11 @@ model Quote {
   likesCount    Int       @default(0) @map("likes_count")
   dislikesCount Int       @default(0) @map("dislikes_count")
   score         Float     @default(0) @map("score")
-  documentId    String?   @map("document_id") @db.Uuid
 
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_quotes")
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_quotes")
   reactions Reaction[] @relation(name: "quotes_reactions")
-  document  Document?  @relation(fields: [documentId], references: [recordId])
+  document  Document?  @relation(name: "quotes_documents")
 
   @@index([createdAt])
   @@index([userId])
@@ -284,13 +278,12 @@ model Review {
   dislikesCount  Int       @default(0) @map("dislikes_count")
   commentsCount  Int       @default(0) @map("comments_count")
   score          Float     @default(0) @map("score")
-  documentId     String?   @map("document_id") @db.Uuid
 
   tutor     Tutor      @relation(fields: [tutorId], references: [id], onDelete: Cascade, name: "tutors_reviews")
   user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, name: "users_reviews")
   comments  Comment[]  @relation(name: "reviews_comments")
   reactions Reaction[] @relation(name: "reviews_reactions")
-  document  Document?  @relation(fields: [documentId], references: [recordId])
+  document  Document?  @relation(name: "reviews_documents")
 
   @@unique([userId, tutorId])
   @@index([createdAt])
@@ -350,7 +343,6 @@ model Tutor {
   quotesCount    Int       @default(0) @map("quotes_count")
   ratesCount     Int       @default(0) @map("rates_count")
   score          Float     @default(0) @map("score")
-  documentId     String?   @map("document_id") @db.Uuid
 
   images       File[]        @relation(name: "tutors_images")
   rates        Rate[]        @relation(name: "tutors_rates")
@@ -361,7 +353,7 @@ model Tutor {
   legacyRating LegacyRating? @relation(name: "tutors_legacy_ratings")
   rating       Rating?       @relation(name: "tutors_ratings")
   quotes       Quote[]       @relation(name: "tutors_quotes")
-  document     Document?     @relation(fields: [documentId], references: [recordId])
+  document     Document?     @relation(name: "tutors_documents")
 
   @@index([fullName])
   @@index([shortName])
@@ -371,23 +363,24 @@ model Tutor {
 // full text search model
 
 model Document {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  text      String     @map("text")
-  recordId  String?    @unique @db.Uuid
-  type      String     @default("unknown") @map("type")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  deletedAt DateTime?  @map("deleted_at")
-  score     Float      @default(0) @map("score")
-  Review    Review[]
-  Tutor     Tutor[]
-  User      User[]
-  Material  Material[]
-  News      News[]
-  Quote     Quote[]
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text      String    @map("text")
+  recordId  String?   @unique @map("record_id") @db.Uuid
+  type      String    @default("unknown") @map("type")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  score     Float     @default(0) @map("score")
+
+  material Material? @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "materials_documents", map: "documents_material_id_fkey")
+  news     News?     @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "news_documents", map: "documents_news_id_fkey")
+  quote    Quote?    @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "quotes_documents", map: "documents_quote_id_fkey")
+  review   Review?   @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "reviews_documents", map: "documents_review_id_fkey")
+  tutor    Tutor?    @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "tutors_documents", map: "documents_tutor_id_fkey")
+  user     User?     @relation(fields: [recordId], references: [id], onDelete: Cascade, name: "users_documents", map: "documents_user_id_fkey")
 
   @@index([type])
-  @@index([recordId])
+  @@index([type, recordId])
   @@map("documents")
 }
 
