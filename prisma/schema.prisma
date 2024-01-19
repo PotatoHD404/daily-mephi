@@ -105,7 +105,7 @@ model Comment {
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
   userId        String    @map("user_id") @db.Uuid
-  recordId      String?   @map("record_id") @db.Uuid
+  recordId      String    @unique @map("record_id") @db.Uuid
   type          String    @map("type")
   path          String[]  @map("path")
   depth         Int       @default(0) @map("depth")
@@ -366,14 +366,15 @@ model Tutor {
 // full text search model
 
 model Document {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  text      String     @map("text")
-  recordId  String?    @unique @map("record_id") @db.Uuid
-  type      String     @default("unknown") @map("type")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  deletedAt DateTime?  @map("deleted_at")
-  score     Float      @default(0) @map("score")
+  id        String                  @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  text      String                  @map("text")
+  recordId  String                  @unique @map("record_id") @db.Uuid
+  type      String                  @default("unknown") @map("type")
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @updatedAt @map("updated_at")
+  deletedAt DateTime?               @map("deleted_at")
+  score     Float                   @default(0) @map("score")
+  words     Unsupported("tsvector") @map("words")
   Review    Review[]
   Tutor     Tutor[]
   User      User[]
