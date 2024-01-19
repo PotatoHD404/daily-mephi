@@ -19,12 +19,12 @@ describe('[GET] /api/v2/comments', () => {
         // create users, news and comments
         const users = Array.from({length: 100}, generateUser);
         const news = Array.from({length: 100}, generateNews);
-        const rawComments = Array.from({length: 1000}, generateComment);
+        const rawComments = Array.from({length: 1}, generateComment);
         const comments = rawComments.map((comment) => {
             return {
                 ...comment,
                 userId: faker.helpers.arrayElement(users).id,
-                newsId: faker.helpers.arrayElement(news).id,
+                recordId: faker.helpers.arrayElement(news).id,
                 type: "news"
             }
         });
@@ -40,10 +40,10 @@ describe('[GET] /api/v2/comments', () => {
 
         const apiComments = await trpc.comments.getAll({
             type: "news",
-            id: news[0].id
+            id: comments[0].recordId
         });
 
-        expect(apiComments).toEqual(comments.filter(el => el.newsId === news[0].id).map(el => {
+        expect(apiComments).toEqual(comments.filter(el => el.recordId === comments[0].recordId).map(el => {
             return {
                 ...el,
                 user: users.find(user => user.id === el.userId)

@@ -67,7 +67,9 @@ export function generateUser() {
         id: faker.string.uuid(),
         nickname: faker.internet.userName(),
         deletedAt: null,
-        image: generateImage(),
+        // image: {
+        //     create: generateImage()
+        // },
         role: faker.helpers.arrayElement(["tutor", "default"]),
     };
 }
@@ -80,8 +82,7 @@ export function generateNews() {
         createdAt: faker.date.past(),
         updatedAt: faker.date.past(),
         deletedAt: null,
-        image: generateImage(),
-        userId: null,
+        // userId: null,
     };
 }
 

@@ -7,6 +7,7 @@ import {prisma} from "lib/database/prisma";
 import VkProvider from "next-auth/providers/vk";
 import GoogleProvider from "next-auth/providers/google";
 import YandexProvider from "next-auth/providers/yandex";
+import GitHubProvider from "next-auth/providers/github";
 import {env} from "../env";
 
 
@@ -74,6 +75,10 @@ export const nextAuthOptions: NextAuthOptions = {
     secret: env.NEXTAUTH_SECRET,
     providers: [
         HomeMEPhiOauth(),
+        YandexProvider({
+            clientId: env.YANDEX_CLIENT_ID,
+            clientSecret: env.YANDEX_CLIENT_SECRET
+        }),
         VkProvider({
             authorization: `https://oauth.vk.com/authorize?scope=email&v=${vkApiVersion}`,
             token: `https://oauth.vk.com/access_token?v=${vkApiVersion}`,
@@ -85,12 +90,29 @@ export const nextAuthOptions: NextAuthOptions = {
             clientId: env.GOOGLE_CLIENT_ID,
             clientSecret: env.GOOGLE_CLIENT_SECRET
         }),
-        YandexProvider({
-            clientId: env.YANDEX_CLIENT_ID,
-            clientSecret: env.YANDEX_CLIENT_SECRET
+        GitHubProvider({
+            clientId: env.GITHUB_CLIENT_ID,
+            clientSecret: env.GITHUB_CLIENT_SECRET
         })
     ],
     callbacks: {
+        async signIn({user, account, profile}) {
+            // return true;
+            if (account?.provider === "home") {
+                return true;
+            }
+            const userExists = await prisma.account.findUnique(
+                {
+                    where: {
+                        provider_providerAccountId: {
+                            provider: account?.provider as string,
+                            providerAccountId: account?.id as string
+                        }
+                    }
+                }
+            )
+            return !!userExists;
+        },
         async jwt({token, user, account, profile, trigger}) {
             // trigger === "signUp"
             if (user || profile) {
