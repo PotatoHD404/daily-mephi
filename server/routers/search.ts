@@ -2,12 +2,10 @@ import {t} from "server/utils";
 import {z} from "zod";
 import {convertGoogleQueryToTsQuery, prepareText} from "lib/database/fullTextSearch";
 import {TRPCError} from "@trpc/server";
-import {DefaultArgs} from "@prisma/client/runtime/library";
 import {Prisma, PrismaClient} from "@prisma/client";
 
 export type DocsKeyTypes = "tutor" | "user" | "material" | "review" | "quote" | "news";
-export type PrismaType = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
-const findTutors = async (prisma: PrismaType, ids: string[]) =>
+const findTutors = async (prisma: PrismaClient, ids: string[]) =>
     prisma.tutor.findMany({
         where: {
             id: {in: ids},
@@ -28,7 +26,7 @@ const findTutors = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findUsers = async (prisma: PrismaType, ids: string[]) =>
+const findUsers = async (prisma: PrismaClient, ids: string[]) =>
     prisma.user.findMany({
         where: {
             id: {in: ids},
@@ -43,7 +41,7 @@ const findUsers = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findMaterials = async (prisma: PrismaType, ids: string[]) =>
+const findMaterials = async (prisma: PrismaClient, ids: string[]) =>
     prisma.material.findMany({
         where: {
             id: {in: ids},
@@ -64,7 +62,7 @@ const findMaterials = async (prisma: PrismaType, ids: string[]) =>
         }
     });
 
-const findReviews = async (prisma: PrismaType, ids: string[]) =>
+const findReviews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.review.findMany({
         where: {
             id: {in: ids},
@@ -88,7 +86,7 @@ const findReviews = async (prisma: PrismaType, ids: string[]) =>
             },
         }
     });
-const findQuote = async (prisma: PrismaType, ids: string[]) =>
+const findQuote = async (prisma: PrismaClient, ids: string[]) =>
     prisma.quote.findMany({
         where: {
             id: {in: ids},
@@ -113,7 +111,7 @@ const findQuote = async (prisma: PrismaType, ids: string[]) =>
         }
     });
 
-const findNews = async (prisma: PrismaType, ids: string[]) =>
+const findNews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.news.findMany({
         where: {
             id: {in: ids},

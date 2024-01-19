@@ -4,9 +4,69 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {Comment, Prisma} from "@prisma/client";
+import {PrismaClient, Comment as DefaultComment, Prisma} from "@prisma/client";
 import {DefaultArgs} from "@prisma/client/runtime/library";
 
+
+type AdditionalSearchType = {} | { path: { has: string }, depth: { gte: number } }
+const getComments = async (prisma: PrismaClient, type: "news" | "material" | "review", recordId: string, additionalSearch: AdditionalSearchType, limit: number, offset: number) =>
+    prisma.comment.findMany({
+        where: {
+            type,
+            recordId,
+            ...additionalSearch
+        },
+        select: {
+            id: true,
+            text: true,
+            createdAt: true,
+            parentId: true,
+            commentsCount: true,
+            likesCount: true,
+            dislikesCount: true,
+            user: {
+                select: {
+                    id: true,
+                    nickname: true,
+                    image: {
+                        select: {
+                            url: true
+                        }
+                    }
+                }
+            },
+        },
+        orderBy: {
+            score: 'desc'
+        },
+        take: limit,
+        skip: offset
+    });
+
+type Comment = Awaited<ReturnType<typeof getComments>>[0]
+
+export function buildCommentTree(comments: Comment[]): Comment[] {
+    const commentMap: { [key: string]: Comment & { children: Comment[] } } = {};
+
+    // Initialize the map and create a children container for each comment
+    comments.forEach(comment => {
+        commentMap[comment.id] = {...comment, children: []};
+    });
+
+    const rootComments: Comment[] = [];
+
+    comments.forEach(comment => {
+        if (comment.parentId) {
+            // If it has a parentId, it's a child comment, add it to the parent's children array
+            commentMap[comment.parentId].children.push(commentMap[comment.id]);
+        } else {
+            // If it doesn't have a parentId, it's a root comment
+            rootComments.push(commentMap[comment.id]);
+        }
+    });
+
+    return rootComments;
+}
 
 export const commentsRouter = t.router({
     getOne: t.procedure.meta({
@@ -21,10 +81,11 @@ export const commentsRouter = t.router({
             comment_id: z.string().uuid()
         }))
         /* .output(z.any()) */
-        .query(({ctx: {prisma}, input: {id, type, comment_id: commentId}}) => {
+        .query(({ctx: {prisma}, input: {id: recordId, type, comment_id: commentId}}) => {
             return prisma.comment.findUnique({
                 where: {
-                    [`${type}Id`]: id,
+                    type,
+                    recordId,
                     id: commentId
                 },
                 select: {
@@ -50,65 +111,45 @@ export const commentsRouter = t.router({
     })
         .input(z.object({
             type: z.enum(["news", "material", "review"]),
-            id: z.string().uuid()
+            id: z.string().uuid(),
+            parentId: z.string().uuid().nullish().default(null),
+            limit: z.number().int().min(1).max(100).default(20),
+            offset: z.number().int().min(0).default(0),
         }))
         /* .output(z.any()) */
-        .query(async ({ctx: {prisma}, input: {id, type}}) => {
-            let comments: {
-                id: string
-                text: string,
-                createdAt: Date,
-                parentId: string | null,
-                userId: string,
-                path: string[],
-                childrenCount: bigint | number
-            }[] = await prisma.$queryRaw`
-                WITH RECURSIVE cte AS (SELECT id,
-                                                               text,
-                                                               "created_at",
-                                                               "parentId",
-                                                               "userId",
-                                                               "likesCount",
-                                                               "dislikesCount",
-                                                               "commentsCount"
-                                                               array [id] AS path
-                                                        FROM "Comment"
-                                                        WHERE "Comment"."parentId" IS NULL
-                                                          AND "Comment"."${type}Id" = ${id}
-                                                        UNION ALL
-                                                        SELECT c.id,
-                                                               c.text,
-                                                               c."created_at",
-                                                               c."parent_id",
-                                                               c."userId",
-                                                               c."likes_count",
-                                                               c."dislikes_count",
-                                                               c."commentsCount",
-                                                               
-                                                        FROM "comments" c
-                                                                 INNER JOIN cte
-                                                                            ON c."parentId" = cte.id)
-                                 SELECT cte.id,
-                                        cte.text,
-                                        cte."created_at",
-                                        cte."parent_id",
-                                        cte."user_id",
-                                        cte."likes_count",
-                                        cte."dislikes_count",
-                                        cte."childrenCount"
-                                 FROM cte
-                                          LEFT JOIN public."users"
-                                                    ON
-                                                        "User"."id" = cte."userId"
-                                 ORDER BY "likes_count", "childrenCount" DESC
-                                 LIMIT 10;
-            `
+        .query(async ({ctx: {prisma}, input: {id: recordId, type, parentId, limit, offset}}) => {
+            let additionalSearch: AdditionalSearchType = {};
+            if (parentId) {
+                const parentComment = await prisma.comment.findUnique({
+                    where: {
+                        type,
+                        recordId,
+                        id: parentId
+                    },
+                    select: {
+                        depth: true
+                    }
+                });
+                if (!parentComment) {
+                    throw new TRPCError({
+                        code: 'NOT_FOUND',
+                        message: 'Parent comment not found'
+                    });
+                }
+                let depth = parentComment.depth;
+                additionalSearch = {
+                    path: {
+                        has: parentId
+                    },
+                    depth: {
+                        gte: depth
+                    }
+                }
+            }
+            let comments = await getComments(prisma, type, recordId, additionalSearch, limit, offset);
 
-            comments = comments.map(comment => {
-                comment.childrenCount = Number(comment.childrenCount);
-                return comment;
-            });
-            return comments;
+            return buildCommentTree(comments);
+
         }),
     create: t.procedure.meta({
         openapi: {
@@ -131,7 +172,7 @@ export const commentsRouter = t.router({
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {id: recordId, type, text, parentId}}) => {
             return prisma.$transaction(async (prisma) => {
-                let parentComment: Comment | null;
+                let parentComment: DefaultComment | null;
                 let path: string[] = [];
                 if (parentId) {
                     parentComment = await prisma.comment.findFirst({where: {id: parentId}});
@@ -146,12 +187,19 @@ export const commentsRouter = t.router({
                         where: {
                             // path contains parent comment id
                             type,
+                            recordId,
+                            depth: {
+                                lte: parentComment.depth
+                            },
                             path: {
                                 has: parentId
                             }
                         },
                         data: {
                             commentsCount: {
+                                increment: 1
+                            },
+                            score: {
                                 increment: 1
                             }
                         }

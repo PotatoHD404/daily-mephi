@@ -28,7 +28,12 @@ export const ratesRouter = t.router({
                             nickname: true,
                             image: true,
                         }
-                    }
+                    },
+                    personality: true,
+                    punctuality: true,
+                    exams: true,
+                    quality: true,
+                    updatedAt: true,
                 }
             });
         }),

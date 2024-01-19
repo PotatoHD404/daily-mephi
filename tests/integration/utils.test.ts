@@ -1,8 +1,8 @@
-import type {Discipline, Faculty, File, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/utils/trpc";
 import {describe, it, expect, jest} from '@jest/globals';
 import { prisma } from "lib/database/prisma";
+import {generateDiscipline, generateFaculty, generateFile, generateImage} from "./utils/faker";
 
 // export type Discipline = {
 //     id: string
@@ -16,16 +16,6 @@ import { prisma } from "lib/database/prisma";
 describe('[GET] /api/v2/disciplines', () => {
 
     it('Test get all', async () => {
-
-        function generateDiscipline(): Discipline {
-            return {
-                id: faker.string.uuid(),
-                name: faker.lorem.sentence(),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-            };
-        }
 
         const disciplines = Array.from({length: 10}, generateDiscipline).sort((a, b) => a.id.localeCompare(b.id));
 
@@ -47,15 +37,6 @@ describe('[GET] /api/v2/disciplines', () => {
 describe('[GET] /api/v2/faculties', () => {
 
     it('Test get all', async () => {
-        function generateFaculty(): Faculty {
-            return {
-                id: faker.string.uuid(),
-                name: faker.lorem.sentence(),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-            };
-        }
 
         const faculties = Array.from({length: 10}, generateFaculty).sort((a, b) => a.id.localeCompare(b.id));
 
@@ -136,28 +117,7 @@ describe('[GET] /api/v2/get_avatars', () => {
         });
 
 
-        function generateFile(): File {
-            const res = {
-                id: faker.string.uuid(),
-                url: faker.internet.url(),
-                altUrl: faker.internet.url(),
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past(),
-                deletedAt: null,
-                filename: faker.system.fileName(),
-                userId: faker.datatype.boolean() || usersCopy.length === 0 ? null : faker.helpers.arrayElement(usersCopy),
-                tutorId: null,
-                materialId: null,
-                tag: faker.datatype.boolean() ? "avatar" : "other",
-                size: faker.number.int({min: 0, max: 10000000}),
-            }
-            // remove user id from users array
-            if (res.userId !== null && res.tag === "avatar")
-                usersCopy.splice(usersCopy.findIndex(el => el === res.userId), 1)
-            return res;
-        }
-
-        let files = Array.from({length: 500}, generateFile).sort((a, b) => a.id.localeCompare(b.id));
+        let files = Array.from({length: 500}, () => generateFile(usersCopy)).sort((a, b) => a.id.localeCompare(b.id));
 
         await prisma.file.createMany({data: files});
 
@@ -179,15 +139,6 @@ describe('[GET] /api/v2/get_avatars', () => {
 
 describe('[GET] /api/v2/top', () => {
     async function initTest() {
-        function generateImage() {
-            return {
-                id: faker.string.uuid(),
-                tag: "avatar",
-                filename: faker.system.fileName(),
-                url: faker.internet.url(),
-                altUrl: faker.internet.url(),
-            }
-        }
 
         const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id.localeCompare(b.id));
         const imageIds = images.map(el => el.id)

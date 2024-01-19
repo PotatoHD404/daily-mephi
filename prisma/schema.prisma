@@ -124,7 +124,9 @@ model Comment {
 
   @@index([createdAt])
   @@index([userId])
-  @@index([type, recordId, depth])
+  @@index([type, recordId, depth, score(sort: Desc), parentId])
+  @@index([parentId])
+  @@index([score])
   @@index([path], type: Gin)
   @@map("comments")
 }

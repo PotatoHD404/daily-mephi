@@ -1,6 +1,7 @@
 import {PrismaClient, Semester} from "@prisma/client";
 import {faker} from "@faker-js/faker";
 import {clearDB} from "./utils/clearDB";
+import {generateSemester} from "./integration/utils/faker";
 
 export default async function seed() {
 
@@ -8,16 +9,6 @@ export default async function seed() {
     const prisma = new PrismaClient();
     await clearDB(prisma);
     faker.seed(404);
-
-    function generateSemester(): Semester {
-        return {
-            id: faker.string.uuid(),
-            name: faker.string.numeric(2),
-            createdAt: faker.date.past(),
-            updatedAt: faker.date.past(),
-            deletedAt: null,
-        };
-    }
 
     let semesters = Array.from({length: 10}, generateSemester).sort((a, b) => a.id.localeCompare(b.id));
     // filter unique semesters by name

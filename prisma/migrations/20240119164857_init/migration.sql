@@ -412,7 +412,13 @@ CREATE INDEX "comments_created_at_idx" ON "comments"("created_at");
 CREATE INDEX "comments_user_id_idx" ON "comments"("user_id");
 
 -- CreateIndex
-CREATE INDEX "comments_type_record_id_depth_idx" ON "comments"("type", "record_id", "depth");
+CREATE INDEX "comments_type_record_id_depth_score_parent_id_idx" ON "comments"("type", "record_id", "depth", "score" DESC, "parent_id");
+
+-- CreateIndex
+CREATE INDEX "comments_parent_id_idx" ON "comments"("parent_id");
+
+-- CreateIndex
+CREATE INDEX "comments_score_idx" ON "comments"("score");
 
 -- CreateIndex
 CREATE INDEX "comments_path_idx" ON "comments" USING GIN ("path");

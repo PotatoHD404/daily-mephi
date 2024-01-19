@@ -1,17 +1,9 @@
 import {faker} from "@faker-js/faker";
 import {User} from "@prisma/client";
 import {prisma} from "lib/database/prisma";
+import {generateImage} from "../integration/utils/faker";
 
 async function createUsers() {
-    function generateImage() {
-        return {
-            id: faker.string.uuid(),
-            tag: "avatar",
-            filename: faker.system.fileName(),
-            url: faker.internet.url(),
-            altUrl: faker.internet.url(),
-        }
-    }
 
     const images = Array.from({length: 500}, generateImage).sort((a, b) => a.id.localeCompare(b.id));
 
@@ -33,7 +25,7 @@ async function createUsers() {
         return nickname;
     }
 
-    // generate faker user
+    // generate faker.ts user
     function generateUser() {
         const res = {
             bio: faker.lorem.sentence(),
