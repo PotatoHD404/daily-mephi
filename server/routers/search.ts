@@ -192,19 +192,20 @@ export const searchRouter = t.router({
 
 
             const docs: DocsType[] = await prisma.$queryRaw`
-                SELECT *, similarity("documents"."text", ${tsQuery}) as similarity FROM "documents"
-                    LEFT JOIN "tutors" ON "documents"."record_id" = "tutors"."id" AND "documents"."type" = 'tutor'
-                    LEFT JOIN "_tutors_faculties" ON tutors.id = _tutors_faculties."B"
-                    LEFT JOIN "_tutors_disciplines" ON tutors.id = _tutors_disciplines."B"
-                    LEFT JOIN "ratings" ON tutors.id = ratings.tutor_id
-                ${tsQuery !== "" ? Prisma.sql`WHERE "documents"."text" @@ to_tsquery('russian', ${tsQuery})` : Prisma.empty}
-                ${tsQuery === "" ? Prisma.sql`WHERE` : Prisma.sql`AND`}
-                "documents"."type" = ANY(${types}) AND
-                "documents"."deleted_at" IS NULL AND
-                "_tutors_disciplines"."id" = ANY(${disciplineIds}) AND
-                "_tutors_faculties"."id" = ANY(${facultyIds}) AND
-                "ratings".avg_rating BETWEEN ${ratingFrom} AND ${ratingTo}
-            GROUP
+            SELECT *, similarity("documents"."text", '${tsQuery}') as similarity FROM "documents"
+                WHERE "documents"."type" = ANY(${types}) AND
+                ${tsQuery !== "" ? Prisma.sql`"documents"."text" @@ to_tsquery('russian', '${tsQuery}') AND` : Prisma.empty}
+                "documents"."deleted_at" IS NOT NULL AND
+                ${types.includes('tutor') ? Prisma.sql`("documents"."type" = 'tutor' AND EXISTS(SELECT 1 FROM "tutors"
+                                JOIN "_tutors_faculties" ON tutors.id = _tutors_faculties."B"
+                                JOIN "_tutors_disciplines" ON tutors.id = _tutors_disciplines."B"
+                                JOIN "ratings" ON tutors.id = ratings.tutor_id
+                                WHERE "documents"."record_id" = "tutors"."id" AND
+                                      ${disciplineIds.length ? Prisma.sql`"_tutors_disciplines"."id" = ANY(${disciplineIds}) AND` : Prisma.empty}
+                                      ${facultyIds.length ? Prisma.sql`"_tutors_faculties"."id" = ANY(${facultyIds}) AND` : Prisma.empty}
+                                      ${ratingFrom != 0 || ratingTo == 5 ? Prisma.sql`"ratings".avg_rating BETWEEN ${ratingFrom} AND ${ratingTo}` : Prisma.empty}
+                                      )
+                                      ${types.length > 1 ? Prisma.sql`OR "documents"."type" != 'tutor'` : Prisma.empty})` : Prisma.empty}
             ORDER BY
                 ${sort === "time" ? Prisma.sql`updated_at DESC,` : Prisma.empty}
                 similarity DESC

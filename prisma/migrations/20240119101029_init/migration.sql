@@ -52,7 +52,6 @@ CREATE TABLE "users" (
     "materials_count" INT4 NOT NULL DEFAULT 0,
     "reviews_count" INT4 NOT NULL DEFAULT 0,
     "quotes_count" INT4 NOT NULL DEFAULT 0,
-    "document_id" UUID,
     "score" FLOAT8 NOT NULL DEFAULT 0,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
@@ -76,7 +75,8 @@ CREATE TABLE "comments" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
     "user_id" UUID NOT NULL,
-    "record_id" UUID NOT NULL,
+    "record_id" UUID,
+    "parent_id" UUID,
     "type" STRING NOT NULL,
     "path" STRING[],
     "depth" INT4 NOT NULL DEFAULT 0,
@@ -142,7 +142,6 @@ CREATE TABLE "materials" (
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "materials_pkey" PRIMARY KEY ("id")
 );
@@ -169,7 +168,6 @@ CREATE TABLE "news" (
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "news_pkey" PRIMARY KEY ("id")
 );
@@ -186,7 +184,6 @@ CREATE TABLE "quotes" (
     "likes_count" INT4 NOT NULL DEFAULT 0,
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "quotes_pkey" PRIMARY KEY ("id")
 );
@@ -206,7 +203,6 @@ CREATE TABLE "reviews" (
     "dislikes_count" INT4 NOT NULL DEFAULT 0,
     "comments_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
@@ -246,7 +242,6 @@ CREATE TABLE "tutors" (
     "quotes_count" INT4 NOT NULL DEFAULT 0,
     "rates_count" INT4 NOT NULL DEFAULT 0,
     "score" FLOAT8 NOT NULL DEFAULT 0,
-    "document_id" UUID,
 
     CONSTRAINT "tutors_pkey" PRIMARY KEY ("id")
 );
@@ -255,7 +250,7 @@ CREATE TABLE "tutors" (
 CREATE TABLE "documents" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "text" STRING NOT NULL,
-    "record_id" UUID NOT NULL,
+    "record_id" UUID,
     "type" STRING NOT NULL DEFAULT 'unknown',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -406,6 +401,9 @@ CREATE UNIQUE INDEX "verification_tokens_id_token_key" ON "verification_tokens"(
 
 -- CreateIndex
 CREATE UNIQUE INDEX "comments_record_id_key" ON "comments"("record_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "comments_parent_id_key" ON "comments"("parent_id");
 
 -- CreateIndex
 CREATE INDEX "comments_created_at_idx" ON "comments"("created_at");
@@ -648,9 +646,6 @@ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "users" ADD CONSTRAINT "users_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "files"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -663,7 +658,7 @@ ALTER TABLE "comments" ADD CONSTRAINT "comments_material_id_fkey" FOREIGN KEY ("
 ALTER TABLE "comments" ADD CONSTRAINT "comments_news_id_fkey" FOREIGN KEY ("record_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("record_id") REFERENCES "comments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "comments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "files" ADD CONSTRAINT "files_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -681,28 +676,16 @@ ALTER TABLE "materials" ADD CONSTRAINT "materials_user_id_fkey" FOREIGN KEY ("us
 ALTER TABLE "materials" ADD CONSTRAINT "materials_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "materials" ADD CONSTRAINT "materials_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "news" ADD CONSTRAINT "news_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "quotes" ADD CONSTRAINT "quotes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "quotes" ADD CONSTRAINT "quotes_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "quotes" ADD CONSTRAINT "quotes_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -723,7 +706,22 @@ ALTER TABLE "reactions" ADD CONSTRAINT "reactions_comment_id_fkey" FOREIGN KEY (
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_news_id_fkey" FOREIGN KEY ("news_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tutors" ADD CONSTRAINT "tutors_document_id_fkey" FOREIGN KEY ("document_id") REFERENCES "documents"("record_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "documents" ADD CONSTRAINT "documents_material_id_fkey" FOREIGN KEY ("record_id") REFERENCES "materials"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_news_id_fkey" FOREIGN KEY ("record_id") REFERENCES "news"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_quote_id_fkey" FOREIGN KEY ("record_id") REFERENCES "quotes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_review_id_fkey" FOREIGN KEY ("record_id") REFERENCES "reviews"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_tutor_id_fkey" FOREIGN KEY ("record_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "documents" ADD CONSTRAINT "documents_user_id_fkey" FOREIGN KEY ("record_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "rates" ADD CONSTRAINT "rates_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -769,6 +767,6 @@ ALTER TABLE "_materials_semesters" ADD CONSTRAINT "_materials_semesters_B_fkey" 
 
 ALTER TABLE "documents" ADD COLUMN "words" TSVECTOR AS (to_tsvector('russian', "text")) STORED;
 
-CREATE INDEX ON "documents" USING GIN ("words");
+CREATE INDEX ON "documents" USING GIN ("type", "words");
 
 CREATE INDEX ON "documents" USING GIN ("text" gin_trgm_ops);

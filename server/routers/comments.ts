@@ -5,7 +5,6 @@ import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Comment, Prisma} from "@prisma/client";
-import {uuidv4} from "msw/lib/core/utils/internal/uuidv4";
 import {DefaultArgs} from "@prisma/client/runtime/library";
 
 
@@ -159,7 +158,7 @@ export const commentsRouter = t.router({
                     })
                     path = parentComment.path;
                 }
-                const id = uuidv4();
+                const id = crypto.randomUUID()
                 path.push(id);
                 const table = prisma[type] as Prisma.NewsDelegate<DefaultArgs>;
 
@@ -169,6 +168,7 @@ export const commentsRouter = t.router({
                             id,
                             text,
                             path,
+                            type,
                             depth: path.length,
                             [type]: {
                                 connect: {
