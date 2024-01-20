@@ -65,7 +65,6 @@ export function buildCommentTree(comments: Comment[]): CommentMapType[] {
 
     comments.forEach(comment => {
         if (comment.parentId) {
-            console.log(comment.parentId in commentMap)
             // If it has a parentId, it's a child comment, add it to the parent's children array
             commentMap[comment.parentId].children.push(commentMap[comment.id]);
         } else {

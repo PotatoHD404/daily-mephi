@@ -266,7 +266,13 @@ export const searchRouter = t.router({
                     default:
                         throw new Error(`Unsupported type: ${key}`);
                 }
-            }));
+            })).catch(err => {
+                console.log(err)
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: err.message
+                });
+            });
 
             return result;
         }),

@@ -87,9 +87,8 @@ export function generateNews() {
 }
 
 export function generateComment() {
-    const id = faker.string.uuid()
-    return {
-        id,
+    const res = {
+        id: faker.string.uuid(),
         text: faker.lorem.paragraph(),
         createdAt: faker.date.past(),
         updatedAt: faker.date.past(),
@@ -98,6 +97,10 @@ export function generateComment() {
         userId: null,
         type: faker.helpers.arrayElement(["news", "material", "review"]),
         recordId: null,
-        path: [id]
+        depth: 1,
+        commentsCount: 0,
+        likesCount: faker.number.int({min: 0, max: 50}),
+        dislikesCount: faker.number.int({min: 0, max: 50}),
     };
+    return {...res, path: [res.id], score: res.likesCount - res.dislikesCount + res.commentsCount};
 }
