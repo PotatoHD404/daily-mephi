@@ -92,7 +92,7 @@ function AuthSection(props: DefaultNavbarParams) {
         if (session?.user && authenticated && !session.user.nickname && !loading) {
             setOpen(true);
         }
-    }, [status, session])
+    }, [status, session, authenticated, loading])
 
     // console.log(session)
     // if (session?.user === null) {

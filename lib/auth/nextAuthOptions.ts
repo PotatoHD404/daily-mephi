@@ -115,7 +115,19 @@ export const nextAuthOptions: NextAuthOptions = {
         },
         async jwt({token, user, account, profile, trigger}) {
             // trigger === "signUp"
-            if (user || profile) {
+            if (trigger == "update") {
+                const tokenUser = token?.user as MyAppUser;
+                if (tokenUser.id === null) {
+                    throw new Error("Invalid user id")
+                }
+                // console.log("update")
+                // console.log(token.user)
+                token.user = await prisma.user.findUnique({where: {id: tokenUser.id}, ...selectUser});
+                if (!token.user) {
+                    throw new Error("User not found")
+                }
+            }
+            else if (user || profile) {
                 token.user = user as MyAppUser;
             }
             return token;

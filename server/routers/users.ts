@@ -106,6 +106,7 @@ export const usersRouter = t.router({
                             }
                         }
                     }]);
+                // console.log(user)
                 const text = nickname + ' ' + bio;
                 await prisma.user.update({
                         where: {

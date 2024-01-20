@@ -4,7 +4,7 @@ import RegisterCat from 'images/register_cat.svg'
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 
-import {CircularProgress, FormControl, SelectChangeEvent, TextField,} from '@mui/material';
+import {CircularProgress, FormControl, TextField,} from '@mui/material';
 import {ChangeEvent, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 
@@ -15,7 +15,7 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 // import { getCsrfToken } from 'next-auth/dist/react';
 // import {cookies} from "next/headers";
 import {trpc} from "server/utils/trpc";
-import {getCsrfToken, getSession} from "next-auth/react";
+import {useSession} from "next-auth/react";
 import {getTokens} from "../lib/react/getTokens";
 // import {signin} from "next-auth/core/routes";
 // import fetch from "node-fetch";
@@ -38,9 +38,11 @@ export default function RegisterDialog(props: DialogProps) {
 
     const {executeRecaptcha} = useGoogleReCaptcha();
     const [name, setName] = useState<string>('');
+    const [done, setDone] = useState<boolean>(false);
     // nickname error
     const [nicknameError, setNicknameError] = useState<string | undefined>(undefined);
     const [isFetching, setIsFetching] = useState(false);
+    const {update: updateSession} = useSession();
 
     const tokensQuery = useQuery({
         queryFn: async () => getTokens(executeRecaptcha),
@@ -63,7 +65,8 @@ export default function RegisterDialog(props: DialogProps) {
             setIsFetching(true);
             await userMutation.mutateAsync({csrfToken, recaptchaToken, nickname: name}, {
                 onSuccess: async () => {
-                    await getSession();
+                    await updateSession();
+                    setDone(true);
                     location.reload();
                 },
                 onError: (error) => {
@@ -90,7 +93,7 @@ export default function RegisterDialog(props: DialogProps) {
     };
 
     return (
-        <CustomDialog onClose={undefined} open={opened}>
+        <CustomDialog onClose={undefined} open={opened && !done}>
             <div className="grid grid-cols-12 px-2 md:px-0">
                 <div className="col-start-1 col-end-13 h-20 flex justify-center md:hidden">
                     <Image
