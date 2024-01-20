@@ -85,11 +85,6 @@ export const env = createEnv({
         GOOGLE_CLIENT_SECRET: z.string().min(1),
         GITHUB_CLIENT_ID: z.string().min(1),
         GITHUB_CLIENT_SECRET: z.string().min(1),
-        NODE_ENV: z.enum(['development', 'production', 'test']),
-        VERCEL_URL: z.string().min(1).optional(),
-        RENDER_INTERNAL_HOSTNAME: z.string().min(1).optional(),
-        PORT: z.string().min(1).optional(),
-        NEXTAUTH_URL: z.string().min(1).optional(),
     },
     /*
      * Environment variables available on the client (and server).
@@ -136,10 +131,5 @@ export const env = createEnv({
         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
         NEXT_PUBLIC_RECAPTCHA_PUBLIC: process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC,
-        NODE_ENV: process.env.NODE_ENV,
-        VERCEL_URL: process.env.VERCEL_URL,
-        RENDER_INTERNAL_HOSTNAME: process.env.RENDER_INTERNAL_HOSTNAME,
-        PORT: process.env.PORT,
-        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     },
 });

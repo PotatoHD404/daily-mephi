@@ -74,13 +74,13 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                     оставить материалы для других студентов.
                 </h1> :
                 <>
-                    <div className="flex grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
+                    <div className="grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
                         <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
 
                         <div
                             className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
                             <div
-                                className="items-center justify-start flex flex-wrap md:w-[42.8%]  my-auto justify-center">
+                                className="items-center justify-start flex flex-wrap md:w-[42.8%]  my-auto">
                                 <LogoText/>
 
 
@@ -108,12 +108,12 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                             <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
                             {!isMobile ?
                                 <div
-                                    className="flex justify-center md:w-[50%] my-auto max-w-xl md:max-w-max justify-center">
+                                    className="flex justify-center md:w-[50%] my-auto max-w-xl md:max-w-max">
                                     <Image src={Logo} priority alt="Big logo"/>
                                 </div> :
                                 <div className="h-[140vw] overflow-clip w-full flex justify-center -z-10 -mb-[40vw]">
                                     <div
-                                        className="flex justify-center mt-[110%] scale-[275%] max-w-[40rem] justify-center h-fit">
+                                        className="flex justify-center mt-[110%] scale-[275%] max-w-[40rem] h-fit">
                                         <Image src={MobileLogo} priority alt="Big logo"/>
                                     </div>
                                 </div>}

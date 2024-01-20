@@ -185,7 +185,7 @@ export const thumbnailsRouter = t.router({
             }
             const element = QuoteThumbnail({
                 name: quote.tutor.shortName,
-                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce fermentum elit sit amet mi sollicitudin, vel rhoncus urna finibus. Nullam quis mauris at ante viverra vestibulum. Quisque vel semper quam. "
+                text: quote.text
             })
             await renderAndSend(element, res);
         }),

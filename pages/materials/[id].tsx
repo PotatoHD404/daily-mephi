@@ -14,7 +14,7 @@ function Material({material}: { material: any }) {
     return (
         <>
             <SEO title={`${material}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/thumbnails/materials/${material.id}.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/materials/${material.id}.png`}/>
         </>
     );
 

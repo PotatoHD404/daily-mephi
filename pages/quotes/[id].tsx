@@ -13,7 +13,7 @@ function Quote({quote}: { quote: any }) {
     return (
         <>
             <SEO title={`Цатата ${quote.tutorName}`}
-                 thumbnail={`https://daily-mephi.ru/api/v1/quotes/${quote.id}/thumbnail.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v2/quotes/${quote.id}/thumbnail.png`}/>
         </>
     );
 

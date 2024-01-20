@@ -124,7 +124,7 @@ function Tutor({tutor}: { tutor: any }) {
     return (
         <>
             <SEO title={'Трифоненков В.П.'}
-                 thumbnail={`https://daily-mephi.ru/api/v1/tutors/${tutor.id}/thumbnail.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v2/tutors/${tutor.id}/thumbnail.png`}/>
             {isMobile == null ? null :
                 <>
                     <div className="flex-wrap w-full">
