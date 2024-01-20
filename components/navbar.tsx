@@ -61,9 +61,7 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                     <Link href="/tutors" legacyBehavior>
                         <h3 className="underlining my-auto">Преподаватели</h3>
                     </Link>
-                    <div className="mt-2">
-                        <AuthSection {...props}/>
-                    </div>
+                    <AuthSection {...props}/>
                 </div>
                 :
                 <div className="col-start-1 col-end-13">
@@ -125,7 +123,7 @@ function AuthSection(props: DefaultNavbarParams) {
             !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
                         className={`${style.authText}`}>
-                    <h3 className="underlining">Войти</h3>
+                    <h3 className="underlining my-auto">Войти</h3>
                 </button> : null
         )
     } else {
@@ -135,9 +133,9 @@ function AuthSection(props: DefaultNavbarParams) {
                 opened={open}/>
 
             {!isMobile ?
-                <Link href={`/users/${session?.user?.id}`} className={`${style.authText}`}>
+                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} `}>
 
-                    <h3 className="underlining">{session.user?.name || "Профиль"}</h3>
+                    <h3 className="underlining my-auto">{session.user?.name || "Профиль"}</h3>
 
                 </Link> : null}
         </>;

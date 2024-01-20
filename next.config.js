@@ -6,7 +6,7 @@ const cachingStrategies = require('./pwa/cache');
 // const nodeExternals = require('webpack-node-externals');
 const withPWA = require('next-pwa')({
     dest: 'public',
-    // disable: process.env.NODE_ENV === 'development',
+    disable: process.env.NODE_ENV === 'development',
     register: true,
     // scope: '/app',
     sw: 'service-worker.js',

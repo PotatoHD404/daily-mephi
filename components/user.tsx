@@ -9,6 +9,7 @@ import RatingPlace from "./ratingPlace";
 import {ButtonBase, Divider, Skeleton, Tooltip} from '@mui/material';
 import useIsMobile from "lib/react/isMobileContext";
 import {signOut} from "next-auth/react";
+import {useRouter} from "next/router";
 
 export default function User(props: {
     name?: string,
@@ -27,6 +28,11 @@ export default function User(props: {
     // Tooltip opens on hover
     const isMobile = useIsMobile();
     const [open, setOpen] = React.useState(false);
+    const router = useRouter();
+    const logOut = async () => {
+        await signOut();
+        await router.push("/");
+    }
     return (
         <div className="w-full normal-case h-fit whiteBox p-5 px-4">
             {
@@ -132,7 +138,7 @@ export default function User(props: {
                                 <div className={`rounded-full border-2 
                                  font-bold text-center border-black text-red-600 w-32 h-fit`}>
                                     <ButtonBase className={"w-full h-full rounded-full p-0.5"}
-                                                onClick={() => signOut()}
+                                                onClick={logOut}
                                     >Выйти</ButtonBase>
                                 </div>
                             </div>

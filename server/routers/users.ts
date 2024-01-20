@@ -3,6 +3,7 @@ import {t} from 'server/utils';
 import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {isToxic} from "lib/toxicity";
+import {selectUser} from "../../lib/auth/nextAuthOptions";
 
 
 export const usersRouter = t.router({
@@ -21,25 +22,7 @@ export const usersRouter = t.router({
                 where: {
                     id
                 },
-                select: {
-                    nickname: true,
-                    id: true,
-                    image: {
-                        select: {
-                            url: true,
-                        }
-                    },
-                    rating: true,
-                    role: true,
-                    likesCount: true,
-                    dislikesCount: true,
-                    materialsCount: true,
-                    reviewsCount: true,
-                    quotesCount: true,
-                    bio: true,
-                    commentsCount: true,
-                    place: true,
-                }
+                ...selectUser
             });
             if (!user) {
                 throw new TRPCError({
@@ -108,7 +91,7 @@ export const usersRouter = t.router({
                     }]);
                 // console.log(user)
                 const text = nickname + ' ' + bio;
-                await prisma.user.update({
+                return await prisma.user.update({
                         where: {
                             id: user.id
                         },
@@ -126,11 +109,10 @@ export const usersRouter = t.router({
                                     },
                                 }
                             }
-                        }
+                        },
+                        ...selectUser
                     }
                 )
-
-                return {ok: true};
             }).catch((e: any) => {
                 console.log(e);
                 throw new TRPCError({

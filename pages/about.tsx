@@ -77,7 +77,7 @@ function About() {
             {isMobile == null ? null :
                 <div className="flex w-full justify-between">
                     <Tabs/>
-                    <TopUsers place={session?.user?.place ?? 1} take={8} withLabel isLoading={isFetching}/>
+                    <TopUsers place={session?.user?.place ?? 1} take={8} withLabel isLoading={isFetching || status == "unauthenticated"}/>
                 </div>
             }
         </>);

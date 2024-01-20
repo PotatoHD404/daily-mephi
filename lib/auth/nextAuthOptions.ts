@@ -16,7 +16,7 @@ import {env} from "../env";
 // const query = new URLSearchParams({service: host});
 
 // select user along with it's image
-const selectUser = {
+export const selectUser = {
     select: {
         id: true,
         nickname: true,
@@ -77,12 +77,14 @@ export const nextAuthOptions: NextAuthOptions = {
         HomeMEPhiOauth(),
         YandexProvider({
             clientId: env.YANDEX_CLIENT_ID,
-            clientSecret: env.YANDEX_CLIENT_SECRET
+            clientSecret: env.YANDEX_CLIENT_SECRET,
+            authorization:
+                "https://oauth.yandex.ru/authorize?scope=login:email",
         }),
         VkProvider({
             authorization: `https://oauth.vk.com/authorize?scope=email&v=${vkApiVersion}`,
             token: `https://oauth.vk.com/access_token?v=${vkApiVersion}`,
-            userinfo: `https://api.vk.com/method/users.get?fields=photo_100&v=${vkApiVersion}`,
+            userinfo: `https://api.vk.com/method/users.get?v=${vkApiVersion}`,
             clientId: env.VK_CLIENT_ID,
             clientSecret: env.VK_CLIENT_SECRET
         }),
@@ -96,25 +98,17 @@ export const nextAuthOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async signIn({user, account, profile}) {
-            // return true;
-            if (account?.provider === "home") {
-                return true;
-            }
-            const userExists = await prisma.account.findUnique(
-                {
-                    where: {
-                        provider_providerAccountId: {
-                            provider: account?.provider as string,
-                            providerAccountId: account?.id as string
-                        }
-                    }
-                }
-            )
-            return !!userExists;
-        },
+        // async signIn({user, account, profile}) {
+        //     // return true;
+        //     return true;
+        // },
         async jwt({token, user, account, profile, trigger}) {
-            // trigger === "signUp"
+
+            if (trigger == "signUp" && account?.provider !== "home") {
+
+                // disallow registering with external providers
+                throw new Error("Sign up with external providers is not allowed")
+            }
             if (trigger == "update") {
                 const tokenUser = token?.user as MyAppUser;
                 if (tokenUser.id === null) {
@@ -140,6 +134,10 @@ export const nextAuthOptions: NextAuthOptions = {
             return session;
         }
     },
+    pages: {
+        error: "/signin",
+        signIn: "/signin",
+    }
     // pages: {
     // signIn: 'https://login.mephi.ru/login?' + query,
     //     // signOut: '/auth/signout',

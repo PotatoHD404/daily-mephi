@@ -8,6 +8,7 @@ import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 import CloseButton from "./closeButton";
 import {CircularProgress} from "@mui/material";
+import {useRouter} from "next/router";
 
 export interface DialogProps {
     opened: boolean;
@@ -18,10 +19,11 @@ export interface DialogProps {
 export default function WarningDialog(props: DialogProps) {
     const {handleClose, opened} = props;
     const [isLoading, changeIsLoading] = useState<boolean>();
+    const router = useRouter();
 
     const auth = async () => {
         changeIsLoading(true);
-        await signIn('home');
+        await router.push("/signin");
     }
     return (
         <CustomDialog onClose={!isLoading ? handleClose : () => {
