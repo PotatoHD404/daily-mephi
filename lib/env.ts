@@ -57,7 +57,7 @@ export const env = createEnv({
      */
     server: {
         DATABASE_URL: z.string().min(1),
-        LOCAL: z.string().min(1),
+        LOCAL: z.string().min(1).optional(),
         NEXTAUTH_SECRET: z.string().min(1),
         HASH_SECRET: z.string().min(1),
         HASH_SALT: z.string().min(1),

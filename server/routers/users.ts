@@ -82,6 +82,7 @@ export const usersRouter = t.router({
                     message: 'Био токсично'
                 });
             }
+
             return prisma.$transaction(async (prisma: any) => {
                 await Promise.all([
                     async () => {
@@ -105,6 +106,7 @@ export const usersRouter = t.router({
                             }
                         }
                     }]);
+                const text = nickname + ' ' + bio;
                 await prisma.user.update({
                         where: {
                             id: user.id
@@ -114,8 +116,13 @@ export const usersRouter = t.router({
                             image: imageId ? {connect: {id: imageId}} : undefined,
                             bio,
                             document: {
-                                update: {
-                                    text: nickname + ' ' + bio
+                                upsert: {
+                                    create: {
+                                        text,
+                                    },
+                                    update: {
+                                        text,
+                                    },
                                 }
                             }
                         }
@@ -123,6 +130,12 @@ export const usersRouter = t.router({
                 )
 
                 return {ok: true};
+            }).catch((e: any) => {
+                console.log(e);
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Ошибка сервера'
+                });
             });
         })
 });

@@ -10,6 +10,7 @@ import type {AppRouter} from "server";
 import {createUsers} from "../utils/createUsers";
 import {describe, it, expect, jest} from '@jest/globals';
 import {prisma} from "lib/database/prisma";
+import {isToxic} from "../../lib/toxicity";
 
 // export type User = {
 //     id: string
@@ -44,6 +45,16 @@ function generateEditInput(): inferProcedureInput<AppRouter["users"]["edit"]> {
     };
 }
 
+// generate describe for this // test this await isToxic(bio)
+
+describe('Test isToxic', () => {
+    it('Test isToxic', async () => {
+        const toxicText = 'You are stupid';
+        const notToxicText = 'You are not stupid';
+        expect(await isToxic(toxicText)).toEqual(true);
+        expect(await isToxic(notToxicText)).toEqual(false);
+    });
+});
 describe('[GET] /api/v2/users/{id}', () => {
 
     it('Test get one', async () => {
@@ -51,12 +62,18 @@ describe('[GET] /api/v2/users/{id}', () => {
         const promises = users.map(el => trpc.users.getOne({id: el.id}))
         const apiUsers = await Promise.all(promises)
 
-        expect(apiUsers).toEqual(usersWithImages)
+        expect(apiUsers.map(el => {
+            return {
+                ...el,
+                documentId: null
+            }
+        })).toEqual(usersWithImages)
 
         await expect(trpc.users.getOne({id: '123'})).rejects.toThrowError(TRPCError) // uuid in not valid
         await expect(trpc.users.getOne({id: faker.string.uuid()})).rejects.toThrowError(TRPCError) // not found
     });
 });
+
 
 describe('[PUT] /api/v2/users', () => {
     it('Edit user nickname + bio', async () => {

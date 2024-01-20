@@ -1,8 +1,11 @@
 import {env} from "./env";
 
-const googleApiKey = env.GOOGLE_API_KEY;
 
-export async function getToxicity(text: string) {
+const googleApiKey = env.GOOGLE_API_KEY;
+// const DISCOVERY_URL =
+//     'https://commentanalyzer.googleapis.com/$discovery/rest';
+
+export async function getToxicity(text: string, context: string[] = []) {
 
 
     // fetch the link
@@ -23,6 +26,13 @@ export async function getToxicity(text: string) {
         body: JSON.stringify({
             "comment": {
                 "text": text
+            },
+            "context": {
+                "entries": context.map(el => {
+                    return {
+                        "text": el
+                    }
+                })
             },
             "languages": [
                 "en",
