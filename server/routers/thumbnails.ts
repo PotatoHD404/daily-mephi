@@ -96,14 +96,57 @@ export const thumbnailsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: materialId}}) => {
-            const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
+
+            const material = await prisma.material.findUnique({
+                where: {
+                    id: materialId
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    text: true,
+                    tutor: {
+                        select: {
+                            shortName: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            nickname: true,
+                            image: {
+                                select: {
+                                    url: true,
+                                }
+                            },
+                        }
+                    },
+                    faculties: {
+                        select: {
+                            name: true
+                        }
+                    },
+                    disciplines: {
+                        select: {
+                            name: true
+                        }
+                    },
+                    likesCount: true,
+                    dislikesCount: true,
+                    commentsCount: true,
+                }
+            });
+            if (!material) {
+                throw new TRPCError({code: 'NOT_FOUND', message: 'Material not found'});
+            }
+
+            const url = normalizeUrl(material.user?.image?.url, "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = MaterialThumbnail({
                 image_url: image_data,
-                name: "Burunduk",
-                tags: ["Семестр 1", "Экзамен", "МатАнализ"],
-                text: "Описание описание описание описание описание описание описание описание описание описание описание описание...",
-                title: "Название"
+                name: material.user?.nickname ?? "",
+                tags: material.disciplines.map((discipline) => discipline.name).concat(material.faculties.map((faculty) => faculty.name)),
+                text: material.text ?? "",
+                title: material.title,
             })
 
 
@@ -157,17 +200,53 @@ export const thumbnailsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: reviewId}}) => {
-            const images = ["/images/profile1.png", "/images/tutor.png"]
+            const review = await prisma.review.findUnique({
+                where: {
+                    id: reviewId
+                },
+                select: {
+                    id: true,
+                    text: true,
+                    updatedAt: true,
+                    likesCount: true,
+                    dislikesCount: true,
+                    title: true,
+                    tutor: {
+                        select: {
+                            shortName: true,
+                            images: {
+                                select: {
+                                    url: true,
+                                }
+                            },
+                        }
+                    },
+                    user: {
+                        select: {
+                            nickname: true,
+                            image: {
+                                select: {
+                                    url: true,
+                                }
+                            },
+                        }
+                    },
+                }
+            });
+            if (!review) {
+                throw new TRPCError({code: 'NOT_FOUND', message: 'Review not found'});
+            }
+            const images =[review.user?.image?.url, review.tutor.images[0]?.url]
             const urls = images.map((image) => normalizeUrl(image, "/images/dead_cat.svg", true))
             const promises = urls.map((url) => imageToBase64(url))
             const [user_image_data, tutor_image_data] = await Promise.all(promises);
             const element = ReviewThumbnail({
-                text: "Описание описание описание описание описание описание описание описание описание описание описание описание...",
-                title: "Название",
+                text: review.text,
+                title: review.title,
                 tutor_image_url: tutor_image_data,
-                tutor_name: "Трифоненков В.П.",
+                tutor_name: review.tutor.shortName,
                 user_image_url: user_image_data,
-                user_name: "Burunduk"
+                user_name: review?.user?.nickname ?? "",
             })
             await renderAndSend(element, res);
         }),
@@ -182,15 +261,45 @@ export const thumbnailsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: tutorId}}) => {
-            const url = normalizeUrl("/images/tutor.png", "/images/dead_cat.svg", true);
+            const tutor = await prisma.tutor.findUnique({
+                where: {
+                    id: tutorId
+                },
+                select: {
+                    id: true,
+                    shortName: true,
+                    rating: {
+                        select: {
+                            avgRating: true,
+                        }
+                    },
+                    legacyRating: {
+                        select: {
+                            avgRating: true,
+                        }
+                    },
+                    reviewsCount: true,
+                    quotesCount: true,
+                    materialsCount: true,
+                    images: {
+                        select: {
+                            url: true,
+                        }
+                    },
+                }
+            });
+            if (!tutor) {
+                throw new TRPCError({code: 'NOT_FOUND', message: 'Tutor not found'});
+            }
+            const url = normalizeUrl(tutor.images[0]?.url, "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = TutorThumbnail({
-                name: "Трифоненков В.П.",
-                rating: 4.5,
-                legacy_rating: 2.1,
-                reviews: 5,
-                quotes: 3,
-                materials: 3,
+                name: tutor.shortName,
+                rating: tutor?.rating?.avgRating ?? -1,
+                legacy_rating: tutor.legacyRating?.avgRating ?? -1,
+                reviews: tutor.reviewsCount,
+                quotes: tutor.quotesCount,
+                materials: tutor.materialsCount,
                 image_url: image_data
             })
             await renderAndSend(element, res);
@@ -206,16 +315,37 @@ export const thumbnailsRouter = t.router({
         }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, res}, input: {id: userId}}) => {
-            const url = normalizeUrl("/images/profile1.png", "/images/dead_cat.svg", true);
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: userId
+                },
+                select: {
+                    id: true,
+                    nickname: true,
+                    image: {
+                        select: {
+                            url: true,
+                        }
+                    },
+                    materialsCount: true,
+                    quotesCount: true,
+                    rating: true,
+                    reviewsCount: true,
+                }
+            });
+            if (!user) {
+                throw new TRPCError({code: 'NOT_FOUND', message: 'User not found'});
+            }
+            const url = normalizeUrl(user?.image?.url, "/images/dead_cat.svg", true);
             const image_data = await imageToBase64(url);
             const element = UserThumbnail({
-                name: "Burunduk",
+                name: user.nickname ?? "",
                 course: 3,
                 image_url: image_data,
-                materials: 3,
-                quotes: 3,
-                rating: 4.9,
-                reviews: 5
+                materials: user.materialsCount,
+                quotes: user.quotesCount,
+                rating: user.rating,
+                reviews: user.reviewsCount,
 
             })
             await renderAndSend(element, res);
