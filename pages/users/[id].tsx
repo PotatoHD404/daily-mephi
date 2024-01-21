@@ -11,20 +11,20 @@ import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {Session} from "next-auth";
 import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
 import {useQuery} from "@tanstack/react-query";
+import {getProvidersProps, ProvidersProps} from "../../lib/react/getProviders";
 
-function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
-    const {status} = useSession() as any as {
-        data: Session & { user: MyAppUser },
-        status: "authenticated" | "loading" | "unauthenticated"
-    };
-
-    const router = useRouter();
+function Profile({user, me, isLoading, providers}: {
+    user?: MyAppUser,
+    me: boolean,
+    isLoading: boolean,
+    providers?: ProvidersProps
+}) {
     // if(!isFetching)
     // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            <User {...(isLoading ? user ?? {} : user)} isLoading={isLoading} me/>
+            <User user={user} isLoading={isLoading} me={me} providers={providers}/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers isLoading={isLoading} place={user?.place}/>
@@ -33,22 +33,34 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 }
 
 
-function UserProfile({user, me}: {
-    user?: MyAppUser,
-    me?: boolean
+function UserProfile({user: serverUser, me, providers}: {
+    user?: Omit<MyAppUser, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
+    me?: boolean,
+    providers: ProvidersProps
 }) {
+    const user = serverUser ? {
+        ...serverUser,
+        createdAt: new Date(serverUser.createdAt),
+        updatedAt: new Date(serverUser.updatedAt)
+    } : null;
     const router = useRouter();
     const {id} = router.query;
-    const {data: session, status, update: updateSession} = useSession() as any as {
+    // state is updated
+    const [isUpdated, setIsUpdated] = React.useState(false);
+    const {status, update: updateSession} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated",
         update: (data?: any) => Promise<Session | null>
     };
 
-    const {data, isFetching, refetch, isError, error} = useQuery({
+    const {isFetching} = useQuery({
         queryKey: ['session'],
-        enabled: session != null && status === "authenticated",
-        queryFn: updateSession
+        enabled: status === "authenticated" || isUpdated,
+        queryFn: async () => {
+            setIsUpdated(true);
+            return updateSession()
+        },
+
     });
 
 
@@ -58,7 +70,7 @@ function UserProfile({user, me}: {
 
 
     const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
-    const isLoading = status === "loading";
+    const isLoading = status === "loading" || status === "authenticated" && isFetching;
 
 
     if (!user) {
@@ -76,7 +88,7 @@ function UserProfile({user, me}: {
                  thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    <Profile me={me ?? false} user={user} isLoading={isLoading}/>
+                    <Profile me={me ?? false} user={user} isLoading={isLoading} providers={providers}/>
                 </div>
             }
         </>
@@ -113,7 +125,15 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
     // )
 
     return {
-        props: {user, me: (session?.user as any)?.id === user.id}
+        props: {
+            user: {
+                ...user,
+                createdAt: user.createdAt.toISOString(),
+                updatedAt: user.updatedAt.toISOString(),
+            },
+            me: (session?.user as any)?.id === user.id,
+            providers: await getProvidersProps().then(el => el.providers)
+        }
     }
 }
 

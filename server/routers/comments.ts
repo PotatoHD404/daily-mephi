@@ -6,6 +6,7 @@ import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Comment as DefaultComment, Prisma, PrismaClient} from "@prisma/client";
 import {DefaultArgs} from "@prisma/client/runtime/library";
+import {buildCommentTree} from "lib/react/buildCommentTree";
 
 
 type AdditionalSearchType = {} | { path: { has: string }, depth: { gte: number } }
@@ -45,35 +46,8 @@ const getComments = async (prisma: PrismaClient, type: "news" | "material" | "re
         skip: offset
     });
 
-type Comment = Awaited<ReturnType<typeof getComments>>[0]
-type CommentMapType = { children: CommentMapType[], comment: Comment | null }
-
-export function buildCommentTree(comments: Comment[]): CommentMapType[] {
-
-    const commentMap: { [key: string]: CommentMapType } = {};
-
-    // Initialize the map and create a children container for each comment
-    comments.forEach(comment => {
-        commentMap[comment.id] = {comment, children: []};
-    });
-    // ids that are in path but not commentIds and filter by commentMap keys
-    const parentIds = comments.flatMap(comment => comment.path.slice(0, -1)).filter(id => !(id in commentMap));
-    parentIds.forEach(id => {
-        commentMap[id] = {comment: null, children: []};
-    });
-    const rootComments: CommentMapType[] = [];
-
-    comments.forEach(comment => {
-        if (comment.parentId) {
-            // If it has a parentId, it's a child comment, add it to the parent's children array
-            commentMap[comment.parentId].children.push(commentMap[comment.id]);
-        } else {
-            // If it doesn't have a parentId, it's a root comment
-            rootComments.push(commentMap[comment.id]);
-        }
-    });
-    return rootComments;
-}
+export type Comment = Awaited<ReturnType<typeof getComments>>[0]
+export type CommentMapType = { children: CommentMapType[], comment: Comment | null }
 
 export const commentsRouter = t.router({
     getOne: t.procedure.meta({

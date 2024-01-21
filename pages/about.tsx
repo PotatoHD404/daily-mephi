@@ -63,11 +63,15 @@ function About() {
         // eslint-disable-next-line no-unused-vars
         update: (data?: any) => Promise<Session | null>
     };
+    const [isUpdated, setIsUpdated] = React.useState(false);
     // useQuery to update session
     const {data, isFetching, refetch, isError, error} = useQuery({
         queryKey: ['session'],
-        enabled: session != null && status === "authenticated",
-        queryFn: updateSession
+        enabled: status === "authenticated" || isUpdated,
+        queryFn: async () => {
+            setIsUpdated(true);
+            return updateSession();
+        }
     });
 
 

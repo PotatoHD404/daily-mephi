@@ -7,6 +7,7 @@ import BronzeCrown from "images/bronze_crown.svg";
 import Link from "next/link";
 import {Skeleton} from "@mui/material";
 import {trpc} from "server/utils/trpc";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
 
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -74,12 +75,12 @@ function TopUserContent(props: TopUserParams) {
                                 src={props.src}
                                 alt="Profile pic"
                                 className="rounded-full"
-                                height={500}
-                                width={500}
+                                height={400}
+                                width={400}
                             />
                             <Crown place={props.place}/>
                         </div>
-                        <div className="text-[0.8rem] h-fit my-auto ml-2">{props.nickname}</div>
+                        <div className="text-[0.8rem] h-fit my-auto ml-2 font-bold">{props.nickname}</div>
                     </>
                 </Link>
             </td>
@@ -126,7 +127,7 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
         enabled: !props.isLoading
     });
 
-    const isLoading = isFetching || props.isLoading;
+    const isLoading = (isFetching || props.isLoading) && false;
     // const router = useRouter();
     return <div className="w-[23.5] hidden md:block -mt-2">
         {
@@ -167,8 +168,8 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                                          isLoading={isLoading}/>)}
                         </> :
                         // <></>
-                        data?.map((user: any, index: number) => {
-                            return <TopUser src={user.image || DeadCat} key={index} nickname={user.name}
+                        data?.map((user, index) => {
+                            return <TopUser src={user.image || DeadCat} key={index} nickname={user?.nickname ?? "Unknown"}
                                             place={index + place} isLoading={isLoading} id={user.id}
                                             rating={user.rating}/>
                         })
