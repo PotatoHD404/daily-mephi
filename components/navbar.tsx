@@ -8,7 +8,7 @@ import UsersIcon from "images/users.svg";
 import {useRouter} from "next/router";
 import Image from "next/image";
 import burger from 'images/burger.svg'
-import {getSession, useSession} from "next-auth/react";
+import {useSession} from "next-auth/react";
 import MiniCat from "images/minicat.svg";
 import style from "styles/navbar.module.css";
 import dynamic from "next/dynamic";
@@ -43,22 +43,22 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                 <div className="flex col-start-1 col-end-13 justify-between">
 
 
-                    <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2" legacyBehavior>
+                    <Link href="/" className="flex h-14 my-auto w-14 mb-2 -mt-2">
                         <button>
                             <Minicat/>
                         </button>
                     </Link>
 
 
-                    <Link href="/about" legacyBehavior>
+                    <Link href="/about">
                         <h3 className="underlining my-auto">О нас</h3>
                     </Link>
 
-                    <Link href="/materials" legacyBehavior>
+                    <Link href="/materials">
                         <h3 className="underlining my-auto">Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors" legacyBehavior>
+                    <Link href="/tutors">
                         <h3 className="underlining my-auto">Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
@@ -94,12 +94,12 @@ function AuthSection(props: DefaultNavbarParams) {
 
     // console.log(session)
     // if (session?.user === null) {
-        // return {
-        //     redirect: {
-        //         destination: '/users/new',
-        //         permanent: false,
-        //     },
-        // }
+    // return {
+    //     redirect: {
+    //         destination: '/users/new',
+    //         permanent: false,
+    //     },
+    // }
     // }
 
     // async function getInitialProps(context: any) {
@@ -162,7 +162,7 @@ function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
                 >
                     <Image className="flex" src={burger} alt="burger"/>
                 </IconButton>
-                <Link href="/" legacyBehavior>
+                <Link href="/">
                     <Button className="flex h-full w-11 rounded-full">
                         <Image src={MiniCat} alt="mini cat"
                                className="flex"
@@ -187,17 +187,17 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                 <div
                     className="mb-0 grid grid-cols-12  2xl:text-4xl xl:text-3xl lg:text-3xl md:text-2xl py-14
                mr-10">
-                    <div className="col-start-2 col-end-12 flex flex-wrap
+                    <div className="col-start-2 col-end-12 flex-wrap
                      justify-between items-center grid-cols-12 grid w-full">
                         <div className="flex col-start-1 col-end-10 justify-between">
-                            <Link href="/about" legacyBehavior>
+                            <Link href="/about">
                                 <h3 className="underlining">О нас</h3>
                             </Link>
-                            <Link href="/materials" legacyBehavior>
+                            <Link href="/materials">
                                 <h3 className="underlining">Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors" legacyBehavior>
+                            <Link href="/tutors">
                                 <h3 className="underlining">Преподаватели</h3>
                             </Link>
                         </div>

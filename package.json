@@ -33,8 +33,6 @@
     "@trpc/next": "^11.0.0-next-beta.193",
     "@trpc/react-query": "^11.0.0-next-beta.193",
     "@trpc/server": "^11.0.0-next-beta.193",
-    "@vercel/analytics": "^1.1.1",
-    "@vercel/speed-insights": "^1.0.4",
     "argon2": "^0.31.2",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.5",
