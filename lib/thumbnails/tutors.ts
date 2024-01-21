@@ -1,38 +1,15 @@
 import {PrismaClient} from '@prisma/client';
-import {renderAndSend} from "lib/renderAndSend";
+import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
 import {NextApiRequest, NextApiResponse} from "next";
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
 import TutorThumbnail from "components/thumbnails/tutor";
-import {UUID_REGEX} from "../../../../../lib/constants/uuidRegex";
+import {UUID_REGEX} from "../constants/uuidRegex";
 
 const prisma = new PrismaClient();
 
 // ... (Include other necessary imports and utility functions like getFontData, renderAndSend)
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'GET') {
-        res.status(405).end(`Method ${req.method} Not Allowed`);
-        return;
-    }
-
-    let {id: tutorId} = req.query;
-
-    // Input validation (optional, you can use zod if you prefer)
-    if (typeof tutorId !== 'string') {
-        res.status(400).end('Invalid input');
-        return;
-    }
-
-    // remove .png at the end if it exists
-    if (tutorId.endsWith('.png')) {
-        tutorId = tutorId.slice(0, -4);
-    }
-
-    // check if is uuid
-    if (!tutorId.match(UUID_REGEX)) {
-        res.status(400).end('Invalid input');
-        return;
-    }
+export default async function handler(tutorId: string, res: NextApiResponse) {
 
 
     try {
