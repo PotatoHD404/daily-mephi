@@ -1,10 +1,18 @@
 import React, {useState} from 'react'
 import Image from "next/image";
 import {ClientSafeProvider, getProviders, signIn} from "next-auth/react";
-import {OAuthProviderButtonStyles} from "next-auth/src/providers/oauth";
 import RippledButton from "../components/rippledButton";
 import {useRouter} from "next/router";
 import {CircularProgress} from "@mui/material";
+
+export interface OAuthProviderButtonStyles {
+    logo: string
+    logoDark?: string
+    bg: string
+    bgDark?: string
+    text: string
+    textDark?: string
+}
 
 export default function SignIn({providers}: {
     providers: Record<string, ClientSafeProvider & { style: OAuthProviderButtonStyles }>
