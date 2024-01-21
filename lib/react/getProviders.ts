@@ -4,7 +4,7 @@ export type ProvidersProps = Record<string, ClientSafeProvider & { style: OAuthP
 
 export const getProvidersProps = async () => {
     const providerStyles: Record<string, OAuthProviderButtonStyles> = {
-        home: {logo: "images/mephi.png", bg: "#E8E9EB", text: "#000000"},
+        home: {logo: "/mephi.png", bg: "#E8E9EB", text: "#000000"},
         yandex: {logo: "/yandex.svg", bg: "#FFCC00", text: "#000000",},
         vk: {logo: "/vk.svg", bg: "#07F", text: "#FFFFFF"},
         google: {logo: "/google.svg", bg: "#FFFFFF", text: "#000000"},

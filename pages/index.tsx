@@ -4,10 +4,13 @@ import Image from 'next/image'
 import Logo from 'images/logo.svg'
 import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
+import {useSession} from "next-auth/react";
+import {Session} from "next-auth";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
 // {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
@@ -38,6 +41,11 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     const handleClickOpenWarning = () => {
         setState({...state, warning: true});
     };
+
+    const handleGotoProfile = () => {
+        router.push(`/users/${session?.user?.id}`);
+    }
+
     const handleCloseWarning = () => {
         setState({...state, warning: false});
     };
@@ -52,10 +60,18 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
 
     }, []);
     const router = useRouter();
+
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    }
     useEffect(() => {
         changeNeedsAuth(false);
         // window.onpopstate = () => changeNeedsAuth(true);
     }, [changeNeedsAuth]);
+
+    const isAuthenticated = status === "authenticated";
+    const isLoading = status === "loading";
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
@@ -101,9 +117,15 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                             {isMobile ?
                                 <Button className="mb-4 shadow-none bg-white text-black font-[Montserrat] font-semibold rounded-lg
                          w-[80%] normal-case"
-                                        variant="contained" onClick={handleClickOpenWarning}>Войти на Daily MEPhi
-                                </Button>
-                                : null}
+                                        variant="contained"
+                                        disabled={isLoading}
+                                        onClick={!isAuthenticated ? handleClickOpenWarning : handleGotoProfile}>
+                                    {!isLoading ? (!isAuthenticated ? 'Войти на Daily MEPhi' : 'Профиль') :
+                                        <CircularProgress color="inherit"
+                                                          thickness={3}
+                                                          size={30}
+                                                          className="my-auto"/>}
+                                </Button> : null}
 
                             <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>
                             {!isMobile ?

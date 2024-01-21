@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import Image from "next/image";
-import {ClientSafeProvider, getProviders, signIn, useSession} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import RippledButton from "../components/rippledButton";
 import {useRouter} from "next/router";
 import {CircularProgress} from "@mui/material";
@@ -36,7 +36,7 @@ export default function SignIn({providers, profile}: {
         return null
     }
     // console.log('Custom Signin page was called.')
-    const providerLogoPath = "https://authjs.dev/img/providers"
+    const providerLogoPath = "/images/auth"
 
 
 // const callbackUrl = "/api/auth/callback/credentials"
@@ -51,7 +51,7 @@ export default function SignIn({providers, profile}: {
                 let logo: string | undefined
                 if (provider.type === "oauth") {
 
-                    logo = provider.id !== 'home' ? providerLogoPath + provider.style.logo : '/api/auth/images/mephi.png'
+                    logo = providerLogoPath + provider.style.logo;
                 }
                 const loading = isLoading == provider.id || status === "loading"
                 const isConnected = session?.user?.accounts.map(account => account.provider).includes(provider.id);
@@ -65,7 +65,7 @@ export default function SignIn({providers, profile}: {
                                 style={{backgroundColor: provider.style.bg, color: provider.style.text}}
                                 onClick={async () => {
                                     changeIsLoading(provider.id);
-                                    await signIn(provider.id, {callbackUrl: '/'})
+                                    await signIn(provider.id, {callbackUrl: session?.user?.id ? `/users/${session.user.id}` : '/'})
                                 }}
                                 disabled={loading || isConnected}
                             >
