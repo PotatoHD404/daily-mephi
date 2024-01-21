@@ -62,12 +62,12 @@ function TopUserContent(props: TopUserParams) {
     return (
         <tr>
             <td className="text-center"><Link href={`/users/${props.id || ""}`}
-                                              >{props.place.toString()}</Link></td>
+            >{props.place.toString()}</Link></td>
             <td>
                 <Link
                     href={`/users/${props.id || ""}`}
                     className="flex pl-4 h-[4.5rem]"
-                    >
+                >
                     <>
                         <div className="h-14 my-auto w-14 flex">
                             <Image

@@ -3,7 +3,6 @@ import Image from "next/image";
 import WarningHalfCat from 'images/warning_halfcat.svg'
 import WarningCat from 'images/warning_cat.svg'
 import Link from "next/link";
-import {signIn} from "next-auth/react";
 import CustomDialog from "./customDialog";
 import RippledButton from "./rippledButton";
 import CloseButton from "./closeButton";

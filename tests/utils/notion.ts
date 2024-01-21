@@ -1,8 +1,8 @@
-import { Client } from '@notionhq/client';
+import {Client} from '@notionhq/client';
 import {env} from "../../lib/env";
-import {beforeAll, afterEach, afterAll} from '@jest/globals';
+import {afterAll, afterEach, beforeAll} from '@jest/globals';
 
-const notion = new Client({ auth: env.NOTION_TOKEN });
+const notion = new Client({auth: env.NOTION_TOKEN});
 
 beforeAll(async () => {
     console.log("Setting up tests...")
@@ -15,10 +15,9 @@ afterEach(async () => {
     });
 
 
-
     // Delete all pages
     for (let result of response.results) {
-        await notion.blocks.delete({ block_id: result.id });
+        await notion.blocks.delete({block_id: result.id});
     }
 })
 
@@ -26,4 +25,4 @@ afterAll(async () => {
     console.log("All tests done.")
 })
 
-export { notion }
+export {notion}

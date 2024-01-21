@@ -1,7 +1,7 @@
 // order makes difference, it's important to mock prisma before importing utils
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/utils/trpc";
-import {describe, expect, it} from '@jest/globals';
+import {describe, it} from '@jest/globals';
 import {generateComment, generateNews, generateUser} from "./utils/faker";
 import {prisma} from "lib/database/prisma";
 
@@ -42,6 +42,7 @@ describe('[GET] /api/v2/comments', () => {
             }
         });
         type Comment = typeof comments[0];
+
         function updateCommentStructure(child: Comment, parent: Comment) {
             // Update the parentId of the child comment to be the id of the parent comment
             child.parentId = parent.id;

@@ -4,7 +4,7 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {TRPCError} from "@trpc/server";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
-import {PrismaClient, Comment as DefaultComment, Prisma} from "@prisma/client";
+import {Comment as DefaultComment, Prisma, PrismaClient} from "@prisma/client";
 import {DefaultArgs} from "@prisma/client/runtime/library";
 
 
@@ -50,7 +50,7 @@ type CommentMapType = { children: CommentMapType[], comment: Comment | null }
 
 export function buildCommentTree(comments: Comment[]): CommentMapType[] {
 
-    const commentMap: { [key: string]: CommentMapType} = {};
+    const commentMap: { [key: string]: CommentMapType } = {};
 
     // Initialize the map and create a children container for each comment
     comments.forEach(comment => {

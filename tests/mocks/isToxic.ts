@@ -1,12 +1,7 @@
-import {t} from "server/utils";
-import {nextAuthOptions} from "lib/auth/nextAuthOptions";
-import {TRPCError} from "@trpc/server";
-import { faker } from "@faker-js/faker";
-
 export const isToxic = jest.fn()
 
 beforeEach(() => {
-    isToxic.mockImplementation(async () => true )
+    isToxic.mockImplementation(async () => true)
 })
 
 afterEach(() => {

@@ -1,7 +1,4 @@
 import {t} from "server/utils";
-import {TRPCError} from "@trpc/server";
-import {createHash} from "crypto";
-import {defaultCookies} from "lib/utils";
 
 export const verifyCSRFTokenFunc = jest.fn()
 
@@ -10,7 +7,7 @@ const verifyCSRFToken = t.middleware(
 )
 
 beforeEach(() => {
-    verifyCSRFTokenFunc.mockImplementation(async ({ ctx: {req}, next }) => {
+    verifyCSRFTokenFunc.mockImplementation(async ({ctx: {req}, next}) => {
         return next()
     })
 })

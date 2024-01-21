@@ -1,9 +1,8 @@
 import {PrismaClient} from '@prisma/client';
 import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
 import ReviewThumbnail from "components/thumbnails/review";
-import {UUID_REGEX} from "../constants/uuidRegex";
 
 const prisma = new PrismaClient();
 
@@ -50,7 +49,7 @@ export default async function handler(reviewId: string, res: NextApiResponse) {
             res.status(404).end('Material not found');
             return;
         }
-        const images =[review.user?.image?.url, review.tutor.images[0]?.url]
+        const images = [review.user?.image?.url, review.tutor.images[0]?.url]
         const urls = images.map((image) => normalizeUrl(image, "/images/dead_cat.svg", true))
         const promises = urls.map((url) => imageToBase64(url))
         const [user_image_data, tutor_image_data] = await Promise.all(promises);

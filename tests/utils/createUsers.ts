@@ -12,6 +12,7 @@ async function createUsers() {
     });
 
     const imageIds = images.map(image => image.id);
+
     function generateNickname() {
         let nickname = faker.internet.userName();
         // Replace disallowed characters with underscores and limit length
@@ -91,9 +92,9 @@ async function createUsers() {
     // generate 10 users
     // remove with duplicate nicknames
     const users: User[] = Array.from({length: 100}, generateUser).filter((user, index, self) =>
-        index === self.findIndex((t) => (
-            t.nickname === user.nickname
-        ))
+            index === self.findIndex((t) => (
+                t.nickname === user.nickname
+            ))
     );
 
 

@@ -139,66 +139,66 @@ export const materialsRouter = t.router({
             return prisma.$transaction(async (prisma) => {
                 const [material] = await Promise.all([
                     prisma.material.create({
-                        data: {
-                            title,
-                            text,
-                            files: files.length > 0 ? {
-                                connect: files.map(file => ({
-                                    id: file
-                                }))
-                            } : undefined,
-                            faculties: facultyIds.length > 0 ? {
-                                connect: facultyIds.map(faculty => ({
-                                    name: faculty
-                                }))
-                            } : undefined,
-                            disciplines: disciplineIds.length > 0 ? {
-                                connect: disciplineIds.map(discipline => ({
-                                    name: discipline
-                                }))
-                            } : undefined,
-                            semesters: semesterIds.length > 0 ? {
-                                connect: semesterIds.map(semester => ({
-                                    name: semester
-                                }))
-                            } : undefined,
-                            tutor: {
-                                connect: {
-                                    id: tutorId
-                                }
-                            },
-                            user: {
-                                connect: {
-                                    id: user.id
-                                }
-                            }
-                        }
-                    }
-                ),
-                prisma.user.update({
-                    where: {
-                        id: user.id
-                    },
-                    data: {
-                        materialsCount: {
-                            increment: 1
-                        }
-                    }
-                }),
-                async () => {
-                    if (tutorId) {
-                        await prisma.tutor.update({
-                            where: {
-                                id: tutorId
-                            },
                             data: {
-                                materialsCount: {
-                                    increment: 1
+                                title,
+                                text,
+                                files: files.length > 0 ? {
+                                    connect: files.map(file => ({
+                                        id: file
+                                    }))
+                                } : undefined,
+                                faculties: facultyIds.length > 0 ? {
+                                    connect: facultyIds.map(faculty => ({
+                                        name: faculty
+                                    }))
+                                } : undefined,
+                                disciplines: disciplineIds.length > 0 ? {
+                                    connect: disciplineIds.map(discipline => ({
+                                        name: discipline
+                                    }))
+                                } : undefined,
+                                semesters: semesterIds.length > 0 ? {
+                                    connect: semesterIds.map(semester => ({
+                                        name: semester
+                                    }))
+                                } : undefined,
+                                tutor: {
+                                    connect: {
+                                        id: tutorId
+                                    }
+                                },
+                                user: {
+                                    connect: {
+                                        id: user.id
+                                    }
                                 }
                             }
-                        });
-                    }
-                }]);
+                        }
+                    ),
+                    prisma.user.update({
+                        where: {
+                            id: user.id
+                        },
+                        data: {
+                            materialsCount: {
+                                increment: 1
+                            }
+                        }
+                    }),
+                    async () => {
+                        if (tutorId) {
+                            await prisma.tutor.update({
+                                where: {
+                                    id: tutorId
+                                },
+                                data: {
+                                    materialsCount: {
+                                        increment: 1
+                                    }
+                                }
+                            });
+                        }
+                    }]);
                 return material;
             });
         }),
@@ -306,26 +306,26 @@ export const materialsRouter = t.router({
                         }
                     }
                 ),
-                prisma.tutor.update({
-                    where: {
-                        id: tutorId
-                    },
-                    data: {
-                        materialsCount: {
-                            increment: 1
+                    prisma.tutor.update({
+                        where: {
+                            id: tutorId
+                        },
+                        data: {
+                            materialsCount: {
+                                increment: 1
+                            }
                         }
-                    }
-                }),
-                await prisma.user.update({
-                    where: {
-                        id: user.id
-                    },
-                    data: {
-                        materialsCount: {
-                            increment: 1
+                    }),
+                    await prisma.user.update({
+                        where: {
+                            id: user.id
+                        },
+                        data: {
+                            materialsCount: {
+                                increment: 1
+                            }
                         }
-                    }
-                })]);
+                    })]);
 
                 return material;
             });

@@ -1,7 +1,7 @@
 import {faker} from "@faker-js/faker";
 import {trpc} from "tests/utils/trpc";
-import {describe, it, expect, jest} from '@jest/globals';
-import { prisma } from "lib/database/prisma";
+import {describe, expect, it} from '@jest/globals';
+import {prisma} from "lib/database/prisma";
 import {generateDiscipline, generateFaculty, generateFile, generateImage} from "./utils/faker";
 
 // export type Discipline = {

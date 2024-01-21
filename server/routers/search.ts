@@ -176,6 +176,7 @@ export const searchRouter = t.router({
                 });
             }
             const tsQuery = convertGoogleQueryToTsQuery(query);
+
             interface DocsType {
                 id: string;
                 text: string;
@@ -185,7 +186,6 @@ export const searchRouter = t.router({
                 deletedAt: Date | null;
                 score: number;
             }
-
 
 
             const docs: DocsType[] = await prisma.$queryRaw`

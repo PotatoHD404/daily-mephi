@@ -1,9 +1,8 @@
 import {PrismaClient} from '@prisma/client';
 import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
 import UserThumbnail from "components/thumbnails/user";
-import {UUID_REGEX} from "../constants/uuidRegex";
 
 const prisma = new PrismaClient();
 

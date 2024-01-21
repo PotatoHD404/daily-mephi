@@ -8,7 +8,7 @@ import {GetServerSideProps} from "next";
 import {prisma} from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-import {getServerSession, Session} from "next-auth";
+import {Session} from "next-auth";
 import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
 import {useQuery} from "@tanstack/react-query";
 

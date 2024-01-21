@@ -1,8 +1,7 @@
 import {PrismaClient} from '@prisma/client';
 import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import QuoteThumbnail from "components/thumbnails/quote";
-import {UUID_REGEX} from "../constants/uuidRegex";
 
 const prisma = new PrismaClient();
 

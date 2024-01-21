@@ -1,7 +1,6 @@
 import {OAuthConfig} from "next-auth/providers";
 import {getHost} from "lib/utils";
 import {hash} from "lib/crypto";
-import {prisma} from "lib/database/prisma";
 
 export interface Profile {
     id: string;
@@ -18,7 +17,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         id: "home",
         name: "Home MEPHi",
         type: "oauth",
-        style: { logo: "images/mephi.png", bg: "#EEE", text: "#000" },
+        style: {logo: "images/mephi.png", bg: "#EEE", text: "#000"},
         authorization: {
             url: "https://auth.mephi.ru/login",
             params: {service: host} // TODO: add host check

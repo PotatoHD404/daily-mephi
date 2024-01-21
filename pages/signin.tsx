@@ -30,7 +30,10 @@ export default function SignIn({providers}: {
     return (
         <div className="w-1/2 flex-wrap">
             {/* if error == OAuthCreateAccount then write something*/}
-            {error == 'OAuthCreateAccount' ? <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой аккаунт</div> : null}
+            {error == 'OAuthCreateAccount' ?
+                <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
+                    только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой
+                    аккаунт</div> : null}
             {Object.values(providers).map((provider) => {
                 let logo: string | undefined
                 if (provider.type === "oauth") {

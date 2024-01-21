@@ -1,7 +1,6 @@
 import {describe, it} from "@jest/globals";
 import {convertGoogleQueryToTsQuery, prepareText} from "../../lib/database/fullTextSearch";
-import {tokenize, tokenizeAndStem} from "../../lib/nlp";
-import {DataRecord, Spellcheck, WordNet} from "natural";
+import {tokenizeAndStem} from "../../lib/nlp";
 
 describe('Text utils', () => {
 

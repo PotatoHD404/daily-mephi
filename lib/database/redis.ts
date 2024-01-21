@@ -1,7 +1,3 @@
-import Redis from 'ioredis';
-import {env} from "../env";
-
-
 // export const redis: Redis =
 //     (global as any).redis || new Redis({
 //         port: +env.REDIS_PORT,

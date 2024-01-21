@@ -1,16 +1,14 @@
 import MaterialThumbnail from 'components/thumbnails/material';
 import {PrismaClient} from '@prisma/client';
 import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {NextApiResponse} from "next";
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
-import {UUID_REGEX} from "../constants/uuidRegex";
 
 const prisma = new PrismaClient();
 
 // ... (Include other necessary imports and utility functions like getFontData, renderAndSend)
 
 export default async function handler(materialId: string, res: NextApiResponse) {
-
 
 
     // Input validation (optional, you can use zod if you prefer)

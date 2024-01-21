@@ -1,4 +1,4 @@
-import {AppRouter, appRouter} from "server";
+import {appRouter} from "server";
 import {prisma} from "lib/database/prisma";
 import {notion} from "lib/database/notion";
 import {t} from "server/utils";
@@ -14,7 +14,7 @@ const ctx = {
 }
 
 
-const { createCallerFactory } = t;
+const {createCallerFactory} = t;
 
 const createCaller = createCallerFactory(appRouter);
 
