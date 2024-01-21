@@ -9,7 +9,7 @@ import {prisma} from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {getServerSession, Session} from "next-auth";
-import {MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
+import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
 import {useQuery} from "@tanstack/react-query";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
@@ -84,7 +84,7 @@ function UserProfile({user, me}: {
 }
 
 export const getServerSideProps: GetServerSideProps = async (props) => {
-    const {req, query} = props;
+    const {req, res, query} = props;
     // console.log(props);
     const {id} = query;
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
@@ -105,7 +105,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
             notFound: true
         }
     }
-    const session = await getServerSession();
+    const session = await auth(req, res);
 
     // res.setHeader(
     //     'Cache-Control',

@@ -1,14 +1,16 @@
 import HomeMEPhiOauth from "./mephiOauthConfig";
 import {PrismaAdapter} from "@next-auth/prisma-adapter"
-import {User} from "@prisma/client"
 // import {Session, User} from "next-auth";
-import type {NextAuthOptions} from "next-auth"
 import {prisma} from "lib/database/prisma";
 import VkProvider from "next-auth/providers/vk";
 import GoogleProvider from "next-auth/providers/google";
 import YandexProvider from "next-auth/providers/yandex";
 import GitHubProvider from "next-auth/providers/github";
 import {env} from "../env";
+import type {GetServerSidePropsContext, NextApiRequest, NextApiResponse} from "next"
+import type {NextAuthOptions} from "next-auth"
+import {getServerSession} from "next-auth"
+import {AdapterAccount} from "next-auth/adapters";
 
 
 // const host = getHost() + "/api/auth/callback/home";
@@ -42,20 +44,26 @@ export const selectUser = {
     },
 }
 
-let findUser = (id: string) => prisma.user.findUniqueOrThrow({ where: { id }, ...selectUser })
+let findUser = (id: string) => prisma.user.findUniqueOrThrow({where: {id}, ...selectUser})
 let prismaAdapter = PrismaAdapter(prisma);
 prismaAdapter = {
     ...prismaAdapter,
-    createUser: (data: any): any => prisma.user.create({ data, ...selectUser },),
-    getUser: (id: any): any  => prisma.user.findUnique({ where: { id }, ...selectUser }),
-    getUserByEmail: (email: any): any  => prisma.user.findUnique({ where: { email }, ...selectUser  }),
+    createUser: (data: any): any => prisma.user.create({data, ...selectUser},),
+    getUser: (id: any): any => prisma.user.findUnique({where: {id}, ...selectUser}),
+    getUserByEmail: (email: any): any => prisma.user.findUnique({where: {email}, ...selectUser}),
     async getUserByAccount(provider_providerAccountId: any): Promise<any> {
         const account = await prisma.account.findUnique({
-            where: { provider_providerAccountId },
+            where: {provider_providerAccountId},
             select: {user: selectUser},
         })
         return account?.user ?? null
     },
+    linkAccount: async (data) => {
+        if (data?.user_id) {
+            delete data.user_id
+        }
+        return await prisma.account.create({data}) as unknown as AdapterAccount
+    }
 }
 
 export type MyAppUser = Awaited<ReturnType<typeof findUser>>
@@ -109,6 +117,7 @@ export const nextAuthOptions: NextAuthOptions = {
                 // disallow registering with external providers
                 throw new Error("Sign up with external providers is not allowed")
             }
+
             if (trigger == "update") {
                 const tokenUser = token?.user as MyAppUser;
                 if (tokenUser.id === null) {
@@ -120,8 +129,7 @@ export const nextAuthOptions: NextAuthOptions = {
                 if (!token.user) {
                     throw new Error("User not found")
                 }
-            }
-            else if (user || profile) {
+            } else if (user || profile) {
                 token.user = user as MyAppUser;
             }
             return token;
@@ -146,3 +154,7 @@ export const nextAuthOptions: NextAuthOptions = {
     //     // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
     // }
 };
+
+export function auth(...args: [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]] | [NextApiRequest, NextApiResponse] | []) {
+    return getServerSession(...args, nextAuthOptions)
+}

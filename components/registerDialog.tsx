@@ -70,11 +70,13 @@ export default function RegisterDialog(props: DialogProps) {
                     location.reload();
                 },
                 onError: (error) => {
+                    setIsFetching(false);
                     if (error.data?.code !== "BAD_REQUEST") {
                         setNicknameError(`Произошла ошибка, попробуйте позже, ${error.message}`)
                         return;
                     }
                     setNicknameError(error.message);
+
                 },
                 onSettled: () => {
                     tokensQuery.refetch();
