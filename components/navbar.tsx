@@ -318,9 +318,12 @@ function Navbar(props: { needsAuth: boolean }) {
             setState({...state, opened: !state.opened});
         };
 
+
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{home, handleClickOpenWarning: callback, toggleDrawer: () => toggleDrawer}}/>
+            <Nav {...{
+                home, handleClickOpenWarning: callback, toggleDrawer: toggleDrawer as any
+            }}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer
