@@ -45,7 +45,7 @@ export default function UserHeaderComponent(props: Props) {
                             <Link
                                 href={`/users/${props.user.id}`}
                                 className="h-14 my-auto w-14"
-                                legacyBehavior>
+                                >
                                 <Image
                                     src={props.user?.image?.url ?? DeadCat}
                                     alt="Profile picture"
@@ -54,7 +54,7 @@ export default function UserHeaderComponent(props: Props) {
                                     height={512}
                                 />
                             </Link>
-                            <Link href={`/users/${props.user.id}`} className="ml-2 h-fit" legacyBehavior>
+                            <Link href={`/users/${props.user.id}`} className="ml-2 h-fit" >
                                 <div className="font-bold text-[0.9rem] leading-5">
                                     {props.user?.nickname ?? props?.legacyNickname ?? "Аноним"}
                                 </div>

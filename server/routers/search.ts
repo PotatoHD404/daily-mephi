@@ -8,7 +8,7 @@ export type DocsKeyTypes = "tutor" | "user" | "material" | "review" | "quote" | 
 const findTutors = async (prisma: PrismaClient, ids: string[]) =>
     prisma.tutor.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -29,7 +29,7 @@ const findTutors = async (prisma: PrismaClient, ids: string[]) =>
 const findUsers = async (prisma: PrismaClient, ids: string[]) =>
     prisma.user.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -44,7 +44,7 @@ const findUsers = async (prisma: PrismaClient, ids: string[]) =>
 const findMaterials = async (prisma: PrismaClient, ids: string[]) =>
     prisma.material.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -65,7 +65,7 @@ const findMaterials = async (prisma: PrismaClient, ids: string[]) =>
 const findReviews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.review.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -89,7 +89,7 @@ const findReviews = async (prisma: PrismaClient, ids: string[]) =>
 const findQuote = async (prisma: PrismaClient, ids: string[]) =>
     prisma.quote.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -114,7 +114,7 @@ const findQuote = async (prisma: PrismaClient, ids: string[]) =>
 const findNews = async (prisma: PrismaClient, ids: string[]) =>
     prisma.news.findMany({
         where: {
-            id: {in: ids},
+            documentId: {in: ids},
         },
         select: {
             id: true,
@@ -179,7 +179,6 @@ export const searchRouter = t.router({
             interface DocsType {
                 id: string;
                 text: string;
-                recordId: string;
                 type: DocsKeyTypes;
                 createdAt: Date;
                 updatedAt: Date;
@@ -198,7 +197,7 @@ export const searchRouter = t.router({
                                 JOIN "_tutors_faculties" ON tutors.id = _tutors_faculties."B"
                                 JOIN "_tutors_disciplines" ON tutors.id = _tutors_disciplines."B"
                                 JOIN "ratings" ON tutors.id = ratings.tutor_id
-                                WHERE "documents"."record_id" = "tutors"."id" AND
+                                WHERE "documents"."id" = "tutors"."document_id" AND
                                       ${disciplineIds.length ? Prisma.sql`"_tutors_disciplines"."id" = ANY(${disciplineIds}) AND` : Prisma.empty}
                                       ${facultyIds.length ? Prisma.sql`"_tutors_faculties"."id" = ANY(${facultyIds}) AND` : Prisma.empty}
                                       ${ratingFrom != 0 || ratingTo == 5 ? Prisma.sql`"ratings".avg_rating BETWEEN ${ratingFrom} AND ${ratingTo}` : Prisma.empty}
@@ -242,7 +241,7 @@ export const searchRouter = t.router({
             };
 
             await Promise.all(Object.entries(groupedDocs).map(async ([key, value]) => {
-                const ids = value.map(el => el.recordId);
+                const ids = value.map(el => el.id);
 
                 switch (key) {
                     case "tutor":
@@ -267,7 +266,13 @@ export const searchRouter = t.router({
                     default:
                         throw new Error(`Unsupported type: ${key}`);
                 }
-            }));
+            })).catch(err => {
+                console.log(err)
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: err.message
+                });
+            });
 
             return result;
         }),

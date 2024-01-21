@@ -61,3 +61,46 @@ export function generateFile(usersCopy: string[]): File {
         usersCopy.splice(usersCopy.findIndex(el => el === res.userId), 1)
     return res;
 }
+
+export function generateUser() {
+    return {
+        id: faker.string.uuid(),
+        nickname: faker.internet.userName(),
+        deletedAt: null,
+        // image: {
+        //     create: generateImage()
+        // },
+        role: faker.helpers.arrayElement(["tutor", "default"]),
+    };
+}
+
+export function generateNews() {
+    return {
+        id: faker.string.uuid(),
+        title: faker.lorem.sentence(),
+        text: faker.lorem.paragraph(),
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+        deletedAt: null,
+        // userId: null,
+    };
+}
+
+export function generateComment() {
+    const res = {
+        id: faker.string.uuid(),
+        text: faker.lorem.paragraph(),
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+        deletedAt: null,
+        parentId: null,
+        userId: null,
+        type: faker.helpers.arrayElement(["news", "material", "review"]),
+        recordId: null,
+        depth: 1,
+        commentsCount: 0,
+        likesCount: faker.number.int({min: 0, max: 50}),
+        dislikesCount: faker.number.int({min: 0, max: 50}),
+    };
+    return {...res, path: [res.id], score: res.likesCount - res.dislikesCount + res.commentsCount};
+}

@@ -1,4 +1,5 @@
 import {PrismaClient} from '@prisma/client';
+import {env} from "../env";
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
 // import {redis} from "./redis";
 
@@ -6,7 +7,7 @@ let notInitialized = (global as any).prisma === undefined;
 const prisma: PrismaClient =
     (global as any).prisma || new PrismaClient();
 
-if (process.env.NODE_ENV !== 'production') {
+if (env.NODE_ENV !== 'production') {
     (global as any).prisma = prisma;
 }
 

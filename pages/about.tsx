@@ -7,6 +7,10 @@ import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import TopUsers from "components/topUsers";
 import useIsMobile from "lib/react/isMobileContext";
+import {useSession} from "next-auth/react";
+import {useQuery} from "@tanstack/react-query";
+import {Session} from "next-auth";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
 
 export function Post() {
     return <>
@@ -53,13 +57,27 @@ function Tabs() {
 
 function About() {
     const isMobile = useIsMobile();
+    const {data: session, status, update: updateSession} = useSession() as unknown as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated",
+        // eslint-disable-next-line no-unused-vars
+        update: (data?: any) => Promise<Session | null>
+    };
+    // useQuery to update session
+    const {data, isFetching, refetch, isError, error} = useQuery({
+        queryKey: ['session'],
+        enabled: session != null && status === "authenticated",
+        queryFn: updateSession
+    });
+
+
     return (
         <>
             <SEO title='О нас' thumbnail={`https://daily-mephi.ru/images/thumbnails/about.png`}/>
             {isMobile == null ? null :
                 <div className="flex w-full justify-between">
                     <Tabs/>
-                    <TopUsers place={1} take={8} withLabel/>
+                    <TopUsers place={session?.user?.place ?? 1} take={8} withLabel isLoading={isFetching || status == "unauthenticated"}/>
                 </div>
             }
         </>);

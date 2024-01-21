@@ -15,7 +15,7 @@ const customJestConfig: Config = {
     clearMocks: true,
     testEnvironment: '@quramy/jest-prisma-node/environment',
     testEnvironmentOptions: {
-        verboseQuery: false,
+        verboseQuery: true,
     },
     setupFilesAfterEnv: [
         "<rootDir>/tests/mocks/isAuthorized.ts",

@@ -123,8 +123,8 @@ function Tutor({tutor}: { tutor: any }) {
 
     return (
         <>
-            <SEO title={'Трифоненков В.П.'}
-                 thumbnail={`https://daily-mephi.ru/api/v1/tutors/${tutor.id}/thumbnail.png`}/>
+            <SEO title={`${tutor.shortName}`}
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/tutors/${tutor.id}.png`}/>
             {isMobile == null ? null :
                 <>
                     <div className="flex-wrap w-full">
@@ -179,9 +179,6 @@ export async function getStaticProps(context: any) {
             notFound: true
         }
     }
-    tutor.images = tutor.images.map((image: any) => image.url);
-    tutor.disciplines = tutor.disciplines.map((image: any) => image.name);
-    tutor.faculties = tutor.faculties.map((image: any) => image.name);
     // console.log(tutor)
     return {
         // Passed to the page component as props

@@ -1,18 +1,17 @@
 import { Client } from '@notionhq/client';
+import {env} from "../../lib/env";
+import {beforeAll, afterEach, afterAll} from '@jest/globals';
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
+const notion = new Client({ auth: env.NOTION_TOKEN });
 
 beforeAll(async () => {
     console.log("Setting up tests...")
 })
 
 afterEach(async () => {
-    if (process.env.NOTION_PRIVATE_PAGE === undefined) {
-        throw new Error("NOTION_PRIVATE_PAGE is not defined")
-    }
     // Query all pages in the database
     const response = await notion.databases.query({
-        database_id: process.env.NOTION_PRIVATE_PAGE,
+        database_id: env.NOTION_PRIVATE_PAGE,
     });
 
 

@@ -24,6 +24,8 @@ const getComments = async (prisma: PrismaClient, type: "news" | "material" | "re
             commentsCount: true,
             likesCount: true,
             dislikesCount: true,
+            path: true,
+            depth: true,
             user: {
                 select: {
                     id: true,
@@ -44,16 +46,22 @@ const getComments = async (prisma: PrismaClient, type: "news" | "material" | "re
     });
 
 type Comment = Awaited<ReturnType<typeof getComments>>[0]
+type CommentMapType = { children: CommentMapType[], comment: Comment | null }
 
-export function buildCommentTree(comments: Comment[]): Comment[] {
-    const commentMap: { [key: string]: Comment & { children: Comment[] } } = {};
+export function buildCommentTree(comments: Comment[]): CommentMapType[] {
+
+    const commentMap: { [key: string]: CommentMapType} = {};
 
     // Initialize the map and create a children container for each comment
     comments.forEach(comment => {
-        commentMap[comment.id] = {...comment, children: []};
+        commentMap[comment.id] = {comment, children: []};
     });
-
-    const rootComments: Comment[] = [];
+    // ids that are in path but not commentIds and filter by commentMap keys
+    const parentIds = comments.flatMap(comment => comment.path.slice(0, -1)).filter(id => !(id in commentMap));
+    parentIds.forEach(id => {
+        commentMap[id] = {comment: null, children: []};
+    });
+    const rootComments: CommentMapType[] = [];
 
     comments.forEach(comment => {
         if (comment.parentId) {
@@ -64,7 +72,6 @@ export function buildCommentTree(comments: Comment[]): Comment[] {
             rootComments.push(commentMap[comment.id]);
         }
     });
-
     return rootComments;
 }
 

@@ -1,6 +1,6 @@
 import SEO from "components/seo";
 import {useRouter} from "next/router";
-import React, {useEffect} from "react";
+import React from "react";
 import TopUsers from "components/topUsers";
 import User from "components/user"
 import useIsMobile from "lib/react/isMobileContext";
@@ -8,10 +8,9 @@ import {GetServerSideProps} from "next";
 import {prisma} from "lib/database/prisma";
 import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-import {getToken} from "next-auth/jwt";
-import {Session} from "next-auth";
-import {MyAppUser} from "lib/auth/nextAuthOptions";
-import {trpc} from "server/utils/trpc";
+import {getServerSession, Session} from "next-auth";
+import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
+import {useQuery} from "@tanstack/react-query";
 
 function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
     const {status} = useSession() as any as {
@@ -34,43 +33,37 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 }
 
 
-function UserProfile({user, me, changeNeedsAuth}: {
+function UserProfile({user, me}: {
     user?: MyAppUser,
-    me?: boolean,
-    changeNeedsAuth: (a: boolean) => void
+    me?: boolean
 }) {
     const router = useRouter();
     const {id} = router.query;
-    const {data: session, status} = useSession() as any as {
+    const {data: session, status, update: updateSession} = useSession() as any as {
         data: Session & { user: MyAppUser },
-        status: "authenticated" | "loading" | "unauthenticated"
+        status: "authenticated" | "loading" | "unauthenticated",
+        update: (data?: any) => Promise<Session | null>
     };
+
+    const {data, isFetching, refetch, isError, error} = useQuery({
+        queryKey: ['session'],
+        enabled: session != null && status === "authenticated",
+        queryFn: updateSession
+    });
+
+
     const isMobile = useIsMobile();
 
     // Ensure id is a string
 
+
     const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
-    const {data, isFetching, isError, error} = validId ?
-        trpc.users.getOne.useQuery({id: validId}) : {
-            data: null,
-            isFetching: false,
-            isError: false,
-            error: null
-        };
-    const isLoading = isFetching;
-    const isMe = session?.user?.id === validId;
+    const isLoading = status === "loading";
 
-    useEffect(() => {
-        if (isError && error) {
-            console.log(error);
-        }
-    }, [isError, error, router]);
 
-    useEffect(() => {
-        if (me) {
-            changeNeedsAuth(true);
-        }
-    }, [changeNeedsAuth, me]);
+    if (!user) {
+        return (<></>);
+    }
 
     // Early return for invalid id
     if (!validId) {
@@ -79,15 +72,11 @@ function UserProfile({user, me, changeNeedsAuth}: {
 
     return (
         <>
-            {user ?
-                <SEO title={`Пользователь ${user.nickname}`}
-                     thumbnail={`https://daily-mephi.ru/api/v1/users/${user.id}/thumbnail.png`}/> :
-                <SEO title={`Пользователь ${data?.nickname || '...'}`}
-                     thumbnail={`https://daily-mephi.ru/api/v1/users/${validId}/thumbnail.png`}/>
-            }
+            <SEO title={`Пользователь ${user.nickname}`}
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    <Profile me={isMe} user={data ?? user} isLoading={isLoading}/>
+                    <Profile me={me ?? false} user={user} isLoading={isLoading}/>
                 </div>
             }
         </>
@@ -95,7 +84,7 @@ function UserProfile({user, me, changeNeedsAuth}: {
 }
 
 export const getServerSideProps: GetServerSideProps = async (props) => {
-    const {req, query} = props;
+    const {req, res, query} = props;
     // console.log(props);
     const {id} = query;
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
@@ -106,37 +95,25 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
     // get user from database
     const user = await prisma.user.findUnique({
         where: {
-            id: id
+            id
         },
-        select: {
-            id: true,
-            nickname: true,
-            image: {
-                select: {
-                    url: true
-                }
-            }
-        }
+        ...selectUser
     });
+
     if (!user) {
         return {
             notFound: true
         }
     }
-    const session = await getToken({req})
+    const session = await auth(req, res);
 
     // res.setHeader(
     //     'Cache-Control',
     //     'public, s-maxage=10, stale-while-revalidate=59'
     // )
 
-    // @ts-ignore
-    user.image = user.image?.url ?? null;
-    if (user.image) { // @ts-ignore
-        delete user.image;
-    }
     return {
-        props: {user, me: session?.sub === user.id}
+        props: {user, me: (session?.user as any)?.id === user.id}
     }
 }
 

@@ -6,7 +6,6 @@ import {materialsRouter} from "./routers/materials";
 import {newsRouter} from "./routers/news";
 import {quotesRouter} from "./routers/quotes";
 import {reviewsRouter} from "./routers/reviews";
-import {thumbnailsRouter} from "./routers/thumbnails";
 import {tutorsRouter} from "./routers/tutors";
 import {usersRouter} from "./routers/users";
 import {searchRouter} from "./routers/search";
@@ -20,7 +19,6 @@ export const appRouter = t.router({
     quotes: quotesRouter,
     reactions: reactionsRouter,
     reviews: reviewsRouter,
-    thumbnails: thumbnailsRouter,
     tutors: tutorsRouter,
     users: usersRouter,
     utils: t.mergeRouters(utilsRouter, searchRouter),

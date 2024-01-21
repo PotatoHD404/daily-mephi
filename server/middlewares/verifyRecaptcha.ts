@@ -1,9 +1,10 @@
 import {TRPCError} from '@trpc/server'
 import {t} from "server/utils";
+import {env} from "../../lib/env";
 
 export const verifyRecaptcha = t.middleware(async ({ctx: {req}, next}) => {
     const {recaptchaToken: token} = req.body;
-    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${token}`, {
+    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${env.RECAPTCHA_SECRET}&response=${token}`, {
         method: 'POST',
     });
     const data = await response.json();

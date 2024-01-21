@@ -2,6 +2,7 @@ import {TRPCError} from '@trpc/server'
 import {t} from "server/utils";
 import {defaultCookies} from "lib/utils";
 import {createHash} from "crypto";
+import {env} from "../../lib/env";
 
 export const verifyCSRFToken = t.middleware(async ({ctx: {req}, next}) => {
 
@@ -9,7 +10,7 @@ export const verifyCSRFToken = t.middleware(async ({ctx: {req}, next}) => {
         ...defaultCookies(
             req.url?.startsWith("https://") ?? false
         ),
-        secret: process.env.NEXTAUTH_SECRET,
+        secret: env.NEXTAUTH_SECRET,
     };
 
     const cookieValue = req.cookies[nextOptions.csrfToken.name];

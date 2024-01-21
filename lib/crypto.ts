@@ -1,15 +1,13 @@
 import crypto from "crypto";
 import argon2 from "argon2";
+import {env} from "./env";
 
 
 export async function encrypt(plaintext: string, key?: string): Promise<string> {
-    if (process.env.AES_NONCE === undefined
-        || process.env.AES_KEY256 === undefined)
-        throw new Error('There is no some environment variables');
     if (!key)
-        key = process.env.AES_KEY256;
+        key = env.AES_KEY256;
     const key256: Buffer = Buffer.from(key, 'base64url');
-    const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
+    const nonce: Buffer = Buffer.from(env.AES_NONCE, 'base64url');
     const cipher = crypto.createCipheriv(
         "aes-256-ccm",
         key256,
@@ -25,13 +23,10 @@ export async function encrypt(plaintext: string, key?: string): Promise<string> 
 }
 
 export async function decrypt(ciphertext: string, key?: string): Promise<string> {
-    if (process.env.AES_NONCE === undefined
-        || process.env.AES_KEY256 === undefined)
-        throw new Error('There is no some environment variables');
     if (!key)
-        key = process.env.AES_KEY256;
+        key = env.AES_KEY256;
     const key256: Buffer = Buffer.from(key, 'base64url');
-    const nonce: Buffer = Buffer.from(process.env.AES_NONCE, 'base64url');
+    const nonce: Buffer = Buffer.from(env.AES_NONCE, 'base64url');
     const decipher = crypto.createDecipheriv('aes-256-ccm',
         key256,
         nonce,
@@ -53,30 +48,23 @@ export async function decrypt(ciphertext: string, key?: string): Promise<string>
 }
 
 export async function hash(pass: string, secret: string | undefined = undefined): Promise<string> {
-    if (process.env.HASH_SECRET === undefined
-        || process.env.HASH_SALT === undefined
-        || process.env.HASH_MEMORY_COST === undefined
-        || process.env.HASH_TYPE === undefined
-        || process.env.HASH_TIME_COST === undefined
-        || process.env.HASH_PARALLELISM === undefined)
-        throw new Error('There is no some environment variables');
 
 
     let hash_type: 0 | 1 | 2 | undefined;
-    if (process.env.HASH_TYPE === '0')
+    if (env.HASH_TYPE === '0')
         hash_type = argon2.argon2d;
-    else if (process.env.HASH_TYPE === '1')
+    else if (env.HASH_TYPE === '1')
         hash_type = argon2.argon2i;
     else
         hash_type = argon2.argon2id;
-    const pepper: string = secret ?? process.env.HASH_SECRET;
+    const pepper: string = secret ?? env.HASH_SECRET;
     return (await argon2.hash(pass, {
-        memoryCost: +process.env.HASH_MEMORY_COST,
-        parallelism: +process.env.HASH_PARALLELISM,
+        memoryCost: +env.HASH_MEMORY_COST,
+        parallelism: +env.HASH_PARALLELISM,
         type: hash_type,
-        timeCost: +process.env.HASH_TIME_COST,
+        timeCost: +env.HASH_TIME_COST,
         secret: Buffer.from(pepper, 'utf8'),
-        salt: Buffer.from(process.env.HASH_SALT, 'utf8'),
+        salt: Buffer.from(env.HASH_SALT, 'utf8'),
         raw: true
     })).toString('base64');
 }

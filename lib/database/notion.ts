@@ -1,11 +1,12 @@
 import {Client} from '@notionhq/client'
+import {env} from "../env";
 
 const notion: Client =
     (global as any).notion || new Client({
-        auth: process.env.NOTION_TOKEN,
+        auth: env.NOTION_TOKEN,
     });
 
-if (process.env.NODE_ENV !== 'production') {
+if (env.NODE_ENV !== 'production') {
     (global as any).notion = notion;
 }
 

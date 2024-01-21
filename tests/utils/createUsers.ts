@@ -89,7 +89,12 @@ async function createUsers() {
     }
 
     // generate 10 users
-    const users: User[] = Array.from({length: 100}, generateUser);
+    // remove with duplicate nicknames
+    const users: User[] = Array.from({length: 100}, generateUser).filter((user, index, self) =>
+        index === self.findIndex((t) => (
+            t.nickname === user.nickname
+        ))
+    );
 
 
     await prisma.user.createMany({

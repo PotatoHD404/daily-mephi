@@ -3,9 +3,10 @@ import Image from "next/image";
 import {Slider} from "@mui/material";
 import StarIcon from "images/star.svg";
 import CustomAccordion from './customAccordion'
+import {env} from "../lib/env";
 
 
-const dev = process.env.NODE_ENV == "development";
+const dev = env.NODE_ENV == "development";
 //                                     />
 export default function SliderFilter(props: { name: string, min: number, max: number }) {
     const [value, setValue] = React.useState<number[]>([0, 5]);

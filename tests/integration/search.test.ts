@@ -13,13 +13,17 @@ import {prisma} from "../../lib/database/prisma";
 //     updatedAt: Date
 //     deletedAt: Date | null
 // }
-describe('[GET] /api/v2/disciplines', () => {
+describe('[GET] /api/v2/search', () => {
 
-    it('Test get all', async () => {
+    it('Test simple search', async () => {
 
-        // const apiSemesters = await utils.utils.semesters();
+        const search = await trpc.utils.search({
+            query: 'test',
+            types: ['news', 'tutor'],
+            faculty_ids: [],
+        });
 
-        // expect(apiSemesters).toEqual(semesters);
+        expect(search).toEqual({});
 
     });
 });

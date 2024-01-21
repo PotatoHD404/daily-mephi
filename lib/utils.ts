@@ -5,6 +5,7 @@ import {promises as fs} from 'fs'
 import path from 'path'
 import {createHash} from "crypto";
 import {NextApiRequest} from "next";
+import {env} from "./env";
 
 
 export function defaultCookies(useSecureCookies: boolean) {
@@ -114,10 +115,10 @@ export async function setCache(products: any[], name: string) {
 
 export function getHost() {
     // If we detect a Vercel environment, we can trust the host
-    // if (process.env.VERCEL) return forwardedHost
+    // if (env.VERCEL) return forwardedHost
     // If `NEXTAUTH_URL` is `undefined` we fall back to "http://localhost:3000"
-    // return process.env.NEXTAUTH_URL
-    return process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    // return env.NEXTAUTH_URL
+    return env.NEXTAUTH_URL ?? "http://localhost:3000";
 }
 
 
@@ -132,7 +133,7 @@ export function verifyCSRFToken(req: NextApiRequest) {
         ...defaultCookies(
             req.url?.startsWith("https://") ?? false
         ),
-        secret: process.env.NEXTAUTH_SECRET,
+        secret: env.NEXTAUTH_SECRET,
     };
 
     const cookieValue = req.cookies[nextOptions.csrfToken.name];
@@ -156,11 +157,11 @@ export function verifyCSRFToken(req: NextApiRequest) {
 
 export async function verifyRecaptcha(req: NextApiRequest) {
     const {recaptchaToken: token} = req.body;
-    if (!process.env.RECAPTCHA_SECRET) {
+    if (!env.RECAPTCHA_SECRET) {
         throw new Error('RECAPTCHA_SECRET is not defined')
     }
 
-    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${token}`, {
+    const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${env.RECAPTCHA_SECRET}&response=${token}`, {
         method: 'POST',
     });
     const data = await response.json();

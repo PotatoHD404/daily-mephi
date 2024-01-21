@@ -11,7 +11,7 @@ const meta: Meta<typeof TopUsers> = {
     parameters: {
         msw: {
             handlers: [
-                http.get('/api/v1/top', () => {
+                http.get('/api/v2/top', () => {
                     const users: any[] = [
                         {
                             id: '1',
