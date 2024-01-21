@@ -73,7 +73,7 @@ function UserProfile({user, me}: {
     return (
         <>
             <SEO title={`Пользователь ${user.nickname}`}
-                 thumbnail={`https://daily-mephi.ru/api/v2/users/${user.id}/thumbnail.png`}/>
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={me ?? false} user={user} isLoading={isLoading}/>
