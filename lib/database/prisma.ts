@@ -1,42 +1,42 @@
 import {PrismaClient} from '@prisma/client';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import ws from 'ws';
 import {env} from "../env";
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
 // import {redis} from "./redis";
 
-let notInitialized = (global as any).prisma === undefined;
-const prisma: PrismaClient =
-    (global as any).prisma || new PrismaClient();
+neonConfig.webSocketConstructor = ws
+const connectionString = env.DATABASE_URL
 
-if (env.NODE_ENV !== 'production') {
-    (global as any).prisma = prisma;
-}
-
-if (notInitialized) {
-    prisma.$use(async (params, next) => {
-        // Check incoming query type
-        // check if params.model not starts with underscore
-        if (!params.model?.startsWith('_')) {
-            if (params.action == 'delete') {
-                // Delete queries
-                // Change action to an update
-                params.action = 'update'
+const pool = new Pool({ connectionString })
+const adapter = new PrismaNeon(pool)
+const prisma = new PrismaClient({ adapter })
+prisma.$use(async (params, next) => {
+    // Check incoming query type
+    // check if params.model not starts with underscore
+    if (!params.model?.startsWith('_')) {
+        if (params.action == 'delete') {
+            // Delete queries
+            // Change action to an update
+            params.action = 'update'
+            params.args['data'] = {deletedAt: new Date()}
+        }
+        if (params.action == 'deleteMany') {
+            // Delete many queries
+            params.action = 'updateMany'
+            if (params?.args?.data != undefined) {
+                params.args.data['deletedAt'] = new Date()
+            } else {
+                if (params.args === undefined) {
+                    params.args = {}
+                }
                 params.args['data'] = {deletedAt: new Date()}
             }
-            if (params.action == 'deleteMany') {
-                // Delete many queries
-                params.action = 'updateMany'
-                if (params?.args?.data != undefined) {
-                    params.args.data['deletedAt'] = new Date()
-                } else {
-                    if (params.args === undefined) {
-                        params.args = {}
-                    }
-                    params.args['data'] = {deletedAt: new Date()}
-                }
-            }
         }
-        return next(params)
-    })
+    }
+    return next(params)
+})
 
     // const cacheMiddleware: Prisma.Middleware = createPrismaRedisCache({
     //     models: [
@@ -59,7 +59,6 @@ if (notInitialized) {
     // });
     //
     // prisma.$use(cacheMiddleware);
-}
 
 // if (process.env.NODE_ENV === 'production') {
 //     prisma = new PrismaClient();
