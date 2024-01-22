@@ -1,17 +1,6 @@
 import {PrismaClient} from '@prisma/client';
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import ws from 'ws';
-import {env} from "../env";
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
-// import {redis} from "./redis";
-
-neonConfig.webSocketConstructor = ws
-const connectionString = env.DATABASE_URL
-
-const pool = new Pool({ connectionString })
-const adapter = new PrismaNeon(pool)
-const prisma = new PrismaClient({ adapter })
+const prisma = new PrismaClient()
 prisma.$use(async (params, next) => {
     // Check incoming query type
     // check if params.model not starts with underscore

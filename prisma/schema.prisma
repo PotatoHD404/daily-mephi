@@ -1,13 +1,13 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes", "driverAdapters"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-1.0.x"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model Account {
