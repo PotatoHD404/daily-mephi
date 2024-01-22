@@ -50,16 +50,16 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                     </Link>
 
 
-                    <Link href="/about">
-                        <h3 className="underlining my-auto">О нас</h3>
+                    <Link href="/about"  className="underlining my-auto">
+                        <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/materials">
-                        <h3 className="underlining my-auto">Материалы</h3>
+                    <Link href="/materials"  className="underlining my-auto">
+                        <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors">
-                        <h3 className="underlining my-auto">Преподаватели</h3>
+                    <Link href="/tutors"  className="underlining my-auto">
+                        <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
                 </div>
@@ -115,7 +115,7 @@ function AuthSection(props: DefaultNavbarParams) {
             !isMobile ?
                 <div
                     className={`${style.authText}`}>
-                    <h3 className="underlining">Загрузка...</h3>
+                    <h3 className="underlining my-auto">Загрузка...</h3>
                 </div> : null
         )
     } else if (status === "unauthenticated" || !session) {
