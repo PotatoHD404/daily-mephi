@@ -3707,12 +3707,10 @@
   dependencies:
     "@trpc/core" "11.0.0-next-beta.193+ec8719429"
 
-"@trpc/server@^11.0.0-next-beta.193":
-  version "11.0.0-next-beta.193"
-  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.0.0-next-beta.193.tgz#90f0676fa9481df949544bae72133d0988ae1c80"
-  integrity sha512-NRs1IyydAQI2jKZQzotVUwwUtBdvZWZOCxtaLsA5EkqZyXWbSQ2hF0xwbCZvUBnMWJXrXZljWidFzsGGsEGSag==
-  dependencies:
-    "@trpc/core" "11.0.0-next-beta.193+ec8719429"
+"@trpc/server@^11.0.0-next.91":
+  version "11.0.0-next.91"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.0.0-next.91.tgz#983a02d2b9831d63fc9dbf9691d9a6a29054f58c"
+  integrity sha512-8ETKhCPaY6QZS2kTio6Vg+lIesqDmnH5dVvQaEJ+oez/xSa7a+tmfhea4Y2yanGd74QOUPFrX2jAqM5pR2J/qw==
 
 "@ts-morph/common@~0.11.0":
   version "0.11.1"
