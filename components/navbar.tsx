@@ -122,8 +122,8 @@ function AuthSection(props: DefaultNavbarParams) {
         return (
             !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText}`}>
-                    <h3 className="underlining my-auto">Войти</h3>
+                        className={`${style.authText} underlining my-auto`}>
+                    <h3>Войти</h3>
                 </button> : null
         )
     } else {
@@ -133,9 +133,9 @@ function AuthSection(props: DefaultNavbarParams) {
                 opened={open}/>
 
             {!isMobile ?
-                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} `}>
+                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto`}>
 
-                    <h3 className="underlining my-auto">{session.user?.name || "Профиль"}</h3>
+                    <h3>{session.user?.name || "Профиль"}</h3>
 
                 </Link> : null}
         </>;

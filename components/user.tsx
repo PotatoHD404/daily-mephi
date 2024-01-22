@@ -24,10 +24,8 @@ export default function User(props: {
     // Tooltip opens on hover
     const isMobile = useIsMobile();
     const [open, setOpen] = React.useState(false);
-    const router = useRouter();
     const logOut = async () => {
-        await signOut();
-        await router.push("/");
+        await signOut({callbackUrl: "/"})
     }
     // console.log(props)
     return (
