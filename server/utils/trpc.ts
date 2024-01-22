@@ -5,6 +5,8 @@ import superjson from 'superjson';
 import type {AppRouter} from "server";
 import {inferRouterInputs, inferRouterOutputs} from "@trpc/server";
 import {env} from "../../lib/env";
+import {createServerSideHelpers} from "@trpc/react-query/server";
+import { createTRPCClient } from '@trpc/client';
 
 export function getBaseUrl() {
     if (typeof window !== 'undefined') {
@@ -87,4 +89,26 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * @example type HelloOutput = RouterOutputs['example']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
+
+export const proxyClient = createTRPCClient<AppRouter>({
+    transformer: superjson,
+    /**
+     * @link https://trpc.io/docs/links
+     */
+    links: [
+        // adds pretty logs to your console in development and logs errors in production
+        loggerLink({
+            enabled: (opts) =>
+                env.NODE_ENV === 'development' ||
+                (opts.direction === 'down' && opts.result instanceof Error),
+        }),
+        httpBatchLink({
+            url: `${getBaseUrl()}/api/v2`,
+        }),
+    ],
+})
+
+export const helpers = createServerSideHelpers({
+    client: proxyClient
+});
 

@@ -6,15 +6,18 @@ import User from "components/user"
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
 import {prisma} from "lib/database/prisma";
-import {useSession} from "next-auth/react";
+// import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-import {Session} from "next-auth";
-import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
-import {useQuery} from "@tanstack/react-query";
+// import {Session} from "next-auth";
+// import {MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
+// import {useQuery} from "@tanstack/react-query";
 import {getProvidersProps, ProvidersProps} from "../../lib/react/getProviders";
+import {helpers, proxyClient} from "../../server/utils/trpc";
+export const runtime = 'experimental-edge'; // 'nodejs' is the default
+export const dynamic = 'force-dynamic'; // static by default, unless reading the request
 
 function Profile({user, me, isLoading, providers}: {
-    user?: MyAppUser,
+    user?: any,
     me: boolean,
     isLoading: boolean,
     providers?: ProvidersProps
@@ -34,7 +37,7 @@ function Profile({user, me, isLoading, providers}: {
 
 
 function UserProfile({user: serverUser, me, providers}: {
-    user?: Omit<MyAppUser, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
+    user?: Omit<any, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
     me?: boolean,
     providers: ProvidersProps
 }) {
@@ -47,21 +50,21 @@ function UserProfile({user: serverUser, me, providers}: {
     const {id} = router.query;
     // state is updated
     const [isUpdated, setIsUpdated] = React.useState(false);
-    const {status, update: updateSession} = useSession() as any as {
-        data: Session & { user: MyAppUser },
-        status: "authenticated" | "loading" | "unauthenticated",
-        update: (data?: any) => Promise<Session | null>
-    };
-
-    const {isFetching} = useQuery({
-        queryKey: ['session'],
-        enabled: status === "authenticated" || isUpdated,
-        queryFn: async () => {
-            setIsUpdated(true);
-            return updateSession()
-        },
-
-    });
+    // const {status, update: updateSession} = useSession() as any as {
+    //     data: Session & { user: MyAppUser },
+    //     status: "authenticated" | "loading" | "unauthenticated",
+    //     update: (data?: any) => Promise<Session | null>
+    // };
+    //
+    // const {isFetching} = useQuery({
+    //     queryKey: ['session'],
+    //     enabled: status === "authenticated" || isUpdated,
+    //     queryFn: async () => {
+    //         setIsUpdated(true);
+    //         return updateSession()
+    //     },
+    //
+    // });
 
 
     const isMobile = useIsMobile();
@@ -70,7 +73,7 @@ function UserProfile({user: serverUser, me, providers}: {
 
 
     const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
-    const isLoading = status === "loading" || status === "authenticated" && isFetching;
+    // const isLoading = status === "loading" || status === "authenticated" && isFetching;
 
 
     if (!user) {
@@ -84,11 +87,11 @@ function UserProfile({user: serverUser, me, providers}: {
 
     return (
         <>
-            <SEO title={`Пользователь ${user.nickname}`}
-                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user.id}.png`}/>
+            <SEO title={`Пользователь ${''}`}
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${''}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    <Profile me={me ?? false} user={user} isLoading={isLoading} providers={providers}/>
+                    <Profile me={me ?? false} user={user} isLoading={false} providers={providers}/>
                 </div>
             }
         </>
@@ -105,11 +108,17 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         }
     }
     // get user from database
-    const user = await prisma.user.findUnique({
-        where: {
-            id
-        },
-        ...selectUser
+    // const user = await prisma.user.findUnique({
+    //     where: {
+    //         id
+    //     },
+    // });
+    const user = await proxyClient.users.getOne.query({id}).catch((e) => {
+        // if 404 return null, else throw
+        if (e.code === "NotFoundError") {
+            return null;
+        }
+        throw e;
     });
 
     if (!user) {
@@ -117,7 +126,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
             notFound: true
         }
     }
-    const session = await auth(req, res);
+    // const session = await auth(req, res);
 
     // res.setHeader(
     //     'Cache-Control',
@@ -131,7 +140,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
                 createdAt: user.createdAt.toISOString(),
                 updatedAt: user.updatedAt.toISOString(),
             },
-            me: (session?.user as any)?.id === user.id,
+            me: false,
             providers: await getProvidersProps().then(el => el.providers)
         }
     }

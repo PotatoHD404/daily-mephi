@@ -62,7 +62,7 @@ model User {
   rating         Float     @default(0) @map("rating")
   bio            String?   @map("bio")
   image          File?     @relation(fields: [imageId], references: [id], name: "users_images")
-  place          Int       @default(autoincrement()) @map("place")
+  place          Int       @default(sequence(start: 1)) @map("place")
   likesCount     Int       @default(0) @map("likes_count")
   dislikesCount  Int       @default(0) @map("dislikes_count")
   commentsCount  Int       @default(0) @map("comments_count")
