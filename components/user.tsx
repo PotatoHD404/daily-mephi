@@ -129,9 +129,9 @@ export default function User(props: {
                     </div>
                 </div>
                 {
-                    props.me && !props.isLoading?
+                    props.me && !props.isLoading ?
                         <div className="w-full flex flex-wrap">
-                            <SignIn providers={props.providers ?? {}} profile={true}/>
+                            <SignIn providers={props.providers ?? []} profile={true}/>
                             <div className="w-fit mt-3">
                                 <div className={`rounded-full border-2 
                                  font-bold text-center border-black text-red-600 w-32 h-fit`}>

@@ -1,6 +1,6 @@
 import {OAuthProviderButtonStyles} from "../../pages/signin";
 import {ClientSafeProvider, getProviders} from "next-auth/react";
-export type ProvidersProps = Record<string, ClientSafeProvider & { style: OAuthProviderButtonStyles }>
+export type ProvidersProps = (ClientSafeProvider & {style: OAuthProviderButtonStyles })[]
 
 export const getProvidersProps = async () => {
     const providerStyles: Record<string, OAuthProviderButtonStyles> = {

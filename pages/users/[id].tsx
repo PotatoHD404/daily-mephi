@@ -16,6 +16,7 @@ import {auth, MyAppUser, selectUser} from "../../lib/auth/nextAuthOptions";
 import {Session} from "next-auth";
 import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
+import {providerProps} from "../../lib/react/providerProps";
 
 function Profile({user, me, isLoading, providers}: {
     user?: any,
@@ -37,10 +38,9 @@ function Profile({user, me, isLoading, providers}: {
 }
 
 
-function UserProfile({user: serverUser, me, providers, isSSR = false}: {
+function UserProfile({user: serverUser, me, isSSR = false}: {
     user?: Omit<any, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
     me?: boolean,
-    providers: ProvidersProps,
     isSSR?: boolean
 }) {
     const user = serverUser ? {
@@ -70,31 +70,14 @@ function UserProfile({user: serverUser, me, providers, isSSR = false}: {
 
 
     const isMobile = useIsMobile();
-
-    // Ensure id is a string
-
-
-    const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
-    // const isLoading = status === "loading" || status === "authenticated" && isFetching;
-
-
-    if (!user) {
-        return (<></>);
-    }
-
-    // Early return for invalid id
-    if (!validId) {
-        return (<></>);
-    }
-
     return (
         <>
-            <SEO title={`Пользователь `}
+            <SEO title={`Пользователь ${user?.nickname ?? session?.user?.nickname}`}
                  thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user?.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={me ?? id === session?.user?.id} user={user ?? session?.user}
-                             isLoading={!isSSR || isSSR && isFetching} providers={providers}/>
+                             isLoading={!isSSR || isSSR && isFetching} providers={providerProps}/>
                 </div>
             }
         </>
