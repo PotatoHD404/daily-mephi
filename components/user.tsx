@@ -39,7 +39,7 @@ export default function User(props: {
             <div className="flex xs:flex-nowrap flex-wrap mt-10 w-full md:h-[18.2rem]">
                 <div className="xs:ml-3 mx-auto md:mt-0 xs:mt-3 -mt-10">
                     {
-                        props.isLoading && !props?.user?.image?.url ? <Skeleton variant="circular"
+                        props.isLoading ? <Skeleton variant="circular"
                                                                                 className="md:w-[18.2rem] w-[14rem] md:h-[18.2rem] h-[14rem]"/> :
                             <div className="md:w-[18.2rem] w-[14rem]">
                                 <Image
@@ -58,7 +58,7 @@ export default function User(props: {
                     <div className="flex flex-wrap h-[15rem]">
                         <div className="w-full">
                             {
-                                props.isLoading && !props?.user?.nickname ?
+                                props.isLoading ?
                                     <Skeleton className="xs:mr-auto h-7 mb-1 w-40"
                                               variant="rounded"/> :
                                     <div className="xs:text-left h-fit text-2xl font-bold mb-1">

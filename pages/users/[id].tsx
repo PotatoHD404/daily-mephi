@@ -48,6 +48,8 @@ function UserProfile({user: serverUser, me, isSSR = false}: {
         createdAt: new Date(serverUser.createdAt),
         updatedAt: new Date(serverUser.updatedAt)
     } as MyAppUser : null;
+    // @ts-ignore
+    // isSSR = false;
     const router = useRouter();
     const {id} = router.query;
     // state is updated
@@ -77,7 +79,7 @@ function UserProfile({user: serverUser, me, isSSR = false}: {
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={me ?? id === session?.user?.id} user={user ?? session?.user}
-                             isLoading={!isSSR || isSSR && isFetching} providers={providerProps}/>
+                             isLoading={!isSSR && isFetching} providers={providerProps}/>
                 </div>
             }
         </>
