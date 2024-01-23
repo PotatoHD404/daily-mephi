@@ -109,39 +109,39 @@ export const reviewsRouter = t.router({
 
                     const [review] = await Promise.all([
                         prisma.review.create({
-                        data: {
-                            text,
-                            title,
-                            user: {
-                                connect: {id: user.id}
+                            data: {
+                                text,
+                                title,
+                                user: {
+                                    connect: {id: user.id}
+                                },
+                                tutor: {
+                                    connect: {id: tutorId}
+                                },
+                                document: {
+                                    create: {
+                                        type: "review",
+                                        text,
+                                    }
+                                }
                             },
-                            tutor: {
-                                connect: {id: tutorId}
-                            },
-                            document: {
-                                create: {
-                                    type: "review",
-                                    text,
+                        }),
+                        prisma.tutor.update({
+                            where: {id: tutorId},
+                            data: {
+                                reviewsCount: {
+                                    increment: 1
                                 }
                             }
-                        },
-                    }),
-                    prisma.tutor.update({
-                        where: {id: tutorId},
-                        data: {
-                            reviewsCount: {
-                                increment: 1
+                        }),
+                        prisma.user.update({
+                            where: {id: user.id},
+                            data: {
+                                reviewsCount: {
+                                    increment: 1
+                                }
                             }
-                        }
-                    }),
-                    prisma.user.update({
-                        where: {id: user.id},
-                        data: {
-                            reviewsCount: {
-                                increment: 1
-                            }
-                        }
-                    })]);
+                        })]);
 
                     return review;
                 });

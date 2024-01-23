@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
+import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 
 let epoch = new Date(1970, 1, 1);
 
@@ -123,13 +124,16 @@ export const utilsRouter = t.router({
             path: '/top'
         }
     }).input(z.object({
-        place: z.number().int().default(0),
-        take: z.number().int().default(10),
+        place: z.number().int().optional(),
+        take: z.number().int().optional().default(10),
     }))
         /* .output(z.any()) */
-        .query(async ({ctx: {prisma}, input: {place, take}}) => {
+        .query(async ({ctx: {prisma, req, res}, input: {place: inputPlace, take}}) => {
+            const session = await auth(req, res);
+            const sessionUser = session?.user as (MyAppUser) ?? null;
             const userCount = await prisma.user.count();
             let skip: number;
+            let place = inputPlace ?? sessionUser?.place ?? 0;
             // show only take users
             // in such way that the user is in the middle
             if (userCount > take) {
@@ -137,7 +141,7 @@ export const utilsRouter = t.router({
             } else {
                 skip = 0;
             }
-            let users = await prisma.user.findMany({
+            return prisma.user.findMany({
                     select: {
                         nickname: true,
                         id: true,
@@ -146,19 +150,16 @@ export const utilsRouter = t.router({
                                 url: true
                             }
                         },
+                        place: true,
                         rating: true,
                     },
                     orderBy: [
-                        {rating: 'desc'},
-                        {id: 'asc'}
+                        {place: 'asc'},
                     ],
                     take,
                     skip
                 }
             );
-            return users.map((el, i) => {
-                return {...el, place: i + skip + 1};
-            });
         }),
     // calculateScore: t.procedure.meta({
     //     openapi: {

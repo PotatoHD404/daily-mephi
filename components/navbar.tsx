@@ -50,16 +50,16 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                     </Link>
 
 
-                    <Link href="/about">
-                        <h3 className="underlining my-auto">О нас</h3>
+                    <Link href="/about"  className="underlining my-auto">
+                        <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/materials">
-                        <h3 className="underlining my-auto">Материалы</h3>
+                    <Link href="/materials"  className="underlining my-auto">
+                        <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors">
-                        <h3 className="underlining my-auto">Преподаватели</h3>
+                    <Link href="/tutors"  className="underlining my-auto">
+                        <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
                 </div>
@@ -114,16 +114,16 @@ function AuthSection(props: DefaultNavbarParams) {
         return (
             !isMobile ?
                 <div
-                    className={`${style.authText}`}>
-                    <h3 className="underlining">Загрузка...</h3>
+                    className={`${style.authText} underlining my-auto`}>
+                    <h3>Загрузка...</h3>
                 </div> : null
         )
     } else if (status === "unauthenticated" || !session) {
         return (
             !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText}`}>
-                    <h3 className="underlining my-auto">Войти</h3>
+                        className={`${style.authText} underlining my-auto`}>
+                    <h3>Войти</h3>
                 </button> : null
         )
     } else {
@@ -133,9 +133,9 @@ function AuthSection(props: DefaultNavbarParams) {
                 opened={open}/>
 
             {!isMobile ?
-                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} `}>
+                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto`}>
 
-                    <h3 className="underlining my-auto">{session.user?.name || "Профиль"}</h3>
+                    <h3>{session.user?.name || "Профиль"}</h3>
 
                 </Link> : null}
         </>;
@@ -318,9 +318,12 @@ function Navbar(props: { needsAuth: boolean }) {
             setState({...state, opened: !state.opened});
         };
 
+
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{home, handleClickOpenWarning: callback, toggleDrawer: () => toggleDrawer}}/>
+            <Nav {...{
+                home, handleClickOpenWarning: callback, toggleDrawer: toggleDrawer as any
+            }}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
                 <SwappableDrawer

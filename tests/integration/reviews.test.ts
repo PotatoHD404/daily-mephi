@@ -1,7 +1,4 @@
-import type {Discipline} from "@prisma/client";
-import {faker} from "@faker-js/faker";
-import {trpc} from "tests/utils/trpc";
-import {describe, it, expect, jest} from '@jest/globals';
+import {describe, it} from '@jest/globals';
 
 
 // export type Discipline = {

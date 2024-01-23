@@ -1,38 +1,14 @@
 import {PrismaClient} from '@prisma/client';
-import {renderAndSend} from "lib/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
+import {NextApiResponse} from "next";
 import {imageToBase64, normalizeUrl} from "lib/react/imageToBase64";
 import ReviewThumbnail from "components/thumbnails/review";
-import {UUID_REGEX} from "../../../../../lib/constants/uuidRegex";
 
 const prisma = new PrismaClient();
 
 // ... (Include other necessary imports and utility functions like getFontData, renderAndSend)
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'GET') {
-        res.status(405).end(`Method ${req.method} Not Allowed`);
-        return;
-    }
-
-    let {id: reviewId} = req.query;
-
-    // Input validation (optional, you can use zod if you prefer)
-    if (typeof reviewId !== 'string') {
-        res.status(400).end('Invalid input');
-        return;
-    }
-
-    // remove .png at the end if it exists
-    if (reviewId.endsWith('.png')) {
-        reviewId = reviewId.slice(0, -4);
-    }
-
-    // check if is uuid
-    if (!reviewId.match(UUID_REGEX)) {
-        res.status(400).end('Invalid input');
-        return;
-    }
+export default async function handler(reviewId: string, res: NextApiResponse) {
 
 
     try {
@@ -73,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(404).end('Material not found');
             return;
         }
-        const images =[review.user?.image?.url, review.tutor.images[0]?.url]
+        const images = [review.user?.image?.url, review.tutor.images[0]?.url]
         const urls = images.map((image) => normalizeUrl(image, "/images/dead_cat.svg", true))
         const promises = urls.map((url) => imageToBase64(url))
         const [user_image_data, tutor_image_data] = await Promise.all(promises);

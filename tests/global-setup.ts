@@ -1,4 +1,4 @@
-import {PrismaClient, Semester} from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 import {faker} from "@faker-js/faker";
 import {clearDB} from "./utils/clearDB";
 import {generateSemester} from "./integration/utils/faker";

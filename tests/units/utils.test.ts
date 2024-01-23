@@ -1,7 +1,7 @@
-import {describe, it} from "@jest/globals";
+import {describe, it, expect} from "@jest/globals";
 import {convertGoogleQueryToTsQuery, prepareText} from "../../lib/database/fullTextSearch";
-import {tokenize, tokenizeAndStem} from "../../lib/nlp";
-import {DataRecord, Spellcheck, WordNet} from "natural";
+import {tokenizeAndStem} from "../../lib/nlp";
+import {getProvidersProps} from "../../lib/react/getProviders";
 
 describe('Text utils', () => {
 
@@ -17,6 +17,10 @@ describe('Text utils', () => {
         let preparedText = prepareText('"Привет", как -дела?');
         let res = convertGoogleQueryToTsQuery(preparedText);
         expect(res).toEqual('привет:* & !дела:*');
+    });
+    it ('Test getProviders', async () => {
+        const providers = await getProvidersProps();
+        console.log(JSON.stringify(providers));
     });
 
     it('Simple usage of tokenize', async () => {

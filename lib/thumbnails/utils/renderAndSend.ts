@@ -1,4 +1,4 @@
-import {normalizeUrl} from "./react/imageToBase64";
+import {normalizeUrl} from "../../react/imageToBase64";
 import {NextApiResponse} from "next";
 import satori, {SatoriOptions} from "satori";
 import {Resvg, ResvgRenderOptions} from "@resvg/resvg-js";

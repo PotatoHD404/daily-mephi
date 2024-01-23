@@ -40,6 +40,11 @@ export const selectUser = {
                 id: true,
                 url: true,
             }
+        },
+        accounts: {
+            select: {
+                provider: true,
+            }
         }
     },
 }

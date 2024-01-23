@@ -1,37 +1,13 @@
 import {PrismaClient} from '@prisma/client';
-import {renderAndSend} from "lib/renderAndSend";
-import {NextApiRequest, NextApiResponse} from "next";
+import {renderAndSend} from "lib/thumbnails/utils/renderAndSend";
+import {NextApiResponse} from "next";
 import QuoteThumbnail from "components/thumbnails/quote";
-import {UUID_REGEX} from "../../../../../lib/constants/uuidRegex";
 
 const prisma = new PrismaClient();
 
 // ... (Include other necessary imports and utility functions like getFontData, renderAndSend)
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'GET') {
-        res.status(405).end(`Method ${req.method} Not Allowed`);
-        return;
-    }
-
-    let {id: quoteId} = req.query;
-
-    // Input validation (optional, you can use zod if you prefer)
-    if (typeof quoteId !== 'string') {
-        res.status(400).end('Invalid input');
-        return;
-    }
-
-    // remove .png at the end if it exists
-    if (quoteId.endsWith('.png')) {
-        quoteId = quoteId.slice(0, -4);
-    }
-
-    // check if is uuid
-    if (!quoteId.match(UUID_REGEX)) {
-        res.status(400).end('Invalid input');
-        return;
-    }
+export default async function handler(quoteId: string, res: NextApiResponse) {
 
 
     try {

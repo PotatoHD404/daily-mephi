@@ -1,9 +1,12 @@
 import React, {useState} from 'react'
 import Image from "next/image";
-import {ClientSafeProvider, getProviders, signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import RippledButton from "../components/rippledButton";
 import {useRouter} from "next/router";
 import {CircularProgress} from "@mui/material";
+import {Session} from "next-auth";
+import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {getProvidersProps, ProvidersProps} from "../lib/react/getProviders";
 
 export interface OAuthProviderButtonStyles {
     logo: string
@@ -14,29 +17,44 @@ export interface OAuthProviderButtonStyles {
     textDark?: string
 }
 
-export default function SignIn({providers}: {
-    providers: Record<string, ClientSafeProvider & { style: OAuthProviderButtonStyles }>
+export default function SignIn({providers, profile}: {
+    providers: ProvidersProps,
+    profile?: boolean
 }) {
     const router = useRouter();
     const [isLoading, changeIsLoading] = useState<string>('');
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    }
+    console.log(session)
     // get error from query params
     const {error} = router.query
 
+    if (!profile && session?.user?.id) {
+        router.push(`/users/${session.user.id}`)
+        return null
+    }
     // console.log('Custom Signin page was called.')
-    const providerLogoPath = "https://authjs.dev/img/providers"
+    const providerLogoPath = "/images/auth"
 
 
 // const callbackUrl = "/api/auth/callback/credentials"
     return (
-        <div className="w-1/2 flex-wrap">
+        <div className={`${!profile ? 'w-1/2' : 'w-full'} flex-wrap`}>
             {/* if error == OAuthCreateAccount then write something*/}
-            {error == 'OAuthCreateAccount' ? <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой аккаунт</div> : null}
-            {Object.values(providers).map((provider) => {
+            {error == 'OAuthCreateAccount' ?
+                <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
+                    только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой
+                    аккаунт</div> : null}
+            {providers.map((provider) => {
                 let logo: string | undefined
                 if (provider.type === "oauth") {
 
-                    logo = provider.id !== 'home' ? providerLogoPath + provider.style.logo : '/api/auth/images/mephi.png'
+                    logo = providerLogoPath + provider.style.logo;
                 }
+                const loading = isLoading == provider.id || status === "loading"
+                const isConnected = session?.user?.accounts.map(account => account.provider).includes(provider.id);
                 return (
                     <div key={provider.id} className={`flex`}>
                         {provider.type === "oauth" ? (
@@ -47,8 +65,9 @@ export default function SignIn({providers}: {
                                 style={{backgroundColor: provider.style.bg, color: provider.style.text}}
                                 onClick={async () => {
                                     changeIsLoading(provider.id);
-                                    await signIn(provider.id, {callbackUrl: '/'})
+                                    await signIn(provider.id, {callbackUrl: session?.user?.id ? `/users/${session.user.id}` : '/'})
                                 }}
+                                disabled={loading || isConnected}
                             >
                                 {logo && (
                                     <Image
@@ -61,11 +80,11 @@ export default function SignIn({providers}: {
                                         className={"mr-auto"}
                                     />
                                 )}
-                                <span className="w-full">{isLoading == provider.id ?
+                                <span className="w-full">{isLoading == provider.id || status === "loading" ?
                                     <CircularProgress color="inherit"
                                                       thickness={3}
                                                       size={30}
-                                                      className="my-auto"/> : `Sign in with ${provider.name}`}</span>
+                                                      className="my-auto"/> : isConnected ? `${provider.name} привязан` : `Войти через ${provider.name}`}</span>
                             </RippledButton>
                         ) : null}
                     </div>
@@ -75,26 +94,4 @@ export default function SignIn({providers}: {
 }
 
 
-SignIn.getInitialProps = async () => {
-    const providerStyles: Record<string, OAuthProviderButtonStyles> = {
-        home: {logo: "images/mephi.png", bg: "#E8E9EB", text: "#000000"},
-        yandex: {logo: "/yandex.svg", bg: "#FFCC00", text: "#000000",},
-        vk: {logo: "/vk.svg", bg: "#07F", text: "#FFFFFF"},
-        google: {logo: "/google.svg", bg: "#FFFFFF", text: "#000000"},
-        github: {logo: "/github.svg", bg: "#24292F", text: "#FFFFFF"},
-    }
-    const providers = await getProviders().then(provider => {
-        if (provider == null) return {}
-        return Object.entries(provider).map(([key, provider]) => {
-            if (providerStyles[key]) {
-                return {
-                    ...provider,
-                    style: providerStyles[key]
-                }
-            }
-        })
-    }) as Record<string, ClientSafeProvider & { style: OAuthProviderButtonStyles }>;
-    return {
-        providers
-    }
-}
+SignIn.getInitialProps = getProvidersProps

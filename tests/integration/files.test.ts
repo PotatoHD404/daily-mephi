@@ -1,16 +1,9 @@
-import {faker} from "@faker-js/faker";
-import {isAuthorizedFunc} from "../mocks/isAuthorized";
 import "../mocks/verifyCSRFToken";
 import "../mocks/verifyRecaptcha";
-import {trpc} from "../utils/trpc"; // order matters
-import {inferProcedureInput, TRPCError} from "@trpc/server";
 // import "./utils/notion";
-import type {AppRouter} from "server";
 import {BinaryLike, createHash} from "crypto";
+import {describe, it, jest} from '@jest/globals';
 
-import axios from "axios";
-import {createUsers} from "../utils/createUsers";
-import {describe, it, expect, jest} from '@jest/globals';
 describe('[GET] /api/v2/files/{id}', () => {
     it('Test get one', async () => {
 

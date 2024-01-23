@@ -8,7 +8,6 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {getTokens} from "../lib/react/getTokens";
 
 
-
 export default function Reactions(props: {
     isLoading?: boolean,
     type: "news" | "material" | "review" | "comment" | "quote",
@@ -21,8 +20,9 @@ export default function Reactions(props: {
     const [likes, setLikes] = React.useState(props.likes);
     const [dislikes, setDislikes] = React.useState(props.dislikes);
     const [prevState, setPrevState] = React.useState<any>({like: null, likes: props.likes, dislikes: props.dislikes});
+
     async function apply_result(type: 'like' | 'dislike' | 'unlike') {
-        let data: {likesCount: number, dislikesCount: number};
+        let data: { likesCount: number, dislikesCount: number };
         try {
             const tokens = await getTokens(executeRecaptcha);
             data = await mutateReactions.mutateAsync({
@@ -31,8 +31,7 @@ export default function Reactions(props: {
                 targetType: props.type,
                 targetId: props.id
             })
-        }
-        catch (e) {
+        } catch (e) {
             setLike(prevState.like);
             setLikes(prevState.likes);
             setDislikes(prevState.dislikes);
@@ -43,8 +42,10 @@ export default function Reactions(props: {
         setLikes(data.likesCount);
         setDislikes(data.dislikesCount);
     }
+
     const mutateReactions = trpc.reactions.change.useMutation();
     const {executeRecaptcha} = useGoogleReCaptcha();
+
     async function onClick(type: string) {
         if (type === 'like' && like !== true) {
             if (like === false) {

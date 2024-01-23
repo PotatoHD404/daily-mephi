@@ -112,7 +112,11 @@ export const reactionsRouter = t.router({
                                 }
                             })]).then((values) => values[2]);
                     } else {
-                        let action: { [x: string]: { decrement: number; } | { increment: number; } | { update: { score: { [x: string]: number; }; }; }; };
+                        let action: {
+                            [x: string]: { decrement: number; } | { increment: number; } | {
+                                update: { score: { [x: string]: number; }; };
+                            };
+                        };
                         let promise: Promise<any>;
                         if (likeRecord?.like === (type === "like") || !likeRecord?.like === (type === "dislike")) {
                             return record;

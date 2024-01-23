@@ -1,4 +1,3 @@
-import { TRPCError } from '@trpc/server'
 import {t} from "server/utils";
 
 export const verifyRecaptchaFunc = jest.fn()
@@ -8,7 +7,7 @@ const verifyRecaptcha = t.middleware(
 )
 
 beforeEach(() => {
-    verifyRecaptchaFunc.mockImplementation(async ({ ctx: {req}, next }) => {
+    verifyRecaptchaFunc.mockImplementation(async ({ctx: {req}, next}) => {
         return next()
     })
 })

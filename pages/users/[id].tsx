@@ -6,25 +6,30 @@ import User from "components/user"
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
 import {prisma} from "lib/database/prisma";
-import {useSession} from "next-auth/react";
+// import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-import {getServerSession, Session} from "next-auth";
-import {auth, MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
+// import {Session} from "next-auth";
+// import {MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
+// import {useQuery} from "@tanstack/react-query";
+import {getProvidersProps, ProvidersProps} from "../../lib/react/getProviders";
+import {auth, MyAppUser, selectUser} from "../../lib/auth/nextAuthOptions";
+import {Session} from "next-auth";
+import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
+import {providerProps} from "../../lib/react/providerProps";
 
-function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boolean }) {
-    const {status} = useSession() as any as {
-        data: Session & { user: MyAppUser },
-        status: "authenticated" | "loading" | "unauthenticated"
-    };
-
-    const router = useRouter();
+function Profile({user, me, isLoading, providers}: {
+    user?: any,
+    me: boolean,
+    isLoading: boolean,
+    providers?: ProvidersProps
+}) {
     // if(!isFetching)
     // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            <User {...(isLoading ? user ?? {} : user)} isLoading={isLoading} me/>
+            <User user={user} isLoading={isLoading} me={me} providers={providers}/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers isLoading={isLoading} place={user?.place}/>
@@ -33,50 +38,46 @@ function Profile({user, me, isLoading}: { user: any, me: boolean, isLoading: boo
 }
 
 
-function UserProfile({user, me}: {
-    user?: MyAppUser,
-    me?: boolean
+function UserProfile({user: serverUser, me, isSSR = false}: {
+    user?: Omit<any, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
+    me?: boolean,
+    isSSR?: boolean
 }) {
+    const user = serverUser ? {
+        ...serverUser,
+        createdAt: new Date(serverUser.createdAt),
+        updatedAt: new Date(serverUser.updatedAt)
+    } as MyAppUser : null;
     const router = useRouter();
     const {id} = router.query;
-    const {data: session, status, update: updateSession} = useSession() as any as {
+    // state is updated
+    const [isUpdated, setIsUpdated] = React.useState(false);
+
+    const {status, update: updateSession, data: session} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated",
         update: (data?: any) => Promise<Session | null>
     };
-
-    const {data, isFetching, refetch, isError, error} = useQuery({
+    // providerProps
+    const {isFetching} = useQuery({
         queryKey: ['session'],
-        enabled: session != null && status === "authenticated",
-        queryFn: updateSession
+        enabled: (status === "authenticated" || isUpdated) && !isSSR,
+        queryFn: async () => {
+            setIsUpdated(true);
+            return updateSession()
+        },
     });
 
 
     const isMobile = useIsMobile();
-
-    // Ensure id is a string
-
-
-    const validId = typeof id === 'string' && UUID_REGEX.test(id) ? id : null;
-    const isLoading = status === "loading";
-
-
-    if (!user) {
-        return (<></>);
-    }
-
-    // Early return for invalid id
-    if (!validId) {
-        return (<></>);
-    }
-
     return (
         <>
-            <SEO title={`Пользователь ${user.nickname}`}
-                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user.id}.png`}/>
+            <SEO title={`Пользователь ${user?.nickname ?? session?.user?.nickname}`}
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user?.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    <Profile me={me ?? false} user={user} isLoading={isLoading}/>
+                    <Profile me={me ?? id === session?.user?.id} user={user ?? session?.user}
+                             isLoading={!isSSR || isSSR && isFetching} providers={providerProps}/>
                 </div>
             }
         </>
@@ -99,13 +100,20 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         },
         ...selectUser
     });
+    // const user = await proxyClient.users.getOne.query({id}).catch((e) => {
+    //     // if 404 return null, else throw
+    //     if (e.code === "NOT_FOUND") {
+    //         return null;
+    //     }
+    //     throw e;
+    // });
 
     if (!user) {
         return {
             notFound: true
         }
     }
-    const session = await auth(req, res);
+    const session = await auth(req, res) as Session & { user: MyAppUser };
 
     // res.setHeader(
     //     'Cache-Control',
@@ -113,7 +121,15 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
     // )
 
     return {
-        props: {user, me: (session?.user as any)?.id === user.id}
+        props: {
+            user: {
+                ...user,
+                createdAt: user.createdAt.toISOString(),
+                updatedAt: user.updatedAt.toISOString(),
+            },
+            me: session?.user?.id === user.id,
+            isSSR: true
+        }
     }
 }
 

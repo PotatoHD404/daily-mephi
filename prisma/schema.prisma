@@ -7,6 +7,7 @@ generator client {
 datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model Account {
@@ -50,7 +51,7 @@ model Session {
 
 model User {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  nickname       String?   @unique @map("nickname") @db.String(50)
+  nickname       String?   @unique @map("nickname")
   imageId        String?   @unique @map("image_id") @db.Uuid
   role           String    @default("default") @map("role")
   email          String?   @unique @map("email")
@@ -58,8 +59,8 @@ model User {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
-  rating         Float     @default(0) @map("rating") @db.Float8
-  bio            String?   @map("bio") @db.String(150)
+  rating         Float     @default(0) @map("rating")
+  bio            String?   @map("bio")
   image          File?     @relation(fields: [imageId], references: [id], name: "users_images")
   place          Int       @default(sequence(start: 1)) @map("place")
   likesCount     Int       @default(0) @map("likes_count")
@@ -136,7 +137,7 @@ model Comment {
 
 model Discipline {
   id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  name      String     @unique @map("name") @db.String(400)
+  name      String     @unique @map("name")
   tutors    Tutor[]    @relation(name: "tutors_disciplines")
   materials Material[] @relation(name: "materials_disciplines")
   createdAt DateTime   @default(now()) @map("created_at")
@@ -149,7 +150,7 @@ model Discipline {
 
 model Faculty {
   id        String     @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  name      String     @unique @map("name") @db.String(200)
+  name      String     @unique @map("name")
   tutors    Tutor[]    @relation(name: "tutors_faculties")
   materials Material[] @relation(name: "materials_faculties")
   createdAt DateTime   @default(now()) @map("created_at")
@@ -162,16 +163,16 @@ model Faculty {
 
 model File {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  url        String    @map("url") @db.String(2000)
-  altUrl     String?   @map("alt_url") @db.String(2000)
+  url        String    @map("url")
+  altUrl     String?   @map("alt_url")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
-  filename   String    @map("filename") @db.String(500)
+  filename   String    @map("filename")
   userId     String?   @map("user_id") @db.Uuid
   tutorId    String?   @map("tutor_id") @db.Uuid
   materialId String?   @map("material_id") @db.Uuid
-  tag        String?   @map("tag") @db.String(200)
+  tag        String?   @map("tag")
   size       Int       @default(0) @map("size")
 
   user       User?     @relation(name: "users_images")
@@ -189,7 +190,7 @@ model File {
 model Material {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
   text          String?   @map("text")
-  title         String    @map("title") @db.String(280)
+  title         String    @map("title")
   userId        String?   @map("user_id") @db.Uuid
   tutorId       String?   @map("tutor_id") @db.Uuid
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -232,7 +233,7 @@ model Semester {
 model News {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
   text          String    @map("text")
-  title         String    @map("title") @db.String(280)
+  title         String    @map("title")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
@@ -277,12 +278,12 @@ model Quote {
 
 model Review {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  title          String    @map("title") @db.String(280)
+  title          String    @map("title")
   text           String    @map("text")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
-  legacyNickname String?   @map("legacy_nickname") @db.String(200)
+  legacyNickname String?   @map("legacy_nickname")
   userId         String?   @map("user_id") @db.Uuid
   tutorId        String    @map("tutor_id") @db.Uuid
   likesCount     Int       @default(0) @map("likes_count")
@@ -341,13 +342,13 @@ model Reaction {
 
 model Tutor {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
-  firstName      String?   @map("first_name") @db.String(64)
-  lastName       String?   @map("last_name") @db.String(64)
-  fatherName     String?   @map("father_name") @db.String(64)
-  fullName       String    @default(dbgenerated()) @map("full_name") @db.String(256)
-  shortName      String    @default(dbgenerated()) @map("short_name") @db.String(80)
-  nickname       String?   @unique @map("nickname") @db.String(64)
-  url            String?   @unique @map("url") @db.String(64)
+  firstName      String?   @map("first_name")
+  lastName       String?   @map("last_name")
+  fatherName     String?   @map("father_name")
+  fullName       String    @default(dbgenerated()) @map("full_name")
+  shortName      String    @default(dbgenerated()) @map("short_name")
+  nickname       String?   @unique @map("nickname")
+  url            String?   @unique @map("url")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
@@ -426,10 +427,10 @@ model LegacyRating {
   quality          Float     @map("quality")
   qualityCount     Int       @map("quality_count")
   tutorId          String    @unique @map("tutor_id") @db.Uuid
-  avgRating        Float     @map("avg_rating") @db.Float8
-  avgQuality       Float     @map("avg_quality") @db.Float8
-  avgPersonality   Float     @map("avg_personality") @db.Float8
-  avgExams         Float     @map("avg_exams") @db.Float8
+  avgRating        Float     @map("avg_rating")
+  avgQuality       Float     @map("avg_quality")
+  avgPersonality   Float     @map("avg_personality")
+  avgExams         Float     @map("avg_exams")
   ratingCount      Int       @map("rating_count")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
@@ -460,11 +461,11 @@ model Rating {
   quality          Float     @map("quality")
   qualityCount     Int       @map("quality_count")
   tutorId          String    @unique @map("tutor_id") @db.Uuid
-  avgRating        Float     @map("avg_rating") @db.Float8
-  avgQuality       Float     @map("avg_quality") @db.Float8
-  avgPersonality   Float     @map("avg_personality") @db.Float8
-  avgPunctuality   Float     @map("avg_punctuality") @db.Float8
-  avgExams         Float     @map("avg_exams") @db.Float8
+  avgRating        Float     @map("avg_rating")
+  avgQuality       Float     @map("avg_quality")
+  avgPersonality   Float     @map("avg_personality")
+  avgPunctuality   Float     @map("avg_punctuality")
+  avgExams         Float     @map("avg_exams")
   ratingCount      Int       @map("rating_count")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")

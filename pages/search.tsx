@@ -33,6 +33,7 @@ function Search() {
         }
         // console.log(e)
     }
+
     const user: UserType = {
         id: "1",
         nickname: "Трифоненков В.П.",
