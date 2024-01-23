@@ -67,7 +67,8 @@ export default function RegisterDialog(props: DialogProps) {
                 onSuccess: async () => {
                     await updateSession();
                     setDone(true);
-                    location.reload();
+                    handleClose()
+                    // location.reload();
                 },
                 onError: (error) => {
                     setIsFetching(false);
