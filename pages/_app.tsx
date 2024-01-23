@@ -115,24 +115,25 @@ function MyApp(
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
 
     const [loading, setLoading] = React.useState(false);
-    React.useEffect(() => {
-        const start = () => {
-            // console.log("start");
-            setLoading(true);
-        };
-        const end = () => {
-            // console.log("findished");
-            setLoading(false);
-        };
-        Router.events.on("routeChangeStart", start);
-        Router.events.on("routeChangeComplete", end);
-        Router.events.on("routeChangeError", end);
-        return () => {
-            Router.events.off("routeChangeStart", start);
-            Router.events.off("routeChangeComplete", end);
-            Router.events.off("routeChangeError", end);
-        };
-    }, []);
+    // React.useEffect(() => {
+    //     const start = () => {
+    //         // console.log("start");
+    //         setLoading(true);
+    //     };
+    //     const end = () => {
+    //         // console.log("findished");
+    //         setLoading(false);
+    //     };
+    //     Router.events.on("routeChangeStart", start);
+    //     Router.events.on("routeChangeComplete", end);
+    //     Router.events.on("routeChangeError", end);
+    //     return () => {
+    //         Router.events.off("routeChangeStart", start);
+    //         Router.events.off("routeChangeComplete", end);
+    //         Router.events.off("routeChangeError", end);
+    //     };
+    // }, []);
+    const isLoading = loading && router.isReady;
     // useEffect(() => {
     //     router.events.on('routeChangeStart', () =>  NProgress.start());
 
@@ -160,7 +161,7 @@ function MyApp(
                                             + (home ? "" : "max-w-[85rem] mx-auto")}>
                                             {isMobile == null ? null : <Navbar needsAuth={needsAuth}/>}
                                             {
-                                                loading ? <div className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden bg-white opacity-75 flex flex-col items-center justify-center">
+                                                isLoading ? <div className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden bg-white opacity-75 flex flex-col items-center justify-center">
                                                     <CircularProgress color="inherit"
                                                                       thickness={3}
                                                                       size={30}

@@ -12,9 +12,10 @@ import {UUID_REGEX} from "lib/constants/uuidRegex";
 // import {MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
 // import {useQuery} from "@tanstack/react-query";
 import {getProvidersProps, ProvidersProps} from "../../lib/react/getProviders";
-import {helpers, proxyClient} from "../../server/utils/trpc";
-export const runtime = 'experimental-edge'; // 'nodejs' is the default
-export const dynamic = 'force-dynamic'; // static by default, unless reading the request
+import {auth, MyAppUser, selectUser} from "../../lib/auth/nextAuthOptions";
+import {Session} from "next-auth";
+import {useSession} from "next-auth/react";
+import {useQuery} from "@tanstack/react-query";
 
 function Profile({user, me, isLoading, providers}: {
     user?: any,
@@ -36,35 +37,36 @@ function Profile({user, me, isLoading, providers}: {
 }
 
 
-function UserProfile({user: serverUser, me, providers}: {
+function UserProfile({user: serverUser, me, providers, isSSR = false}: {
     user?: Omit<any, "createdAt" | "updatedAt"> & { createdAt: string, updatedAt: string },
     me?: boolean,
-    providers: ProvidersProps
+    providers: ProvidersProps,
+    isSSR?: boolean
 }) {
     const user = serverUser ? {
         ...serverUser,
         createdAt: new Date(serverUser.createdAt),
         updatedAt: new Date(serverUser.updatedAt)
-    } : null;
+    } as MyAppUser : null;
     const router = useRouter();
     const {id} = router.query;
     // state is updated
     const [isUpdated, setIsUpdated] = React.useState(false);
-    // const {status, update: updateSession} = useSession() as any as {
-    //     data: Session & { user: MyAppUser },
-    //     status: "authenticated" | "loading" | "unauthenticated",
-    //     update: (data?: any) => Promise<Session | null>
-    // };
-    //
-    // const {isFetching} = useQuery({
-    //     queryKey: ['session'],
-    //     enabled: status === "authenticated" || isUpdated,
-    //     queryFn: async () => {
-    //         setIsUpdated(true);
-    //         return updateSession()
-    //     },
-    //
-    // });
+
+    const {status, update: updateSession, data: session} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated",
+        update: (data?: any) => Promise<Session | null>
+    };
+    // providerProps
+    const {isFetching} = useQuery({
+        queryKey: ['session'],
+        enabled: (status === "authenticated" || isUpdated) && !isSSR,
+        queryFn: async () => {
+            setIsUpdated(true);
+            return updateSession()
+        },
+    });
 
 
     const isMobile = useIsMobile();
@@ -87,11 +89,12 @@ function UserProfile({user: serverUser, me, providers}: {
 
     return (
         <>
-            <SEO title={`Пользователь ${''}`}
-                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${''}.png`}/>
+            <SEO title={`Пользователь `}
+                 thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user?.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
-                    <Profile me={me ?? false} user={user} isLoading={false} providers={providers}/>
+                    <Profile me={me ?? id === session?.user?.id} user={user ?? session?.user}
+                             isLoading={!isSSR || isSSR && isFetching} providers={providers}/>
                 </div>
             }
         </>
@@ -108,25 +111,26 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         }
     }
     // get user from database
-    // const user = await prisma.user.findUnique({
-    //     where: {
-    //         id
-    //     },
-    // });
-    const user = await proxyClient.users.getOne.query({id}).catch((e) => {
-        // if 404 return null, else throw
-        if (e.code === "NotFoundError") {
-            return null;
-        }
-        throw e;
+    const user = await prisma.user.findUnique({
+        where: {
+            id
+        },
+        ...selectUser
     });
+    // const user = await proxyClient.users.getOne.query({id}).catch((e) => {
+    //     // if 404 return null, else throw
+    //     if (e.code === "NOT_FOUND") {
+    //         return null;
+    //     }
+    //     throw e;
+    // });
 
     if (!user) {
         return {
             notFound: true
         }
     }
-    // const session = await auth(req, res);
+    const session = await auth(req, res) as Session & { user: MyAppUser };
 
     // res.setHeader(
     //     'Cache-Control',
@@ -140,8 +144,8 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
                 createdAt: user.createdAt.toISOString(),
                 updatedAt: user.updatedAt.toISOString(),
             },
-            me: false,
-            providers: await getProvidersProps().then(el => el.providers)
+            me: session?.user?.id === user.id,
+            isSSR: true
         }
     }
 }

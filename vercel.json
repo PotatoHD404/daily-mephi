@@ -4,6 +4,12 @@
   "github": {
     "enabled": false
   },
+  "rewrites": [
+    {
+      "source": "/_next/data/:path/(users|reviews|tutors|quotes)/:id.json",
+      "destination": "/none.json"
+    }
+  ],
   "builds": [
     { "src": "./package.json", "use": "@vercel/next" }
   ]

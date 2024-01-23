@@ -104,6 +104,17 @@ module.exports = [
         }
     },
     {
+        urlPattern: /\/_next\/data\/.+\/(users|reviews|tutors|quotes)\/.+\.json$/i,
+        handler: 'CacheFirst',
+        options: {
+            cacheName: 'next-data-json',
+            expiration: {
+                maxEntries: 32,
+                maxAgeSeconds: 24 * 60 * 60 // 24 hours
+            }
+        }
+    },
+    {
         urlPattern: /\/_next\/data\/.+\/.+\.json$/i,
         handler: 'StaleWhileRevalidate',
         options: {

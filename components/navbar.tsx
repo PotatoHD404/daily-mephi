@@ -114,8 +114,8 @@ function AuthSection(props: DefaultNavbarParams) {
         return (
             !isMobile ?
                 <div
-                    className={`${style.authText}`}>
-                    <h3 className="underlining my-auto">Загрузка...</h3>
+                    className={`${style.authText} underlining my-auto`}>
+                    <h3>Загрузка...</h3>
                 </div> : null
         )
     } else if (status === "unauthenticated" || !session) {

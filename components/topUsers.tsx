@@ -7,7 +7,6 @@ import BronzeCrown from "images/bronze_crown.svg";
 import Link from "next/link";
 import {Skeleton} from "@mui/material";
 import {trpc} from "server/utils/trpc";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
 
 
 const formatter = Intl.NumberFormat('en', {notation: "compact"});
@@ -89,27 +88,23 @@ function TopUserContent(props: TopUserParams) {
     );
 }
 
-function TopUserContentLoading(props: TopUserParams) {
-    return (<tr>
-        <td className="text-center"><Skeleton variant="rounded" width={40} height={20} className="mx-auto"/></td>
-        <td>
-            <div className="flex pl-4 h-[4.5rem]">
-                <Skeleton className="h-14 my-auto w-14 flex" variant="circular"/>
-                <Skeleton className="my-auto ml-2" variant="rounded" width={60} height={20}/>
-            </div>
-        </td>
-        <td className="text-center"><Skeleton className="mx-auto" variant="rounded" width={60} height={20}/></td>
-    </tr>)
-}
-
-function TopUser(props: TopUserParams) {
-    return props.isLoading ?
-        <TopUserContentLoading {...props}/>
-        : <TopUserContent {...props}/>;
+function TopUserContentLoading() {
+    return (
+        <tr>
+            <td className="text-center"><Skeleton variant="rounded" width={40} height={20} className="mx-auto"/></td>
+            <td>
+                <div className="flex pl-4 h-[4.5rem]">
+                    <Skeleton className="h-14 my-auto w-14 flex" variant="circular"/>
+                    <Skeleton className="my-auto ml-2" variant="rounded" width={60} height={20}/>
+                </div>
+            </td>
+            <td className="text-center"><Skeleton className="mx-auto" variant="rounded" width={60} height={20}/></td>
+        </tr>
+    )
 }
 
 export default function TopUsers(props: { withLabel?: boolean, place?: number, isLoading?: boolean, take?: number }) {
-    const place = props.place ?? 0
+
     // const isUUID = props.id && typeof props.id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(props.id)
     // const {status} = useSession();
     // const queryParams = {skip: props.skip, take: props.take};
@@ -121,13 +116,14 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     // }
 
 
-    const topInput = {place: place, take: props.take}
+    const topInput = {place: props.place, take: props.take}
 
     const {data, isFetching, refetch, isError, error} = trpc.utils.top.useQuery(topInput, {
         enabled: !props.isLoading
     });
 
-    const isLoading = (isFetching || props.isLoading) && false;
+    const isLoading = isFetching || (props.isLoading ?? false);
+    // const isLoading = true;
     // const router = useRouter();
     return <div className="w-[23.5] hidden md:block -mt-2">
         {
@@ -161,23 +157,14 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                 {
-                    isLoading ?
-                        <>
-                            {Array(props.take || 4).map((_, index) =>
-                                <TopUser key={index} src={DeadCat} place={0} rating={0} nickname=""
-                                         isLoading={isLoading}/>)}
-                        </> :
-                        // <></>
+                    isLoading ? [...Array(props.take ?? 4).keys()].map((_, index) =>
+                            <TopUserContentLoading key={index}/>) :
                         data?.map((user, index) => {
-                            return <TopUser src={user.image || DeadCat} key={index} nickname={user?.nickname ?? "Unknown"}
-                                            place={index + place} isLoading={isLoading} id={user.id}
-                                            rating={user.rating}/>
+                            return <TopUserContent src={user.image || DeadCat} key={index}
+                                                   nickname={user?.nickname ?? "Unknown"}
+                                                   place={user.place} id={user.id}
+                                                   rating={user.rating}/>
                         })
-                    // <TopUser src={ProfileIco} place={1} rating={3100} nickname={"Burunduk"} id={"uuid"}
-                    //          isLoading={isLoading}/>
-                    // <TopUser src={ProfileIco} place={2} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
-                    // <TopUser src={ProfileIco} place={3} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
-                    // <TopUser src={ProfileIco} place={4} rating={3100} nickname={"Burunduk"} isLoading={isLoading}/>
                 }
                 </tbody>
             </table>
