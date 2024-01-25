@@ -3001,6 +3001,14 @@
     use-resize-observer "^9.1.0"
     util-deprecate "^1.0.2"
 
+"@storybook/core-client@7.6.10":
+  version "7.6.10"
+  resolved "https://registry.yarnpkg.com/@storybook/core-client/-/core-client-7.6.10.tgz#cd427d7017c1f32b2e956b4eb8ea89f3424b60c9"
+  integrity sha512-DjnzSzSNDmZyxyg6TxugzWQwOsW+n/iWVv6sHNEvEd5STr0mjuJjIEELmv58LIr5Lsre5+LEddqHsyuLyt8ubg==
+  dependencies:
+    "@storybook/client-logger" "7.6.10"
+    "@storybook/preview-api" "7.6.10"
+
 "@storybook/core-client@7.6.7":
   version "7.6.7"
   resolved "https://registry.yarnpkg.com/@storybook/core-client/-/core-client-7.6.7.tgz#5dfd61519101ead2056a2f2b6ef3f265b257899a"
@@ -3412,7 +3420,7 @@
   resolved "https://registry.yarnpkg.com/@storybook/react-dom-shim/-/react-dom-shim-7.6.7.tgz#73db51e895998e91984de751814b22cf7cdfb426"
   integrity sha512-b/rmy/YzVrwP+ifyZG4yXVIdeFVdTbmziodHUlbrWiUNsqtTZZur9kqkKRUH/7ofji9MFe81nd0MRlcTNFomqg==
 
-"@storybook/react@7.6.7", "@storybook/react@^7.6.7":
+"@storybook/react@7.6.7":
   version "7.6.7"
   resolved "https://registry.yarnpkg.com/@storybook/react/-/react-7.6.7.tgz#53af9e97c1c3d0a59601637f655cefb93a426505"
   integrity sha512-uT9IBPDM1SQg6FglWqb7IemOJ1Z8kYB5rehIDEDToi0u5INihSY8rHd003TxG4Wx4REp6J+rfbDJO2aVui/gxA==
@@ -3424,6 +3432,33 @@
     "@storybook/preview-api" "7.6.7"
     "@storybook/react-dom-shim" "7.6.7"
     "@storybook/types" "7.6.7"
+    "@types/escodegen" "^0.0.6"
+    "@types/estree" "^0.0.51"
+    "@types/node" "^18.0.0"
+    acorn "^7.4.1"
+    acorn-jsx "^5.3.1"
+    acorn-walk "^7.2.0"
+    escodegen "^2.1.0"
+    html-tags "^3.1.0"
+    lodash "^4.17.21"
+    prop-types "^15.7.2"
+    react-element-to-jsx-string "^15.0.0"
+    ts-dedent "^2.0.0"
+    type-fest "~2.19"
+    util-deprecate "^1.0.2"
+
+"@storybook/react@^7.6.10":
+  version "7.6.10"
+  resolved "https://registry.yarnpkg.com/@storybook/react/-/react-7.6.10.tgz#aca5c446f43de75981f19d112a8a04d7abd0a03d"
+  integrity sha512-wwBn1cg2uZWW4peqqBjjU7XGmFq8HdkVUtWwh6dpfgmlY1Aopi+vPgZt7pY9KkWcTOq5+DerMdSfwxukpc3ajQ==
+  dependencies:
+    "@storybook/client-logger" "7.6.10"
+    "@storybook/core-client" "7.6.10"
+    "@storybook/docs-tools" "7.6.10"
+    "@storybook/global" "^5.0.0"
+    "@storybook/preview-api" "7.6.10"
+    "@storybook/react-dom-shim" "7.6.10"
+    "@storybook/types" "7.6.10"
     "@types/escodegen" "^0.0.6"
     "@types/estree" "^0.0.51"
     "@types/node" "^18.0.0"
