@@ -27,7 +27,7 @@
     "@prisma/nextjs-monorepo-workaround-plugin": "^5.8.1",
     "@quramy/jest-prisma-node": "^1.7.3",
     "@resvg/resvg-js": "^2.6.0",
-    "@t3-oss/env-nextjs": "^0.7.3",
+    "@t3-oss/env-nextjs": "^0.8.0",
     "@tanstack/react-query": "^5.17.19",
     "@trpc/client": "^11.0.0-next-beta.228",
     "@trpc/next": "^11.0.0-next-beta.228",
