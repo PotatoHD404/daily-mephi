@@ -8,9 +8,6 @@ import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 function Review({review}: { review: any }) {
     const router = useRouter();
-    useEffect(() => {
-        router.push(`/tutors/${review.tutorId}?review=${review.id}`);
-    });
     return (
         <>
             <SEO title={`${review.header}`}

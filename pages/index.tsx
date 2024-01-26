@@ -11,6 +11,7 @@ import useIsMobile from "lib/react/isMobileContext";
 import {useSession} from "next-auth/react";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
+import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 // {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
@@ -72,12 +73,11 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
 
     const isAuthenticated = status === "authenticated";
     const isLoading = status === "loading";
-
+    const updateQueryParams = updateQueryParamsFactory(router)
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)
-            const href = `/search?q=${input}`;
-            await router.push(href)
+            updateQueryParams({q: input})
         }
         // console.log(e)
     }

@@ -14,16 +14,16 @@ import style from "styles/navbar.module.css";
 import dynamic from "next/dynamic";
 
 
-import {Box, Button, Divider, IconButton} from '@mui/material';
+import {Box, Button, CircularProgress, Divider, IconButton} from '@mui/material';
 
 import useIsMobile from "lib/react/isMobileContext";
 import {Session} from "next-auth";
 import {MyAppUser} from "lib/auth/nextAuthOptions";
+import WarningDialog from "./warningDialog";
 
 const List = dynamic(() => import("@mui/material/List"), {ssr: false});
 const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
 const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
 const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
 const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
 
@@ -234,6 +234,20 @@ function ItemsList(props: {
     handleClickOpenWarning: () => void
 }) {
     const router = useRouter();
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    }
+
+    const isAuthenticated = status === "authenticated";
+    const isLoading = status === "loading";
+    const handleGotoProfile = () => {
+        router.push(`/users/${session?.user?.id}`);
+    }
+
+    const handleClickOpenWarningCallback = useCallback(() => props.handleClickOpenWarning(), [props])
+    const handleGotoProfileCallback = useCallback(handleGotoProfile, [router, session?.user?.id])
+
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -255,9 +269,15 @@ function ItemsList(props: {
         <Divider/>
         <List>
             {[
-                {icon: UsersIcon, text: "Профиль", alt: "users"},
+                {icon: UsersIcon, text: (
+                        !isLoading ? (!isAuthenticated ? 'Войти' : 'Профиль') :
+                        <CircularProgress color="inherit"
+                                          thickness={3}
+                                          size={30}
+                                          className="my-auto"/>
+                    ), alt: "users"},
             ].map((item, index) => (
-                <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
+                <ListItemButton key={index} onClick={!isAuthenticated ? handleClickOpenWarningCallback : handleGotoProfileCallback}>
                     <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
                     <div>{item.text}</div>
                 </ListItemButton>))
@@ -283,18 +303,19 @@ function Navbar(props: { needsAuth: boolean }) {
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
     const handleClickOpenWarning = () => {
+
         setState(s => ({...s, warning: true}));
+        console.log(state)
     };
-    const callback = useCallback(handleClickOpenWarning, []);
 
     useEffect(() => {
         // console.log(props.needsAuth, authenticated)
         if (props.needsAuth && !authenticated && !loading) {
-            callback();
+            handleClickOpenWarning();
         } else {
             setState(s => ({...s, warning: false}));
         }
-    }, [status, props.needsAuth, router.pathname, callback]);
+    }, [status, props.needsAuth, router.pathname, authenticated, loading]);
 
     const handleCloseWarning = async () => {
         if (props.needsAuth) {
@@ -307,9 +328,7 @@ function Navbar(props: { needsAuth: boolean }) {
             if (
                 event &&
                 event.type === 'keydown' &&
-                ((event as React.KeyboardEvent).key === 'Tab' ||
-                    (event as React.KeyboardEvent).key === 'Shift')
-            ) {
+                (event as React.KeyboardEvent).key === 'Tab') {
                 return;
             }
 
@@ -320,7 +339,7 @@ function Navbar(props: { needsAuth: boolean }) {
     return (
         <header className="font-medium justify-center items-center grid grid-cols-1">
             <Nav {...{
-                home, handleClickOpenWarning: callback, toggleDrawer: toggleDrawer as any
+                home, handleClickOpenWarning, toggleDrawer: toggleDrawer as any
             }}/>
             <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
             {isMobile ?
@@ -332,7 +351,7 @@ function Navbar(props: { needsAuth: boolean }) {
                     disableBackdropTransition={false}
                     // disableDiscovery={true}
                 >
-                    <ItemsList onClick={toggleDrawer} {...{handleClickOpenWarning: callback}}/>
+                    <ItemsList onClick={toggleDrawer} handleClickOpenWarning={handleClickOpenWarning}/>
                 </SwappableDrawer> : null}
 
         </header>

@@ -16,6 +16,7 @@ import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 import {CircularProgress} from "@mui/material";
 
 export function Post() {
+    console.log('Post')
     return <>
         <div className="whiteBox md:text-[1.7rem] text-xl w-[99.5%]">
             <div className="flex w-full mb-4">
@@ -78,34 +79,35 @@ function Tabs() {
 
     const {queryTab} = router.query;
     const tabOk = typeof queryTab === "string" && ["0", "1", "2"].includes(queryTab);
+    const updateQueryParams = updateQueryParamsFactory(router)
+
     // console.log(queryTab, tabOk)
     useEffect(() => {
         if (!tabOk && router.isReady) {
-            router.push("/about?queryTab=1");
+            updateQueryParams({queryTab: 1})
         } else if (tabOk && router.isReady) {
             setTab(+queryTab);
         }
-    }, [tabOk, router.isReady, queryTab, router]);
+    }, [tabOk, router.isReady, queryTab, router, updateQueryParams]);
 
-    const updateQueryParams = updateQueryParamsFactory(router)
     const [tab, setTab] = React.useState(3);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         updateQueryParams({queryTab: newValue.toString()})
         setTab(newValue);
     };
     return <div className="md:w-[75%] w-[100%]">
-        <TabsBox value={tab} onChange={handleChange} tabs={["О нас", "Новости", "Правила"]}/>
-        {tab == 0 ? <Info/> : null}
-        {tab == 1 ? <Post/> : null}
-        {tab == 2 ? <Rules/> : null}
-        {tab == 3 ? (
+        <TabsBox value={tab} onChange={handleChange} tabNames={["О нас", "Новости", "Правила"]}>
+            <Info/>
+            <Post/>
+            <Rules/>
             <div className="md:text-[1.7rem] text-xl w-[99.5%] h-full">
                 <div className="mx-auto w-fit h-fit my-auto">
                     <CircularProgress color="inherit"
                                       thickness={3}
                                       size={30}/>
                 </div>
-            </div>) : null}
+            </div>
+        </TabsBox>
     </div>
         ;
 }
@@ -137,7 +139,7 @@ function About() {
                 <div className="flex w-full justify-between">
                     <Tabs/>
                     <TopUsers place={session?.user?.place ?? 1} take={8} withLabel
-                              isLoading={isFetching || status == "unauthenticated"}/>
+                              isLoading={isFetching}/>
                 </div>
             }
         </>);

@@ -42,7 +42,7 @@ export default function Material({user}: { user: UserType }) {
             <div
                 className="flex flex-wrap md:flex-nowrap font-semibold relative">
                 <div
-                    className="md:absolute md:right-0 space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 inline-block items-center w-full md:w-fit">
+                    className="md:absolute md:right-0 space-x-4 md:mb-0 mb-2 my-auto text-[1.0rem] mt-0.5 flex items-center w-full md:w-fit">
                     <div className="font-medium">exam_file_1.pdf (50 MB)</div>
                     <IconButton
                         onClick={undefined}

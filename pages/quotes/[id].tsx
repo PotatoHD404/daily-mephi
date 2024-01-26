@@ -6,10 +6,6 @@ import {prisma} from "lib/database/prisma";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 
 function Quote({quote}: { quote: any }) {
-    const router = useRouter();
-    useEffect(() => {
-        router.push(`/tutors/${quote.tutorId}?quote=${quote.id}`);
-    });
     return (
         <>
             <SEO title={`Цитата ${quote.tutorName}`}

@@ -8,6 +8,7 @@ import Tutor from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../components/userHeader";
 import {trpc} from "../server/utils/trpc";
+import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: false});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
@@ -20,6 +21,8 @@ function Search() {
 
     const router = useRouter();
 
+    const updateQueryParams = updateQueryParamsFactory(router)
+
     const {q: query} = router.query;
 
     useEffect(() => {
@@ -28,8 +31,7 @@ function Search() {
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
-            const href = `/search?q=${input}`;
-            await router.push(href)
+            updateQueryParams({q: input})
         }
         // console.log(e)
     }

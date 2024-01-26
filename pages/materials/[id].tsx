@@ -7,10 +7,6 @@ import {useRouter} from "next/router";
 
 
 function Material({material}: { material: any }) {
-    const router = useRouter();
-    useEffect(() => {
-        router.push(`/tutors/${material.tutorId}?material=${material.id}`);
-    });
     return (
         <>
             <SEO title={`${material}`}

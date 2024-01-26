@@ -93,7 +93,7 @@ function Tabs(props: { tutorId: any }) {
                         setValue={setPostValue}/>
             <TabsBox value={value}
                      onChange={handleChange as any}
-                     tabs={["Отзывы", "Цитаты", "Материалы"]}/>
+                     tabNames={["Отзывы", "Цитаты", "Материалы"]}/>
 
             <div className="mt-6 mx-auto">
                 <div className="flex-wrap space-y-4 w-full">
