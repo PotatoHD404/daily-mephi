@@ -37,7 +37,7 @@ export default function WarningDialog(props: DialogProps) {
                 <Image
                     src={WarningHalfCat}
                     alt="Warning cat"
-                    className="col-start-1 col-end-6 grid mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
+                    className="col-start-1 col-end-6 mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
                 />
 
                 <div className="col-start-1 md:col-start-6 col-end-13">
@@ -70,7 +70,8 @@ export default function WarningDialog(props: DialogProps) {
                                                               size={30}
                                                               className="my-auto"/>
 
-                                        </div>}</RippledButton>
+                                        </div>}
+                                </RippledButton>
                             </div>
                         </div>
 

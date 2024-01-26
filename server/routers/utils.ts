@@ -58,19 +58,17 @@ export const utilsRouter = t.router({
         .input(z.void())
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
-            return prisma.discipline.findMany();
+            return prisma.discipline.findMany({
+                orderBy: [
+                    {
+                        name: 'asc'
+                    },
+                    {
+                        id: 'asc'
+                    }
+                ]
+            }).then(disciplines => disciplines.map(el => el.name));
         }),
-    // departments: t.procedure.meta({
-    //     openapi: {
-    //         method: 'GET',
-    //         path: '/departments'
-    //     }
-    // })
-    //     .input(z.void())
-    //     /* .output(z.any()) */
-    //     .query(async ({ctx: {prisma}}) => {
-    //         return prisma.departments.findMany();
-    //     }),
     facilities: t.procedure.meta({
         openapi: {
             method: 'GET',
