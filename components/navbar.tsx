@@ -50,15 +50,15 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                     </Link>
 
 
-                    <Link href="/about"  className="underlining my-auto">
+                    <Link href="/about" className="underlining my-auto">
                         <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/materials"  className="underlining my-auto">
+                    <Link href="/materials" className="underlining my-auto">
                         <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors"  className="underlining my-auto">
+                    <Link href="/tutors" className="underlining my-auto">
                         <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
@@ -234,7 +234,6 @@ function ItemsList(props: {
     handleClickOpenWarning: () => void
 }) {
     const router = useRouter();
-    const home: boolean = router.pathname === '/';
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -254,17 +253,16 @@ function ItemsList(props: {
             }
         </List>
         <Divider/>
-        {!home ?
-            <List>
-                {[
-                    {icon: UsersIcon, text: "Профиль", alt: "users"},
-                ].map((item, index) => (
-                    <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
-                        <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
-                        <div>{item.text}</div>
-                    </ListItemButton>))
-                }
-            </List> : null}
+        <List>
+            {[
+                {icon: UsersIcon, text: "Профиль", alt: "users"},
+            ].map((item, index) => (
+                <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
+                    <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                    <div>{item.text}</div>
+                </ListItemButton>))
+            }
+        </List>
     </Box>;
 }
 

@@ -3,6 +3,8 @@ import {FormControlLabelProps} from "@mui/material/FormControlLabel";
 import SearchFilter from "./searchFilter";
 import {FormControlLabel, Radio, RadioGroup, useRadioGroup,} from "@mui/material";
 import SliderFilter from "./sliderFilter";
+import RippledButton from "./rippledButton";
+import {trpc} from "../server/utils/trpc";
 
 function MyFormControlLabel(props: FormControlLabelProps) {
     const radioGroup = useRadioGroup();
@@ -18,6 +20,19 @@ function MyFormControlLabel(props: FormControlLabelProps) {
 
 
 export default function Filters() {
+
+    const {data, isFetching} = trpc.utils.facilities.useQuery(undefined,{
+        // enabled: !props.isLoading
+        refetchOnWindowFocus: false
+    });
+    const {data: data1, isFetching: isFetching1} = trpc.utils.disciplines.useQuery(undefined,{
+        // enabled: !props.isLoading
+        refetchOnWindowFocus: false
+    });
+
+    const faculties = data?.map(el => el.name) ?? []
+    const disciplines = data1?.map(el => el.name) ?? []
+
     return <div className="w-[15rem] ml-auto mt-4 pl-1">
         <div
             className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black mb-4">
@@ -49,9 +64,12 @@ export default function Filters() {
         <div
             className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black">
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
-            <SearchFilter defaultExpanded name="Факультеты" options={["ИИКС", "ФБИУКС"]}/>
-            <SearchFilter defaultExpanded name="Предметы" options={["предмет", "предмет 2"]}/>
-            <SliderFilter name="Оценка" min={0} max={5}/>
+            <SearchFilter defaultExpanded name="Факультеты" options={faculties}/>
+            <SearchFilter defaultExpanded name="Предметы" options={disciplines}/>
+            <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
+            <RippledButton  className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>
+                <div>Применить</div>
+            </RippledButton>
         </div>
     </div>;
 }

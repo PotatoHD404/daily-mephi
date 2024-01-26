@@ -144,7 +144,7 @@ model Discipline {
   updatedAt DateTime   @updatedAt @map("updated_at")
   deletedAt DateTime?  @map("deleted_at")
 
-  @@index([id, name])
+  @@index([name, id])
   @@map("disciplines")
 }
 
@@ -157,7 +157,7 @@ model Faculty {
   updatedAt DateTime   @updatedAt @map("updated_at")
   deletedAt DateTime?  @map("deleted_at")
 
-  @@index([id, name])
+  @@index([name, id])
   @@map("faculties")
 }
 

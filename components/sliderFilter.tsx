@@ -3,12 +3,9 @@ import Image from "next/image";
 import {Slider} from "@mui/material";
 import StarIcon from "images/star.svg";
 import CustomAccordion from './customAccordion'
-import {env} from "../lib/env";
 
-
-const dev = env.NODE_ENV == "development";
 //                                     />
-export default function SliderFilter(props: { name: string, min: number, max: number }) {
+export default function SliderFilter(props: { name: string, min: number, max: number, defaultExpanded?: boolean }) {
     const [value, setValue] = React.useState<number[]>([0, 5]);
     const handleChange = (event: Event, newValue: number | number[]) => {
         setValue(newValue as number[]);
@@ -27,7 +24,7 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
         </div>;
     }
 
-    const marks = [
+    const marks = React.useMemo(() => [
         {
             value: 0,
             label: <Mark mt value={0}/>,
@@ -36,19 +33,13 @@ export default function SliderFilter(props: { name: string, min: number, max: nu
             value: 5,
             label: <Mark mt value={5}/>,
         },
-    ];
+    ], []);
 
 
-    return <CustomAccordion name={props.name}>
+    return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
         <div className="flex flex-wrap px-4">
-            <div className="flex space-x-1 -ml-1">
-                <Mark value={value[0]}/>
-                <div>-</div>
-                <Mark value={value[1]}/>
-            </div>
             <Slider
-                // @ts-ignore
-                value={dev ? value.map((v, index) => <div key={index}>{v.toString()}</div>) : value}
+                value={value}
                 // onChange={(event, newValue) => {
                 //     console.log(newValue);
                 // }}

@@ -80,7 +80,18 @@ export const utilsRouter = t.router({
         .input(z.void())
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
-            return prisma.faculty.findMany();
+            return prisma.faculty.findMany(
+                {
+                    orderBy: [
+                        {
+                            name: 'asc'
+                        },
+                        {
+                            id: 'asc'
+                        }
+                    ]
+                }
+            ).then(faculties => faculties.map(el => el.name));
         }),
     semesters: t.procedure.meta({
         openapi: {
@@ -91,10 +102,16 @@ export const utilsRouter = t.router({
         .input(z.void())
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
-            return (await prisma.semester.findMany()).map(el => {
-                el['name'] = el['name'][0];
-                return el;
-            });
+            return prisma.semester.findMany({
+                orderBy: [
+                    {
+                        name: 'asc'
+                    },
+                    {
+                        id: 'asc'
+                    }
+                ]
+            }).then(semesters => semesters.map(el => el.name));
         }),
     getAvatars: t.procedure.meta({
         openapi: {

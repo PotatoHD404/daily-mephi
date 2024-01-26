@@ -20,38 +20,39 @@ import {useRouter} from "next/router";
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
 
 function Quote() {
-    return (<div className="text-xl w-full whiteBox">
-        <UserHeader legacyNickname={"User1"}
-                    date={new Date()} isLoading={true}/>
-        <div className="relative flex">
-            <div className="h-4 w-4">
-                <Image
-                    src={QuoteIco}
-                    alt="Quote symbol"
-                />
+    return (
+        <div className="text-xl w-full whiteBox">
+            <UserHeader legacyNickname={"User1"}
+                        date={new Date()} isLoading={true}/>
+            <div className="relative flex">
+                <div className="h-4 w-4">
+                    <Image
+                        src={QuoteIco}
+                        alt="Quote symbol"
+                    />
+                </div>
+                <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
+                    consectetur
+                    adipisicing
+                    elit. Delectus eius laboriosam magni neque obcaecati provident rem
+                    repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
+                    nesciunt
+                    pariatur, sed sunt tempora, ullam?
+                </div>
+                <div className="h-4 w-4 mt-auto">
+                    <Image
+                        src={QuoteIco}
+                        alt="Quote symbol"
+                        className="rotate-180"
+                    />
+                </div>
             </div>
-            <div className="italic w-[80%] mx-auto">Lorem ipsum dolor sit amet,
-                consectetur
-                adipisicing
-                elit. Delectus eius laboriosam magni neque obcaecati provident rem
-                repellendus. Consequuntur dolorem, excepturi illum iste maxime modi
-                nesciunt
-                pariatur, sed sunt tempora, ullam?
+            <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
+            <div className="flex space-x-4 font-semibold">
+                <Like count={0}/>
+                <Dislike count={0}/>
             </div>
-            <div className="h-4 w-4 mt-auto">
-                <Image
-                    src={QuoteIco}
-                    alt="Quote symbol"
-                    className="rotate-180"
-                />
-            </div>
-        </div>
-        <div className="text-center my-2 font-semibold italic">Трифоненков В.П.</div>
-        <div className="flex space-x-4 font-semibold">
-            <Like count={0}/>
-            <Dislike count={0}/>
-        </div>
-    </div>);
+        </div>);
 }
 
 function Tabs(props: { tutorId: any }) {
