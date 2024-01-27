@@ -16,22 +16,21 @@ import {Session} from "next-auth";
 import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
 import {providerProps} from "../../lib/react/providerProps";
-import {helpers} from "../../server";
+import {helpers, helpersFactory} from "../../server";
 import {getQueryKey} from "@trpc/react-query";
 import {RouterOutputs, trpc} from "../../server/utils/trpc";
 
-function Profile({user, me, isLoading, providers}: {
+function Profile({user, me, isLoading}: {
     user?: any,
     me: boolean,
-    isLoading: boolean,
-    providers?: ProvidersProps
+    isLoading: boolean
 }) {
     // if(!isFetching)
     // console.log(data);
 
     return <div className="flex">
         <div className="lg:mr-8 -mt-2 lg:w-[80%] w-full">
-            <User user={user} isLoading={isLoading} me={me} providers={providers}/>
+            <User user={user} isLoading={isLoading} me={me}/>
         </div>
         <div className="ml-auto hidden lg:block">
             <TopUsers isLoading={isLoading} place={user?.place}/>
@@ -86,7 +85,7 @@ function UserProfile({me: serverMe, id: serverId}: { me?: boolean, id?: string }
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">
                     <Profile me={me} user={user}
-                             isLoading={isFetching} providers={providerProps}/>
+                             isLoading={isFetching}/>
                 </div>
             }
         </>
@@ -95,6 +94,8 @@ function UserProfile({me: serverMe, id: serverId}: { me?: boolean, id?: string }
 
 export const getServerSideProps: GetServerSideProps = async (props) => {
     const {req, res, query} = props;
+    // @ts-ignore
+    const helpers = helpersFactory({req, res});
     // console.log(props);
     const {id} = query;
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {

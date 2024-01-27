@@ -13,6 +13,7 @@ import {reactionsRouter} from "./routers/reactions";
 import {createServerSideHelpers} from "@trpc/react-query/server";
 import superjson from "superjson";
 import {createContext} from "./utils/context";
+import * as trpcNext from "@trpc/server/adapters/next";
 
 export const appRouter = t.router({
     comments: commentsRouter,
@@ -29,8 +30,8 @@ export const appRouter = t.router({
 
 export type AppRouter = typeof appRouter;
 
-export const helpers = createServerSideHelpers({
+export const helpersFactory = (opts?: trpcNext.CreateNextContextOptions) =>  createServerSideHelpers({
     router: appRouter,
-    ctx: await createContext(),
+    ctx: createContext(opts),
     transformer: superjson, // optional - adds superjson serialization
 });

@@ -17,8 +17,7 @@ import {ProvidersProps} from "../lib/react/getProviders";
 export default function User(props: {
     user?: MyAppUser
     me?: boolean,
-    isLoading?: boolean,
-    providers?: ProvidersProps
+    isLoading?: boolean
 }) {
     // props.userCourse = props.userCourse?.replace("B", "Б").replace("C", "С").replace("M", "М").replace("A", "А") || "Курс не указан";
     // Tooltip opens on hover
@@ -131,13 +130,13 @@ export default function User(props: {
                 {
                     props.me && !props.isLoading ?
                         <div className="w-full flex flex-wrap">
-                            <SignIn providers={props.providers ?? []} profile={true}/>
+                            <SignIn profile={true}/>
                             <div className="w-fit mt-3">
                                 <div className={`rounded-full border-2 
                                  font-bold text-center border-black text-red-600 w-32 h-fit`}>
                                     <ButtonBase className={"w-full h-full rounded-full p-0.5"}
                                                 onClick={logOut}
-                                    >Выйти</ButtonBase>
+                                    ><div className={"text-black"}>Выйти</div></ButtonBase>
                                 </div>
                             </div>
                         </div>
