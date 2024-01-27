@@ -7,6 +7,7 @@ import {CircularProgress} from "@mui/material";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
 import {getProvidersProps, ProvidersProps} from "../lib/react/getProviders";
+import {providerProps} from "../lib/react/providerProps";
 
 export interface OAuthProviderButtonStyles {
     logo: string
@@ -17,8 +18,7 @@ export interface OAuthProviderButtonStyles {
     textDark?: string
 }
 
-export default function SignIn({providers, profile}: {
-    providers: ProvidersProps,
+export default function SignIn({profile}: {
     profile?: boolean
 }) {
     const router = useRouter();
@@ -47,7 +47,7 @@ export default function SignIn({providers, profile}: {
                 <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
                     только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой
                     аккаунт</div> : null}
-            {providers.map((provider) => {
+            {providerProps.map((provider) => {
                 let logo: string | undefined
                 if (provider.type === "oauth") {
 
@@ -92,6 +92,3 @@ export default function SignIn({providers, profile}: {
             })}
         </div>);
 }
-
-
-SignIn.getInitialProps = getProvidersProps

@@ -80,17 +80,17 @@ function Tabs() {
     const {queryTab} = router.query;
     const tabOk = typeof queryTab === "string" && ["0", "1", "2"].includes(queryTab);
     const updateQueryParams = updateQueryParamsFactory(router)
+    const [tab, setTab] = React.useState(3);
 
     // console.log(queryTab, tabOk)
     useEffect(() => {
-        if (!tabOk && router.isReady) {
+        if (!tabOk && router.isReady && tab === 3) {
             updateQueryParams({queryTab: 1})
-        } else if (tabOk && router.isReady) {
+        } else if (tabOk && router.isReady && tab === 3) {
             setTab(+queryTab);
         }
-    }, [tabOk, router.isReady, queryTab, router, updateQueryParams]);
+    }, [tabOk, router.isReady, queryTab, router, updateQueryParams, tab]);
 
-    const [tab, setTab] = React.useState(3);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         updateQueryParams({queryTab: newValue.toString()})
         setTab(newValue);

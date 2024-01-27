@@ -17,7 +17,7 @@ import TutorProfile from "components/tutorProfile";
 import Reviews from "components/reviews";
 import {useRouter} from "next/router";
 
-const PostDialog = dynamic(() => import("components/postDialog"), {ssr: false});
+const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
 
 function Quote() {
     return (

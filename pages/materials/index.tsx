@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../../components/userHeader";
 
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
 function Materials() {
     const isMobile = useIsMobile();

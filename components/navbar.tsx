@@ -20,12 +20,12 @@ import useIsMobile from "lib/react/isMobileContext";
 import {Session} from "next-auth";
 import {MyAppUser} from "lib/auth/nextAuthOptions";
 
-const List = dynamic(() => import("@mui/material/List"), {ssr: false});
-const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
-const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
-const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
-const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
+const List = dynamic(() => import("@mui/material/List"), {ssr: true});
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: true});
+const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
+const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
+const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: true});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
 
 
 interface DefaultNavbarParams {

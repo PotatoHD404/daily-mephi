@@ -13,9 +13,9 @@ import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 // {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
-const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
-const SearchBar = dynamic(() => import("components/searchBar"), {ssr: false});
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
+const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
 
 export function LogoText() {
     const isMobile = useIsMobile();

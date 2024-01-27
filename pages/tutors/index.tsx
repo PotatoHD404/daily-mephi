@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 import Tutor from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
 
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
 const marks = [
     {

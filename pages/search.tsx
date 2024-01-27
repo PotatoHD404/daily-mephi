@@ -10,8 +10,8 @@ import {UserType} from "../components/userHeader";
 import {trpc} from "../server/utils/trpc";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
 
 function Search() {
