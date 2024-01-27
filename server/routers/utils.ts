@@ -59,12 +59,12 @@ export const utilsRouter = t.router({
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.discipline.findMany({
+                select: {
+                    name: true
+                },
                 orderBy: [
                     {
                         name: 'asc'
-                    },
-                    {
-                        id: 'asc'
                     }
                 ]
             }).then(disciplines => disciplines.map(el => el.name));
@@ -80,12 +80,12 @@ export const utilsRouter = t.router({
         .query(async ({ctx: {prisma}}) => {
             return prisma.faculty.findMany(
                 {
+                    select: {
+                        name: true
+                    },
                     orderBy: [
                         {
                             name: 'asc'
-                        },
-                        {
-                            id: 'asc'
                         }
                     ]
                 }
@@ -101,12 +101,12 @@ export const utilsRouter = t.router({
         /* .output(z.any()) */
         .query(async ({ctx: {prisma}}) => {
             return prisma.semester.findMany({
+                select: {
+                    name: true
+                },
                 orderBy: [
                     {
                         name: 'asc'
-                    },
-                    {
-                        id: 'asc'
                     }
                 ]
             }).then(semesters => semesters.map(el => el.name));
