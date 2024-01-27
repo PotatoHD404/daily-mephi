@@ -39,7 +39,7 @@ export default function SignIn({profile}: {
 
 // const callbackUrl = "/api/auth/callback/credentials"
     return (
-        <div className={`${!profile ? 'w-1/2' : 'w-full'}`}>
+        <div className={`${!profile ? 'w-1/2' : 'w-full'} flex-row flex-wrap gap-x-8 gap-y-5`}>
             {/* if error == OAuthCreateAccount then write something*/}
             {error == 'OAuthCreateAccount' ?
                 <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
@@ -47,16 +47,20 @@ export default function SignIn({profile}: {
                     аккаунт</div> : null}
             {providerProps.map((provider) => {
                 let logo: string | undefined
-                if (provider.type === "oauth") {
-                    logo = providerLogoPath + provider.style.logo;
-                }
                 const loading = isLoading == provider.id || status === "loading"
                 const isConnected = session?.user?.accounts.map(account => account.provider).includes(provider.id);
+                if (provider.type === "oauth") {
+                    logo = providerLogoPath;
+                    if (isConnected)
+                        logo += "/green";
+                    logo += provider.style.logo;
+                }
+
                 return provider.type === "oauth" ? (
-                    <div className={`w-fit greenBox border-2 ${isConnected ? 'border-[#238F19]' : 'border-black'} rounded-xl`}>
+                    <div className={`w-fit h-fit border-2 ${isConnected ? 'border-[#238F19]' : 'border-black'} rounded-xl`}>
                         <RippledButton
-                            className={`items-center w-64 px-4 py-2.5 text-base
-                                     font-medium rounded-xl text-center `}
+                            className={`items-center w-56 px-4 py-2.5 text-base
+                                     font-medium rounded-xl text-center`}
                             style={{
                                 backgroundColor: "white",
                                 color: isConnected ? "#238F19" : "black",
