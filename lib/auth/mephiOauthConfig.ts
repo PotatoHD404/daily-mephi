@@ -17,7 +17,7 @@ export default function HomeOauth<P extends Record<string, any> = Profile>(): OA
         id: "home",
         name: "Home MEPHi",
         type: "oauth",
-        style: {logo: "images/mephi.png", bg: "#EEE", text: "#000"},
+        style: {logo: "images/mephi.svg", bg: "#EEE", text: "#000"},
         authorization: {
             url: "https://auth.mephi.ru/login",
             params: {service: host} // TODO: add host check

@@ -12,6 +12,7 @@ import {useSession} from "next-auth/react";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
+import {tr} from "@faker-js/faker";
 // {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
 const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
@@ -35,21 +36,7 @@ export function LogoText() {
 
 function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
 
-    const [state, setState] = React.useState({
-        warning: false
-    });
     const isMobile = useIsMobile();
-    const handleClickOpenWarning = () => {
-        setState({...state, warning: true});
-    };
-
-    const handleGotoProfile = () => {
-        router.push(`/users/${session?.user?.id}`);
-    }
-
-    const handleCloseWarning = () => {
-        setState({...state, warning: false});
-    };
     // const session = useSession()
     const [input, setInput] = React.useState('');
     // console.log(session);
@@ -62,14 +49,14 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     }, []);
     const router = useRouter();
 
+    const handleGotoSearch = async () => {
+        await router?.push('/search')
+    }
+
     const {data: session, status} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     }
-    useEffect(() => {
-        changeNeedsAuth(false);
-        // window.onpopstate = () => changeNeedsAuth(true);
-    }, [changeNeedsAuth]);
 
     const isAuthenticated = status === "authenticated";
     const isLoading = status === "loading";
@@ -91,7 +78,6 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                 </h1> :
                 <>
                     <div className="grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
-                        <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
 
                         <div
                             className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
@@ -119,12 +105,8 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                          w-[80%] normal-case"
                                         variant="contained"
                                         disabled={isLoading}
-                                        onClick={!isAuthenticated ? handleClickOpenWarning : handleGotoProfile}>
-                                    {!isLoading ? (!isAuthenticated ? 'Войти на Daily MEPhi' : 'Профиль') :
-                                        <CircularProgress color="inherit"
-                                                          thickness={3}
-                                                          size={30}
-                                                          className="my-auto"/>}
+                                        onClick={handleGotoSearch}>
+                                    Поиск
                                 </Button> : null}
 
                             <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>

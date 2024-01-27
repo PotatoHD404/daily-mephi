@@ -5,20 +5,13 @@ import TopUsers from "components/topUsers";
 import User from "components/user"
 import useIsMobile from "lib/react/isMobileContext";
 import {GetServerSideProps} from "next";
-// import {useSession} from "next-auth/react";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
-// import {Session} from "next-auth";
-// import {MyAppUser, selectUser} from "lib/auth/nextAuthOptions";
-// import {useQuery} from "@tanstack/react-query";
-import {ProvidersProps} from "../../lib/react/getProviders";
 import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 import {Session} from "next-auth";
 import {useSession} from "next-auth/react";
 import {useQuery} from "@tanstack/react-query";
-import {providerProps} from "../../lib/react/providerProps";
-import {helpers, helpersFactory} from "../../server";
-import {getQueryKey} from "@trpc/react-query";
-import {RouterOutputs, trpc} from "../../server/utils/trpc";
+import {helpersFactory} from "../../server";
+import {trpc} from "../../server/utils/trpc";
 
 function Profile({user, me, isLoading}: {
     user?: any,
@@ -33,28 +26,31 @@ function Profile({user, me, isLoading}: {
             <User user={user} isLoading={isLoading} me={me}/>
         </div>
         <div className="ml-auto hidden lg:block">
-            <TopUsers isLoading={isLoading} place={user?.place}/>
+            <TopUsers isLoading={isLoading} place={user?.place} take={4}/>
         </div>
     </div>;
 }
 
 
-function UserProfile({me: serverMe, id: serverId}: { me?: boolean, id?: string }) {
+function UserProfile({session: serverSession, id: serverId}: { session?: Session & { user: MyAppUser }, id?: string }) {
 
     // @ts-ignore
     // isSSR = false;
     const router = useRouter();
     const {id: queryId} = router.query;
-    const id = serverId ?? queryId;
+    const id = queryId ?? serverId;
 
     // state is updated
     const [isUpdated, setIsUpdated] = React.useState(false);
 
-    const {status, update: updateSession, data: session} = useSession() as any as {
+    const {status, update: updateSession, data: clientSession} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated",
         update: (data?: any) => Promise<Session | null>
     };
+
+    const session = clientSession ?? serverSession;
+
     // providerProps
     const {isFetching: isFetching1} = useQuery({
         queryKey: ['session'],
@@ -75,7 +71,7 @@ function UserProfile({me: serverMe, id: serverId}: { me?: boolean, id?: string }
 
     const {data: user, isFetching: isFetching2} = trpc.users.getOne.useQuery({id})
     const isFetching = isFetching1 || isFetching2;
-    const me = serverMe ?? session?.user.id === user?.id;
+    const me = session?.user?.id === user?.id && session !== undefined;
 
 
     return (
@@ -111,14 +107,6 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
         }
         throw e;
     });
-    const usersKey = getQueryKey(trpc.users.getOne, undefined, 'query');
-    const user = helpers.queryClient.getQueryData(usersKey) as RouterOutputs['users']['getOne'];
-
-    if (!user) {
-        return {
-            notFound: true
-        }
-    }
     const session = await auth(req, res)
 
     // res.setHeader(
@@ -129,7 +117,7 @@ export const getServerSideProps: GetServerSideProps = async (props) => {
 
     return {
         props: {
-            me: user.id === session.user.id,
+            session,
             id,
             trpcState: helpers.dehydrate(),
         }

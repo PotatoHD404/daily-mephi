@@ -6,7 +6,6 @@ import {useRouter} from "next/router";
 import {CircularProgress} from "@mui/material";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
-import {getProvidersProps, ProvidersProps} from "../lib/react/getProviders";
 import {providerProps} from "../lib/react/providerProps";
 
 export interface OAuthProviderButtonStyles {
@@ -27,7 +26,6 @@ export default function SignIn({profile}: {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     }
-    console.log(session)
     // get error from query params
     const {error} = router.query
 
@@ -41,7 +39,7 @@ export default function SignIn({profile}: {
 
 // const callbackUrl = "/api/auth/callback/credentials"
     return (
-        <div className={`${!profile ? 'w-1/2' : 'w-full'} flex-wrap`}>
+        <div className={`${!profile ? 'w-1/2' : 'w-full'}`}>
             {/* if error == OAuthCreateAccount then write something*/}
             {error == 'OAuthCreateAccount' ?
                 <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
@@ -50,45 +48,43 @@ export default function SignIn({profile}: {
             {providerProps.map((provider) => {
                 let logo: string | undefined
                 if (provider.type === "oauth") {
-
                     logo = providerLogoPath + provider.style.logo;
                 }
                 const loading = isLoading == provider.id || status === "loading"
                 const isConnected = session?.user?.accounts.map(account => account.provider).includes(provider.id);
-                return (
-                    <div key={provider.id} className={`flex`}>
-                        {provider.type === "oauth" ? (
-                            <RippledButton
-                                className={`flex items-center justify-center w-full px-4 my-1 py-2.5 text-base
-                                     font-medium
-                                      border rounded-md shadow-sm text-center`}
-                                style={{backgroundColor: provider.style.bg, color: provider.style.text}}
-                                onClick={async () => {
-                                    changeIsLoading(provider.id);
-                                    await signIn(provider.id, {callbackUrl: session?.user?.id ? `/users/${session.user.id}` : '/'})
-                                }}
-                                disabled={loading || isConnected}
-                            >
-                                {logo && (
-                                    <Image
-                                        loading="lazy"
-                                        height={24}
-                                        width={24}
-                                        id={`${provider.id}-provider-logo`}
-                                        src={logo}
-                                        alt={`${provider.id} logo`}
-                                        className={"mr-auto"}
-                                    />
-                                )}
-                                <span className="w-full">{isLoading == provider.id || status === "loading" ?
-                                    <CircularProgress color="inherit"
-                                                      thickness={3}
-                                                      size={30}
-                                                      className="my-auto"/> : isConnected ? `${provider.name} привязан` : `Войти через ${provider.name}`}</span>
-                            </RippledButton>
-                        ) : null}
-                    </div>
-                )
+                return provider.type === "oauth" ? (
+                    <div className={`w-fit greenBox border-2 ${isConnected ? 'border-[#238F19]' : 'border-black'} rounded-xl`}>
+                        <RippledButton
+                            className={`items-center w-64 px-4 py-2.5 text-base
+                                     font-medium rounded-xl text-center `}
+                            style={{
+                                backgroundColor: "white",
+                                color: isConnected ? "#238F19" : "black",
+                            }}
+                            onClick={async () => {
+                                changeIsLoading(provider.id);
+                                await signIn(provider.id, {callbackUrl: session?.user?.id ? `/users/${session.user.id}` : '/'})
+                            }}
+                            disabled={loading || isConnected}
+                        >
+                            {logo && (
+                                <Image
+                                    loading="lazy"
+                                    height={24}
+                                    width={24}
+                                    id={`${provider.id}-provider-logo`}
+                                    src={logo}
+                                    alt={`${provider.id} logo`}
+                                    className={"mr-auto"}
+                                />
+                            )}
+                            <span className="w-full">{isLoading == provider.id || status === "loading" ?
+                                <CircularProgress color="inherit"
+                                                  thickness={3}
+                                                  size={30}
+                                                  className="my-auto"/> : isConnected ? `${provider.name}` : `Привязать ${provider.name}`}</span>
+                        </RippledButton>
+                    </div>) : null
             })}
         </div>);
 }

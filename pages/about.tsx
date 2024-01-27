@@ -114,23 +114,6 @@ function Tabs() {
 
 function About() {
     const isMobile = useIsMobile();
-    const {data: session, status, update: updateSession} = useSession() as unknown as {
-        data: Session & { user: MyAppUser },
-        status: "authenticated" | "loading" | "unauthenticated",
-        // eslint-disable-next-line no-unused-vars
-        update: (data?: any) => Promise<Session | null>
-    };
-    const [isUpdated, setIsUpdated] = React.useState(false);
-    // useQuery to update session
-    const {data, isFetching, refetch, isError, error} = useQuery({
-        queryKey: ['session'],
-        enabled: status === "authenticated" || isUpdated,
-        queryFn: async () => {
-            setIsUpdated(true);
-            return updateSession();
-        }
-    });
-
 
     return (
         <>
@@ -138,8 +121,7 @@ function About() {
             {isMobile == null ? null :
                 <div className="flex w-full justify-between">
                     <Tabs/>
-                    <TopUsers place={session?.user?.place ?? 1} take={8} withLabel
-                              isLoading={isFetching}/>
+                    <TopUsers place={1} take={8} withLabel/>
                 </div>
             }
         </>);

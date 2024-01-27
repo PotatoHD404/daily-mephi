@@ -23,6 +23,8 @@ export default function WarningDialog(props: DialogProps) {
     const auth = async () => {
         changeIsLoading(true);
         await router.push("/signin");
+        handleClose()
+        setTimeout(() => changeIsLoading(false), 200);
     }
     return (
         <CustomDialog onClose={!isLoading ? handleClose : () => {

@@ -37,7 +37,7 @@ interface DefaultNavbarParams {
 export function DefaultNavbar(props: DefaultNavbarParams) {
     const isMobile = useIsMobile();
     return (
-        <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
+        <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl
                          justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
             {!isMobile ?
                 <div className="flex col-start-1 col-end-13 justify-between">
@@ -311,7 +311,7 @@ function Navbar(props: { needsAuth: boolean }) {
     }, [status, props.needsAuth, router.pathname, authenticated, loading, handleClickOpenWarning]);
 
     const handleCloseWarning = async () => {
-        if (props.needsAuth) {
+        if (props.needsAuth && router.pathname && router.pathname !== "/signin") {
             await router.push("/");
         }
         setWarningState(false)
