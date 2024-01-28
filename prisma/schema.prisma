@@ -429,9 +429,6 @@ model LegacyRating {
   qualityCount     Int       @map("quality_count")
   tutorId          String    @unique @map("tutor_id") @db.Uuid
   avgRating        Float     @map("avg_rating")
-  avgQuality       Float     @map("avg_quality")
-  avgPersonality   Float     @map("avg_personality")
-  avgExams         Float     @map("avg_exams")
   ratingCount      Int       @map("rating_count")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
