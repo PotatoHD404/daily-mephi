@@ -141,10 +141,5 @@ export default function User(props: {
                     : null
                 }
             </div>
-            <div className="w-full normal-case h-fit whiteBox p-5 px-4 relative">
-                <div className="w-full flex flex-wrap">
-                    <SignIn profile={true}/>
-                </div>
-            </div>
         </>);
 }

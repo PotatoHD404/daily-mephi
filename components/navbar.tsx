@@ -54,11 +54,11 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                         <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/materials" className="underlining my-auto">
+                    <Link href="/search?type=materials" className="underlining my-auto">
                         <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors" className="underlining my-auto">
+                    <Link href="/search?type=tutors" className="underlining my-auto">
                         <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
@@ -114,42 +114,34 @@ function AuthSection(props: DefaultNavbarParams) {
         return (
             !isMobile ?
                 <div
-                    className={`${style.authText} underlining my-auto`}>
+                    className={`${style.authText} underlining my-auto w-fit`}>
                     <h3>Загрузка...</h3>
                 </div> : null
         )
-    } else if (status === "unauthenticated" || !session) {
+    } else if (status === "unauthenticated") {
         return (
             !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText} underlining my-auto`}>
+                        className={`${style.authText} underlining my-auto w-fit`}>
                     <h3>Войти</h3>
                 </button> : null
         )
     } else {
-        return <>
-            <RegisterDialog
-                handleClose={() => setOpen(false)}
-                opened={open}/>
+        return (
+            <>
+                <RegisterDialog
+                    handleClose={() => setOpen(false)}
+                    opened={open}/>
 
-            {!isMobile ?
-                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto`}>
+                {!isMobile ?
+                    <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto w-fit`}>
 
-                    <h3>{session.user?.name || "Профиль"}</h3>
+                        <h3>{session.user?.name || "Профиль"}</h3>
 
-                </Link> : null}
-        </>;
+                    </Link> : null}
+            </>);
     }
 }
-
-// function CustomButton(props: { children: React.ReactNode, onClick: () => void }) {
-//     // @ts-ignore
-//     return <Button className="rounded-full text-black font-[Montserrat] font-bold text-center
-//                                               w-[1px] normal-case h-8"
-//                    onClick={props.onClick()}>
-//         {props.children}
-//     </Button>;
-// }
 
 function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
     return (
@@ -193,11 +185,11 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                             <Link href="/about">
                                 <h3 className="underlining">О нас</h3>
                             </Link>
-                            <Link href="/materials">
+                            <Link href="/search?type=materials">
                                 <h3 className="underlining">Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors">
+                            <Link href="/search?type=tutors">
                                 <h3 className="underlining">Преподаватели</h3>
                             </Link>
                         </div>
@@ -254,8 +246,8 @@ function ItemsList(props: {
         <List>
             {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
-                {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
-                {icon: TutorsIcon, text: "Преподаватели", link: "/tutors", alt: "tutors"},
+                {icon: MaterialsIcon, text: "Материалы", link: "/search?type=materials", alt: "materials"},
+                {icon: TutorsIcon, text: "Преподаватели", link: "/search?type=tutors", alt: "tutors"},
             ].map((item, index) => (
                 <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
                     <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>

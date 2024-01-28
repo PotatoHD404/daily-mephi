@@ -31,7 +31,7 @@ function Footer() {
                             <div
                                 className="justify-end gap-3 text-2xl hidden lg:flex">
                                 <Link
-                                    href="https://github.com/MEPhI-Floppas/daily-mephi"
+                                    href="https://github.com/PotatoHD404/daily-mephi"
                                     passHref
                                 >
                                     <div className="w-8 h-8 flex">
@@ -43,7 +43,7 @@ function Footer() {
                                     </div>
                                 </Link>
                                 <Link
-                                    href="https://github.com/MEPhI-Floppas/daily-mephi"
+                                    href="https://github.com/PotatoHD404/daily-mephi"
                                     passHref
                                 >
                                     <div className="cursor-pointer flex">github.com</div>

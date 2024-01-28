@@ -39,8 +39,12 @@ export default function SignIn({profile}: {
 
 // const callbackUrl = "/api/auth/callback/credentials"
     return (
-        <div className={`${!profile ? 'w-1/2' : 'w-full'} flex-row flex-wrap gap-x-8 gap-y-5`}>
+        <div className={`${!profile ? 'max-w-96 whiteBox' : 'w-full'} flex-row flex-wrap gap-x-8 gap-y-4`}>
             {/* if error == OAuthCreateAccount then write something*/}
+            {!profile ? (
+                <div className="w-full mx-auto">
+                    <h2 className={"text-center font-bold text-xl"}>Вход</h2>
+                </div>) : null}
             {error == 'OAuthCreateAccount' ?
                 <div className="text-md text-center bg-red-400 font-bold rounded mb-4">Вы можете зарегестрироваться
                     только используя аккаунт home.mephi, после чего вы сможете привязать к нему другой
@@ -57,9 +61,10 @@ export default function SignIn({profile}: {
                 }
 
                 return provider.type === "oauth" ? (
-                    <div className={`w-fit h-fit border-2 ${isConnected ? 'border-[#238F19]' : 'border-black'} rounded-xl`}>
+                    <div
+                        className={`${profile ? 'md:w-56 max-w-96 md:mx-0' : ''} w-full mx-auto h-fit border-2 ${isConnected ? 'border-[#238F19]' : 'border-black'} rounded-xl`}>
                         <RippledButton
-                            className={`items-center w-56 px-4 py-2.5 text-base
+                            className={`items-center w-full px-4 py-2.5 text-base
                                      font-medium rounded-xl text-center`}
                             style={{
                                 backgroundColor: "white",
@@ -86,7 +91,7 @@ export default function SignIn({profile}: {
                                 <CircularProgress color="inherit"
                                                   thickness={3}
                                                   size={30}
-                                                  className="my-auto"/> : isConnected ? `${provider.name}` : `Привязать ${provider.name}`}</span>
+                                                  className="my-auto"/> : isConnected ? `${provider.name}` : `${profile ? 'Привязать ' : ''}${provider.name}`}</span>
                         </RippledButton>
                     </div>) : null
             })}

@@ -112,7 +112,6 @@ export const nextAuthOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({token, user, account, profile, trigger}) {
-            console.log(account, user, token, profile, trigger)
             if (trigger == "signUp" && account?.provider !== "home") {
 
                 // disallow registering with external providers

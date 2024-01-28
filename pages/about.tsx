@@ -7,13 +7,10 @@ import TabsBox from "components/tabsBox";
 import Reactions from "components/reactions";
 import TopUsers from "components/topUsers";
 import useIsMobile from "lib/react/isMobileContext";
-import {useSession} from "next-auth/react";
-import {useQuery} from "@tanstack/react-query";
-import {Session} from "next-auth";
-import {MyAppUser} from "../lib/auth/nextAuthOptions";
 import {useRouter} from "next/router";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 import {CircularProgress} from "@mui/material";
+import Link from "next/link";
 
 export function Post() {
     console.log('Post')
@@ -48,12 +45,58 @@ export function Post() {
 export function Info() {
     return <>
         <div className="whiteBox md:text-[1.7rem] text-xl w-[99.5%]">
-            <h1 className="font-bold text-[1.1rem] leading-6">Тут осмысленный текст о том, кто мы</h1>
-            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Adipisci
-                aut autem
-                dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
-                officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
+            <h1 className="font-bold text-[1.2rem] leading-6">Кто мы?</h1>
+            <div className="mb-2 text-[1.0rem] leading-5">
+                Мы - новый студенческий портал НИЯУ МИФИ.
+                Данный сайт никак не связан с руководством университета и написан силами студентов для улучшения жизни
+                других студентов.
+                Здесь вы можете написать честные анонимные отзывы о преподавателях или выложить учебные материалы,
+                которыми смогут пользоваться другие посетители сайта.
+            </div>
+            <h1 className="font-bold text-[1.2rem] leading-6">Безопасность</h1>
+            <div className="mb-2 text-[1.0rem] leading-5 ">Мы собираем необходимый минимум ваших данных при авторизации.
+                Например, при авторизации через
+                home.mephi, мы сохраняем только ваш логин в зашифрованном виде (хеш argon2 без соли, но с перцем). При
+                авторизации через другие провайдеры не сохраняются никакие данные, кроме токена авторизации.
+                Везде, где используется симметричное шифрование, используется AES256. Все запросы защищены протоколом
+                SSL. Данные о вашей авторизации передаются посредством JWT токена.
+                Если у вас остаются вопросы, как именно работает какая-либо часть кода, вы можете перейти на наш
+                <Link className="ml-1 w-fit hover:underline text-blue-600"
+                      href="https://github.com/PotatoHD404/daily-mephi" passHref>
+                    проект
+                </Link> на GitHub.
+            </div>
+            <h1 className="font-bold text-[1.2rem] leading-6">О стеке</h1>
+            <div className="mb-2 text-[1.0rem] leading-5">Сайт написан на <Link
+                className="ml-1 w-fit hover:underline text-blue-600"
+                href="https://create.t3.gg/" passHref>
+                T3 stack
+            </Link>: <Link
+                className="ml-1 w-fit hover:underline text-blue-600"
+                href="https://nextjs.org/" passHref>
+                Next.js
+            </Link>, с использованием <Link
+                className="ml-1 w-fit hover:underline text-blue-600"
+                href="https://trpc.io/" passHref>
+                tRPC
+            </Link> для
+                бекенда, <Link className="ml-1 w-fit hover:underline text-blue-600"
+                               href="https://www.prisma.io/" passHref>
+                    Prisma
+                </Link> как ORM. В качестве базы данных используется <Link
+                    className="ml-1 w-fit hover:underline text-blue-600"
+                    href="https://www.cockroachlabs.com/" passHref>
+                    CockroachDB
+                </Link>. Хостинг предоставляет <Link
+                    className="ml-1 w-fit hover:underline text-blue-600"
+                    href="https://vercel.com/" passHref>
+                    Vercel
+                </Link>. Файлы хостятся в <Link
+                    className="ml-1 w-fit hover:underline text-blue-600"
+                    href="https://www.notion.so/" passHref>
+                    Notion
+                </Link> S3 при помощи нашего особенного решения. Всё хостится бесплатно, для того, чтобы мы могли
+                поддерживать сайт как можно дольше.
             </div>
         </div>
     </>;
@@ -62,13 +105,17 @@ export function Info() {
 export function Rules() {
     return <>
         <div className="whiteBox md:text-[1.7rem] text-xl w-[99.5%]">
-            <h1 className="font-bold text-[1.1rem] leading-6">Тут осмысленные правила</h1>
-            <div className="mb-2 text-[1.0rem] leading-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Adipisci
-                aut autem
-                dolores dolorum enim esse excepturi fugit, inventore laboriosam magnam nihil
-                officiis possimus qui recusandae repudiandae sed sequi sunt temporibus.
-            </div>
+            <h1 className="font-bold text-[1.2rem] leading-6">Правила:</h1>
+            <ol className="mb-2 text-[1.0rem] leading-5 list-decimal ml-5">
+                <li>Выражать свои мысли культурно: не опускаться до оскорбления преподавателей или других
+                    пользователей.
+                </li>
+                <li>Запрещено заливать в материалы любые вещи, не относящиеся напрямую к учебному процессу.</li>
+                <li>На сайте возможно зарегистрироваться только действующим учащимся и сотрудникам ВУЗа через
+                    home.MEPHI, поэтому для сохранения вашего аккаунта после выпуска, привязать учетную запись другого
+                    интернет-источника.
+                </li>
+            </ol>
         </div>
     </>;
 }

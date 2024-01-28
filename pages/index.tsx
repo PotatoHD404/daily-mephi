@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Logo from 'images/logo.svg'
 import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
-import {Button, CircularProgress} from "@mui/material";
+import {Button} from "@mui/material";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
@@ -12,10 +12,7 @@ import {useSession} from "next-auth/react";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
-import {tr} from "@faker-js/faker";
-// {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
 const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
 const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
 
 export function LogoText() {
@@ -34,7 +31,7 @@ export function LogoText() {
     </div>;
 }
 
-function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
+function Home() {
 
     const isMobile = useIsMobile();
     // const session = useSession()
@@ -53,20 +50,19 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
         await router?.push('/search')
     }
 
-    const {data: session, status} = useSession() as any as {
+    const {status} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     }
 
-    const isAuthenticated = status === "authenticated";
     const isLoading = status === "loading";
     const updateQueryParams = updateQueryParamsFactory(router)
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)
-            updateQueryParams({q: input})
+            await updateQueryParams({q: input}, '/search')
         }
-        // console.log(e)
+        console.log(e)
     }
 
     return (
