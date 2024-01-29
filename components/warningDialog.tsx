@@ -23,6 +23,8 @@ export default function WarningDialog(props: DialogProps) {
     const auth = async () => {
         changeIsLoading(true);
         await router.push("/signin");
+        handleClose()
+        setTimeout(() => changeIsLoading(false), 200);
     }
     return (
         <CustomDialog onClose={!isLoading ? handleClose : () => {
@@ -37,7 +39,7 @@ export default function WarningDialog(props: DialogProps) {
                 <Image
                     src={WarningHalfCat}
                     alt="Warning cat"
-                    className="col-start-1 col-end-6 grid mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
+                    className="col-start-1 col-end-6 mt-1 hidden md:block md:h-[34.5rem] lg:h-full"
                 />
 
                 <div className="col-start-1 md:col-start-6 col-end-13">
@@ -70,7 +72,8 @@ export default function WarningDialog(props: DialogProps) {
                                                               size={30}
                                                               className="my-auto"/>
 
-                                        </div>}</RippledButton>
+                                        </div>}
+                                </RippledButton>
                             </div>
                         </div>
 

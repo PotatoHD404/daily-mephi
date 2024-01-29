@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-1.0.x"]
 }
 
@@ -144,7 +144,7 @@ model Discipline {
   updatedAt DateTime   @updatedAt @map("updated_at")
   deletedAt DateTime?  @map("deleted_at")
 
-  @@index([id, name])
+  @@index([name, id])
   @@map("disciplines")
 }
 
@@ -157,7 +157,7 @@ model Faculty {
   updatedAt DateTime   @updatedAt @map("updated_at")
   deletedAt DateTime?  @map("deleted_at")
 
-  @@index([id, name])
+  @@index([name, id])
   @@map("faculties")
 }
 
@@ -173,6 +173,7 @@ model File {
   tutorId    String?   @map("tutor_id") @db.Uuid
   materialId String?   @map("material_id") @db.Uuid
   tag        String?   @map("tag")
+  isImage    Boolean   @default(false) @map("is_image")
   size       Int       @default(0) @map("size")
 
   user       User?     @relation(name: "users_images")
@@ -227,6 +228,7 @@ model Semester {
   updatedAt DateTime   @updatedAt @map("updated_at")
   deletedAt DateTime?  @map("deleted_at")
 
+  @@index([name, id])
   @@map("semesters")
 }
 
@@ -428,9 +430,6 @@ model LegacyRating {
   qualityCount     Int       @map("quality_count")
   tutorId          String    @unique @map("tutor_id") @db.Uuid
   avgRating        Float     @map("avg_rating")
-  avgQuality       Float     @map("avg_quality")
-  avgPersonality   Float     @map("avg_personality")
-  avgExams         Float     @map("avg_exams")
   ratingCount      Int       @map("rating_count")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
@@ -514,3 +513,9 @@ model Internal {
 //
 // ALTER TABLE comments
 // DROP CONSTRAINT comments_review_id_fkey;
+
+// CREATE INDEX ON "faculties" USING GIN ("name" gin_trgm_ops);
+//
+// CREATE INDEX ON "disciplines" USING GIN ("name" gin_trgm_ops);
+
+// 20240128225732_init

@@ -8,7 +8,7 @@ import YandexProvider from "next-auth/providers/yandex";
 import GitHubProvider from "next-auth/providers/github";
 import {env} from "../env";
 import type {GetServerSidePropsContext, NextApiRequest, NextApiResponse} from "next"
-import type {NextAuthOptions} from "next-auth"
+import {NextAuthOptions, Session} from "next-auth"
 import {getServerSession} from "next-auth"
 import {AdapterAccount} from "next-auth/adapters";
 
@@ -111,12 +111,7 @@ export const nextAuthOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        // async signIn({user, account, profile}) {
-        //     // return true;
-        //     return true;
-        // },
         async jwt({token, user, account, profile, trigger}) {
-
             if (trigger == "signUp" && account?.provider !== "home") {
 
                 // disallow registering with external providers
@@ -161,5 +156,5 @@ export const nextAuthOptions: NextAuthOptions = {
 };
 
 export function auth(...args: [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]] | [NextApiRequest, NextApiResponse] | []) {
-    return getServerSession(...args, nextAuthOptions)
+    return getServerSession(...args, nextAuthOptions) as Promise<Session & { user: MyAppUser }>;
 }

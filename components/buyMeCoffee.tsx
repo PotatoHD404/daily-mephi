@@ -4,10 +4,6 @@ import Image from "next/image";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {ButtonBase} from '@mui/material';
 
-function getElementByXpath(path: string) {
-    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-}
-
 const BuyMeACoffeeWidget = () => {
 
     const [state, setState] = useState({widget: false, triggered: false})

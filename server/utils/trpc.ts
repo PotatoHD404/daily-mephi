@@ -1,4 +1,4 @@
-import {httpBatchLink, loggerLink} from '@trpc/client';
+import {createTRPCClient, httpBatchLink, loggerLink} from '@trpc/client';
 import {createTRPCNext} from '@trpc/next';
 
 import superjson from 'superjson';
@@ -6,7 +6,6 @@ import type {AppRouter} from "server";
 import {inferRouterInputs, inferRouterOutputs} from "@trpc/server";
 import {env} from "../../lib/env";
 import {createServerSideHelpers} from "@trpc/react-query/server";
-import { createTRPCClient } from '@trpc/client';
 
 export function getBaseUrl() {
     if (typeof window !== 'undefined') {
@@ -73,7 +72,7 @@ export const trpc = createTRPCNext<AppRouter>({
     /**
      * @link https://trpc.io/docs/ssr
      */
-    ssr: false,
+    ssr: true,
 });
 
 /**
@@ -108,7 +107,6 @@ export const proxyClient = createTRPCClient<AppRouter>({
     ],
 })
 
-export const helpers = createServerSideHelpers({
+export const proxyHelpers = createServerSideHelpers({
     client: proxyClient
 });
-

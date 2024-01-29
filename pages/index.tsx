@@ -4,17 +4,16 @@ import Image from 'next/image'
 import Logo from 'images/logo.svg'
 import MobileLogo from 'images/mobile_logo.svg'
 import MiniCat from 'images/minicat.svg'
-import {Button, CircularProgress} from "@mui/material";
+import {Button} from "@mui/material";
 import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
 import {useSession} from "next-auth/react";
 import {Session} from "next-auth";
 import {MyAppUser} from "../lib/auth/nextAuthOptions";
-// {"pageProps":{"user":{"id":"dcfa2082-be71-4f0a-bd0c-3d517aae4adc","name":"PotatoHD"},"me":true},"__N_SSP":true}
-const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
-const SearchBar = dynamic(() => import("components/searchBar"), {ssr: false});
+import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
+const BuyMeACoffee = dynamic(() => import("components/buyMeCoffee"), {ssr: true});
+const SearchBar = dynamic(() => import("components/searchBar"), {ssr: true});
 
 export function LogoText() {
     const isMobile = useIsMobile();
@@ -32,23 +31,9 @@ export function LogoText() {
     </div>;
 }
 
-function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
+function Home() {
 
-    const [state, setState] = React.useState({
-        warning: false
-    });
     const isMobile = useIsMobile();
-    const handleClickOpenWarning = () => {
-        setState({...state, warning: true});
-    };
-
-    const handleGotoProfile = () => {
-        router.push(`/users/${session?.user?.id}`);
-    }
-
-    const handleCloseWarning = () => {
-        setState({...state, warning: false});
-    };
     // const session = useSession()
     const [input, setInput] = React.useState('');
     // console.log(session);
@@ -61,25 +46,23 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
     }, []);
     const router = useRouter();
 
-    const {data: session, status} = useSession() as any as {
+    const handleGotoSearch = async () => {
+        await router?.push('/search')
+    }
+
+    const {status} = useSession() as any as {
         data: Session & { user: MyAppUser },
         status: "authenticated" | "loading" | "unauthenticated"
     }
-    useEffect(() => {
-        changeNeedsAuth(false);
-        // window.onpopstate = () => changeNeedsAuth(true);
-    }, [changeNeedsAuth]);
 
-    const isAuthenticated = status === "authenticated";
     const isLoading = status === "loading";
-
+    const updateQueryParams = updateQueryParamsFactory(router)
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             // Redirect to search page with query (next.js)
-            const href = `/search?q=${input}`;
-            await router.push(href)
+            await updateQueryParams({q: input}, '/search')
         }
-        // console.log(e)
+        console.log(e)
     }
 
     return (
@@ -91,7 +74,6 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                 </h1> :
                 <>
                     <div className="grid-cols-12 grid pb-12 h-auto md:pl-6 2xl:ml-0">
-                        <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
 
                         <div
                             className="flex col-start-1 md:pl-0 md:pr-0 md:col-start-1 col-end-13 content-between justify-center md:gap-4 flex-wrap md:px-5 mt-12 mb-2">
@@ -119,12 +101,8 @@ function Home({changeNeedsAuth}: { changeNeedsAuth: (a: boolean) => void }) {
                          w-[80%] normal-case"
                                         variant="contained"
                                         disabled={isLoading}
-                                        onClick={!isAuthenticated ? handleClickOpenWarning : handleGotoProfile}>
-                                    {!isLoading ? (!isAuthenticated ? 'Войти на Daily MEPhi' : 'Профиль') :
-                                        <CircularProgress color="inherit"
-                                                          thickness={3}
-                                                          size={30}
-                                                          className="my-auto"/>}
+                                        onClick={handleGotoSearch}>
+                                    Поиск
                                 </Button> : null}
 
                             <div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>

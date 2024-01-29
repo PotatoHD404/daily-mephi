@@ -13,7 +13,7 @@ type Story = StoryObj<typeof TabsBox>;
 
 export const Primary: Story = {
     args: {
-        tabs: [
+        tabNames: [
             'Tab 1',
             'Tab 2',
             'Tab 3',

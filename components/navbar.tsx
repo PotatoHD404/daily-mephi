@@ -14,18 +14,18 @@ import style from "styles/navbar.module.css";
 import dynamic from "next/dynamic";
 
 
-import {Box, Button, Divider, IconButton} from '@mui/material';
+import {Box, Button, CircularProgress, Divider, IconButton} from '@mui/material';
 
 import useIsMobile from "lib/react/isMobileContext";
 import {Session} from "next-auth";
 import {MyAppUser} from "lib/auth/nextAuthOptions";
 
-const List = dynamic(() => import("@mui/material/List"), {ssr: false});
-const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: false});
-const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: false});
-const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: false});
-const Minicat = dynamic(() => import("components/minicat"), {ssr: false});
-const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: false});
+const List = dynamic(() => import("@mui/material/List"), {ssr: true});
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"), {ssr: true});
+const SwappableDrawer = dynamic(() => import("@mui/material/SwipeableDrawer"), {ssr: true});
+const Minicat = dynamic(() => import("components/minicat"), {ssr: true});
+const RegisterDialog = dynamic(() => import("./registerDialog"), {ssr: true});
+const WarningDialog = dynamic(() => import("components/warningDialog"), {ssr: true});
 
 
 interface DefaultNavbarParams {
@@ -37,7 +37,7 @@ interface DefaultNavbarParams {
 export function DefaultNavbar(props: DefaultNavbarParams) {
     const isMobile = useIsMobile();
     return (
-        <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl flex
+        <nav className="grid-cols-12 grid text-[1.65rem] md:h-[5.5rem] w-full content-center mx-auto rounded-b-lg md:rounded-b-2xl
                          justify-between align-middle bg-white bg-opacity-[36%] md:px-8 max-w-[1280px]">
             {!isMobile ?
                 <div className="flex col-start-1 col-end-13 justify-between">
@@ -50,15 +50,15 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                     </Link>
 
 
-                    <Link href="/about"  className="underlining my-auto">
+                    <Link href="/about" className="underlining my-auto">
                         <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/materials"  className="underlining my-auto">
+                    <Link href="/search?type=materials" className="underlining my-auto">
                         <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/tutors"  className="underlining my-auto">
+                    <Link href="/search?type=tutors" className="underlining my-auto">
                         <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
@@ -114,42 +114,34 @@ function AuthSection(props: DefaultNavbarParams) {
         return (
             !isMobile ?
                 <div
-                    className={`${style.authText} underlining my-auto`}>
+                    className={`${style.authText} underlining my-auto w-fit`}>
                     <h3>Загрузка...</h3>
                 </div> : null
         )
-    } else if (status === "unauthenticated" || !session) {
+    } else if (status === "unauthenticated") {
         return (
             !isMobile ?
                 <button onClick={props.handleClickOpenWarning}
-                        className={`${style.authText} underlining my-auto`}>
+                        className={`${style.authText} underlining my-auto w-fit`}>
                     <h3>Войти</h3>
                 </button> : null
         )
     } else {
-        return <>
-            <RegisterDialog
-                handleClose={() => setOpen(false)}
-                opened={open}/>
+        return (
+            <>
+                <RegisterDialog
+                    handleClose={() => setOpen(false)}
+                    opened={open}/>
 
-            {!isMobile ?
-                <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto`}>
+                {!isMobile ?
+                    <Link href={`/users/${session?.user?.id}`} className={`${style.authText} underlining my-auto w-fit`}>
 
-                    <h3>{session.user?.name || "Профиль"}</h3>
+                        <h3>{session.user?.name || "Профиль"}</h3>
 
-                </Link> : null}
-        </>;
+                    </Link> : null}
+            </>);
     }
 }
-
-// function CustomButton(props: { children: React.ReactNode, onClick: () => void }) {
-//     // @ts-ignore
-//     return <Button className="rounded-full text-black font-[Montserrat] font-bold text-center
-//                                               w-[1px] normal-case h-8"
-//                    onClick={props.onClick()}>
-//         {props.children}
-//     </Button>;
-// }
 
 function MobileNavbar(props: { onClick: () => void, home?: boolean }) {
     return (
@@ -193,11 +185,11 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                             <Link href="/about">
                                 <h3 className="underlining">О нас</h3>
                             </Link>
-                            <Link href="/materials">
+                            <Link href="/search?type=materials">
                                 <h3 className="underlining">Материалы</h3>
                             </Link>
 
-                            <Link href="/tutors">
+                            <Link href="/search?type=tutors">
                                 <h3 className="underlining">Преподаватели</h3>
                             </Link>
                         </div>
@@ -234,7 +226,17 @@ function ItemsList(props: {
     handleClickOpenWarning: () => void
 }) {
     const router = useRouter();
-    const home: boolean = router.pathname === '/';
+    const {data: session, status} = useSession() as any as {
+        data: Session & { user: MyAppUser },
+        status: "authenticated" | "loading" | "unauthenticated"
+    }
+
+    const isAuthenticated = status === "authenticated";
+    const isLoading = status === "loading";
+    const handleGotoProfile = () => {
+        router.push(`/users/${session?.user?.id}`);
+    }
+
     return <Box
         sx={{width: 300}}
         role="presentation"
@@ -244,8 +246,8 @@ function ItemsList(props: {
         <List>
             {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
-                {icon: MaterialsIcon, text: "Материалы", link: "/materials", alt: "materials"},
-                {icon: TutorsIcon, text: "Преподаватели", link: "/tutors", alt: "tutors"},
+                {icon: MaterialsIcon, text: "Материалы", link: "/search?type=materials", alt: "materials"},
+                {icon: TutorsIcon, text: "Преподаватели", link: "/search?type=tutors", alt: "tutors"},
             ].map((item, index) => (
                 <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
                     <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
@@ -254,26 +256,32 @@ function ItemsList(props: {
             }
         </List>
         <Divider/>
-        {!home ?
-            <List>
-                {[
-                    {icon: UsersIcon, text: "Профиль", alt: "users"},
-                ].map((item, index) => (
-                    <ListItemButton key={index} onClick={props.handleClickOpenWarning}>
-                        <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
-                        <div>{item.text}</div>
-                    </ListItemButton>))
-                }
-            </List> : null}
+        <List>
+            {[
+                {
+                    icon: UsersIcon, text: (
+                        !isLoading ? (!isAuthenticated ? 'Войти' : 'Профиль') :
+                            <CircularProgress color="inherit"
+                                              thickness={3}
+                                              size={30}
+                                              className="my-auto"/>
+                    ), alt: "users"
+                },
+            ].map((item, index) => (
+                <ListItemButton key={index}
+                                onClick={!isAuthenticated ? props.handleClickOpenWarning : handleGotoProfile}>
+                    <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>
+                    <div>{item.text}</div>
+                </ListItemButton>))
+            }
+        </List>
     </Box>;
 }
 
 
 function Navbar(props: { needsAuth: boolean }) {
-    const [state, setState] = React.useState({
-        opened: false,
-        warning: false
-    });
+    const [warningState, setWarningState] = React.useState(false);
+    const [openedState, setOpenedState] = React.useState(false);
     const router = useRouter();
     const isMobile = useIsMobile();
     const {data: session, status} = useSession() as any as {
@@ -284,60 +292,55 @@ function Navbar(props: { needsAuth: boolean }) {
     const loading = status == "loading";
     const home: boolean = router.pathname === '/' || router.pathname === '/404' || router.pathname === '/500';
 
-    const handleClickOpenWarning = () => {
-        setState(s => ({...s, warning: true}));
-    };
-    const callback = useCallback(handleClickOpenWarning, []);
-
+    const handleClickOpenWarning = useCallback(() => {
+        setWarningState(true)
+    }, [])
     useEffect(() => {
         // console.log(props.needsAuth, authenticated)
         if (props.needsAuth && !authenticated && !loading) {
-            callback();
-        } else {
-            setState(s => ({...s, warning: false}));
+            handleClickOpenWarning();
         }
-    }, [status, props.needsAuth, router.pathname, callback]);
+    }, [status, props.needsAuth, router.pathname, authenticated, loading, handleClickOpenWarning]);
 
     const handleCloseWarning = async () => {
-        if (props.needsAuth) {
+        if (props.needsAuth && router.pathname && router.pathname !== "/signin") {
             await router.push("/");
         }
-        setState({...state, warning: false});
+        setWarningState(false)
     };
-    const toggleDrawer =
-        (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event &&
-                event.type === 'keydown' &&
-                ((event as React.KeyboardEvent).key === 'Tab' ||
-                    (event as React.KeyboardEvent).key === 'Shift')
-            ) {
-                return;
-            }
-
-            setState({...state, opened: !state.opened});
-        };
+    const toggleDrawer = (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+            event &&
+            event.type === 'keydown' &&
+            (event as React.KeyboardEvent).key === 'Tab') {
+            return;
+        }
+        setOpenedState(!openedState)
+    }
 
 
     return (
-        <header className="font-medium justify-center items-center grid grid-cols-1">
-            <Nav {...{
-                home, handleClickOpenWarning: callback, toggleDrawer: toggleDrawer as any
-            }}/>
-            <WarningDialog handleClose={handleCloseWarning} opened={state.warning}/>
-            {isMobile ?
-                <SwappableDrawer
-                    anchor='left'
-                    open={state.opened}
-                    onClose={toggleDrawer}
-                    onOpen={toggleDrawer}
-                    disableBackdropTransition={false}
-                    // disableDiscovery={true}
-                >
-                    <ItemsList onClick={toggleDrawer} {...{handleClickOpenWarning: callback}}/>
-                </SwappableDrawer> : null}
+        <>
+            <header className="font-medium justify-center items-center grid grid-cols-1">
+                <Nav {...{
+                    home, handleClickOpenWarning, toggleDrawer: toggleDrawer as any
+                }}/>
 
-        </header>
+                {isMobile ?
+                    <SwappableDrawer
+                        anchor='left'
+                        open={openedState}
+                        onClose={toggleDrawer}
+                        onOpen={toggleDrawer}
+                        disableBackdropTransition={false}
+                        // disableDiscovery={true}
+                    >
+                        <ItemsList onClick={toggleDrawer} handleClickOpenWarning={handleClickOpenWarning}/>
+                    </SwappableDrawer> : null}
+
+            </header>
+            <WarningDialog handleClose={handleCloseWarning} opened={warningState}/>
+        </>
     );
 }
 

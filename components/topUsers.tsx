@@ -116,11 +116,10 @@ export default function TopUsers(props: { withLabel?: boolean, place?: number, i
     // }
 
 
-    const topInput = {place: props.place, take: props.take}
-
-    const {data, isFetching, refetch, isError, error} = trpc.utils.top.useQuery(topInput, {
-        enabled: !props.isLoading
-    });
+    const {data, isFetching, refetch, isError, error} =
+        trpc.utils.top.useQuery({place: props.place, take: props.take}, {
+            enabled: !props.isLoading
+        });
 
     const isLoading = isFetching || (props.isLoading ?? false);
     // const isLoading = true;

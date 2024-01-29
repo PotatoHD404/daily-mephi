@@ -23,8 +23,8 @@ function CustomDrawer(props: { open: boolean, onClose: () => void }) {
         <div className="h-[100vh] relative">
             <CloseButton onClick={props.onClose}/>
             <div className="mt-12">
-                <SearchFilter defaultExpanded name="Факультеты" options={["ИИКС", "ФБИУКС"]}/>
-                <SearchFilter defaultExpanded name="Предметы" options={["предмет", "предмет 2"]}/>
+                <SearchFilter defaultExpanded name="Факультеты" options={["ИИКС", "ФБИУКС"]} selectChanged={() => {}} selectedValues={[]}/>
+                <SearchFilter defaultExpanded name="Предметы" options={["предмет", "предмет 2"]} selectChanged={() => {}} selectedValues={[]}/>
                 <SliderFilter name="Оценка" min={0} max={5}/>
             </div>
 

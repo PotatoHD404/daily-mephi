@@ -4,7 +4,7 @@ import {ButtonBase} from '@mui/material';
 
 export default function RippledButton(props: {
     onClick: () => Promise<any> | any,
-    children: any,
+    children?: any,
     disabled?: boolean,
     className?: string,
     style?: React.CSSProperties

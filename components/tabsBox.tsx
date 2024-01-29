@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Box, Tab, Tabs} from '@mui/material';
 
 function a11yProps(index: number) {
@@ -9,29 +9,55 @@ function a11yProps(index: number) {
 }
 
 
-export default function TabsBox<N extends number>(props: {
-    value: number, onChange: (event: React.SyntheticEvent, newValue: number) => void,
-    tabs: string[],
+export default function TabsBox(props: {
+    value: number,
+    onChange: (event: React.SyntheticEvent, newValue: number) => void,
+    tabNames: string[],
     color?: string,
-    size?: string
+    size?: string,
+    children?: (React.JSX.Element)[]
 }) {
-    return <Box sx={{borderBottom: 1, borderColor: "divider", marginBottom: "1rem"}}>
-        <Tabs value={props.value} onChange={props.onChange} variant="fullWidth"
-              TabIndicatorProps={{style: {background: props.color || "white"},}}>
-            {props.tabs.map((value, index) =>
-                <Tab sx={{minWidth: "fit-content", maxWidth: "fit-content", padding: "0.5rem", margin: "auto"}}
-                     key={index}
-                     label={
-                         <div className="flex h-8">
-                             <div
-                                 className={`text-black md:text-${props.size || "2xl"}
+    // console.log(props.value)
+    const tabContents = useMemo(() => props.children, [props.children]);
+    return (
+        <Box sx={{borderBottom: 1, borderColor: "divider"}}>
+            <Tabs value={props.value} onChange={props.onChange} variant="fullWidth"
+                  TabIndicatorProps={{style: {background: props.color || "white"},}}>
+                {props.tabNames.map((value, index) =>
+                    <Tab sx={{
+                        minWidth: "fit-content",
+                        maxWidth: "fit-content",
+                        padding: "0.5rem",
+                        margin: "auto"
+                    }}
+                         key={index}
+                         label={
+                             <div className="flex h-8">
+                                 <div
+                                     className={`text-black md:text-${props.size || "2xl"}
                                   text-xl font-[Montserrat] normal-case my-auto`}>
-                                 {value}
+                                     {value}
+                                 </div>
                              </div>
-                         </div>
-                     } {...a11yProps(index)}/>
-            )
-            }
-        </Tabs>
-    </Box>;
+                         } {...a11yProps(index)}/>
+                )
+                }
+            </Tabs>
+            <div className="mt-[1.1rem]">
+                {tabContents?.map((el, index) => {
+                    return (
+                        <div
+                            role="tabpanel"
+                            id={`simple-tabpanel-${index}`}
+                            aria-labelledby={`simple-tab-${index}`}
+                            key={index}
+                        >
+                            {props.value === index && el}
+                        </div>
+                    )
+                })}
+            </div>
+
+        </Box>
+    )
 }

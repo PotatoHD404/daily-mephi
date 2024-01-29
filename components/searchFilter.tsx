@@ -34,13 +34,23 @@ function CustomCheckbox() {
 }
 
 
-export default function SearchFilter(props: { name: string, options: string[], defaultExpanded?: boolean }) {
+export default function SearchFilter(props: {
+    name: string,
+    options: string[],
+    defaultExpanded?: boolean,
+    selectedValues: string[],
+    selectChanged: (_: string[]) => any
+}) {
     // opened state
     const [opened, setOpened] = React.useState(false);
+    const [text, setText] = React.useState('');
+
     return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
         <FormGroup className="md:max-h-[20rem]">
             <div className="px-3">
                 <TextField label={<div>Поиск</div>}
+                           value={text}
+                           onChange={(event) => setText(event.target.value)}
                            variant="outlined" className="w-full mt-2 mb-2"
                            InputProps={{
                                endAdornment: (

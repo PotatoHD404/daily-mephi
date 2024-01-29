@@ -7,29 +7,31 @@ import Material from "components/material";
 import Tutor from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../components/userHeader";
+import {trpc} from "../server/utils/trpc";
+import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 
-const Filters = dynamic(() => import("components/filters"), {ssr: false});
-const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: false});
+const Filters = dynamic(() => import("components/filters"), {ssr: true});
+const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
 
 function Search() {
     const isMobile = useIsMobile();
-    const [value, setValue] = React.useState(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
     const [input, setInput] = React.useState('');
 
     const router = useRouter();
+
+    const updateQueryParams = updateQueryParamsFactory(router)
+
+    const {q: query} = router.query;
+
     useEffect(() => {
-        setInput(router.query.q as string || '');
-    }, [router.query.q]);
+        setInput(query as string || '');
+    }, [query]);
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
-            const href = `/search?query=${input}`;
-            await router.push(href)
+            updateQueryParams({q: input})
         }
         // console.log(e)
     }

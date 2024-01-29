@@ -397,7 +397,7 @@ export default function PostDialog(props: DialogProps) {
                                     className="xs:mt-0 mt-7 xs:absolute xs:top-10 md:left-[6rem] md:w-[450px] w-full md:mr-0 xs:pr-[100px]"/>
                 <div className="md:mt-24 xs:mt-12">
                     <TabsBox color={"black"} value={props.value} onChange={handleChange}
-                             tabs={['Отзыв', 'Цитата', 'Материал']}
+                             tabNames={['Отзыв', 'Цитата', 'Материал']}
                              size="xl"/>
                     {props.value == 0 ? <Review postForm={postForm}/> : null}
                     {props.value == 1 ? <Quote postForm={postForm}/> : null}

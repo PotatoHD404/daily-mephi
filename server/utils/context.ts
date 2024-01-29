@@ -5,7 +5,7 @@ import {notion} from "lib/database/notion";
 
 // create context based of incoming request
 // set as optional here, so it can also be re-used for `getStaticProps()`
-export const createContext = async (
+export const createContext = (
     opts?: trpcNext.CreateNextContextOptions,
 ) => {
     // get session from request
