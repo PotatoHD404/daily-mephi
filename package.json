@@ -67,7 +67,7 @@
     "@storybook/addon-links": "^7.6.10",
     "@storybook/blocks": "^7.6.10",
     "@storybook/jest": "^0.2.3",
-    "@storybook/nextjs": "^7.6.7",
+    "@storybook/nextjs": "^7.6.10",
     "@storybook/react": "^7.6.7",
     "@storybook/testing-library": "^0.2.2",
     "@types/cookie": "^0.6.0",
