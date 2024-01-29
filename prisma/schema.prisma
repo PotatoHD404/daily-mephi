@@ -513,3 +513,9 @@ model Internal {
 //
 // ALTER TABLE comments
 // DROP CONSTRAINT comments_review_id_fkey;
+
+// CREATE INDEX ON "faculties" USING GIN ("name" gin_trgm_ops);
+//
+// CREATE INDEX ON "disciplines" USING GIN ("name" gin_trgm_ops);
+
+// 20240128225732_init

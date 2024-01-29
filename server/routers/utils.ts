@@ -170,7 +170,12 @@ type TutorDTO =
     faculties: { connectOrCreate: { create: { name: string }, where: { name: string } }[] },
     disciplines: { connectOrCreate: { create: { name: string }, where: { name: string } }[] },
     images: { connect: { id: string }[] },
-    document: { create: { text: string, type: string } }
+    document: { create: { text: string, type: string } },
+    score: number,
+    reviewsCount: number,
+    materialsCount: number,
+    quotesCount: number,
+    ratesCount: number,
 };
 type FileDTO = {
     status: string,
@@ -396,7 +401,7 @@ export const utilsRouter = t.router({
         const disciplines = new Set<string>();
         const faculties = new Set<string>();
         const addedMaterials = new Set<string>();
-        const semestersMapping: { [id: string]: string } = {
+        const semestersMapping: Record<string, string> = {
             "Б1": "01",
             "Б2": "02",
             "Б3": "03",
@@ -410,6 +415,11 @@ export const utilsRouter = t.router({
             "М3": "11",
             "М4": "12"
         };
+        const reversedSemestersMapping: Record<string, string> = {};
+
+        Object.entries(semestersMapping).forEach(([key, value]) => {
+            reversedSemestersMapping[value] = key;
+        });
         const tutorFaculties: Record<string, string[]> = {}
         const tutorDisciplines: Record<string, string[]> = {}
         for (const [cafedra, tutorsData] of Object.entries(data.cafedras)) {
@@ -499,6 +509,18 @@ export const utilsRouter = t.router({
             if (fatherName) {
                 shortName += (shortName ? ` ${fatherName.charAt(0)}.` : `${fatherName.charAt(0)}.`);
             }
+            const legacyRating = {
+                create: {
+                    personality: Number(jsonTutor.personality.value),
+                    personalityCount: Number(jsonTutor.personality.count),
+                    exams: Number(jsonTutor.tests.value),
+                    examsCount: Number(jsonTutor.tests.count),
+                    quality: Number(jsonTutor.quality.value),
+                    qualityCount: Number(jsonTutor.quality.count),
+                    avgRating: (Number(jsonTutor.personality.value) + Number(jsonTutor.tests.value) + Number(jsonTutor.quality.value)) / 3,
+                    ratingCount: Math.max(Number(jsonTutor.personality.count), Number(jsonTutor.tests.count), Number(jsonTutor.quality.count)),
+                }
+            }
             const tutor: TutorDTO = {
                 firstName: jsonTutor.name,
                 lastName: jsonTutor.lastName,
@@ -508,23 +530,17 @@ export const utilsRouter = t.router({
                 updatedAt: new Date(),
                 nickname: jsonTutor.nickName,
                 url: jsonTutor.url,
-                legacyRating: {
-                    create: {
-                        personality: Number(jsonTutor.personality.value),
-                        personalityCount: Number(jsonTutor.personality.count),
-                        exams: Number(jsonTutor.tests.value),
-                        examsCount: Number(jsonTutor.tests.count),
-                        quality: Number(jsonTutor.quality.value),
-                        qualityCount: Number(jsonTutor.quality.count),
-                        avgRating: (Number(jsonTutor.personality.value) + Number(jsonTutor.tests.value) + Number(jsonTutor.quality.value)) / 3,
-                        ratingCount: Math.max(Number(jsonTutor.personality.count), Number(jsonTutor.tests.count), Number(jsonTutor.quality.count)),
-                    }
-                },
+                legacyRating,
+                score: (Math.abs(legacyRating.create.avgRating) + 0.01) * (jsonTutor.reviews.length + jsonTutor.materials.length + jsonTutor.quotes.length + 0.01) / 3,
                 quotes: {create: []},
                 materials: {create: []},
                 reviews: {create: []},
                 faculties: {connectOrCreate: []},
                 disciplines: {connectOrCreate: []},
+                reviewsCount: jsonTutor.reviews.length,
+                materialsCount: jsonTutor.materials.length,
+                quotesCount: jsonTutor.quotes.length,
+                ratesCount: 0,
                 images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []},
                 document: {
                     create: {
@@ -542,12 +558,26 @@ export const utilsRouter = t.router({
 
             for (const quote of jsonTutor.quotes) {
                 tutor.quotes.create.push({
+                    // @ts-ignore
+                    document: {
+                        create: {
+                            text: quote.Текст,
+                            type: 'quote'
+                        }
+                    },
+                    score: +(quote.Оценка ?? 0),
                     text: quote.Текст,
                     createdAt: strToDateTime(quote["Ник и дата"].split(' ').slice(-2).join(' '))
                 })
             }
             if (tutorFaculties[id]) {
                 tutor.faculties.connectOrCreate = tutorFaculties[id].map(el => {
+                    return {
+                        create: {name: el},
+                        where: {name: el}
+                    }
+                })
+                tutor.disciplines.connectOrCreate = tutorDisciplines[id].map(el => {
                     return {
                         create: {name: el},
                         where: {name: el}
@@ -581,7 +611,7 @@ export const utilsRouter = t.router({
                         connectOrCreate: jsonMaterial.Факультет?.split("; ").map(el => {
                             return {
                                 where: {name: el.trim()},
-                                name: el.trim()
+                                create: {name: el.trim()}
                             }
                         }) || []
                     },
@@ -595,7 +625,7 @@ export const utilsRouter = t.router({
                     semesters: {
                         connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
                             jsonMaterial.Семестр.split("; ").map(el => {
-                                return {name: el, where: {name: el}}
+                                return {name: reversedSemestersMapping[el]}
                             }) : []
                     },
                     files: {connect: files}
@@ -626,9 +656,9 @@ export const utilsRouter = t.router({
                     tutor.disciplines.connectOrCreate.push({create: {name: el}, where: {name: el}})
                 }
             } else {
-                for (const el of Object.values(tutorData.directions)) {
-                    tutor.faculties.connectOrCreate.push({create: {name: el}, where: {name: el}})
-                }
+                // for (const el of Object.values(tutorData.directions)) {
+                //     tutor.faculties.connectOrCreate.push({create: {name: el}, where: {name: el}})
+                // }
             }
             tutors.push(tutor)
         }

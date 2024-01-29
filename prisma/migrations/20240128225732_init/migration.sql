@@ -433,13 +433,13 @@ CREATE INDEX "comments_path_idx" ON "comments" USING GIN ("path");
 CREATE UNIQUE INDEX "disciplines_name_key" ON "disciplines"("name");
 
 -- CreateIndex
-CREATE INDEX "disciplines_name_idx" ON "disciplines"("name");
+CREATE INDEX "disciplines_name_id_idx" ON "disciplines"("name", "id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "faculties_name_key" ON "faculties"("name");
 
 -- CreateIndex
-CREATE INDEX "faculties_name_idx" ON "faculties"("name");
+CREATE INDEX "faculties_name_id_idx" ON "faculties"("name", "id");
 
 -- CreateIndex
 CREATE INDEX "files_user_id_idx" ON "files"("user_id");
@@ -472,7 +472,7 @@ CREATE INDEX "materials_tutor_id_idx" ON "materials"("tutor_id");
 CREATE UNIQUE INDEX "semesters_name_key" ON "semesters"("name");
 
 -- CreateIndex
-CREATE INDEX "semesters_name_idx" ON "semesters"("name");
+CREATE INDEX "semesters_name_id_idx" ON "semesters"("name", "id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "news_document_id_key" ON "news"("document_id");
@@ -700,15 +700,6 @@ ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "comments"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_material_id_fkey" FOREIGN KEY ("record_id") REFERENCES "materials"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_news_id_fkey" FOREIGN KEY ("record_id") REFERENCES "news"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_review_id_fkey" FOREIGN KEY ("record_id") REFERENCES "reviews"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "files" ADD CONSTRAINT "files_tutor_id_fkey" FOREIGN KEY ("tutor_id") REFERENCES "tutors"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -816,12 +807,6 @@ CREATE INDEX ON "documents" USING GIN ("type", "words");
 
 CREATE INDEX ON "documents" USING GIN ("text" gin_trgm_ops);
 
-ALTER TABLE public.comments
-DROP CONSTRAINT comments_news_id_fkey;
+CREATE INDEX ON "faculties" USING GIN ("name" gin_trgm_ops);
 
-ALTER TABLE comments
-DROP CONSTRAINT comments_material_id_fkey;
-
-ALTER TABLE comments
-DROP CONSTRAINT comments_review_id_fkey;
-
+CREATE INDEX ON "disciplines" USING GIN ("name" gin_trgm_ops);
