@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
-import {File, Material} from '@prisma/client';
+import {File, Material, PrismaClient} from '@prisma/client';
 import json from "parsing/combined/data.json"
 import tutor_imgs from "parsing/tutor_imgs.json"
 import mephist_imgs from "parsing/mephist_imgs.json"
@@ -167,9 +167,10 @@ type TutorDTO =
     quotes: { create: QuoteDTO[] },
     materials: { create: any[] },
     reviews: { create: ReviewDTO[] },
-    faculties: { connect: { id: string }[] },
-    disciplines: { connect: { id: string }[] },
-    images: { connect: { id: string }[] }
+    faculties: { connectOrCreate: { create: {name: string}, where: {name: string} }[] },
+    disciplines: { connectOrCreate: { create: {name: string}, where: {name: string} }[] },
+    images: { connect: { id: string }[] },
+    document: { create: { text: string, type: string } }
 };
 type FileDTO = {
     status: string,
@@ -357,7 +358,8 @@ export const utilsRouter = t.router({
                 path: '/utils/seed'
             }
         }
-    ).query(async ({ctx: {prisma}}) => {
+    ).query(async () => {
+        const prisma = new PrismaClient();
         if (process.env.LOCAL !== "true") {
             throw new TRPCError({
                 code: "FORBIDDEN",
@@ -408,75 +410,77 @@ export const utilsRouter = t.router({
             "М3": "11",
             "М4": "12"
         };
-
-        for (const {tutors} of Object.values(data.cafedras)) {
-            for (const id of Object.keys(tutors)) {
+        const tutorFaculties: Record<string, string[]> = {}
+        const tutorDisciplines: Record<string, string[]> = {}
+        for (const [cafedra, tutorsData] of Object.entries(data.cafedras)) {
+            faculties.add(cafedra)
+            for (const [id, directions] of Object.entries(tutorsData.tutors)) {
+                if (!tutorFaculties[id]) {
+                    tutorFaculties[id] = []
+                }
+                tutorFaculties[id].push(cafedra)
+                if (!tutorDisciplines[id]) {
+                    tutorDisciplines[id] = []
+                }
                 newTutors.add(id)
-            }
-            for (const directions of Object.values(tutors)) {
-
                 for (const direction of Object.keys(directions)) {
                     disciplines.add(direction)
+                    tutorDisciplines[id].push(direction);
                 }
             }
         }
-
         for (const material of Object.values(data.materials)) {
             const jsonMaterial = material as unknown as JsonMaterial;
             jsonMaterial.Факультет?.split("; ").forEach(faculty => faculties.add(faculty.trim()));
-            if (jsonMaterial.Предмет) {
-                disciplines.add(jsonMaterial.Предмет)
-            }
         }
+        // console.log(faculties)
 
         // await prisma.account.deleteMany({})
         // await prisma.user.deleteMany({})
-        // await prisma.file.deleteMany({})
-        // await prisma.discipline.deleteMany({})
-        // await prisma.faculty.deleteMany({})
-        // await prisma.semester.deleteMany({})
-        // await prisma.tutor.deleteMany({})
-        // await prisma.material.deleteMany({})
-        // await prisma.quote.deleteMany({})
+        await prisma.file.deleteMany({})
+        await prisma.discipline.deleteMany({})
+        await prisma.faculty.deleteMany({})
+        await prisma.semester.deleteMany({})
+        await prisma.tutor.deleteMany({})
+        await prisma.material.deleteMany({})
+        await prisma.quote.deleteMany({})
 
-        await Promise.all([
-            prisma.file.createMany({
-                data: all_files,
-                skipDuplicates: true
-            }),
-            prisma.discipline.createMany({
-                data: Array.from(disciplines).map(el => ({name: el})),
-                skipDuplicates: true
-            }),
-            prisma.faculty.createMany({
-                data: Array.from(faculties).map(el => ({name: el})),
-                skipDuplicates: true
-            }),
-            prisma.semester.createMany({
-                data: Object.keys(semestersMapping).map(el => ({name: el})),
-                skipDuplicates: true
-            })
-        ]);
+        await prisma.file.createMany({
+            data: all_files,
+            skipDuplicates: true
+        })
+        // await prisma.discipline.createMany({
+        //     data: Array.from(disciplines).map(el => ({name: el})),
+        //     skipDuplicates: true
+        // })
+        // await prisma.faculty.createMany({
+        //     data: Array.from(faculties).map(el => ({name: el})),
+        //     skipDuplicates: true
+        // })
+        await prisma.semester.createMany({
+            data: Object.keys(semestersMapping).map(el => ({name: el})),
+            skipDuplicates: true
+        })
 
 // Fetch the created models concurrently
-        const [facultyModels, disciplineModels, semesterModels] = await Promise.all([
-            prisma.faculty.findMany(),
-            prisma.discipline.findMany(),
-            prisma.semester.findMany()
-        ]).then(([faculties, disciplines, semesters]) => [
-            faculties.reduce((obj: Record<string, string>, el) => {
-                obj[el.name] = el.id;
-                return obj;
-            }, {}),
-            disciplines.reduce((obj: Record<string, string>, el) => {
-                obj[el.name] = el.id;
-                return obj;
-            }, {}),
-            semesters.reduce((obj: Record<string, string>, el) => {
-                obj[semestersMapping[el.name]] = el.id;
-                return obj;
-            }, {})
-        ]);
+//         const [facultyModels, disciplineModels, semesterModels] = await Promise.all([
+//             prisma.faculty.findMany(),
+//             prisma.discipline.findMany(),
+//             prisma.semester.findMany()
+//         ]).then(([faculties, disciplines, semesters]) => [
+//             faculties.reduce((obj: Record<string, string>, el) => {
+//                 obj[el.name] = el.id;
+//                 return obj;
+//             }, {}),
+//             disciplines.reduce((obj: Record<string, string>, el) => {
+//                 obj[el.name] = el.id;
+//                 return obj;
+//             }, {}),
+//             semesters.reduce((obj: Record<string, string>, el) => {
+//                 obj[semestersMapping[el.name]] = el.id;
+//                 return obj;
+//             }, {})
+//         ]);
 
         for (let [id, tutorData] of Object.entries(data.tutors)) {
             const jsonTutor = tutorData as unknown as JsonTutor;
@@ -519,9 +523,15 @@ export const utilsRouter = t.router({
                 quotes: {create: []},
                 materials: {create: []},
                 reviews: {create: []},
-                faculties: {connect: []},
-                disciplines: {connect: []},
-                images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []}
+                faculties: {connectOrCreate: []},
+                disciplines: {connectOrCreate: []},
+                images: tutor_images["fileMap"][`${id}.jpg`] ? {connect: [{id: tutor_images["fileMap"][`${id}.jpg`]}]} : {connect: []},
+                document: {
+                    create: {
+                        text: [jsonTutor.name, jsonTutor.lastName, jsonTutor.fatherName].filter(el => !!el).join(' '),
+                        type: 'tutor'
+                    }
+                },
             }
 
             for (const [key, value] of Object.entries(mephist_images.fileMap)) {
@@ -536,6 +546,14 @@ export const utilsRouter = t.router({
                     createdAt: strToDateTime(quote["Ник и дата"].split(' ').slice(-2).join(' '))
                 })
             }
+            if (tutorFaculties[id]) {
+                tutor.faculties.connectOrCreate = tutorFaculties[id].map(el => {
+                    return {
+                        create: {name: el},
+                        where: {name: el}
+                    }
+                })
+            }
             for (const materialId of jsonTutor.materials) {
                 const jsonMaterial = data.materials[materialId as any] as unknown as JsonMaterial;
                 const files: { id: string }[] = [];
@@ -544,22 +562,35 @@ export const utilsRouter = t.router({
                         files.push({id: value})
                     }
                 }
+                if (jsonMaterial.Предмет !== null) {
+                    tutor.faculties.connectOrCreate = [{
+                        create: {name: jsonMaterial.Предмет},
+                        where: {name: jsonMaterial.Предмет}
+                    }]
+                }
                 tutor.materials.create.push({
+                    document: {
+                        create: {
+                            text: [jsonMaterial.Описание, jsonMaterial.Название].filter(el => !!el).join(' '),
+                            type: 'material'
+                        }
+                    },
                     text: jsonMaterial.Описание,
                     title: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
                     faculties: {
-                        connect: jsonMaterial.Факультет?.split("; ").map(el => {
+                        connectOrCreate: jsonMaterial.Факультет?.split("; ").map(el => {
                             return {
-                                id: facultyModels[el.trim()]
+                                where: {name: el.trim()},
+                                name: el.trim()
                             }
                         }) || []
                     },
-                    disciplines: jsonMaterial.Предмет !== null ? {connect: {id: disciplineModels[jsonMaterial.Предмет]}} : undefined,
+                    disciplines: jsonMaterial.Предмет !== null ? {connectOrCreate: {name: jsonMaterial.Предмет, where: {name: jsonMaterial.Предмет}}} : undefined,
                     createdAt: new Date(jsonMaterial["Дата добавления"]),
                     semesters: {
                         connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
                             jsonMaterial.Семестр.split("; ").map(el => {
-                                return {id: semesterModels[el]}
+                                return {name: el, where: {name: el}}
                             }) : []
                     },
                     files: {connect: files}
@@ -587,60 +618,17 @@ export const utilsRouter = t.router({
             }
             if (!newTutors.has(id)) {
                 for (const el of Object.values(tutorData.directions)) {
-                    disciplines.add(el)
+                    tutor.disciplines.connectOrCreate.push({create: {name: el}, where: {name: el}})
                 }
             } else {
                 for (const el of Object.values(tutorData.directions)) {
-                    faculties.add(el)
+                    tutor.faculties.connectOrCreate.push({create: {name: el}, where: {name: el}})
                 }
             }
             tutors.push(tutor)
         }
-        for (const [id, value] of Object.entries(data.materials)) {
-            if (!addedMaterials.has(id)) {
-                const jsonMaterial = value as unknown as JsonMaterial;
-                const els = Object.entries(mephist_files["fileMap"]).filter(([key]) => key.startsWith(id + "-"))
-                await prisma.material.create({
-                        data: {
-                            // document: {
-                            //     connectOrCreate: {
-                            //         create: {
-                            //             create: {text: ''}
-                            //         }
-                            //     }
-                            // },
-                            files: {connect: els.length ? els.map(([_, value]) => ({id: value})) : undefined},
-                            text: jsonMaterial.Описание,
-                            title: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
-                            faculties: {
-                                connect: jsonMaterial.Факультет?.split("; ").map(el => {
-                                    return {
-                                        id: facultyModels[el.trim()]
-                                    }
-                                }) || []
-                            },
-                            disciplines: jsonMaterial.Предмет !== null ? {
-                                connectOrCreate: {
-                                    where: {name: jsonMaterial.Предмет},
-                                    create: {name: jsonMaterial.Предмет}
-                                }
-                            } : undefined,
-                            createdAt: new Date(jsonMaterial["Дата добавления"]),
-                            semesters: {
-                                connect: jsonMaterial.Семестр && !jsonMaterial.Семестр.split("; ").includes("Аспирантура") ?
-                                    jsonMaterial.Семестр.split("; ").map(el => {
-                                        return {id: semesterModels[el]}
-                                    }) : []
-                            },
-                        }
-                    }
-                )
-            }
-        }
 
         for (const tutor of tutors) {
-            if (tutor.nickname === "ankosilov")
-                console.log(JSON.stringify(tutor));
 
             await prisma.tutor.create({
                 data: tutor,
