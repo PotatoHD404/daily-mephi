@@ -124,6 +124,7 @@ CREATE TABLE "files" (
     "tutor_id" UUID,
     "material_id" UUID,
     "tag" STRING,
+    "is_image" BOOL NOT NULL DEFAULT false,
     "size" INT4 NOT NULL DEFAULT 0,
 
     CONSTRAINT "files_pkey" PRIMARY KEY ("id")
@@ -292,9 +293,6 @@ CREATE TABLE "legacy_ratings" (
     "quality_count" INT4 NOT NULL,
     "tutor_id" UUID NOT NULL,
     "avg_rating" FLOAT8 NOT NULL,
-    "avg_quality" FLOAT8 NOT NULL,
-    "avg_personality" FLOAT8 NOT NULL,
-    "avg_exams" FLOAT8 NOT NULL,
     "rating_count" INT4 NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -435,13 +433,13 @@ CREATE INDEX "comments_path_idx" ON "comments" USING GIN ("path");
 CREATE UNIQUE INDEX "disciplines_name_key" ON "disciplines"("name");
 
 -- CreateIndex
-CREATE INDEX "disciplines_name_id_idx" ON "disciplines"("name", "id");
+CREATE INDEX "disciplines_name_idx" ON "disciplines"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "faculties_name_key" ON "faculties"("name");
 
 -- CreateIndex
-CREATE INDEX "faculties_name_id_idx" ON "faculties"("name", "id");
+CREATE INDEX "faculties_name_idx" ON "faculties"("name");
 
 -- CreateIndex
 CREATE INDEX "files_user_id_idx" ON "files"("user_id");
@@ -472,6 +470,9 @@ CREATE INDEX "materials_tutor_id_idx" ON "materials"("tutor_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "semesters_name_key" ON "semesters"("name");
+
+-- CreateIndex
+CREATE INDEX "semesters_name_idx" ON "semesters"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "news_document_id_key" ON "news"("document_id");
@@ -823,3 +824,4 @@ DROP CONSTRAINT comments_material_id_fkey;
 
 ALTER TABLE comments
 DROP CONSTRAINT comments_review_id_fkey;
+

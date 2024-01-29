@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {t} from 'server/utils';
 import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
-import {File} from '@prisma/client';
+import {File, Material} from '@prisma/client';
 import json from "parsing/combined/data.json"
 import tutor_imgs from "parsing/tutor_imgs.json"
 import mephist_imgs from "parsing/mephist_imgs.json"
@@ -151,15 +151,6 @@ interface Review {
     tutorId: string,
 }
 
-interface Material {
-    id: string,
-    text: string | null,
-    title: string,
-    userId: string,
-    tutorId: string,
-    createdAt: Date,
-}
-
 type LegacyRatingDTO = Omit<LegacyRating, "id" | "tutorId">;
 type QuoteDTO = Omit<Quote, "id" | "tutorId" | "userId">;
 type MaterialDTO =
@@ -170,32 +161,11 @@ type MaterialDTO =
     files: { connect: { id: string }[] }
 };
 type ReviewDTO = Omit<Review, "id" | "tutorId" | "userId">;
-type Semester =
-    "Б1"
-    | "Б2"
-    | "Б3"
-    | "Б4"
-    | "Б5"
-    | "Б6"
-    | "Б7"
-    | "Б8"
-    | "М1"
-    | "М2"
-    | "М3"
-    | "М4"
-    | "А1"
-    | "А2"
-    | "А3"
-    | "А4"
-    | "А5"
-    | "А6"
-    | "А7"
-    | "А8"
 type TutorDTO =
     Omit<Tutor, "id" | "updated"> & {
     legacyRating: { create: LegacyRatingDTO },
     quotes: { create: QuoteDTO[] },
-    materials: { create: MaterialDTO[] },
+    materials: { create: any[] },
     reviews: { create: ReviewDTO[] },
     faculties: { connect: { id: string }[] },
     disciplines: { connect: { id: string }[] },
@@ -402,7 +372,23 @@ export const utilsRouter = t.router({
         const tutor_images: FileDTO = tutor_imgs;
         const mephist_images: FileDTO = mephist_imgs;
         const mephist_files: FileDTO = mephist_fils;
-        const all_files: File[] = all_fils as unknown as File[];
+        const all_files: File[] = (all_fils as unknown[]).map((el: any) => {
+            let tag: string = 'unknown';
+            if (el.id in tutor_images.fileMap) {
+                tag = 'home-avatar'
+            } else if (el.id in mephist_images.fileMap) {
+                tag = 'mephist-avatar'
+            } else if (el.id in mephist_files.fileMap) {
+                tag = 'material'
+            } else if (el.url.startsWith('https://lh3.googleusercontent.com')) {
+                tag = 'avatar'
+            }
+            return {
+                ...el,
+                createdAt: new Date(el.createdAt),
+                tag
+            }
+        }) as File[];
 
         const newTutors = new Set<string>();
         const disciplines = new Set<string>();
@@ -443,15 +429,15 @@ export const utilsRouter = t.router({
             }
         }
 
-        await Promise.all([
-            prisma.discipline.deleteMany(),
-            prisma.file.deleteMany(),
-            prisma.faculty.deleteMany(),
-            prisma.semester.deleteMany(),
-            prisma.material.deleteMany(),
-            prisma.tutor.deleteMany(),
-            prisma.quote.deleteMany()
-        ]);
+        // await prisma.account.deleteMany({})
+        // await prisma.user.deleteMany({})
+        // await prisma.file.deleteMany({})
+        // await prisma.discipline.deleteMany({})
+        // await prisma.faculty.deleteMany({})
+        // await prisma.semester.deleteMany({})
+        // await prisma.tutor.deleteMany({})
+        // await prisma.material.deleteMany({})
+        // await prisma.quote.deleteMany({})
 
         await Promise.all([
             prisma.file.createMany({
@@ -610,13 +596,19 @@ export const utilsRouter = t.router({
             }
             tutors.push(tutor)
         }
-
         for (const [id, value] of Object.entries(data.materials)) {
             if (!addedMaterials.has(id)) {
                 const jsonMaterial = value as unknown as JsonMaterial;
                 const els = Object.entries(mephist_files["fileMap"]).filter(([key]) => key.startsWith(id + "-"))
                 await prisma.material.create({
                         data: {
+                            // document: {
+                            //     connectOrCreate: {
+                            //         create: {
+                            //             create: {text: ''}
+                            //         }
+                            //     }
+                            // },
                             files: {connect: els.length ? els.map(([_, value]) => ({id: value})) : undefined},
                             text: jsonMaterial.Описание,
                             title: jsonMaterial.Название === null || jsonMaterial.Название === "" ? "Без названия" : jsonMaterial.Название,
@@ -646,22 +638,14 @@ export const utilsRouter = t.router({
             }
         }
 
-        await prisma.tutor.createMany({
-            data: tutors,
-        });
+        for (const tutor of tutors) {
+            if (tutor.nickname === "ankosilov")
+                console.log(JSON.stringify(tutor));
 
-        // for (const tutor of tutors) {
-        //     console.log(JSON.stringify(tutor));
-        //
-        //
-        //     // createTutorPromises.push(tutorCreatePromise);
-        // }
-
-        // await Promise.all(createTutorPromises)
-        //     .catch(error => {
-        //         console.error("An error occurred while creating tutors: ", error);
-        //     });
-        // });
-        return tutors;
+            await prisma.tutor.create({
+                data: tutor,
+            });
+        }
+        return prisma.tutor.findMany();
     })
 });

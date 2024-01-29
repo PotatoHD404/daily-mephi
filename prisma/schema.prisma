@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins", "extendedIndexes"]
+  previewFeatures = ["fullTextSearch", "fullTextIndex", "relationJoins"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-1.0.x"]
 }
 
@@ -173,6 +173,7 @@ model File {
   tutorId    String?   @map("tutor_id") @db.Uuid
   materialId String?   @map("material_id") @db.Uuid
   tag        String?   @map("tag")
+  isImage    Boolean   @default(false) @map("is_image")
   size       Int       @default(0) @map("size")
 
   user       User?     @relation(name: "users_images")
