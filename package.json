@@ -50,7 +50,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-google-recaptcha-v3": "^1.10.1",
-    "satori": "^0.10.11",
+    "satori": "^0.10.13",
     "superjson": "^2.2.1",
     "tailwindcss": "^3.4.1",
     "vercel": "^33.2.0",
