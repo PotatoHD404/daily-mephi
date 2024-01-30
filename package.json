@@ -76,7 +76,7 @@
     "@types/node": "^20.11.10",
     "@types/react": "^18.2.48",
     "@types/supertest": "^6.0.2",
-    "chromatic": "^10.5.0",
+    "chromatic": "^10.6.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "eslint-plugin-storybook": "^0.6.15",
