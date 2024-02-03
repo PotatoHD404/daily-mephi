@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useMemo} from "react";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIco from "images/search.svg";
-import {Checkbox, FormControlLabel, FormGroup, InputAdornment, TextField} from "@mui/material";
+import {Checkbox, InputAdornment, styled, TextField, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
+import {AutoSizer, InfiniteLoader, List} from "react-virtualized";
 
 
 function CustomCheckbox() {
@@ -34,6 +35,28 @@ function CustomCheckbox() {
 }
 
 
+const HtmlTooltip = styled(({className, ...props}: TooltipProps) =>
+    (<Tooltip {...props} classes={{popper: className}}/>)
+)(({theme}) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: '#ffffff',
+        color: 'rgba(0, 0, 0, 0.87)',
+        maxWidth: 220,
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #000000',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.white,
+        "&::before": {
+            backgroundColor: theme.palette.common.white,
+            border: "1px solid #000000"
+        }
+    },
+}));
+
+
+
+
 export default function SearchFilter(props: {
     name: string,
     options: string[],
@@ -45,9 +68,27 @@ export default function SearchFilter(props: {
     const [opened, setOpened] = React.useState(false);
     const [text, setText] = React.useState('');
 
+    function rowRenderer({key, index, style}: {key: any, index: number, style: any}) {
+        const option = props.options[index]
+        return (
+            // <HtmlTooltip
+            //     key={key}
+            //     title={option}
+            //     placement="left-start"
+            //     style={style}
+            //     arrow
+            // >
+                <div key={key} style={style} className="hover:bg-red-100 w-full flex flex-nowrap transition ease-in-out">
+                    <div className="w-fit h-fit ml-0 my-auto"><CustomCheckbox/></div>
+                    <div className="font-[Montserrat] truncate my-auto w-[82.5%] mx-auto py-1">{option}</div>
+                </div>
+            // </HtmlTooltip>
+        );
+    }
+
     return <CustomAccordion name={props.name} defaultExpanded={props.defaultExpanded}>
-        <FormGroup className="md:max-h-[20rem]">
-            <div className="px-3">
+        <div className="md:max-h-[20rem] w-full flex flex-wrap">
+            <div className="px-3 flex">
                 <TextField label={<div>Поиск</div>}
                            value={text}
                            onChange={(event) => setText(event.target.value)}
@@ -116,14 +157,26 @@ export default function SearchFilter(props: {
                 />
             </div>
             <div
-                className="overflow-y-auto overflow-x-visible flex flex-wrap px-4"> {props.options.map((option, index) => (
-                    <FormControlLabel
-                        className="w-full"
-                        control={<CustomCheckbox/>}
-                        key={index}
-                        label={<div className="font-[Montserrat]">{option}</div>}/>
-                )
-            )}</div>
+                className="flex flex-wrap w-full md:max-h-[14rem] overflow-y-scroll text-left">
+                {/* @ts-ignore */}
+                <InfiniteLoader itemCount={props.options.length}>
+                    {({onItemsRendered, ref}: any) => (
+                        <AutoSizer>
+                            {({height, width}) => (
+                                <List
+                                    height={height}
+                                    onItemsRendered={onItemsRendered}
+                                    ref={ref}
+                                    rowCount={props.options.length}
+                                    rowHeight={20}
+                                    rowRenderer={rowRenderer}
+                                    width={width}
+                                />
+                            )}
+                        </AutoSizer>)
+                    }
+                </InfiniteLoader>
+            </div>
 
             <div className="flex text-[0.8rem] justify-between underline mt-3 px-4">
                 <div className="flex cursor-pointer" onClick={() => setOpened(!opened)}>
@@ -134,6 +187,6 @@ export default function SearchFilter(props: {
                 <div className="my-auto cursor-pointer select-none">Сбросить</div>
             </div>
 
-        </FormGroup>
+        </div>
     </CustomAccordion>;
 }

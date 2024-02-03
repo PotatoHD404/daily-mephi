@@ -97,20 +97,46 @@ export function checkStatus(options: https.RequestOptions, data?: any): Promise<
 }
 
 export async function getCache(id: string, name: string): Promise<any | null | undefined> {
-    const data = await fs.readFile(path.join(process.cwd(), `/tmp/${name}.json`));
-    const products: any = JSON.parse(data as unknown as string)
-
-    return products.find((el: { id: string; }) => el.id === id)
+    return fs.readFile(path.join(process.cwd(), `/tmp/${name}/${id}.json`)).then(data => JSON.parse(data as unknown as string))
 }
 
 export async function setCache(products: any[], name: string) {
     if (!fs2.existsSync(path.join(process.cwd(), '/tmp/'))) {
         fs2.mkdirSync(path.join(process.cwd(), '/tmp/'));
     }
-    return await fs.writeFile(
-        path.join(process.cwd(), `/tmp/${name}.json`),
-        JSON.stringify(products)
-    )
+    if (!fs2.existsSync(path.join(process.cwd(), `/tmp/${name}/`))) {
+        fs2.mkdirSync(path.join(process.cwd(), `/tmp/${name}/`));
+    }
+    return Promise.all(products.map(product =>
+        fs.writeFile(
+            path.join(process.cwd(), `/tmp/${name}/${product.id}.json`),
+            JSON.stringify(product))
+    ))
+}
+
+export const mergeInPlace = <T>(arr1: T[], arr2: T[]) => {
+    let arr1Length = arr1.length;
+    let arr2Length = arr2.length;
+
+    let i = 0;
+    let j = 0;
+
+    while (i < arr1Length && j < arr2Length) {
+        if (arr2[j] < arr1[i]) {
+            arr1.splice(i, 0, arr2[j]);
+            j++;
+            i++; // Increment i to compare the next element in arr1 with the current element in arr2
+            arr1Length++; // Increment arr1Length as the length of arr1 has changed
+        } else {
+            i++;
+        }
+    }
+
+    while (j < arr2Length) {
+        arr1.push(arr2[j++]);
+    }
+
+    return arr1;
 }
 
 export function getHost() {

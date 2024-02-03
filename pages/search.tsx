@@ -9,18 +9,55 @@ import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../components/userHeader";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 import {helpersFactory} from "../server";
+import {prisma} from "../lib/database/prisma";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: true});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
 export const getStaticProps = (async () => {
     const helpers = helpersFactory();
-    await helpers.utils.faculties.prefetch(undefined, {});
-    await helpers.utils.disciplines.prefetch(undefined, {});
-    return {props: {trpcState: helpers.dehydrate()}}
+    const [disciplines, semesters, faculties] = await Promise.all([
+        helpers.utils.disciplines.fetch(),
+        prisma.semester.findMany(
+            {
+                select: {
+                    name: true,
+                    materials: {
+                        select: {
+                            disciplines: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: {
+                    name: 'asc'
+                }
+            }
+        ).then(semesters => {
+            const res: Record<string, string[]> = {}
+            semesters.forEach(semester => {
+                const s: Set<string> = new Set()
+                semester.materials.forEach(material => material.disciplines.forEach(el=> s.add(el.name)))
+                res[semester.name] = [...s].sort()
+            })
+            return res;
+        }),
+        helpers.utils.faculties.fetch()]);
+    return {
+        props: {
+            filterParams: {
+                disciplines,
+                faculties,
+                semesters
+            }
+        }
+    }
 })
 
-function Search() {
+function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["props"]) {
     const isMobile = useIsMobile();
 
     const [input, setInput] = React.useState('');
@@ -73,7 +110,7 @@ function Search() {
                         </div>
                         {!isMobile ?
                             <div className="ml-auto">
-                                <Filters/>
+                                <Filters {...filterParams}/>
                             </div> : null}
                     </div>
                 </div>

@@ -13,7 +13,7 @@ export default function SearchBar(props: { handleEnterPress: any, input: string,
 
     return <div className="bg-transparent flex border-2
                                              border-black align-middle
-                                             rounded-full flex-row h-full w-[100%]">
+                                             rounded-full flex-row h-full w-full">
         <SearchIcon style={{color: "black"}} className="scale-125 my-auto ml-5 mr-1"/>
         <Input
             placeholder="Поиск"
