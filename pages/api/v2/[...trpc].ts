@@ -3,12 +3,6 @@ import {createContext} from "server/utils/context";
 import {NextApiRequest, NextApiResponse} from "next";
 import {createNextApiHandler} from "@trpc/server/adapters/next";
 // import {redis} from "lib/database/redis";
-export const config = {
-    api: {
-        responseLimit: process.env.NODE_ENV === 'production',
-    }
-};
-
 const nextApiHandler = createNextApiHandler({
     router: appRouter,
     createContext,

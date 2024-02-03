@@ -6,6 +6,12 @@ import {env} from "../../lib/env";
 
 export const verifyCSRFToken = t.middleware(async ({ctx: {req}, next}) => {
 
+    if (!req)
+        throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'No CSRF token found'
+        })
+
     const nextOptions: any = {
         ...defaultCookies(
             req.url?.startsWith("https://") ?? false

@@ -6,7 +6,7 @@
   },
   "rewrites": [
     {
-      "source": "/_next/data/:path/(users|reviews|tutors|quotes)/:id.json",
+      "source": "/_next/data/:path/(users|reviews|quotes)/:id.json",
       "destination": "/none.json"
     },
     {

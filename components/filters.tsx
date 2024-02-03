@@ -21,12 +21,16 @@ function MyFormControlLabel(props: FormControlLabelProps) {
 
 export default function Filters() {
 
-    const {data, isFetching} = trpc.utils.facilities.useQuery(undefined,{
+    const {data, isFetching} = trpc.utils.faculties.useQuery(undefined,{
         // enabled: !props.isLoading
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         refetchOnWindowFocus: false
     });
     const {data: data1, isFetching: isFetching1} = trpc.utils.disciplines.useQuery(undefined,{
         // enabled: !props.isLoading
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         refetchOnWindowFocus: false
     });
 

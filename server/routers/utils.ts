@@ -249,10 +249,10 @@ export const utilsRouter = t.router({
                 ]
             }).then(disciplines => disciplines.map(el => el.name));
         }),
-    facilities: t.procedure.meta({
+    faculties: t.procedure.meta({
         openapi: {
             method: 'GET',
-            path: '/facilities'
+            path: '/faculties'
         }
     })
         .input(z.void())
@@ -324,7 +324,7 @@ export const utilsRouter = t.router({
     }))
         /* .output(z.any()) */
         .query(async ({ctx: {prisma, req, res}, input: {place: inputPlace, take}}) => {
-            const session = await auth(req, res);
+            const session = req && res ? await auth(req, res) : undefined;
             const sessionUser = session?.user as (MyAppUser) ?? null;
             const userCount = await prisma.user.count();
             let skip: number;

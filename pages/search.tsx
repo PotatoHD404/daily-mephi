@@ -15,7 +15,7 @@ const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: tr
 
 export const getStaticProps = (async () => {
     const helpers = helpersFactory();
-    await helpers.utils.facilities.prefetch(undefined, {});
+    await helpers.utils.faculties.prefetch(undefined, {});
     await helpers.utils.disciplines.prefetch(undefined, {});
     return {props: {trpcState: helpers.dehydrate()}}
 })

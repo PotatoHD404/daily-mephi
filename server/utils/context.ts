@@ -12,18 +12,18 @@ export const createContext = (
     const req = opts?.req;
     const res = opts?.res;
 
-    if (!req) {
-        throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'No request found'
-        })
-    }
-    if (!res) {
-        throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'No response found'
-        })
-    }
+    // if (!req) {
+    //     throw new TRPCError({
+    //         code: 'UNAUTHORIZED',
+    //         message: 'No request found'
+    //     })
+    // }
+    // if (!res) {
+    //     throw new TRPCError({
+    //         code: 'UNAUTHORIZED',
+    //         message: 'No response found'
+    //     })
+    // }
     return {
         req,
         res,

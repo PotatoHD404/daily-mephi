@@ -42,6 +42,7 @@ export function generateFaculty(): Faculty {
 }
 
 export function generateFile(usersCopy: string[]): File {
+    const av = faker.datatype.boolean() ? "avatar" : "other"
     const res = {
         id: faker.string.uuid(),
         url: faker.internet.url(),
@@ -51,9 +52,10 @@ export function generateFile(usersCopy: string[]): File {
         deletedAt: null,
         filename: faker.system.fileName(),
         userId: faker.datatype.boolean() || usersCopy.length === 0 ? null : faker.helpers.arrayElement(usersCopy),
+        isImage: av === "avatar",
         tutorId: null,
         materialId: null,
-        tag: faker.datatype.boolean() ? "avatar" : "other",
+        tag: av,
         size: faker.number.int({min: 0, max: 10000000}),
     }
     // remove user id from users array
