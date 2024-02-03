@@ -7,12 +7,18 @@ import Material from "components/material";
 import Tutor from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../components/userHeader";
-import {trpc} from "../server/utils/trpc";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
+import {helpersFactory} from "../server";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: true});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
 
+export const getStaticProps = (async () => {
+    const helpers = helpersFactory();
+    await helpers.utils.facilities.prefetch(undefined, {});
+    await helpers.utils.disciplines.prefetch(undefined, {});
+    return {props: {trpcState: helpers.dehydrate()}}
+})
 
 function Search() {
     const isMobile = useIsMobile();
