@@ -420,22 +420,23 @@ export const utilsRouter = t.router({
         Object.entries(semestersMapping).forEach(([key, value]) => {
             reversedSemestersMapping[value] = key;
         });
-        const tutorFaculties: Record<string, string[]> = {}
-        const tutorDisciplines: Record<string, string[]> = {}
+        const tutorFaculties: Record<string, Set<string>> = {}
+        const tutorDisciplines: Record<string, Set<string>> = {}
         for (const [cafedra, tutorsData] of Object.entries(data.cafedras)) {
             faculties.add(cafedra)
             for (const [id, directions] of Object.entries(tutorsData.tutors)) {
                 if (!tutorFaculties[id]) {
-                    tutorFaculties[id] = []
+                    tutorFaculties[id] = new Set()
                 }
-                tutorFaculties[id].push(cafedra)
+                tutorFaculties[id].add(cafedra)
                 if (!tutorDisciplines[id]) {
-                    tutorDisciplines[id] = []
+                    tutorDisciplines[id] = new Set()
                 }
                 newTutors.add(id)
-                for (const direction of Object.keys(directions)) {
+                for (let direction of Object.keys(directions)) {
+                    direction = direction.split('_').slice(1).join('_');
                     disciplines.add(direction)
-                    tutorDisciplines[id].push(direction);
+                    tutorDisciplines[id].add(direction);
                 }
             }
         }
@@ -571,13 +572,13 @@ export const utilsRouter = t.router({
                 })
             }
             if (tutorFaculties[id]) {
-                tutor.faculties.connectOrCreate = tutorFaculties[id].map(el => {
+                tutor.faculties.connectOrCreate = [...tutorFaculties[id]].map(el => {
                     return {
                         create: {name: el},
                         where: {name: el}
                     }
                 })
-                tutor.disciplines.connectOrCreate = tutorDisciplines[id].map(el => {
+                tutor.disciplines.connectOrCreate = [...tutorDisciplines[id]].map(el => {
                     return {
                         create: {name: el},
                         where: {name: el}
