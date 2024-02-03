@@ -1,11 +1,11 @@
-import React, {useMemo} from "react";
+import React, {useState} from "react";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIco from "images/search.svg";
 import {Checkbox, InputAdornment, styled, TextField, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import CustomAccordion from './customAccordion'
 import CheckIcon from '@mui/icons-material/Check'
-import {AutoSizer, InfiniteLoader, List} from "react-virtualized";
+import {useVirtualizer, VirtualItem} from "@tanstack/react-virtual";
 
 
 function CustomCheckbox() {
@@ -36,7 +36,7 @@ function CustomCheckbox() {
 
 
 const HtmlTooltip = styled(({className, ...props}: TooltipProps) =>
-    (<Tooltip {...props} classes={{popper: className}}/>)
+    (<CustomTooltip {...props} classes={{popper: className}}/>)
 )(({theme}) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: '#ffffff',
@@ -55,34 +55,72 @@ const HtmlTooltip = styled(({className, ...props}: TooltipProps) =>
 }));
 
 
+function CustomTooltip({children, ...rest}: TooltipProps) {
+    const [renderTooltip, setRenderTooltip] = useState(false);
+
+    return (
+        <div
+            onMouseEnter={() => !renderTooltip && setRenderTooltip(true)}
+            className="display-contents"
+        >
+            {!renderTooltip && children}
+            {
+                renderTooltip && (
+                    <Tooltip {...rest}>
+                        {children}
+                    </Tooltip>
+                )
+            }
+        </div>
+    );
+}
 
 
 export default function SearchFilter(props: {
     name: string,
     options: string[],
     defaultExpanded?: boolean,
-    selectedValues: string[],
-    selectChanged: (_: string[]) => any
+    selectedValues: Set<string>,
+    selectChanged: (_: string) => any
 }) {
     // opened state
     const [opened, setOpened] = React.useState(false);
     const [text, setText] = React.useState('');
 
-    function rowRenderer({key, index, style}: {key: any, index: number, style: any}) {
-        const option = props.options[index]
+
+    const parentRef = React.useRef(null)
+
+// The virtualizer
+    const rowVirtualizer = useVirtualizer({
+        count: props.options.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 35,
+    })
+
+    function rowRenderer(virtualRow: VirtualItem) {
+        const option = props.options[virtualRow.index]
+        console.log(virtualRow.key)
         return (
-            // <HtmlTooltip
-            //     key={key}
-            //     title={option}
-            //     placement="left-start"
-            //     style={style}
-            //     arrow
-            // >
-                <div key={key} style={style} className="hover:bg-red-100 w-full flex flex-nowrap transition ease-in-out">
+            <HtmlTooltip
+                key={virtualRow.key}
+                title={<div className="font-[Montserrat] text-md">{option}</div>}
+                placement="left-start"
+                arrow
+            >
+                <div className="hover:bg-red-100 w-full flex flex-nowrap transition ease-in-out"
+                     onClick={() => props.selectChanged(option)}
+                     style={{
+                         position: 'absolute',
+                         top: 0,
+                         left: 0,
+                         width: '100%',
+                         height: `${virtualRow.size}px`,
+                         transform: `translateY(${virtualRow.start}px)`,
+                     }}>
                     <div className="w-fit h-fit ml-0 my-auto"><CustomCheckbox/></div>
                     <div className="font-[Montserrat] truncate my-auto w-[82.5%] mx-auto py-1">{option}</div>
                 </div>
-            // </HtmlTooltip>
+            </HtmlTooltip>
         );
     }
 
@@ -156,26 +194,26 @@ export default function SearchFilter(props: {
                            }}
                 />
             </div>
+            {/* The scrollable element for your list */}
             <div
-                className="flex flex-wrap w-full md:max-h-[14rem] overflow-y-scroll text-left">
-                {/* @ts-ignore */}
-                <InfiniteLoader itemCount={props.options.length}>
-                    {({onItemsRendered, ref}: any) => (
-                        <AutoSizer>
-                            {({height, width}) => (
-                                <List
-                                    height={height}
-                                    onItemsRendered={onItemsRendered}
-                                    ref={ref}
-                                    rowCount={props.options.length}
-                                    rowHeight={20}
-                                    rowRenderer={rowRenderer}
-                                    width={width}
-                                />
-                            )}
-                        </AutoSizer>)
-                    }
-                </InfiniteLoader>
+                ref={parentRef}
+                style={{
+                    height: `400px`,
+                    overflow: 'auto', // Make it scroll!
+                }}
+                className="flex flex-wrap w-full md:max-h-[14rem] overflow-y-scroll text-left"
+            >
+                {/* The large inner element to hold all the items */}
+                <div
+                    style={{
+                        height: `${rowVirtualizer.getTotalSize()}px`,
+                        width: '100%',
+                        position: 'relative',
+                    }}
+                >
+                    {/* Only the visible items in the virtualizer, manually positioned to be in view */}
+                    {rowVirtualizer.getVirtualItems().map(rowRenderer)}
+                </div>
             </div>
 
             <div className="flex text-[0.8rem] justify-between underline mt-3 px-4">
