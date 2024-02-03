@@ -57,11 +57,11 @@ export default function Filters({faculties, disciplines, semesters}: {
             className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black">
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
             <SearchFilter defaultExpanded name="Предметы" options={disciplines} selectChanged={() => {
-            }} selectedValues={[]}/>
+            }} selectedValues={new Set()}/>
             <SearchFilter defaultExpanded name="Семестры" options={Object.keys(semesters)} selectChanged={() => {
-            }} selectedValues={[]}/>
+            }} selectedValues={new Set()}/>
             <SearchFilter name="Факультеты" options={faculties} selectChanged={() => {
-            }} selectedValues={[]}/>
+            }} selectedValues={new Set()}/>
             <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
             <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>
                 <div>Применить</div>

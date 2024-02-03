@@ -2,10 +2,15 @@ import {z} from 'zod';
 import {t} from 'server/utils';
 import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 import {File, Material, PrismaClient} from '@prisma/client';
+// @ts-ignore
 import json from "parsing/combined/data.json"
+// @ts-ignore
 import tutor_imgs from "parsing/tutor_imgs.json"
+// @ts-ignore
 import mephist_imgs from "parsing/mephist_imgs.json"
+// @ts-ignore
 import mephist_fils from "parsing/mephist_files.json"
+// @ts-ignore
 import all_fils from "parsing/File.json"
 import {TRPCError} from "@trpc/server";
 
@@ -364,13 +369,14 @@ export const utilsRouter = t.router({
             }
         }
     ).query(async () => {
-        const prisma = new PrismaClient();
         if (process.env.LOCAL !== "true") {
             throw new TRPCError({
                 code: "FORBIDDEN",
                 message: "You can perform this operation only locally"
             })
         }
+        const prisma = new PrismaClient();
+
         const tutors: TutorDTO[] = []
 
         // await prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
@@ -444,10 +450,6 @@ export const utilsRouter = t.router({
             const jsonMaterial = material as unknown as JsonMaterial;
             jsonMaterial.Факультет?.split("; ").forEach(faculty => faculties.add(faculty.trim()));
         }
-        // console.log(faculties)
-
-        // await prisma.account.deleteMany({})
-        // await prisma.user.deleteMany({})
         await prisma.file.deleteMany({})
         await prisma.discipline.deleteMany({})
         await prisma.faculty.deleteMany({})
@@ -460,38 +462,10 @@ export const utilsRouter = t.router({
             data: all_files,
             skipDuplicates: true
         })
-        // await prisma.discipline.createMany({
-        //     data: Array.from(disciplines).map(el => ({name: el})),
-        //     skipDuplicates: true
-        // })
-        // await prisma.faculty.createMany({
-        //     data: Array.from(faculties).map(el => ({name: el})),
-        //     skipDuplicates: true
-        // })
         await prisma.semester.createMany({
             data: Object.keys(semestersMapping).map(el => ({name: el})),
             skipDuplicates: true
         })
-
-// Fetch the created models concurrently
-//         const [facultyModels, disciplineModels, semesterModels] = await Promise.all([
-//             prisma.faculty.findMany(),
-//             prisma.discipline.findMany(),
-//             prisma.semester.findMany()
-//         ]).then(([faculties, disciplines, semesters]) => [
-//             faculties.reduce((obj: Record<string, string>, el) => {
-//                 obj[el.name] = el.id;
-//                 return obj;
-//             }, {}),
-//             disciplines.reduce((obj: Record<string, string>, el) => {
-//                 obj[el.name] = el.id;
-//                 return obj;
-//             }, {}),
-//             semesters.reduce((obj: Record<string, string>, el) => {
-//                 obj[semestersMapping[el.name]] = el.id;
-//                 return obj;
-//             }, {})
-//         ]);
 
         for (let [id, tutorData] of Object.entries(data.tutors)) {
             const jsonTutor = tutorData as unknown as JsonTutor;
