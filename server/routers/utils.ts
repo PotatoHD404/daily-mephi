@@ -2,17 +2,8 @@ import {z} from 'zod';
 import {t} from 'server/utils';
 import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 import {File, Material, PrismaClient} from '@prisma/client';
-// @ts-ignore
-import json from "parsing/combined/data.json"
-// @ts-ignore
-import tutor_imgs from "parsing/tutor_imgs.json"
-// @ts-ignore
-import mephist_imgs from "parsing/mephist_imgs.json"
-// @ts-ignore
-import mephist_fils from "parsing/mephist_files.json"
-// @ts-ignore
-import all_fils from "parsing/File.json"
 import {TRPCError} from "@trpc/server";
+import * as fs from "fs";
 
 function strToDateTime(dtStr: string): Date {
     if (!dtStr) return new Date()
@@ -233,6 +224,15 @@ function confidence(likes: number, dislikes: number): number {
     return (left - right) / under;
 }
 
+function readJsonFile(filePath: string) {
+    try {
+        const fileContents = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(fileContents);
+    } catch (error) {
+        console.error(`Error reading file from disk: ${error}`);
+    }
+}
+
 export const utilsRouter = t.router({
     disciplines: t.procedure.meta({
         openapi: {
@@ -379,13 +379,11 @@ export const utilsRouter = t.router({
 
         const tutors: TutorDTO[] = []
 
-        // await prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
-        const data = json as unknown as JsonType;
-
-        const tutor_images: FileDTO = tutor_imgs;
-        const mephist_images: FileDTO = mephist_imgs;
-        const mephist_files: FileDTO = mephist_fils;
-        const all_files: File[] = (all_fils as unknown[]).map((el: any) => {
+        const data: JsonType = readJsonFile('parsing/combined/data.json');
+        const tutor_images: FileDTO = readJsonFile('parsing/tutor_imgs.json');
+        const mephist_images: FileDTO = readJsonFile('parsing/mephist_imgs.json')
+        const mephist_files: FileDTO = readJsonFile('parsing/mephist_files.json');
+        const all_files: File[] = (readJsonFile('parsing/File.json')).map((el: any) => {
             let tag: string = 'unknown';
             if (el.id in tutor_images.fileMap) {
                 tag = 'home-avatar'
