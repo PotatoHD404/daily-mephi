@@ -18,6 +18,7 @@ export function getBaseUrl() {
 
     // // reference for render.com
     if (env.RENDER_INTERNAL_HOSTNAME) {
+        // noinspection HttpUrlsUsage
         return `http://${env.RENDER_INTERNAL_HOSTNAME}:${env.PORT}`;
     }
 
@@ -72,7 +73,7 @@ export const trpc = createTRPCNext<AppRouter>({
     /**
      * @link https://trpc.io/docs/ssr
      */
-    ssr: true,
+    ssr: false,
 });
 
 /**

@@ -9,7 +9,7 @@ import Image1 from "next/image";
 import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
-import {useRouter} from "next/router";
+import {Router, useRouter} from "next/router";
 import {CircularProgress, createTheme, ThemeProvider} from "@mui/material";
 import {trpc} from 'server/utils/trpc';
 
@@ -115,24 +115,24 @@ function MyApp(
     pageProps = {...pageProps, isMobile, changeNeedsAuth};
 
     const [loading, setLoading] = React.useState(false);
-    // React.useEffect(() => {
-    //     const start = () => {
-    //         // console.log("start");
-    //         setLoading(true);
-    //     };
-    //     const end = () => {
-    //         // console.log("findished");
-    //         setLoading(false);
-    //     };
-    //     Router.events.on("routeChangeStart", start);
-    //     Router.events.on("routeChangeComplete", end);
-    //     Router.events.on("routeChangeError", end);
-    //     return () => {
-    //         Router.events.off("routeChangeStart", start);
-    //         Router.events.off("routeChangeComplete", end);
-    //         Router.events.off("routeChangeError", end);
-    //     };
-    // }, []);
+    React.useEffect(() => {
+        const start = () => {
+            // console.log("start");
+            setLoading(true);
+        };
+        const end = () => {
+            // console.log("findished");
+            setLoading(false);
+        };
+        Router.events.on("routeChangeStart", start);
+        Router.events.on("routeChangeComplete", end);
+        Router.events.on("routeChangeError", end);
+        return () => {
+            Router.events.off("routeChangeStart", start);
+            Router.events.off("routeChangeComplete", end);
+            Router.events.off("routeChangeError", end);
+        };
+    }, []);
     const isLoading = loading && router.isReady;
     // useEffect(() => {
     //     router.events.on('routeChangeStart', () =>  NProgress.start());

@@ -6,7 +6,6 @@ import {getNoun} from "lib/getNoun";
 
 interface UType {
     name: string,
-    course: number,
     rating: number,
     reviews: number,
     quotes: number,
@@ -18,7 +17,6 @@ interface UType {
 export default function User(
     {
         name,
-        course,
         rating,
         reviews,
         quotes,
@@ -43,10 +41,10 @@ export default function User(
                     <Div tw="flex w-full">
                         <Div tw="flex flex-wrap w-1/2 mx-[100px] mt-8">
                             <H1 tw="text-[60px] font-bold text-wrap">{name}</H1>
-                            <H2 tw="flex flex-nowrap font-semibold w-4/5 text-[40px] mt-4">
-                                <Div tw="flex ">Курс:</Div>
-                                <Div tw="flex ml-4">{course}</Div>
-                            </H2>
+                            {/*<H2 tw="flex flex-nowrap font-semibold w-4/5 text-[40px] mt-4">*/}
+                            {/*    <Div tw="flex ">Курс:</Div>*/}
+                            {/*    <Div tw="flex ml-4">{course}</Div>*/}
+                            {/*</H2>*/}
                             <H2 tw="flex flex-nowrap font-semibold w-4/5 text-[40px] mt-4">
                                 <Div tw="flex">Рейтинг:</Div>
                                 <Div tw="flex ml-4">{rating}</Div>

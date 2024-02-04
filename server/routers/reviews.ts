@@ -5,6 +5,7 @@ import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Prisma} from "@prisma/client";
+import {isToxic} from "../../lib/toxicity";
 
 
 export const reviewsRouter = t.router({
@@ -104,48 +105,59 @@ export const reviewsRouter = t.router({
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {id: tutorId, title, text}}) => {
-            try {
-                return await prisma.$transaction(async (prisma) => {
-
-                    const [review] = await Promise.all([
-                        prisma.review.create({
-                            data: {
-                                text,
-                                title,
-                                user: {
-                                    connect: {id: user.id}
-                                },
-                                tutor: {
-                                    connect: {id: tutorId}
-                                },
-                                document: {
-                                    create: {
-                                        type: "review",
-                                        text,
-                                    }
-                                }
-                            },
-                        }),
-                        prisma.tutor.update({
-                            where: {id: tutorId},
-                            data: {
-                                reviewsCount: {
-                                    increment: 1
-                                }
-                            }
-                        }),
-                        prisma.user.update({
-                            where: {id: user.id},
-                            data: {
-                                reviewsCount: {
-                                    increment: 1
-                                }
-                            }
-                        })]);
-
-                    return review;
+            if ((await isToxic(title))) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Название токсично'
                 });
-            } catch (e) {
+            }
+
+            if ((await isToxic(text))) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Отзыв токсичен'
+                });
+            }
+
+            return prisma.$transaction(async (prisma) => {
+                const [review] = await Promise.all([
+                    prisma.review.create({
+                        data: {
+                            text,
+                            title,
+                            user: {
+                                connect: {id: user.id}
+                            },
+                            tutor: {
+                                connect: {id: tutorId}
+                            },
+                            document: {
+                                create: {
+                                    type: "review",
+                                    text,
+                                }
+                            }
+                        },
+                    }),
+                    prisma.tutor.update({
+                        where: {id: tutorId},
+                        data: {
+                            reviewsCount: {
+                                increment: 1
+                            }
+                        }
+                    }),
+                    prisma.user.update({
+                        where: {id: user.id},
+                        data: {
+                            reviewsCount: {
+                                increment: 1
+                            }
+                        }
+                    })]);
+
+                return review;
+            }).catch((e: any) => {
                 if (e instanceof Prisma.PrismaClientKnownRequestError) {
                     if (e.code === 'P2002') {
                         throw new TRPCError({
@@ -157,7 +169,9 @@ export const reviewsRouter = t.router({
                         code: 'INTERNAL_SERVER_ERROR',
                         message: e.message
                     });
+                } else {
+                    throw e
                 }
-            }
+            });
         })
 });

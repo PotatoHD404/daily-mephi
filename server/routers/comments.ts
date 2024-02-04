@@ -7,6 +7,7 @@ import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
 import {Comment as DefaultComment, Prisma, PrismaClient} from "@prisma/client";
 import {DefaultArgs} from "@prisma/client/runtime/library";
 import {buildCommentTree} from "lib/react/buildCommentTree";
+import {isToxic} from "../../lib/toxicity";
 
 
 type AdditionalSearchType = {} | { path: { has: string }, depth: { gte: number } }
@@ -152,6 +153,12 @@ export const commentsRouter = t.router({
         .use(verifyCSRFToken)
         .use(verifyRecaptcha)
         .mutation(async ({ctx: {prisma, user}, input: {id: recordId, type, text, parentId}}) => {
+            if ((await isToxic(text))) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Комментарий токсичен'
+                });
+            }
             return prisma.$transaction(async (prisma) => {
                 let parentComment: DefaultComment | null;
                 let path: string[] = [];
@@ -229,6 +236,8 @@ export const commentsRouter = t.router({
                 return comment;
             }, {
                 isolationLevel: "Serializable"
+            }).catch((e: any) => {
+                throw e
             });
         }),
 

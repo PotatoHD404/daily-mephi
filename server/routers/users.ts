@@ -114,11 +114,7 @@ export const usersRouter = t.router({
                     }
                 )
             }).catch((e: any) => {
-                console.log(e);
-                throw new TRPCError({
-                    code: 'INTERNAL_SERVER_ERROR',
-                    message: 'Ошибка сервера'
-                });
+                throw e
             });
         })
 });

@@ -4,6 +4,7 @@ import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 import {File, Material, PrismaClient} from '@prisma/client';
 import {TRPCError} from "@trpc/server";
 import * as fs from "fs";
+import {tr} from "@faker-js/faker";
 
 function strToDateTime(dtStr: string): Date {
     if (!dtStr) return new Date()
@@ -401,6 +402,29 @@ export const utilsRouter = t.router({
             }
         }) as File[];
 
+        const clearDiscipline = (discipline: string, tokens: Record<string, boolean>) => {
+            let res = discipline;
+            Object.entries(tokens).forEach(([token, start]) => {
+                const arr = res.split(token)
+                if (arr.length === 1) {
+                    return;
+                }
+                if (start) {
+                    arr.shift();
+                } else {
+                    arr.pop();
+                }
+                res = arr.join(token);
+            })
+            return res;
+        }
+        const clearDisciplineRegex = new RegExp(
+            "([Пп]одгруппа |[Пп]оток |(?:дистант|очно)(?:[ ,]|$)|[0-9]-[A-ZА-Я] [0-9]|" +
+            "[0-9][A-ZА-Я] {1,2}[0-9]{1,2}|[0-9]-[A-ZА-Я]{2} [0-9]|" +
+            "[0-9]-[A-ZА-Я][0-9] [0-9]|[0-9][A-ZА-Я]{2} [0-9]|" +
+            "[0-9][A-ZА-Я]_[0-9] {2}[0-9])",
+            "g"
+        );
         const newTutors = new Set<string>();
         const disciplines = new Set<string>();
         const faculties = new Set<string>();
@@ -438,9 +462,17 @@ export const utilsRouter = t.router({
                 }
                 newTutors.add(id)
                 for (let direction of Object.keys(directions)) {
-                    direction = direction.split('_').slice(1).join('_');
-                    disciplines.add(direction)
-                    tutorDisciplines[id].add(direction);
+                    direction.split('; ').map((direction) => {
+                        const tmp =  clearDiscipline(direction,
+                            {
+                                '_': true,
+                            })
+                        return tmp.split(clearDisciplineRegex)[0];
+                    }).forEach(direction => {
+                        disciplines.add(direction)
+                        tutorDisciplines[id].add(direction);
+                    })
+
                 }
             }
         }

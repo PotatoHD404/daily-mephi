@@ -4,6 +4,7 @@ import {TRPCError} from "@trpc/server";
 import {isAuthorized} from "server/middlewares/isAuthorized";
 import {verifyCSRFToken} from "server/middlewares/verifyCSRFToken";
 import {verifyRecaptcha} from "server/middlewares/verifyRecaptcha";
+import {isToxic} from "../../lib/toxicity";
 
 
 export const materialsRouter = t.router({
@@ -136,6 +137,19 @@ export const materialsRouter = t.router({
                              ctx: {prisma, user},
                              input: {title, text, files, tutorId, facultyIds, disciplineIds, semesterIds}
                          }) => {
+            if ((await isToxic(title))) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Название токсично'
+                });
+            }
+
+            if ((await isToxic(text))) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Описание токсичен'
+                });
+            }
             return prisma.$transaction(async (prisma) => {
                 const [material] = await Promise.all([
                     prisma.material.create({
@@ -200,6 +214,8 @@ export const materialsRouter = t.router({
                         }
                     }]);
                 return material;
+            }).catch((e: any) => {
+                throw e
             });
         }),
     getFromTutor: t.procedure.meta({

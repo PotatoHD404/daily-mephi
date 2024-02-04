@@ -38,7 +38,6 @@ export default async function handler(userId: string, res: NextApiResponse) {
         const image_data = await imageToBase64(url);
         const element = UserThumbnail({
             name: user.nickname ?? "",
-            course: 3,
             image_url: image_data,
             materials: user.materialsCount,
             quotes: user.quotesCount,
