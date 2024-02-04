@@ -9,7 +9,7 @@ import Image1 from "next/image";
 import Background1 from 'images/bg.webp'
 import styles from "styles/home.module.css";
 import Navbar from "components/navbar";
-import {Router, useRouter} from "next/router";
+import {useRouter} from "next/router";
 import {CircularProgress, createTheme, ThemeProvider} from "@mui/material";
 import {trpc} from 'server/utils/trpc';
 
@@ -140,57 +140,55 @@ function MyApp(
     //     router.events.on('routeChangeComplete', () =>  NProgress.done());
     //     router.events.on('routeChangeError', () =>  NProgress.done());
     //   }, []);
-    return (<>{
-            router.pathname.startsWith('/thumbnails') ?
-                <Component {...pageProps}/> :
-                <>
-                    <GoogleReCaptchaProvider reCaptchaKey={env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""}
-                                             scriptProps={{
-                                                 async: false,
-                                                 defer: false,
-                                                 appendTo: "head",
-                                                 nonce: undefined,
-                                             }}
-                                             language="ru">
-                        <IsMobileProvider value={isMobile}>
-                            <QueryClientProvider client={queryClient}>
-                                <SessionProvider session={session}>
-                                    <ThemeProvider theme={theme}>
-                                        {isMobile == null ? null : <BackgroundComp {...{home, isMobile}}/>}
-                                        <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
-                                            + (home ? "" : "max-w-[85rem] mx-auto")}>
-                                            {isMobile == null ? null : <Navbar needsAuth={needsAuth}/>}
-                                            {
-                                                isLoading ? <div className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden bg-white opacity-75 flex flex-col items-center justify-center">
-                                                    <CircularProgress color="inherit"
-                                                                      thickness={3}
-                                                                      size={30}
-                                                                      className="mb-2"/>
-                                                    <h2 className="text-center text-black text-xl font-semibold">Загрузка...</h2>
-                                                    <p className="w-1/3 text-center text-gray-500">Это может занять некоторое время</p>
-                                                </div> : <>
-                                                    {home1 ?
-                                                        <div className={"md:px-8 mx-auto"}>
-                                                            <Component {...pageProps}/>
-                                                        </div>
-                                                        :
-                                                        <div
-                                                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
+    return (
+        <>
+            <GoogleReCaptchaProvider reCaptchaKey={env.NEXT_PUBLIC_RECAPTCHA_PUBLIC || ""}
+                                     scriptProps={{
+                                         async: false,
+                                         defer: false,
+                                         appendTo: "head",
+                                         nonce: undefined,
+                                     }}
+                                     language="ru">
+                <IsMobileProvider value={isMobile}>
+                    <QueryClientProvider client={queryClient}>
+                        <SessionProvider session={session}>
+                            <ThemeProvider theme={theme}>
+                                {isMobile == null ? null : <BackgroundComp {...{home, isMobile}}/>}
+                                <div className={"font-[Montserrat] relative min-h-screen pb-24 z-10"
+                                    + (home ? "" : "max-w-[85rem] mx-auto")}>
+                                    {isMobile == null ? null : <Navbar needsAuth={needsAuth}/>}
+                                    {
+                                        isLoading ? <div
+                                            className="fixed top-0 left-0 w-full h-full z-50 overflow-hidden bg-white opacity-75 flex flex-col items-center justify-center">
+                                            <CircularProgress color="inherit"
+                                                              thickness={3}
+                                                              size={30}
+                                                              className="mb-2"/>
+                                            <h2 className="text-center text-black text-xl font-semibold">Загрузка...</h2>
+                                            <p className="w-1/3 text-center text-gray-500">Это может занять некоторое
+                                                время</p>
+                                        </div> : <>
+                                            {home1 ?
+                                                <div className={"md:px-8 mx-auto"}>
+                                                    <Component {...pageProps}/>
+                                                </div>
+                                                :
+                                                <div
+                                                    className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
                                                     bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
-                                                            <Component {...pageProps} />
-                                                        </div>}
-                                                    {isMobile == null ? null : <Footer/>}
-                                                </>
-                                            }
-                                        </div>
-                                    </ThemeProvider>
-                                </SessionProvider>
-                            </QueryClientProvider>
-                        </IsMobileProvider>
-                    </GoogleReCaptchaProvider>
-                    <MetricContainer/>
-                </>
-        }
+                                                    <Component {...pageProps} />
+                                                </div>}
+                                            {isMobile == null ? null : <Footer/>}
+                                        </>
+                                    }
+                                </div>
+                            </ThemeProvider>
+                        </SessionProvider>
+                    </QueryClientProvider>
+                </IsMobileProvider>
+            </GoogleReCaptchaProvider>
+            <MetricContainer/>
         </>
     )
 
