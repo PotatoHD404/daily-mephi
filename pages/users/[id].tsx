@@ -18,6 +18,7 @@ import Image from "next/image";
 import QuestionIco from "../../images/question.svg";
 import AuthIco from "../../images/auth.svg";
 import {Tooltip} from "@mui/material";
+import Custom404 from "../404";
 
 function Profile({user, me, isLoading}: {
     user?: any,
@@ -121,19 +122,23 @@ function UserProfile({session: serverSession, id: serverId}: { session?: Session
     const isMobile = useIsMobile();
 
     if (!id || typeof id !== "string" || !id.match(UUID_REGEX)) {
-        router.push("/404")
-        return;
+        return Custom404()
     }
 
 
-    const {data: user, isFetching: isFetching2} = trpc.users.getOne.useQuery({id})
+    const {data: user, isFetching: isFetching2, error} = trpc.users.getOne.useQuery({id})
+
+    if (error?.data?.code == 'NOT_FOUND') {
+        return Custom404()
+    }
+
     const isFetching = isFetching1 || isFetching2;
     const me = session?.user?.id === user?.id && session !== undefined;
 
 
     return (
         <>
-            <SEO title={`Пользователь ${user?.nickname}`}
+            <SEO title={user ? `Пользователь ${user.nickname}` : 'Загрузка...'}
                  thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/users/${user?.id}.png`}/>
             {isMobile == null ? null :
                 <div className="flex-wrap w-full space-y-8">

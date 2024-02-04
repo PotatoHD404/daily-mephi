@@ -8,6 +8,7 @@ import LoadingBlock from "./loadingBlock";
 import {CircularProgress} from "@mui/material";
 import {UUID_REGEX} from "lib/constants/uuidRegex";
 import {RouterOutputs, trpc} from "server/utils/trpc";
+import Custom404 from "../pages/404";
 
 export type ReviewType = RouterOutputs['reviews']['getFromTutor'][0];
 
@@ -92,8 +93,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         }
     }, [fetchNextPage, hasNextPage]);
     if (!validReviewId || !validTutorId) {
-        // router.push('/404');
-        return (<></>);
+        return Custom404()
     }
 
     const isLoading = hasNextPage === undefined || isFetchingNextPage || isFetching;

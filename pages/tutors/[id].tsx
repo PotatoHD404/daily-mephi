@@ -11,11 +11,12 @@ import Material from "components/material";
 import NewPost from "components/newPost";
 import dynamic from "next/dynamic";
 import useIsMobile from "lib/react/isMobileContext";
-import {getCache, setCache} from "lib/utils";
 import {prisma} from "lib/database/prisma";
 import TutorProfile from "components/tutorProfile";
 import Reviews from "components/reviews";
 import {useRouter} from "next/router";
+import {helpersFactory} from "../../server";
+import Custom404 from "../404";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
 
@@ -120,7 +121,7 @@ function Tutor({tutor}: { tutor: any }) {
     const router = useRouter()
 
     if (tutor === undefined)
-        return (<></>);
+        return Custom404()
 
     return (
         <>
@@ -163,7 +164,6 @@ export async function getStaticPaths() {
             }
         }
     });
-    await setCache(tutors, "tutors");
     return {
         paths: tutors.map((tutor) =>
             ({params: {id: tutor.id}})
@@ -174,7 +174,8 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: any) {
     const {id} = context.params;
-    const tutor: any = await getCache(id, "tutors");
+    const helper = helpersFactory()
+    const tutor = await helper.tutors.getOne.fetch({id}).catch(() => null)
     if (!tutor) {
         return {
             notFound: true

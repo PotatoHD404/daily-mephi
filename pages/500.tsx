@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Logo from "images/cat_500.svg";
 import useIsMobile from "lib/react/isMobileContext";
+import Link from "next/link";
 
 export default function Custom500() {
     const isMobile = useIsMobile();
@@ -23,10 +24,11 @@ export default function Custom500() {
                             </div>
                         </div>
                         {/*<div className="bg-white h-[1px] w-full opacity-50 md:hidden"></div>*/}
-                        <div
-                            className="md:px-0 md:flex justify-center md:w-[50%]  mt-[4.5%] max-w-xl md:max-w-max">
+                        <Link
+                            className="md:px-0 md:flex md:w-[50%]  mt-[4.5%] max-w-xl md:max-w-max justify-center"
+                            href="/">
                             <Image src={Logo} alt="Big logo"/>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             }

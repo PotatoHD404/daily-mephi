@@ -13,7 +13,6 @@ import {CircularProgress} from "@mui/material";
 import Link from "next/link";
 
 export function Post() {
-    console.log('Post')
     return <>
         <div className="whiteBox md:text-[1.7rem] text-xl w-[99.5%]">
             <div className="flex w-full mb-4">
