@@ -67,6 +67,16 @@ const normalizeQueryParam = (param: string | string[] | undefined): string[] => 
     }
 };
 
+export interface ChangeStateType {
+    faculties?: string[],
+    disciplines?: string[],
+    semesters?: string[],
+    types?: string[],
+    q?: string
+}
+
+type ChangeStateType2 = Record<string, string | string[] | number | boolean | readonly string[] | readonly number[] | readonly boolean[] | null | undefined>
+
 function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["props"]) {
     const isMobile = useIsMobile();
 
@@ -77,14 +87,13 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
     const updateQueryParams = updateQueryParamsFactory(router)
 
 
-
     const [selectedTypes, changeSelectedTypes] = React.useState<Set<string>>(new Set());
     const [selectedDisciplines, changeSelectedDisciplines] = React.useState<Set<string>>(new Set());
     const [selectedFaculties, changeSelectedFaculties] = React.useState<Set<string>>(new Set());
     const [selectedSemesters, changeSelectedSemesters] = React.useState<Set<string>>(new Set());
     const [initialized, setInitialized] = React.useState<boolean>(false);
     useEffect(() => {
-        if (!initialized) {
+        if (!initialized && router.isReady) {
             setInput(router.query.q as string || '');
             const types = new Set(normalizeQueryParam(router.query.types));
             const disciplines = new Set(normalizeQueryParam(router.query.disciplines));
@@ -97,24 +106,19 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
             setInitialized(true);
         }
         // Removed dependencies to mimic componentDidMount behavior
-    }, [initialized, router.query]);
+    }, [initialized, router.query, router.isReady]);
 
-    const changeState = useCallback(async (newInput?: string) => {
-        if (initialized) {
-            return updateQueryParams({
-                q: newInput ?? input,
-                types: [...selectedTypes],
-                disciplines: [...selectedDisciplines],
-                faculties: [...selectedFaculties],
-                semesters: [...selectedSemesters],
-            });
+
+    const changeState = useCallback(async (props: ChangeStateType) => {
+        if (initialized && router.isReady) {
+            return updateQueryParams(props as ChangeStateType2);
         }
         // Ensure useCallback has the right dependencies
-    }, [initialized, updateQueryParams, input, selectedTypes, selectedDisciplines, selectedFaculties, selectedSemesters]);
+    }, [initialized, router.isReady, updateQueryParams]);
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
-            await changeState(input)
+            await changeState({q: input})
         }
     }
 

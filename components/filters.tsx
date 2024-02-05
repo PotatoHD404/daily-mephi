@@ -4,6 +4,7 @@ import SearchFilter from "./searchFilter";
 import {FormControlLabel, useRadioGroup,} from "@mui/material";
 import SliderFilter from "./sliderFilter";
 import RippledButton from "./rippledButton";
+import {ChangeStateType} from "../pages/search";
 
 function MyFormControlLabel(props: FormControlLabelProps) {
     const radioGroup = useRadioGroup();
@@ -17,8 +18,8 @@ function MyFormControlLabel(props: FormControlLabelProps) {
     return <FormControlLabel checked={checked} {...props} />;
 }
 
-function changeTypes(types: Set<string>, el: string) {
-    const newSet = new Set(types);
+function changeSet(set: Set<string>, el: string) {
+    const newSet = new Set(set);
     if (newSet.has(el)) {
         newSet.delete(el)
     } else {
@@ -39,7 +40,7 @@ interface FiltersType {
     faculties: string[],
     disciplines: string[],
     semesters: Record<string, string[]>
-    changeState: () => any
+    changeState: (_: ChangeStateType) => any
 }
 
 export default function Filters({
@@ -91,23 +92,27 @@ export default function Filters({
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
             <SearchFilter defaultExpanded name="Тип" options={['Преподаватель', 'Материал', 'Цитата']}
                           selectChanged={(el) => {
-                              changeSelectedTypes(changeTypes(selectedTypes, el))
-                              changeState()
+                              const newTypes = changeSet(selectedTypes, el);
+                              changeSelectedTypes(newTypes)
+                              changeState({types: [...newTypes]})
                           }} selectedValues={selectedTypes}/>
             <SearchFilter defaultExpanded name="Предметы" options={disciplines}
                           selectChanged={(el) => {
-                              changeSelectedDisciplines(changeTypes(selectedDisciplines, el))
-                              changeState()
+                              const newDisciplines = changeSet(selectedDisciplines, el);
+                              changeSelectedDisciplines(newDisciplines)
+                              changeState({disciplines: [...newDisciplines]})
                           }} selectedValues={selectedDisciplines}/>
             <SearchFilter defaultExpanded name="Семестры" options={Object.keys(semesters)}
                           selectChanged={(el) => {
-                              changeSelectedFaculties(changeTypes(selectedFaculties, el))
-                              changeState()
+                              const newFaculties = changeSet(selectedFaculties, el);
+                              changeSelectedFaculties(newFaculties)
+                              changeState({faculties: [...newFaculties]})
                           }} selectedValues={selectedFaculties}/>
             <SearchFilter name="Факультеты" options={faculties}
                           selectChanged={(el) => {
-                              changeSelectedSemesters(changeTypes(selectedSemesters, el))
-                              changeState()
+                              const newSemesters = changeSet(selectedSemesters, el);
+                              changeSelectedSemesters(newSemesters)
+                              changeState({semesters: [...newSemesters]})
                           }} selectedValues={selectedSemesters}/>
             <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
             <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>

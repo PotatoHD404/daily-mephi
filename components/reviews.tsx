@@ -76,7 +76,7 @@ export default function Reviews({tutorId}: { tutorId: string }) {
         if (reviewId) {
             refetch();
         }
-    }, [reviewId]);
+    }, [refetch, reviewId]);
     useEffect(() => {
         let fetching = false;
         const handleScroll = async (e: any) => {
