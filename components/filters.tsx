@@ -39,6 +39,7 @@ interface FiltersType {
     faculties: string[],
     disciplines: string[],
     semesters: Record<string, string[]>
+    changeState: () => any
 }
 
 export default function Filters({
@@ -52,7 +53,8 @@ export default function Filters({
                                     changeSelectedSemesters,
                                     faculties,
                                     disciplines,
-                                    semesters
+                                    semesters,
+                                    changeState
                                 }: FiltersType) {
 
 
@@ -90,18 +92,22 @@ export default function Filters({
             <SearchFilter defaultExpanded name="Тип" options={['Преподаватель', 'Материал', 'Цитата']}
                           selectChanged={(el) => {
                               changeSelectedTypes(changeTypes(selectedTypes, el))
+                              changeState()
                           }} selectedValues={selectedTypes}/>
             <SearchFilter defaultExpanded name="Предметы" options={disciplines}
                           selectChanged={(el) => {
                               changeSelectedDisciplines(changeTypes(selectedDisciplines, el))
+                              changeState()
                           }} selectedValues={selectedDisciplines}/>
             <SearchFilter defaultExpanded name="Семестры" options={Object.keys(semesters)}
                           selectChanged={(el) => {
                               changeSelectedFaculties(changeTypes(selectedFaculties, el))
+                              changeState()
                           }} selectedValues={selectedFaculties}/>
             <SearchFilter name="Факультеты" options={faculties}
                           selectChanged={(el) => {
                               changeSelectedSemesters(changeTypes(selectedSemesters, el))
+                              changeState()
                           }} selectedValues={selectedSemesters}/>
             <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
             <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>

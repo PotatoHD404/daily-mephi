@@ -94,9 +94,11 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
             changeSelectedDisciplines(disciplines);
             changeSelectedFaculties(faculties);
             changeSelectedSemesters(semesters);
-            setInitialized(true)
+            setInitialized(true);
         }
+        // Removed dependencies to mimic componentDidMount behavior
     }, [initialized, router.query]);
+
     const changeState = useCallback(async (newInput?: string) => {
         if (initialized) {
             return updateQueryParams({
@@ -105,13 +107,11 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
                 disciplines: [...selectedDisciplines],
                 faculties: [...selectedFaculties],
                 semesters: [...selectedSemesters],
-            })
+            });
         }
+        // Ensure useCallback has the right dependencies
     }, [initialized, updateQueryParams, input, selectedTypes, selectedDisciplines, selectedFaculties, selectedSemesters]);
 
-    useEffect(() => {
-        changeState();
-    }, [changeState]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
             await changeState(input)
@@ -159,6 +159,7 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
                                     changeSelectedDisciplines={changeSelectedDisciplines}
                                     changeSelectedFaculties={changeSelectedFaculties}
                                     changeSelectedSemesters={changeSelectedSemesters}
+                                    changeState={changeState}
                                 />
                             </div> : null}
                     </div>
