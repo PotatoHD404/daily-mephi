@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import Image from "next/image";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIco from "images/search.svg";
 import {Checkbox, InputAdornment, styled, TextField, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import CustomAccordion from './customAccordion'
@@ -8,8 +7,9 @@ import CheckIcon from '@mui/icons-material/Check'
 import {useVirtualizer, VirtualItem} from "@tanstack/react-virtual";
 
 
-function CustomCheckbox() {
+function CustomCheckbox({checked, onClick}: { checked: boolean, onClick: () => void }) {
     return <Checkbox
+        checked={checked}
         sx={{
             // color: blue[800],
 
@@ -84,7 +84,7 @@ export default function SearchFilter(props: {
     selectChanged: (_: string) => any
 }) {
     // opened state
-    const [opened, setOpened] = React.useState(false);
+    // const [opened, setOpened] = React.useState(false);
     const [text, setText] = React.useState('');
 
 
@@ -99,7 +99,10 @@ export default function SearchFilter(props: {
 
     function rowRenderer(virtualRow: VirtualItem) {
         const option = props.options[virtualRow.index]
-        console.log(virtualRow.key)
+        // console.log(virtualRow.key)
+        const onChange = () => {
+            props.selectChanged(option);
+        }
         return (
             <HtmlTooltip
                 key={virtualRow.key}
@@ -107,8 +110,8 @@ export default function SearchFilter(props: {
                 placement="left-start"
                 arrow
             >
-                <div className="hover:bg-red-100 w-full flex flex-nowrap transition ease-in-out"
-                     onClick={() => props.selectChanged(option)}
+                <div className="hover:bg-red-100 w-full flex flex-nowrap transition ease-in-out cursor-pointer"
+                     onClick={onChange}
                      style={{
                          position: 'absolute',
                          top: 0,
@@ -117,7 +120,9 @@ export default function SearchFilter(props: {
                          height: `${virtualRow.size}px`,
                          transform: `translateY(${virtualRow.start}px)`,
                      }}>
-                    <div className="w-fit h-fit ml-0 my-auto"><CustomCheckbox/></div>
+                    <div className="w-fit h-fit ml-0 my-auto">
+                        <CustomCheckbox onClick={onChange} checked={props.selectedValues.has(option)}/>
+                    </div>
                     <div className="font-[Montserrat] truncate my-auto w-[82.5%] mx-auto py-1">{option}</div>
                 </div>
             </HtmlTooltip>
@@ -197,11 +202,7 @@ export default function SearchFilter(props: {
             {/* The scrollable element for your list */}
             <div
                 ref={parentRef}
-                style={{
-                    height: `400px`,
-                    overflow: 'auto', // Make it scroll!
-                }}
-                className="flex flex-wrap w-full md:max-h-[14rem] overflow-y-scroll text-left"
+                className="flex flex-wrap w-full md:max-h-[14rem] overflow-y-auto text-left min-h-[7rem]"
             >
                 {/* The large inner element to hold all the items */}
                 <div
@@ -217,11 +218,11 @@ export default function SearchFilter(props: {
             </div>
 
             <div className="flex text-[0.8rem] justify-between underline mt-3 px-4">
-                <div className="flex cursor-pointer" onClick={() => setOpened(!opened)}>
-                    <div className="my-auto select-none">{opened ? "Скрыть" : "Показать всё"}</div>
-                    <ExpandMoreIcon
-                        className={`w-4 my-auto transition-all ease-in-out duration-200 ${opened ? "rotate-180" : ""}`}/>
-                </div>
+                {/*<div className="flex cursor-pointer" onClick={() => setOpened(!opened)}>*/}
+                {/*    <div className="my-auto select-none">{opened ? "Скрыть" : "Показать всё"}</div>*/}
+                {/*    <ExpandMoreIcon*/}
+                {/*        className={`w-4 my-auto transition-all ease-in-out duration-200 ${opened ? "rotate-180" : ""}`}/>*/}
+                {/*</div>*/}
                 <div className="my-auto cursor-pointer select-none">Сбросить</div>
             </div>
 
