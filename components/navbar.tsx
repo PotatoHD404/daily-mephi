@@ -54,11 +54,11 @@ export function DefaultNavbar(props: DefaultNavbarParams) {
                         <h3>О нас</h3>
                     </Link>
 
-                    <Link href="/search?type=materials" className="underlining my-auto">
+                    <Link href="/search?types=Материал" className="underlining my-auto">
                         <h3>Материалы</h3>
                     </Link>
 
-                    <Link href="/search?type=tutors" className="underlining my-auto">
+                    <Link href="/search?types=Преподаватель" className="underlining my-auto">
                         <h3>Преподаватели</h3>
                     </Link>
                     <AuthSection {...props}/>
@@ -185,11 +185,11 @@ export function HomeNavbar(props: DefaultNavbarParams) {
                             <Link href="/about">
                                 <h3 className="underlining">О нас</h3>
                             </Link>
-                            <Link href="/search?type=materials">
+                            <Link href="/search?types=Материал">
                                 <h3 className="underlining">Материалы</h3>
                             </Link>
 
-                            <Link href="/search?type=tutors">
+                            <Link href="/search?types=Преподаватель">
                                 <h3 className="underlining">Преподаватели</h3>
                             </Link>
                         </div>
@@ -246,8 +246,8 @@ function ItemsList(props: {
         <List>
             {[
                 {icon: NewsIcon, text: "О нас", link: "/about", alt: "news"},
-                {icon: MaterialsIcon, text: "Материалы", link: "/search?type=materials", alt: "materials"},
-                {icon: TutorsIcon, text: "Преподаватели", link: "/search?type=tutors", alt: "tutors"},
+                {icon: MaterialsIcon, text: "Материалы", link: "/search?types=Материал", alt: "materials"},
+                {icon: TutorsIcon, text: "Преподаватели", link: "/search?types=Преподаватель", alt: "tutors"},
             ].map((item, index) => (
                 <ListItemButton key={index} onClick={async () => await router.push(item.link)}>
                     <Image src={item.icon} className="w-6 mr-2" alt={item.alt}/>

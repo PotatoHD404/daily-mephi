@@ -17,16 +17,43 @@ function MyFormControlLabel(props: FormControlLabelProps) {
     return <FormControlLabel checked={checked} {...props} />;
 }
 
-export default function Filters({faculties, disciplines, semesters}: {
+function changeTypes(types: Set<string>, el: string) {
+    const newSet = new Set(types);
+    if (newSet.has(el)) {
+        newSet.delete(el)
+    } else {
+        newSet.add(el)
+    }
+    return newSet;
+}
+
+interface FiltersType {
+    selectedTypes: Set<string>
+    changeSelectedTypes: React.Dispatch<React.SetStateAction<Set<string>>>
+    selectedDisciplines: Set<string>
+    changeSelectedDisciplines: React.Dispatch<React.SetStateAction<Set<string>>>
+    selectedFaculties: Set<string>
+    changeSelectedFaculties: React.Dispatch<React.SetStateAction<Set<string>>>
+    selectedSemesters: Set<string>
+    changeSelectedSemesters: React.Dispatch<React.SetStateAction<Set<string>>>
     faculties: string[],
     disciplines: string[],
     semesters: Record<string, string[]>
-}) {
-    // console.log(disciplines.length)
-    const [selectedTypes, changeSelectedTypes] = React.useState<Set<string>>(new Set());
-    const [selectedDisciplines, changeSelectedDisciplines] = React.useState<Set<string>>(new Set());
-    const [selectedFaculties, changeSelectedFaculties] = React.useState<Set<string>>(new Set());
-    const [selectedSemesters, changeSelectedSemesters] = React.useState<Set<string>>(new Set());
+}
+
+export default function Filters({
+                                    selectedTypes,
+                                    changeSelectedTypes,
+                                    selectedDisciplines,
+                                    changeSelectedDisciplines,
+                                    selectedFaculties,
+                                    changeSelectedFaculties,
+                                    selectedSemesters,
+                                    changeSelectedSemesters,
+                                    faculties,
+                                    disciplines,
+                                    semesters
+                                }: FiltersType) {
 
 
     return <div className="w-[15rem] ml-auto mt-4 pl-1">
@@ -62,43 +89,19 @@ export default function Filters({faculties, disciplines, semesters}: {
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
             <SearchFilter defaultExpanded name="Тип" options={['Преподаватель', 'Материал', 'Цитата']}
                           selectChanged={(el) => {
-                              const newSet = new Set(selectedTypes);
-                              if (newSet.has(el)) {
-                                  newSet.delete(el)
-                              } else {
-                                  newSet.add(el)
-                              }
-                              changeSelectedTypes(newSet)
+                              changeSelectedTypes(changeTypes(selectedTypes, el))
                           }} selectedValues={selectedTypes}/>
             <SearchFilter defaultExpanded name="Предметы" options={disciplines}
                           selectChanged={(el) => {
-                              const newSet = new Set(selectedDisciplines);
-                              if (newSet.has(el)) {
-                                  newSet.delete(el)
-                              } else {
-                                  newSet.add(el)
-                              }
-                              changeSelectedDisciplines(newSet)
+                              changeSelectedDisciplines(changeTypes(selectedDisciplines, el))
                           }} selectedValues={selectedDisciplines}/>
             <SearchFilter defaultExpanded name="Семестры" options={Object.keys(semesters)}
                           selectChanged={(el) => {
-                              const newSet = new Set(selectedFaculties);
-                              if (newSet.has(el)) {
-                                  newSet.delete(el)
-                              } else {
-                                  newSet.add(el)
-                              }
-                              changeSelectedFaculties(newSet)
+                              changeSelectedFaculties(changeTypes(selectedFaculties, el))
                           }} selectedValues={selectedFaculties}/>
             <SearchFilter name="Факультеты" options={faculties}
                           selectChanged={(el) => {
-                              const newSet = new Set(selectedSemesters);
-                              if (newSet.has(el)) {
-                                  newSet.delete(el)
-                              } else {
-                                  newSet.add(el)
-                              }
-                              changeSelectedSemesters(newSet)
+                              changeSelectedSemesters(changeTypes(selectedSemesters, el))
                           }} selectedValues={selectedSemesters}/>
             <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
             <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>

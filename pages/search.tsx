@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import SEO from "components/seo";
 import dynamic from "next/dynamic";
 import SearchBar from "components/searchBar";
@@ -40,7 +40,7 @@ export const getStaticProps = (async () => {
             const res: Record<string, string[]> = {}
             semesters.forEach(semester => {
                 const s: Set<string> = new Set()
-                semester.materials.forEach(material => material.disciplines.forEach(el=> s.add(el.name)))
+                semester.materials.forEach(material => material.disciplines.forEach(el => s.add(el.name)))
                 res[semester.name] = [...s].sort()
             })
             return res;
@@ -57,6 +57,16 @@ export const getStaticProps = (async () => {
     }
 })
 
+const normalizeQueryParam = (param: string | string[] | undefined): string[] => {
+    if (Array.isArray(param)) {
+        return param;
+    } else if (param) {
+        return [param];
+    } else {
+        return [];
+    }
+};
+
 function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["props"]) {
     const isMobile = useIsMobile();
 
@@ -66,17 +76,46 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
 
     const updateQueryParams = updateQueryParamsFactory(router)
 
-    const {q: query} = router.query;
+
+
+    const [selectedTypes, changeSelectedTypes] = React.useState<Set<string>>(new Set());
+    const [selectedDisciplines, changeSelectedDisciplines] = React.useState<Set<string>>(new Set());
+    const [selectedFaculties, changeSelectedFaculties] = React.useState<Set<string>>(new Set());
+    const [selectedSemesters, changeSelectedSemesters] = React.useState<Set<string>>(new Set());
+    const [initialized, setInitialized] = React.useState<boolean>(false);
+    useEffect(() => {
+        if (!initialized) {
+            setInput(router.query.q as string || '');
+            const types = new Set(normalizeQueryParam(router.query.types));
+            const disciplines = new Set(normalizeQueryParam(router.query.disciplines));
+            const faculties = new Set(normalizeQueryParam(router.query.faculties));
+            const semesters = new Set(normalizeQueryParam(router.query.semesters));
+            changeSelectedTypes(types);
+            changeSelectedDisciplines(disciplines);
+            changeSelectedFaculties(faculties);
+            changeSelectedSemesters(semesters);
+            setInitialized(true)
+        }
+    }, [initialized, router.query]);
+    const changeState = useCallback(async (newInput?: string) => {
+        if (initialized) {
+            return updateQueryParams({
+                q: newInput ?? input,
+                types: [...selectedTypes],
+                disciplines: [...selectedDisciplines],
+                faculties: [...selectedFaculties],
+                semesters: [...selectedSemesters],
+            })
+        }
+    }, [initialized, updateQueryParams, input, selectedTypes, selectedDisciplines, selectedFaculties, selectedSemesters]);
 
     useEffect(() => {
-        setInput(query as string || '');
-    }, [query]);
-
+        changeState();
+    }, [changeState]);
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
-            updateQueryParams({q: input})
+            await changeState(input)
         }
-        // console.log(e)
     }
 
     const user: UserType = {
@@ -110,7 +149,17 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
                         </div>
                         {!isMobile ?
                             <div className="ml-auto">
-                                <Filters {...filterParams}/>
+                                <Filters
+                                    {...filterParams}
+                                    selectedTypes={selectedTypes}
+                                    selectedDisciplines={selectedDisciplines}
+                                    selectedFaculties={selectedFaculties}
+                                    selectedSemesters={selectedSemesters}
+                                    changeSelectedTypes={changeSelectedTypes}
+                                    changeSelectedDisciplines={changeSelectedDisciplines}
+                                    changeSelectedFaculties={changeSelectedFaculties}
+                                    changeSelectedSemesters={changeSelectedSemesters}
+                                />
                             </div> : null}
                     </div>
                 </div>
