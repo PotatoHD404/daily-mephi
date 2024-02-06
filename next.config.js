@@ -17,7 +17,7 @@ const withPWA = require('next-pwa')({
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' https://mc.yandex.ru https://yastatic.net https://www.google.com https://www.gstatic.com https://mc.yandex.com gc.kis.v2.scr.kaspersky-labs.com ajax.cloudflare.com cloudflareinsights.com static.cloudflareinsights.com 'unsafe-inline';
-  img-src data: 'self' https://mc.yandex.ru https://mc.yandex.com https://authjs.dev;
+  img-src data: 'self' https://mc.yandex.ru https://mc.yandex.com https://authjs.dev https://daily-mephi.ru https://www.notion.so;
   connect-src 'self' https://mc.yandex.ru https://mc.yandex.com fonts.googleapis.com fonts.gstatic.com https://www.google.com https://www.gstatic.com cloudflareinsights.com static.cloudflareinsights.com;
   child-src blob: 'self' https://mc.yandex.ru https://mc.yandex.com;
   font-src 'self' https://fonts.gstatic.com;

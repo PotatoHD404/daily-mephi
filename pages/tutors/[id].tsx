@@ -15,8 +15,8 @@ import {prisma} from "lib/database/prisma";
 import TutorProfile from "components/tutorProfile";
 import Reviews from "components/reviews";
 import {useRouter} from "next/router";
-import {helpersFactory} from "../../server";
 import Custom404 from "../404";
+import {getCache, setCache} from "../../lib/utils";
 
 const PostDialog = dynamic(() => import("components/postDialog"), {ssr: true});
 
@@ -125,7 +125,7 @@ function Tutor({tutor}: { tutor: any }) {
 
     return (
         <>
-            <SEO title={`${tutor.shortName}`}
+            <SEO title={`${tutor?.shortName}`}
                  thumbnail={`https://daily-mephi.ru/api/v2/thumbnails/tutors/${tutor.id}.png`}/>
             {isMobile == null ? null :
                 <>
@@ -140,13 +140,19 @@ function Tutor({tutor}: { tutor: any }) {
         </>);
 }
 
-export async function getStaticPaths() {
-    const tutors = await prisma.tutor.findMany({
+async function getTutors() {
+    return prisma.tutor.findMany({
         select: {
             id: true,
             firstName: true,
             lastName: true,
             fatherName: true,
+            // rating: true,
+            legacyRating: {
+                select: {
+                    avgRating: true
+                }
+            },
             disciplines: {
                 select: {
                     name: true
@@ -164,6 +170,11 @@ export async function getStaticPaths() {
             }
         }
     });
+}
+
+export async function getStaticPaths() {
+    const tutors = await getTutors()
+    await setCache(tutors, 'tutors')
     return {
         paths: tutors.map((tutor) =>
             ({params: {id: tutor.id}})
@@ -174,8 +185,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: any) {
     const {id} = context.params;
-    const helper = helpersFactory()
-    const tutor = await helper.tutors.getOne.fetch({id}).catch(() => null)
+    const tutor = await getCache(id, 'tutors')
+    // const helper = helpersFactory()
+    // const tutor = await helper.tutors.getOne.fetch({id}).catch(() => null)
     if (!tutor) {
         return {
             notFound: true
@@ -187,6 +199,8 @@ export async function getStaticProps(context: any) {
         props: {tutor},
     }
 }
+
+export type TutorType = Awaited<ReturnType<typeof getTutors>>[0]
 
 
 export default Tutor;

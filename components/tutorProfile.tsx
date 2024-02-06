@@ -9,6 +9,7 @@ import HoverRating from "./rating";
 import {Session} from "next-auth";
 import {MyAppUser} from "lib/auth/nextAuthOptions";
 import {trpc} from "server/utils/trpc";
+import {TutorType} from "../pages/tutors/[id]";
 
 function RatingComponent(props: { text: string, rate: string, isLoading?: boolean }) {
     if (props.isLoading) {
@@ -28,7 +29,11 @@ function RatingComponent(props: { text: string, rate: string, isLoading?: boolea
         ;
 }
 
-export default function TutorProfile({tutor, loading = false}: { tutor: any, loading?: boolean }) {
+function roundFloat(n?: number) {
+    return n ? Math.round((n + Number.EPSILON) * 100) / 100: undefined
+}
+
+export default function TutorProfile({tutor, loading = false}: { tutor: TutorType, loading?: boolean }) {
 
     // const {data, isFetching} = useSendQuery(`tutor-${tutor.id}`, getTutor);
 
@@ -46,7 +51,7 @@ export default function TutorProfile({tutor, loading = false}: { tutor: any, loa
         <div className="flex items-center w-full mb-2">
             <div className="mb-3 w-16 h-14 md:w-60 md:hidden justify-self-start">
                 <Image
-                    src={tutor.images[0] ?? DeadCat}
+                    src={tutor?.images[0]?.url ?? DeadCat}
                     alt="Tutor image"
                     className="rounded-full z-0"
                     width={458}
@@ -67,7 +72,7 @@ export default function TutorProfile({tutor, loading = false}: { tutor: any, loa
                 <div className="w-fit text-[1.0rem] md:text-xl font-bold h-fit md:flex-row-reverse">
                     <div className="flex mb-3 w-32 md:w-60">
                         <Image
-                            src={tutor.images[0] ?? DeadCat}
+                            src={tutor?.images[0]?.url ?? DeadCat}
                             alt="Tutor image"
                             className="rounded-full z-0"
                             width={458}
@@ -84,13 +89,13 @@ export default function TutorProfile({tutor, loading = false}: { tutor: any, loa
                 {tutor.disciplines.length > 0 ? <div className="w-full">
                     <h2 className="font-semibold">Дисциплины:</h2>
                     <h2 className="my-2">
-                        {tutor.disciplines.join(", ")}
+                        {tutor.disciplines.map(el => el.name).join(", ")}
                     </h2>
                 </div> : null}
                 {tutor.faculties.length > 0 ? <div className="w-full">
                     <h2 className="font-semibold">Факультеты:</h2>
                     <h2 className="my-2">
-                        {tutor.faculties.join(", ")}
+                        {tutor.faculties.map(el => el.name).join(", ")}
                     </h2>
                 </div> : null}
                 <div className="flex flex-wrap space-y-1 w-full pr-4 md:max-w-[14rem]">
@@ -102,11 +107,11 @@ export default function TutorProfile({tutor, loading = false}: { tutor: any, loa
                         <>
                             <div className="my-auto flex w-full justify-between">
                                 <div className="font-semibold">Daily Mephi:</div>
-                                {/*<div>{data.rating}</div>*/}
+                                {/*<div>{tutor?.rating || "-"}</div>*/}
                             </div>
                             <div className="my-auto flex w-full justify-between">
                                 <div className="font-semibold">mephist.ru:</div>
-                                {/*<div>{data.legacyRating || "-"}</div>*/}
+                                <div>{roundFloat(tutor?.legacyRating?.avgRating) || "-"}/5</div>
                             </div>
                         </>}
                 </div>
