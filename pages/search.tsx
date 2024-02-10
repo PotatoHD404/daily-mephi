@@ -109,10 +109,27 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
         // Removed dependencies to mimic componentDidMount behavior
     }, [initialized, router.query, router.isReady]);
 
+    const {data, isFetching, refetch, isError, error} =
+        trpc.utils.search.useQuery({
+            sort: "relevance",
+            query: input,
+            faculties: selectedFaculties.size ? [...selectedFaculties] : undefined,
+            disciplines: selectedDisciplines.size ? [...selectedDisciplines] : undefined,
+            semesters: selectedSemesters.size ? [...selectedSemesters] : undefined,
+            types: selectedSemesters.size ? [...selectedTypes] as any[] : ["tutor", "review", "quote", "material"],
+        }, {
+            enabled: false
+        });
+
+    const handleSearch = useCallback(() => {
+        if (input !== ''.trim())
+            refetch()
+    }, [input, refetch])
+
     useEffect(() => {
             if (initialized)
                 handleSearch()
-        }, [handleSearch, initialized]
+        }, [initialized]
     )
 
 
@@ -132,22 +149,7 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
     //             types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional().default([]),
     //             limit: z.number().int().min(1).max(20).default(10),
     //             offset: z.number().int().min(0).default(0),
-    const {data, isFetching, refetch, isError, error} =
-        trpc.utils.search.useQuery({
-            sort: "relevance",
-            query: input,
-            faculties: selectedFaculties.size ? [...selectedFaculties] : undefined,
-            disciplines: selectedDisciplines.size ? [...selectedDisciplines] : undefined,
-            semesters: selectedSemesters.size ? [...selectedSemesters] : undefined,
-            types: selectedSemesters.size ? [...selectedTypes] as any[] : ["tutor", "review", "quote"],
-        }, {
-            enabled: false
-        });
 
-    const handleSearch = useCallback(() => {
-        if (input !== '')
-            refetch()
-    }, [input, refetch])
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {

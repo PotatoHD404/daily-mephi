@@ -208,26 +208,27 @@ export const searchRouter = t.router({
                                       ${ratingFrom != 0 || ratingTo == 5 ? Prisma.sql`"ratings".avg_rating BETWEEN ${ratingFrom} AND ${ratingTo} AND` : Prisma.empty}
                                       "documents"."id" = "tutors"."document_id"
                                       )
-                                ` : Prisma.empty}}
+                                ` : Prisma.empty}
                 
-                ${(types.includes('tutor') && types.includes('review')) ? Prisma.sql`OR` : Prisma.empty}
+                ${(types.includes('tutor') && types.includes('material')) ? Prisma.sql`OR` : Prisma.empty}
                 
-                ${types.includes('review') ? Prisma.sql`"documents"."type" = 'review' AND EXISTS(SELECT 1 FROM "tutors"
-                JOIN "_reviews_faculties" ON reviews.id = _reviews_faculties."B"
-                JOIN "faculties" ON faculties.id = _reviews_faculties."A"
-                JOIN "_reviews_disciplines" ON reviews.id = _reviews_disciplines."B"
-                JOIN "disciplines" ON disciplines.id = _reviews_disciplines."A"
-                JOIN "_reviews_semesters" ON tutors.id = _reviews_disciplines."B"
-                JOIN "semesters" ON disciplines.id = _reviews_semesters."A"
+                ${types.includes('material') ? Prisma.sql`"documents"."type" = 'material' AND EXISTS(SELECT 1 FROM "materials"
+                JOIN "_materials_faculties" ON materials.id = _materials_faculties."A"
+                JOIN "faculties" ON faculties.id = _materials_faculties."B"
+                JOIN "_materials_disciplines" ON materials.id = _materials_disciplines."A"
+                JOIN "disciplines" ON disciplines.id = _materials_disciplines."B"
+                JOIN "_materials_semesters" ON materials.id = _materials_semesters."A"
+                JOIN "semesters" ON materials.id = _materials_semesters."B"
                 WHERE
                       ${disciplines.length ? Prisma.sql`"disciplines"."name" = ANY(${disciplines}) AND` : Prisma.empty}
                       ${faculties.length ? Prisma.sql`"faculties"."name" = ANY(${faculties}) AND` : Prisma.empty}
                       ${semesters.length ? Prisma.sql`"semesters"."name" = ANY(${semesters}) AND` : Prisma.empty}
-                      "documents"."id" = "reviews"."document_id"
+                      "documents"."id" = "materials"."document_id"
                       )
-                ` : Prisma.empty}}
+                ` : Prisma.empty}
                 
-                ${types.filter(el => el !== 'tutor' && el !== 'material').length > 1 ? Prisma.sql`OR "documents"."type" != 'tutor'` : Prisma.empty}
+                ${types.filter(el => el !== 'tutor' && el !== 'material').length > 1 ?
+                 Prisma.sql`OR "documents"."type" != 'tutor' AND "documents"."type" != 'material'` : Prisma.empty}
                 
                 ${(types.includes('tutor') || types.includes('review')) ? Prisma.sql`)` : Prisma.empty}
             ORDER BY
@@ -253,7 +254,7 @@ export const searchRouter = t.router({
 
             const docPositionMap: Record<string, { index: number, type: DocsKeyTypes }> = {};
             docs.forEach((el, index) => {
-                docPositionMap[el.id] = { index, type: el.type };
+                docPositionMap[el.id] = {index, type: el.type};
             });
             type ResultDataType = Tutor | User | Material | Review | Quote | News;
             const result: {
@@ -262,6 +263,8 @@ export const searchRouter = t.router({
             }[] = new Array(docs.length);
             await Promise.all(Object.entries(groupedDocs).map(async ([key, value]) => {
                 const ids = value.map(el => el.id);
+                if (ids.length === 0)
+                    return;
                 let fetchedData: ResultDataType[];
                 switch (key) {
                     case "tutor":

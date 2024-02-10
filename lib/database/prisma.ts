@@ -1,6 +1,19 @@
 import {PrismaClient} from '@prisma/client';
 // import {createPrismaRedisCache} from "prisma-redis-middleware";
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+    log: [
+        {
+            level: 'query',
+            emit: 'event', // Emit logs as events
+        },
+    ]
+})
+
+prisma.$on('query', (e) => {
+    console.log(`Query: ${e.query}`);
+    console.log(`Params: ${e.params}`);
+});
+
 prisma.$use(async (params, next) => {
     // Check incoming query type
     // check if params.model not starts with underscore
