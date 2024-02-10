@@ -4,7 +4,6 @@ import {auth, MyAppUser} from "../../lib/auth/nextAuthOptions";
 import {File, Material, PrismaClient} from '@prisma/client';
 import {TRPCError} from "@trpc/server";
 import * as fs from "fs";
-import {tr} from "@faker-js/faker";
 
 function strToDateTime(dtStr: string): Date {
     if (!dtStr) return new Date()
@@ -157,7 +156,7 @@ type MaterialDTO =
     semesters: { connect: { id: string }[] },
     files: { connect: { id: string }[] }
 };
-type ReviewDTO = Omit<Review, "id" | "tutorId" | "userId">;
+type ReviewDTO = Omit<Review, "id" | "tutorId" | "userId"> & { document: { create: { text: string, type: string } }, };
 type TutorDTO =
     Omit<Tutor, "id" | "updated"> & {
     legacyRating: { create: LegacyRatingDTO },
@@ -463,7 +462,7 @@ export const utilsRouter = t.router({
                 newTutors.add(id)
                 for (let direction of Object.keys(directions)) {
                     direction.split('; ').map((direction) => {
-                        const tmp =  clearDiscipline(direction,
+                        const tmp = clearDiscipline(direction,
                             {
                                 '_': true,
                             })
@@ -640,6 +639,12 @@ export const utilsRouter = t.router({
             for (const review of jsonTutor.reviews) {
                 const jsonReview = review as unknown as JsonReview;
                 tutor.reviews.create.push({
+                    document: {
+                        create: {
+                            text: [jsonReview.Название, jsonReview.Текст].filter(el => !!el).join(' '),
+                            type: 'review'
+                        }
+                    },
                     text: jsonReview.Текст,
                     title: jsonReview.Название === null || jsonReview.Название === "" ? "Без названия" : jsonReview.Название,
                     legacyNickname: jsonReview.Ник,
@@ -650,6 +655,12 @@ export const utilsRouter = t.router({
 
             for (const [name, review] of Object.entries(jsonTutor.mailReviews)) {
                 tutor.reviews.create.push({
+                    document: {
+                        create: {
+                            text: [review].filter(el => !!el).join(' '),
+                            type: 'review'
+                        }
+                    },
                     text: review,
                     title: "Отзыв с мифиста",
                     legacyNickname: name,

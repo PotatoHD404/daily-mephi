@@ -19,6 +19,7 @@ const findTutors = async (prisma: PrismaClient, ids: string[]) =>
             quotesCount: true,
             ratesCount: true,
             updatedAt: true,
+            documentId: true,
             images: {
                 select: {
                     url: true,
@@ -34,6 +35,7 @@ const findUsers = async (prisma: PrismaClient, ids: string[]) =>
         select: {
             id: true,
             nickname: true,
+            documentId: true,
             image: {
                 select: {
                     url: true,
@@ -54,6 +56,7 @@ const findMaterials = async (prisma: PrismaClient, ids: string[]) =>
             commentsCount: true,
             likesCount: true,
             dislikesCount: true,
+            documentId: true,
             files: {
                 select: {
                     url: true,
@@ -73,6 +76,7 @@ const findReviews = async (prisma: PrismaClient, ids: string[]) =>
             updatedAt: true,
             likesCount: true,
             dislikesCount: true,
+            documentId: true,
             user: {
                 select: {
                     id: true,
@@ -97,6 +101,7 @@ const findQuote = async (prisma: PrismaClient, ids: string[]) =>
             updatedAt: true,
             likesCount: true,
             dislikesCount: true,
+            documentId: true,
             user: {
                 select: {
                     id: true,
@@ -124,6 +129,7 @@ const findNews = async (prisma: PrismaClient, ids: string[]) =>
             likesCount: true,
             dislikesCount: true,
             commentsCount: true,
+            documentId: true,
         }
     });
 
@@ -191,10 +197,10 @@ export const searchRouter = t.router({
 
 
             const docs: DocsType[] = await prisma.$queryRaw`
-            SELECT *, similarity("documents"."text", '${tsQuery}') as similarity FROM "documents"
+            SELECT *, similarity("documents"."text", ${query}) as similarity FROM "documents"
                 WHERE "documents"."type" = ANY(${types}) AND
                 ${tsQuery !== "" ? Prisma.sql`"documents"."text" @@ to_tsquery('russian', '${tsQuery}') AND` : Prisma.empty}
-                "documents"."deleted_at" IS NOT NULL AND
+                "documents"."deleted_at" IS NULL AND
                 ${(types.includes('tutor') || types.includes('review')) ? Prisma.sql`(` : Prisma.empty}
                 ${types.includes('tutor') ? Prisma.sql`"documents"."type" = 'tutor' AND EXISTS(SELECT 1 FROM "tutors"
                                 JOIN "_tutors_faculties" ON tutors.id = _tutors_faculties."B"
@@ -213,12 +219,12 @@ export const searchRouter = t.router({
                 ${(types.includes('tutor') && types.includes('material')) ? Prisma.sql`OR` : Prisma.empty}
                 
                 ${types.includes('material') ? Prisma.sql`"documents"."type" = 'material' AND EXISTS(SELECT 1 FROM "materials"
-                JOIN "_materials_faculties" ON materials.id = _materials_faculties."A"
-                JOIN "faculties" ON faculties.id = _materials_faculties."B"
-                JOIN "_materials_disciplines" ON materials.id = _materials_disciplines."A"
-                JOIN "disciplines" ON disciplines.id = _materials_disciplines."B"
-                JOIN "_materials_semesters" ON materials.id = _materials_semesters."A"
-                JOIN "semesters" ON materials.id = _materials_semesters."B"
+                JOIN "_materials_faculties" ON materials.id = _materials_faculties."B"
+                JOIN "faculties" ON faculties.id = _materials_faculties."A"
+                JOIN "_materials_disciplines" ON materials.id = _materials_disciplines."B"
+                JOIN "disciplines" ON disciplines.id = _materials_disciplines."A"
+                JOIN "_materials_semesters" ON materials.id = _materials_semesters."B"
+                JOIN "semesters" ON materials.id = _materials_semesters."A"
                 WHERE
                       ${disciplines.length ? Prisma.sql`"disciplines"."name" = ANY(${disciplines}) AND` : Prisma.empty}
                       ${faculties.length ? Prisma.sql`"faculties"."name" = ANY(${faculties}) AND` : Prisma.empty}
@@ -235,7 +241,7 @@ export const searchRouter = t.router({
                 ${sort === "time" ? Prisma.sql`updated_at DESC,` : Prisma.empty}
                 similarity DESC
             LIMIT ${limit}
-                OFFSET ${offset}`;
+            OFFSET ${offset}`;
 
 
             // group by type into some object
@@ -289,10 +295,12 @@ export const searchRouter = t.router({
                     default:
                         throw new Error(`Unsupported type: ${key}`);
                 }
+
+
                 fetchedData.map(el => {
                     return {data: el, type: key}
                 }).forEach((doc) => {
-                    const positionInfo = docPositionMap[doc.data.id];
+                    const positionInfo = docPositionMap[doc.data.documentId as any];
                     result[positionInfo.index] = doc;
                 });
             })).catch(err => {
@@ -302,7 +310,6 @@ export const searchRouter = t.router({
                     message: err.message
                 });
             });
-
 
             return result;
         }),
