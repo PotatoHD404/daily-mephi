@@ -89,16 +89,17 @@ export default function SearchFilter(props: {
 
 
     const parentRef = React.useRef(null)
+    const options = props.options.filter(el => el.toLowerCase().includes(text.toLowerCase()))
 
 // The virtualizer
     const rowVirtualizer = useVirtualizer({
-        count: props.options.length,
+        count: options.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 35,
     })
 
     function rowRenderer(virtualRow: VirtualItem) {
-        const option = props.options[virtualRow.index]
+        const option = options[virtualRow.index]
         // console.log(virtualRow.key)
         const onChange = () => {
             props.selectChanged(option);

@@ -116,8 +116,14 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
         // Ensure useCallback has the right dependencies
     }, [initialized, router.isReady, updateQueryParams]);
 
+    function handleSearch() {
+
+        // console.log(input)
+    }
+
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
+            handleSearch()
             await changeState({q: input})
         }
     }
@@ -164,6 +170,7 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
                                     changeSelectedFaculties={changeSelectedFaculties}
                                     changeSelectedSemesters={changeSelectedSemesters}
                                     changeState={changeState}
+                                    search={handleSearch}
                                 />
                             </div> : null}
                     </div>

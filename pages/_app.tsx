@@ -116,23 +116,31 @@ function MyApp(
 
     const [loading, setLoading] = React.useState(false);
     React.useEffect(() => {
-        const start = () => {
-            // console.log("start");
-            setLoading(true);
+        const currentPathName = () => router.pathname; // Get the current path without query params
+
+        const handleRouteChangeStart = (url: string) => {
+            // Extract the path without query params from the next URL
+            const nextPathName = url.split('?')[0];
+            if (currentPathName() !== nextPathName) {
+                // If the path has changed (not just query params), then indicate loading
+                setLoading(true);
+            }
         };
-        const end = () => {
-            // console.log("findished");
+
+        const handleRouteChangeEnd = () => {
             setLoading(false);
         };
-        Router.events.on("routeChangeStart", start);
-        Router.events.on("routeChangeComplete", end);
-        Router.events.on("routeChangeError", end);
+
+        Router.events.on("routeChangeStart", handleRouteChangeStart);
+        Router.events.on("routeChangeComplete", handleRouteChangeEnd);
+        Router.events.on("routeChangeError", handleRouteChangeEnd);
+
         return () => {
-            Router.events.off("routeChangeStart", start);
-            Router.events.off("routeChangeComplete", end);
-            Router.events.off("routeChangeError", end);
+            Router.events.off("routeChangeStart", handleRouteChangeStart);
+            Router.events.off("routeChangeComplete", handleRouteChangeEnd);
+            Router.events.off("routeChangeError", handleRouteChangeEnd);
         };
-    }, []);
+    }, [router.pathname]); // Empty array means this effect runs only once on mount
     const isLoading = loading && router.isReady;
     // useEffect(() => {
     //     router.events.on('routeChangeStart', () =>  NProgress.start());
@@ -168,20 +176,20 @@ function MyApp(
                                             <h2 className="text-center text-black text-xl font-semibold">Загрузка...</h2>
                                             <p className="w-1/3 text-center text-gray-500">Это может занять некоторое
                                                 время</p>
-                                        </div> : <>
-                                            {home1 ?
-                                                <div className={"md:px-8 mx-auto"}>
-                                                    <Component {...pageProps}/>
-                                                </div>
-                                                :
-                                                <div
-                                                    className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
-                                                    bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
-                                                    <Component {...pageProps} />
-                                                </div>}
-                                            {isMobile == null ? null : <Footer/>}
-                                        </>
+                                        </div> : null
                                     }
+                                    {home1 ?
+                                        <div className={"md:px-8 mx-auto"}>
+                                            <Component {...pageProps}/>
+                                        </div>
+                                        :
+                                        <div
+                                            className="rounded-2xl justify-center w-full flex pt-6 pb-10 md:px-8 px-2 my-12
+                                                    bg-white bg-opacity-[36%] max-w-[1280px] mx-auto">
+                                            <Component {...pageProps} />
+                                        </div>}
+                                    {isMobile == null ? null : <Footer/>}
+
                                 </div>
                             </ThemeProvider>
                         </SessionProvider>

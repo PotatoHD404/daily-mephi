@@ -1,22 +1,22 @@
 import React from "react";
-import {FormControlLabelProps} from "@mui/material/FormControlLabel";
+// import {FormControlLabelProps} from "@mui/material/FormControlLabel";
 import SearchFilter from "./searchFilter";
-import {FormControlLabel, useRadioGroup,} from "@mui/material";
+// import {FormControlLabel, useRadioGroup,} from "@mui/material";
 import SliderFilter from "./sliderFilter";
 import RippledButton from "./rippledButton";
 import {ChangeStateType} from "../pages/search";
 
-function MyFormControlLabel(props: FormControlLabelProps) {
-    const radioGroup = useRadioGroup();
-
-    let checked = false;
-
-    if (radioGroup) {
-        checked = radioGroup.value === props.value;
-    }
-
-    return <FormControlLabel checked={checked} {...props} />;
-}
+// function MyFormControlLabel(props: FormControlLabelProps) {
+//     const radioGroup = useRadioGroup();
+//
+//     let checked = false;
+//
+//     if (radioGroup) {
+//         checked = radioGroup.value === props.value;
+//     }
+//
+//     return <FormControlLabel checked={checked} {...props} />;
+// }
 
 function changeSet(set: Set<string>, el: string) {
     const newSet = new Set(set);
@@ -41,6 +41,7 @@ interface FiltersType {
     disciplines: string[],
     semesters: Record<string, string[]>
     changeState: (_: ChangeStateType) => any
+    search: () => any
 }
 
 export default function Filters({
@@ -55,7 +56,8 @@ export default function Filters({
                                     faculties,
                                     disciplines,
                                     semesters,
-                                    changeState
+                                    changeState,
+                                    search
                                 }: FiltersType) {
 
 
@@ -87,8 +89,7 @@ export default function Filters({
         {/*        </RadioGroup>*/}
         {/*    </div>*/}
         {/*</div>*/}
-        <div
-            className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black">
+        <div className="text-[1.25rem] ml-auto w-[99.5%] px-0 whiteBox flex-wrap space-y-2 text-center text-black">
             <div className="font-bold mb-4 -mt-2">Фильтры</div>
             <SearchFilter defaultExpanded name="Тип" options={['Преподаватель', 'Материал', 'Цитата']}
                           selectChanged={(el) => {
@@ -115,7 +116,7 @@ export default function Filters({
                               changeState({semesters: [...newSemesters]})
                           }} selectedValues={selectedSemesters}/>
             <SliderFilter defaultExpanded name="Оценка" min={0} max={5}/>
-            <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={() => null}>
+            <RippledButton className="rounded-full mx-auto w-4/5 p-1 shadow-sm bg-red-200" onClick={search}>
                 <div>Применить</div>
             </RippledButton>
         </div>

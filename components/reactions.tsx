@@ -35,7 +35,7 @@ export default function Reactions(props: {
             setLike(prevState.like);
             setLikes(prevState.likes);
             setDislikes(prevState.dislikes);
-            console.log(e);
+            // console.log(e);
             return;
         }
         setPrevState({like: like, likes: likes, dislikes: dislikes});

@@ -185,7 +185,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: any) {
     const {id} = context.params;
-    const tutor = await getCache(id, 'tutors')
+    const tutor = await getCache(id, 'tutors');
     // const helper = helpersFactory()
     // const tutor = await helper.tutors.getOne.fetch({id}).catch(() => null)
     if (!tutor) {

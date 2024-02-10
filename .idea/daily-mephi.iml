@@ -10,6 +10,8 @@
       <excludeFolder url="file://$MODULE_DIR$/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/storybook-static" />
       <excludeFolder url="file://$MODULE_DIR$/wordnet" />
+      <excludeFolder url="file://$MODULE_DIR$/home-mephi-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/parsing" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
