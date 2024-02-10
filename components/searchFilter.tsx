@@ -96,6 +96,7 @@ export default function SearchFilter(props: {
         count: options.length,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 35,
+        overscan: 5,
     })
 
     function rowRenderer(virtualRow: VirtualItem) {

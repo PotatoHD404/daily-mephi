@@ -4,12 +4,13 @@ import dynamic from "next/dynamic";
 import SearchBar from "components/searchBar";
 import {useRouter} from "next/router";
 import Material from "components/material";
-import Tutor from "components/tutor";
+import Tutor, {LoadingTutor} from "components/tutor";
 import useIsMobile from "lib/react/isMobileContext";
 import {UserType} from "../components/userHeader";
 import {updateQueryParamsFactory} from "../lib/react/updateQueryParams";
 import {helpersFactory} from "../server";
 import {prisma} from "../lib/database/prisma";
+import {trpc} from "../server/utils/trpc";
 
 const Filters = dynamic(() => import("components/filters"), {ssr: true});
 const FilterButtons = dynamic(() => import("components/filterButtons"), {ssr: true});
@@ -108,6 +109,12 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
         // Removed dependencies to mimic componentDidMount behavior
     }, [initialized, router.query, router.isReady]);
 
+    useEffect(() => {
+            if (initialized)
+                handleSearch()
+        }, [handleSearch, initialized]
+    )
+
 
     const changeState = useCallback(async (props: ChangeStateType) => {
         if (initialized && router.isReady) {
@@ -116,10 +123,31 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
         // Ensure useCallback has the right dependencies
     }, [initialized, router.isReady, updateQueryParams]);
 
-    function handleSearch() {
+    //             query: z.string().min(1).max(100),
+    //             sort: z.enum(['relevance', 'time']).default('relevance'),
+    //             faculty_ids: z.array(z.string()).optional().default([]),
+    //             discipline_ids: z.array(z.string()).optional().default([]),
+    //             rating_from: z.number().min(0).max(5).optional().default(0),
+    //             rating_to: z.number().min(0).max(5).optional().default(5),
+    //             types: z.array(z.enum(['tutor', 'user', 'material', 'review', 'quote', 'news'])).optional().default([]),
+    //             limit: z.number().int().min(1).max(20).default(10),
+    //             offset: z.number().int().min(0).default(0),
+    const {data, isFetching, refetch, isError, error} =
+        trpc.utils.search.useQuery({
+            sort: "relevance",
+            query: input,
+            faculties: selectedFaculties.size ? [...selectedFaculties] : undefined,
+            disciplines: selectedDisciplines.size ? [...selectedDisciplines] : undefined,
+            semesters: selectedSemesters.size ? [...selectedSemesters] : undefined,
+            types: selectedSemesters.size ? [...selectedTypes] as any[] : ["tutor", "review", "quote"],
+        }, {
+            enabled: false
+        });
 
-        // console.log(input)
-    }
+    const handleSearch = useCallback(() => {
+        if (input !== '')
+            refetch()
+    }, [input, refetch])
 
     async function handleEnterPress(e: any, input: string) {
         if (e.key === 'Enter') {
@@ -152,10 +180,20 @@ function Search({filterParams}: Awaited<ReturnType<typeof getStaticProps>>["prop
                             handleEnterPress={handleEnterPress}
                         />
                     </div>
-                    <div className="flex">
-                        <div className="md:w-[75%] w-[100%]">
-                            <Tutor/>
-                            <Material user={user}/>
+                    <div className="flex flex-nowrap w-full">
+                        <div className="md:min-w-[75%] min-w-[100%] w-full">
+                            {isFetching ?
+                                <>
+                                    <LoadingTutor/>
+                                    <LoadingTutor/>
+                                    <LoadingTutor/>
+                                    <LoadingTutor/>
+                                    <LoadingTutor/>
+                                </> :
+                                <>
+                                    <Tutor/>
+                                    <Material user={user}/>
+                                </>}
                         </div>
                         {!isMobile ?
                             <div className="ml-auto">

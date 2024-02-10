@@ -7,14 +7,56 @@ import QuotesIco from "images/quotes.svg";
 import MaterialsIco from "images/materials.svg";
 import React from "react";
 import RatingPlace from "./ratingPlace";
-import {Button} from '@mui/material';
+import {Box, Button, Skeleton} from '@mui/material';
 
 import useIsMobile from "lib/react/isMobileContext";
 
-export default function Tutor() {
+interface TutorProps {
+    loading: boolean;
+    tutorId: string;
+    name: string;
+    image: string; // Assuming this is always required. Make it optional if not.
+    rating?: number;
+    disciplines: string[];
+    department?: string;
+    reviewsCount?: number;
+    materialsCount?: number;
+    quotesCount?: number;
+    place?: number;
+}
+export function LoadingTutor() {
+    return (
+        <Box className="p-5 px-4 w-full whiteBox mt-4">
+            {/* Mimic the header section with the rating place and tutor name */}
+            <Box className="flex justify-between mb-3">
+                <Skeleton variant="circular" width={50} height={50} />
+                <Box className="flex-grow ml-4">
+                    <Skeleton variant="text" width="90%" height={20} />
+                    <Skeleton variant="text" width="60%" height={20} />
+                </Box>
+            </Box>
+
+            {/* Mimic the disciplines and department section */}
+            <Box>
+                <Skeleton variant="text" width="100%" height={20} />
+                <Skeleton variant="text" width="80%" height={20} />
+                <Skeleton variant="text" width="90%" height={20} />
+                <Skeleton variant="text" width="70%" height={20} />
+            </Box>
+
+            {/* Mimic the additional information for mobile and desktop */}
+            <Box className="flex flex-wrap mt-4">
+                <Skeleton variant="rectangular" width="45%" height={10} className="mr-2" />
+                <Skeleton variant="rectangular" width="45%" height={10} className="mr-2" />
+            </Box>
+        </Box>
+    );
+}
+
+export default function Tutor({loading, tutorId, place}: TutorProps) {
     const isMobile = useIsMobile();
     return (
-        <Link href="/tutors/00000000-0000-0000-0000-000000000000">
+        <Link href={`/tutors/${tutorId}`}>
 
             <Button className="text-black font-[Montserrat] text-center
                                               w-fit normal-case h-fit flex flex-wrap active:bg-white
@@ -68,7 +110,7 @@ export default function Tutor() {
                     </div>
                 </div>
 
-                <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem]">
+                <div className="flex flex-wrap w-fit h-fit md:text-xl text-[1.0rem] mr-auto">
                     <div className="h-fit mb-2 text-left flex flex-wrap">
                         <span className="font-bold h-fit mr-2 text-[1.1rem]">Дисциплины: </span>
                         {["Теория функций копмплексных переменных",
